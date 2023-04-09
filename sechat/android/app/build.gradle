@@ -39,10 +39,11 @@ android {
         applicationId "chat.dim.sechat"
         // You can update the following values to match your application needs.
         // For more information, see: https://docs.flutter.dev/deployment/android#reviewing-the-gradle-build-configuration.
-        minSdkVersion flutter.minSdkVersion
+        minSdkVersion 19  //flutter.minSdkVersion
         targetSdkVersion flutter.targetSdkVersion
         versionCode flutterVersionCode.toInteger()
         versionName flutterVersionName
+        multiDexEnabled true
     }
 
     buildTypes {
@@ -56,4 +57,17 @@ android {
 
 flutter {
     source '../..'
+}
+
+dependencies {
+    implementation 'com.android.support:multidex:1.0.3'
+
+    implementation project(':Client')
+    implementation project(':Common')
+
+    implementation project(':DB')
+    implementation project(':UIKit')
+
+    implementation group: 'chat.dim', name: 'Client', version: '0.1.1'
+    implementation group: 'chat.dim', name: 'LNC', version: '0.1.1'
 }

@@ -1,6 +1,7 @@
+import 'package:dim_client/dim_client.dart';
 import 'package:flutter/cupertino.dart';
 
-import 'account.dart';
+import '../models/contact.dart';
 import 'alert.dart';
 import 'browser.dart';
 import 'styles.dart';
@@ -68,18 +69,19 @@ class SettingsPage extends StatelessWidget {
     );
   }
 
-  User _currentUser() {
+  ContactInfo _currentUser() {
     // TODO: get current user info
-    return User(identifier: 'moky@anywhere', name: 'me');
+    ID me = ID.kFounder;
+    return ContactInfo(identifier: me, type: me.type, name: 'me');
   }
   Widget _me(BuildContext context) {
-    User user = _currentUser();
+    ContactInfo user = _currentUser();
     return CupertinoListTile(
       padding: const EdgeInsets.all(16),
       leadingSize: 64,
       leading: user.getIcon(64),
       title: Text(user.name),
-      subtitle: Text(user.identifier),
+      subtitle: Text(user.identifier.string),
       trailing: const CupertinoListTileChevron(),
       onTap: () => {
         Alert.show(context, 'Coming soon', 'Edit profile')

@@ -4,8 +4,6 @@ class ChannelNames {
 
   static const register = 'chat.dim/register';
 
-  static const facebook = 'chat.dim/facebook';
-
   static const messenger = 'chat.dim/messenger';
 
   static const conversation = 'chat.dim/conversation';
@@ -17,12 +15,6 @@ class ChannelMethods {
   //  Register channel
   //
   static const createUser = 'createUser';
-
-  //
-  //  Facebook channel
-  //
-  static const currentUser = 'currentUser';
-  static const contactsOfUser = 'contactsOfUser';
 
   //
   //  Messenger channel
@@ -45,7 +37,6 @@ class ChannelManager {
   //  Channels
   //
   final RegisterChannel registerChannel = RegisterChannel(ChannelNames.register);
-  final FacebookChannel facebookChannel = FacebookChannel(ChannelNames.facebook);
   final ConversationChannel conversationChannel = ConversationChannel(ChannelNames.conversation);
 }
 
@@ -59,34 +50,6 @@ class RegisterChannel extends MethodChannel {
       });
     } on PlatformException catch (e) {
       return e.toString();
-    }
-  }
-}
-
-class FacebookChannel extends MethodChannel {
-  FacebookChannel(super.name);
-
-  static bool isID(String? string) {
-    if (string != null && string.startsWith("0x")) {
-      return string.length == 42;
-    }
-    // TODO: other format
-    return false;
-  }
-
-  Future<Map> getCurrentUser() async {
-    try {
-      return await invokeMethod(ChannelMethods.currentUser);
-    } on PlatformException catch (e) {
-      return {'error': e.toString()};
-    }
-  }
-
-  Future<List?> getContacts() async {
-    try {
-      return await invokeMethod(ChannelMethods.contactsOfUser);
-    } on PlatformException {
-      return null;
     }
   }
 }

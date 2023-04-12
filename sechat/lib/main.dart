@@ -1,7 +1,8 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/services.dart';
 
-import 'views/channels.dart';
+import 'client/shared.dart';
+
 import 'views/chats.dart';
 import 'views/customizer.dart';
 import 'views/contacts.dart';
@@ -23,12 +24,12 @@ void main() {
       PermissionHandler.check(PermissionHandler.minimumPermissions)
     } else {
       // check current user
-      ChannelManager.instance.facebookChannel.getCurrentUser().then((value) => {
+      GlobalVariable().facebook.currentUser.then((user) => {
         debugPrint('current user: $value'),
-        if (FacebookChannel.isID(value['identifier'])) {
-          runApp(const TarsierApp(MainPage()))
-        } else {
+        if (user == null) {
           runApp(const TarsierApp(RegisterPage()))
+        } else {
+          runApp(const TarsierApp(MainPage()))
         }
       })
     }

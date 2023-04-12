@@ -1,10 +1,11 @@
+import 'package:dim_client/dim_client.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
+import '../client/shared.dart';
 import '../main.dart';
 import 'alert.dart';
 import 'browser.dart';
-import 'channels.dart';
 import 'permissions.dart';
 
 class RegisterPage extends StatelessWidget {
@@ -216,12 +217,9 @@ void _submit(BuildContext context, {required String nickname, required String av
       )
     } else {
       // check current user
-      ChannelManager.instance.facebookChannel.getCurrentUser().then((value) => {
+      GlobalVariable().facebook.currentUser.then((user) => {
         debugPrint('current user: $value'),
-        if (FacebookChannel.isID(value['identifier'])) {
-          // current user already exists
-          runApp(const TarsierApp(MainPage()))
-        } else {
+        if (user == null) {
           // current user not exists, create new one
           if (nickname.isEmpty) {
             Alert.show(context, 'Input Name', 'Please input your nickname.')
@@ -230,6 +228,9 @@ void _submit(BuildContext context, {required String nickname, required String av
           } else {
             _generateAccount(context, nickname, avatarURL)
           }
+        } else {
+          // current user already exists
+          runApp(const TarsierApp(MainPage()))
         }
       })
     }
@@ -237,12 +238,12 @@ void _submit(BuildContext context, {required String nickname, required String av
 }
 
 void _generateAccount(BuildContext context, String name, String avatar) {
-  ChannelManager.instance.registerChannel.createUser(name, avatar).then((result) => {
-    if (FacebookChannel.isID(result)) {
-      _openMain(context)
-    } else {
-      Alert.show(context, 'Error', result)
-    }
+  GlobalVariable shared = GlobalVariable();
+  Register register = Register(shared.database);
+  register.createUser(name: name, avatar: avatar).then((identifier) => {
+    _openMain(context)
+  }).onError((error, stackTrace) => {
+    Alert.show(context, 'Error', '$error')
   });
 }
 

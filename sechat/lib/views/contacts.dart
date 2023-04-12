@@ -2,9 +2,9 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_section_list/flutter_section_list.dart';
 
-import 'account.dart';
+import '../client/shared.dart';
+import '../models/contact.dart';
 import 'alert.dart';
-import 'channels.dart';
 import 'profile.dart';
 import 'search.dart';
 import 'styles.dart';
@@ -34,11 +34,17 @@ class _ContactListState extends State<ContactListPage> {
   late final _ContactDataSource dataSource;
 
   void reloadData() {
-    FacebookChannel channel = ChannelManager.instance.facebookChannel;
-    channel.getContacts().then((json) => {
-      if (json != null) {
-        setState(() {
-          dataSource.refresh(Entity.listFromJson(json));
+    GlobalVariable shared = GlobalVariable();
+    shared.facebook.currentUser.then((user) => {
+      if (user == null) {
+
+      } else {
+        shared.database.getContacts(user.identifier).then((contacts) => {
+          ContactInfo.fromList(contacts).then((array) => {
+            setState(() {
+              dataSource.refresh(array);
+            })
+          })
         })
       }
     });
@@ -124,7 +130,7 @@ class _ContactListAdapter with SectionAdapterMixin {
       // fixed section
       return getFixedItem(context, indexPath.item);
     }
-    Entity info = dataSource.getItem(indexPath.section - 1, indexPath.item);
+    ContactInfo info = dataSource.getItem(indexPath.section - 1, indexPath.item);
     Widget avatar = info.getIcon(null);
     return TableView.cell(
         leading: avatar,
@@ -176,9 +182,9 @@ class _ContactListAdapter with SectionAdapterMixin {
 class _ContactDataSource {
 
   List<String> sections = [];
-  Map<int, List<Entity>> items = {};
+  Map<int, List<ContactInfo>> items = {};
 
-  void refresh(List<Entity> contacts) {
+  void refresh(List<ContactInfo> contacts) {
     debugPrint('refreshing ${contacts.length} contact(s)');
     ContactSorter sorter = ContactSorter.build(contacts);
     sections = sorter.sectionNames;
@@ -194,12 +200,12 @@ class _ContactDataSource {
   }
 
   int getItemCount(int sec) {
-    List<Entity>? contacts = items[sec];
+    List<ContactInfo>? contacts = items[sec];
     return contacts!.length;
   }
 
-  Entity getItem(int sec, int idx) {
-    List<Entity>? contacts = items[sec];
+  ContactInfo getItem(int sec, int idx) {
+    List<ContactInfo>? contacts = items[sec];
     return contacts![idx];
   }
 }

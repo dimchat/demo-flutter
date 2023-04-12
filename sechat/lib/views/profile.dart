@@ -1,15 +1,15 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
-import 'account.dart';
+import '../models/contact.dart';
 import 'alert.dart';
 
 class ProfilePage extends StatelessWidget {
   const ProfilePage(this.info, {super.key});
 
-  final Entity info;
+  final ContactInfo info;
 
-  static void open(BuildContext context, Entity info) {
+  static void open(BuildContext context, ContactInfo info) {
     showCupertinoDialog(
       context: context,
       builder: (context) => ProfilePage(info),
@@ -46,7 +46,7 @@ class ProfilePage extends StatelessWidget {
       children: [
         const SizedBox(height: 32,),
         info.getIcon(256),
-        Text(info.identifier),
+        Text(info.identifier.string),
         const SizedBox(height: 64,),
         SizedBox(
           width: 256,

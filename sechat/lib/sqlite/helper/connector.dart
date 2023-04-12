@@ -101,6 +101,21 @@ class DatabaseConnector {
     }
   }
 
+  static void createTable(Database db, String table,
+      {required List<String> fields}) {
+    String sql = SQLBuilder.buildCreateTable(table, fields: fields);
+    Log.debug('create table: $sql');
+    db.execute(sql);
+  }
+
+  static void createIndex(Database db, String table,
+      {required String name, required List<String> fields}) {
+    String keys = fields.join(',');
+    String sql = 'CREATE INDEX $name ON $table ($keys)';
+    Log.debug('create index: $sql');
+    db.execute(sql);
+  }
+
 }
 
 class _Connection extends DBConnection {
@@ -144,8 +159,8 @@ class _Statement extends Statement {
       throw Exception('Redundant execution: $sql');
     }
     _sql = sql;
-    List<Map<String,dynamic>> results = await database.rawQuery(sql);
-    return _ResultSet(results);
+    Log.debug('executeQuery: $sql');
+    return _ResultSet(await database.rawQuery(sql));
   }
 
   @override
@@ -154,6 +169,7 @@ class _Statement extends Statement {
       throw Exception('Redundant execution: $sql');
     }
     _sql = sql;
+    Log.debug('executeInsert: $sql');
     return await database.rawInsert(sql);
   }
 
@@ -163,6 +179,7 @@ class _Statement extends Statement {
       throw Exception('Redundant execution: $sql');
     }
     _sql = sql;
+    Log.debug('executeUpdate: $sql');
     return await database.rawUpdate(sql);
   }
 
@@ -172,6 +189,7 @@ class _Statement extends Statement {
       throw Exception('Redundant execution: $sql');
     }
     _sql = sql;
+    Log.debug('executeDelete: $sql');
     return await database.rawDelete(sql);
   }
 

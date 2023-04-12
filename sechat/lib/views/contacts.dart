@@ -1,3 +1,4 @@
+import 'package:dim_client/dim_client.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_section_list/flutter_section_list.dart';
@@ -185,7 +186,7 @@ class _ContactDataSource {
   Map<int, List<ContactInfo>> items = {};
 
   void refresh(List<ContactInfo> contacts) {
-    debugPrint('refreshing ${contacts.length} contact(s)');
+    Log.debug('refreshing ${contacts.length} contact(s)');
     ContactSorter sorter = ContactSorter.build(contacts);
     sections = sorter.sectionNames;
     items = sorter.sectionItems;

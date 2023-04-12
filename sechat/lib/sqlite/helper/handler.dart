@@ -61,10 +61,14 @@ class DatabaseHandler<T> {
 
   Future<Statement?> get statement async {
     Statement? st = _statement;
-    if (st == null) {
-      st = (await connection)?.createStatement();
-      _statement = st;
+    if (st != null) {
+      // close old statement
+      st.close();
+      _statement = null;
     }
+    // create new statement
+    st = (await connection)?.createStatement();
+    _statement = st;
     return st;
   }
 

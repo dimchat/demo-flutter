@@ -2,19 +2,12 @@ import 'package:flutter/services.dart';
 
 class ChannelNames {
 
-  static const register = 'chat.dim/register';
-
   static const messenger = 'chat.dim/messenger';
 
   static const conversation = 'chat.dim/conversation';
 }
 
 class ChannelMethods {
-
-  //
-  //  Register channel
-  //
-  static const createUser = 'createUser';
 
   //
   //  Messenger channel
@@ -36,22 +29,7 @@ class ChannelManager {
   //
   //  Channels
   //
-  final RegisterChannel registerChannel = RegisterChannel(ChannelNames.register);
   final ConversationChannel conversationChannel = ConversationChannel(ChannelNames.conversation);
-}
-
-class RegisterChannel extends MethodChannel {
-  RegisterChannel(super.name);
-
-  Future<String> createUser(String name, String avatar) async {
-    try {
-      return await invokeMethod(ChannelMethods.createUser, {
-        "name": name, "avatar": avatar
-      });
-    } on PlatformException catch (e) {
-      return e.toString();
-    }
-  }
 }
 
 class ConversationChannel extends MethodChannel {

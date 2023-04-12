@@ -33,7 +33,7 @@ dependencies:
 
   path: ^1.8.3
 
-  dim_client: 0.1.0-dev.2
+  dim_client: 0.1.0-dev.3
 
   sqflite: ^2.2.6
 

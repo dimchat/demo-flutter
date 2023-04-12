@@ -1,3 +1,4 @@
+import 'package:dim_client/dim_client.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_section_list/flutter_section_list.dart';
@@ -94,7 +95,7 @@ class _ChatListDataSource {
   List<Conversation> conversations = [];
 
   void refresh(List<Conversation> history) {
-    debugPrint('refreshing ${history.length} history(ies)');
+    Log.debug('refreshing ${history.length} history(ies)');
     conversations = history;
   }
 

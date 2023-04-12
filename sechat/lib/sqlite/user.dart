@@ -1,38 +1,27 @@
-import 'package:dim_client/dim_client.dart';
-import 'package:sqflite/sqflite.dart';
-
 import '../client/dbi/account.dart';
-import 'helper/connector.dart';
-import 'helper/handler.dart';
+import 'helper/sqlite.dart';
+import 'entity.dart';
+
 
 class _UserExtractor implements DataRowExtractor<ID> {
 
   @override
   ID extractRow(ResultSet resultSet, int index) {
-    String user = resultSet.getString('user');
+    String user = resultSet.getString('uid');
     return ID.parse(user)!;
   }
 
 }
 
 class UserDB extends DataTableHandler<ID> implements UserTable {
-  UserDB()
-      : super(DatabaseConnector(name: name, version: version, onCreate: onCreate));
+  UserDB() : super(EntityDatabase());
 
-  static const String name = 'user.db';
-  static const int version = 1;
+  static const String _table = EntityDatabase.tLocalUser;
+  static const List<String> _selectColumns = ["uid"];
+  static const List<String> _insertColumns = ["uid", "chosen"];
 
-  static const String _table = 't_local_user';
-  static const List<String> _selectColumns = ['user'];
-  static const List<String> _insertColumns = ['user', 'chosen'];
-
-  static Future<void> onCreate(Database db, int version) => db.execute(
-      SQLBuilder.buildCreateTable(name, fields: [
-        'id INTEGER PRIMARY KEY AUTOINCREMENT',
-        'user VARCHAR(64)',
-        'chosen BIT',
-      ])
-  );
+  // const
+  static final SQLConditions kTrue = SQLConditions(left: '\'money\'', comparison: '!=', right: 'love');
 
   @override
   DataRowExtractor<ID> get extractor => _UserExtractor();
@@ -43,7 +32,7 @@ class UserDB extends DataTableHandler<ID> implements UserTable {
     // 0. check new users
     if (newUsers.isEmpty) {
       assert(false, 'new users empty??');
-      return await delete(_table, conditions: SQLConditions.any) > 0;
+      return await delete(_table, conditions: kTrue) > 0;
     }
     ID current = newUsers[0];
     bool resign = true;
@@ -56,7 +45,7 @@ class UserDB extends DataTableHandler<ID> implements UserTable {
           continue;
         }
         // delete records not contain in new users
-        cond = SQLConditions(left: 'user', comparison: '=', right: item.string);
+        cond = SQLConditions(left: 'uid', comparison: '=', right: item.string);
         if (await delete(_table, conditions: cond) < 0) {
           // db error
           return false;
@@ -67,7 +56,7 @@ class UserDB extends DataTableHandler<ID> implements UserTable {
         // current user changed, and not all old users removed,
         // erase chosen flags for them
         Map<String, dynamic> values = {'chosen': 0};
-        if (await update(_table, values: values, conditions: SQLConditions.any) < 0) {
+        if (await update(_table, values: values, conditions: kTrue) < 0) {
           // db error
           return false;
         }
@@ -100,7 +89,7 @@ class UserDB extends DataTableHandler<ID> implements UserTable {
 
   @override
   Future<List<ID>> getLocalUsers() async =>
-      await select(_table, columns: _selectColumns, conditions: SQLConditions.any);
+      await select(_table, columns: _selectColumns, conditions: kTrue);
 
   @override
   Future<bool> saveLocalUsers(List<ID> users) async {
@@ -164,6 +153,7 @@ class UserDB extends DataTableHandler<ID> implements UserTable {
 
 }
 
+
 class _ContactExtractor implements DataRowExtractor<ID> {
 
   @override
@@ -175,24 +165,11 @@ class _ContactExtractor implements DataRowExtractor<ID> {
 }
 
 class ContactDB extends DataTableHandler<ID> implements ContactTable {
-  ContactDB()
-      : super(DatabaseConnector(name: name, version: version, onCreate: onCreate));
+  ContactDB() : super(EntityDatabase());
 
-  static const String name = 'user.db';
-  static const int version = 1;
-
-  static const String _table = 't_contact';
-  static const List<String> _selectColumns = ['contact', 'alias'];
-  static const List<String> _insertColumns = ['user', 'contact', 'alias'];
-
-  static Future<void> onCreate(Database db, int version) => db.execute(
-      SQLBuilder.buildCreateTable(name, fields: [
-        'id INTEGER PRIMARY KEY AUTOINCREMENT',
-        'user VARCHAR(64)',
-        'contact VARCHAR(64)',
-        'alias VARCHAR(32))',
-      ])
-  );
+  static const String _table = EntityDatabase.tContact;
+  static const List<String> _selectColumns = ["contact", "alias"];
+  static const List<String> _insertColumns = ["uid", "contact", "alias"];
 
   @override
   DataRowExtractor<ID> get extractor => _ContactExtractor();
@@ -200,7 +177,7 @@ class ContactDB extends DataTableHandler<ID> implements ContactTable {
   Future<bool> _updateContacts(List<ID> contacts, ID user) async {
     SQLConditions cond;
     // 0. remove old records
-    cond = SQLConditions(left: 'user', comparison: '=', right: user.string);
+    cond = SQLConditions(left: 'uid', comparison: '=', right: user.string);
     if (await delete(_table, conditions: cond) < 0) {
       // db error
       return false;
@@ -225,8 +202,11 @@ class ContactDB extends DataTableHandler<ID> implements ContactTable {
       throw UnimplementedError('call UserTable');
 
   @override
-  Future<List<ID>> getContacts(ID user) async =>
-      await select(_table, columns: _selectColumns, conditions: SQLConditions.any);
+  Future<List<ID>> getContacts(ID user) async {
+    SQLConditions cond;
+    cond = SQLConditions(left: 'uid', comparison: '=', right: user.string);
+    return await select(_table, columns: _selectColumns, conditions: cond);
+  }
 
   @override
   Future<bool> saveContacts(List<ID> contacts, ID user) async {
@@ -242,7 +222,7 @@ class ContactDB extends DataTableHandler<ID> implements ContactTable {
   @override
   Future<bool> removeContact(ID contact, {required ID user}) async {
     SQLConditions cond;
-    cond = SQLConditions(left: 'user', comparison: '=', right: user.string);
+    cond = SQLConditions(left: 'uid', comparison: '=', right: user.string);
     cond.addCondition(SQLConditions.and,
         left: 'contact', comparison: '=', right: contact.string);
     return await delete(_table, conditions: cond) > 0;

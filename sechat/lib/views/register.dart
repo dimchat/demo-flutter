@@ -208,31 +208,31 @@ class _RegisterFormState extends State<_RegisterForm> {
 //
 
 void _submit(BuildContext context, {required String nickname, required String avatarURL, required bool agreed}) {
-  PermissionHandler.request(PermissionHandler.minimumPermissions).then((value) => {
+  PermissionHandler.request(PermissionHandler.minimumPermissions).then((value) {
     if (!value) {
       // storage permission not granted
       Alert.show(context, 'Permission denied',
         'You should grant the permission to continue using this app.',
         callback: () => PermissionHandler.openAppSettings(),
-      )
+      );
     } else {
       // check current user
-      GlobalVariable().facebook.currentUser.then((user) => {
-        debugPrint('current user: $value'),
+      GlobalVariable().facebook.currentUser.then((user) {
+        Log.debug('current user: $user');
         if (user == null) {
           // current user not exists, create new one
           if (nickname.isEmpty) {
-            Alert.show(context, 'Input Name', 'Please input your nickname.')
+            Alert.show(context, 'Input Name', 'Please input your nickname.');
           } else if (!agreed) {
-            Alert.show(context, 'Privacy Policy', 'Please read and agree the privacy policy.')
+            Alert.show(context, 'Privacy Policy', 'Please read and agree the privacy policy.');
           } else {
-            _generateAccount(context, nickname, avatarURL)
+            _generateAccount(context, nickname, avatarURL);
           }
         } else {
           // current user already exists
-          runApp(const TarsierApp(MainPage()))
+          runApp(const TarsierApp(MainPage()));
         }
-      })
+      });
     }
   });
 }

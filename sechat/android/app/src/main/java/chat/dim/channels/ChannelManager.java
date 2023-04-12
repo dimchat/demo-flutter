@@ -13,27 +13,12 @@ import io.flutter.plugin.common.StandardMethodCodec;
 
 final class ChannelNames {
 
-    static String REGISTER = "chat.dim/register";
-
-    static String FACEBOOK = "chat.dim/facebook";
-
     static String MESSENGER = "chat.dim/messenger";
 
     static String CONVERSATION = "chat.dim/conversation";
 }
 
 final class ChannelMethods {
-
-    //
-    //  Register channel
-    //
-    static String CREATE_USER = "createUser";
-
-    //
-    //  Facebook channel
-    //
-    static String CURRENT_USER = "currentUser";
-    static String CONTACTS_OF_USER = "contactsOfUser";
 
     //
     //  Messenger channel
@@ -58,8 +43,6 @@ public enum ChannelManager {
 
     }
 
-    private MethodChannel registerChannel = null;
-    private MethodChannel facebookChannel = null;
     private MethodChannel conversationChannel = null;
 
     private static MethodChannel createMethodChannel(BinaryMessenger messenger, String name,
@@ -80,14 +63,6 @@ public enum ChannelManager {
     }
 
     public void initChannels(BinaryMessenger messenger) {
-        if (registerChannel == null) {
-            registerChannel = createMethodChannel(messenger,
-                    ChannelNames.REGISTER, new RegisterChannelHandler());
-        }
-        if (facebookChannel == null) {
-            facebookChannel = createMethodChannel(messenger,
-                    ChannelNames.FACEBOOK, new FacebookChannelHandler());
-        }
         if (conversationChannel == null) {
             conversationChannel = createMethodChannel(messenger,
                     ChannelNames.CONVERSATION, new ConversationChannelHandler());

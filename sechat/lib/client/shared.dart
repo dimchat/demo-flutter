@@ -30,6 +30,7 @@ class GlobalVariable {
 }
 
 void _registerPlugins() {
+
   ClientFacebook.prepare();
 
   //
@@ -37,9 +38,9 @@ void _registerPlugins() {
   //
 
   // Report (online, offline)
-  Command.setFactory("broadcast", CommandFactoryBuilder(ReportCommand));
-  Command.setFactory(ReportCommand.kOnline, CommandFactoryBuilder(ReportCommand));
-  Command.setFactory(ReportCommand.kOffline, CommandFactoryBuilder(ReportCommand));
+  Command.setFactory("broadcast", CommandParser((dict) => ReportCommand(dict)));
+  Command.setFactory(ReportCommand.kOnline, CommandParser((dict) => ReportCommand(dict)));
+  Command.setFactory(ReportCommand.kOffline, CommandParser((dict) => ReportCommand(dict)));
 
   // // Storage (contacts, private_key)
   // Command.setFactory(StorageCommand.STORAGE, StorageCommand::new);
@@ -47,7 +48,7 @@ void _registerPlugins() {
   // Command.setFactory(StorageCommand.PRIVATE_KEY, StorageCommand::new);
 
   // Search (users)
-  Command.setFactory(SearchCommand.kSearch, CommandFactoryBuilder(SearchCommand));
-  Command.setFactory(SearchCommand.kOnlineUsers, CommandFactoryBuilder(SearchCommand));
+  Command.setFactory(SearchCommand.kSearch, CommandParser((dict) => SearchCommand(dict)));
+  Command.setFactory(SearchCommand.kOnlineUsers, CommandParser((dict) => SearchCommand(dict)));
 
 }

@@ -79,7 +79,7 @@ class ContactSorter {
       String name = item.name;
       String prefix = name.substring(0, 1);
       // TODO: convert for Pinyin
-      debugPrint('[$prefix] contact: $item');
+      Log.debug('[$prefix] contact: $item');
       set.add(prefix);
       List<ContactInfo>? list = map[prefix];
       if (list == null) {

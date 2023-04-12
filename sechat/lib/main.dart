@@ -1,3 +1,4 @@
+import 'package:dim_client/dim_client.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/services.dart';
 
@@ -11,27 +12,32 @@ import 'views/register.dart';
 import 'views/styles.dart';
 
 void main() {
+  // Set log level
+  Log.level = Log.kDebug;
+
   WidgetsFlutterBinding.ensureInitialized();
   // This app is designed only to work vertically, so we limit
   // orientations to portrait up and down.
   SystemChrome.setPreferredOrientations(
       [DeviceOrientation.portraitUp, DeviceOrientation.portraitDown]
   );
-  PermissionHandler.check(PermissionHandler.minimumPermissions).then((value) => {
+  PermissionHandler.check(PermissionHandler.minimumPermissions).then((value) {
     if (!value) {
       // not granted for photos/storage, first run?
-      runApp(const TarsierApp(RegisterPage())),
-      PermissionHandler.check(PermissionHandler.minimumPermissions)
+      Log.warning('not granted for photos/storage, first run?');
+      runApp(const TarsierApp(RegisterPage()));
+      PermissionHandler.check(PermissionHandler.minimumPermissions);
     } else {
       // check current user
-      GlobalVariable().facebook.currentUser.then((user) => {
-        debugPrint('current user: $value'),
+      Log.debug('check current user');
+      GlobalVariable().facebook.currentUser.then((user) {
+        Log.info('current user: $user');
         if (user == null) {
-          runApp(const TarsierApp(RegisterPage()))
+          runApp(const TarsierApp(RegisterPage()));
         } else {
-          runApp(const TarsierApp(MainPage()))
+          runApp(const TarsierApp(MainPage()));
         }
-      })
+      });
     }
   });
 }

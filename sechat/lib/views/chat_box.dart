@@ -1,3 +1,4 @@
+import 'package:dim_client/dim_client.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_section_list/flutter_section_list.dart';
@@ -314,7 +315,7 @@ class _HistoryDataSource {
   List<InstantMessage> messages = [];
 
   void refresh(List<InstantMessage> history) {
-    debugPrint('refreshing ${history.length} message(s)');
+    Log.debug('refreshing ${history.length} message(s)');
     messages = history.reversed.toList();
   }
 

@@ -1,3 +1,4 @@
+import 'package:dim_client/dim_client.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
@@ -47,6 +48,6 @@ class SearchPage extends StatelessWidget {
   }
 
   void _search(value) {
-    debugPrint('search $value');
+    Log.warning('TODO: search $value');
   }
 }

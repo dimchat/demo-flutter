@@ -3,130 +3,9 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_section_list/flutter_section_list.dart';
 
+import '../sqlite/conversation.dart';
 import 'alert.dart';
 import 'styles.dart';
-
-class Envelope {
-  final String sender;
-  final String receiver;
-  final double time;
-  Envelope({required this.sender, required this.receiver, this.time = 0});
-
-  @override
-  String toString() {
-    return '<Envelope sender="$sender" receiver="$receiver" time=$time />';
-  }
-
-  static Envelope fromJson(Map json) => Envelope(
-    sender: json['sender'],
-    receiver: json['receiver'],
-    time: getTime(json['time']),
-  );
-
-  static double getTime(dynamic time) {
-    if (time is double) {
-      return time;
-    } else if (time is int) {
-      return time.toDouble();
-    } else if (time is String) {
-      return double.parse(time);
-    } else {
-      // FIXME:
-      throw TypeError();
-    }
-  }
-}
-
-class Content {
-  final int type;
-  final String? text;
-  final String? url;
-  final String? filename;
-  Content({required this.type, this.text, this.url, this.filename});
-
-  @override
-  String toString() {
-    if (type == 1) {
-      return '<TextContent>$text</TextContent>';
-    } else {
-      return '<Content filename="$filename" url="$url" />';
-    }
-  }
-
-  static Content fromJson(Map json) => Content(
-    type: json['type'],
-    text: json['text'],
-    url: json['url'],
-    filename: json['filename'],
-  );
-}
-
-class InstantMessage {
-  final Envelope envelope;
-  final Content content;
-  InstantMessage({required this.envelope, required this.content});
-
-  @override
-  String toString() {
-    return '<InstantMessage>\n$envelope\n$content\n</InstantMessage>';
-  }
-
-  static InstantMessage fromJson(Map json) => InstantMessage(
-    envelope: Envelope.fromJson(json),
-    content: Content.fromJson(json['content']),
-  );
-
-  static List<InstantMessage> listFromJson(List json) {
-    return json.map((item) => InstantMessage.fromJson(item)).toList();
-  }
-}
-
-class Conversation {
-  final String identifier;
-  final int type;
-  final String name;
-  String? icon;
-  Conversation({required this.identifier, required this.type, required this.name, this.icon});
-
-  @override
-  String toString() {
-    return '<Conversation id="$identifier" type=$type name="$name" icon="$icon" />';
-  }
-
-  bool isUser() {
-    return type & 1 == 0;
-  }
-  bool isGroup() {
-    return type & 1 == 1;
-  }
-
-  Widget getIcon(double? size) {
-    if (icon != null) {
-      // TODO: build icon
-      return Icon(CupertinoIcons.photo, size: size);
-    } else if (isGroup()) {
-      return Icon(CupertinoIcons.person_2_fill, size: size);
-    } else {
-      return Icon(CupertinoIcons.profile_circled, size: size);
-    }
-  }
-
-  //
-  //  factories
-  //
-  static Conversation fromJson(Map json) {
-    return Conversation(
-      identifier: json['identifier']!,
-      name: json['name']!,
-      type: json['type'] ?? 0,
-      icon: json['icon'],
-    );
-  }
-
-  static List<Conversation> listFromJson(List json) {
-    return json.map((item) => Conversation.fromJson(item)).toList();
-  }
-}
 
 ///
 ///  Chat Box
@@ -243,11 +122,11 @@ class _HistoryAdapter with SectionAdapterMixin {
   @override
   Widget getItem(BuildContext context, IndexPath indexPath) {
     InstantMessage info = dataSource.getItem(indexPath.item);
-    String sender = info.envelope.sender;
+    ID? sender = info.sender;
     // TODO: get current user
-    String me = 'moky@anywhere';
+    ID me = ID.kFounder;
     bool isMe = sender == me;
-    bool isGroupChat = conversation.type & 1 == 1;
+    bool isGroupChat = conversation.identifier.isGroup;
     const radius = Radius.circular(12);
     const borderRadius = BorderRadius.all(radius);
     return Container(
@@ -273,7 +152,7 @@ class _HistoryAdapter with SectionAdapterMixin {
               if (!isMe && (isGroupChat || sender != conversation.identifier))
                 Container(
                   margin: const EdgeInsets.only(left: 8),
-                  child: Text(sender,
+                  child: Text(sender.string,
                     style: const TextStyle(color: Colors.grey),
                   ),
                 ),
@@ -339,6 +218,6 @@ void _openDetail(BuildContext context, Conversation info) {
   Alert.show(context, 'Coming soon', 'show detail: $info');
 }
 
-void _openProfile(BuildContext context, String uid) {
+void _openProfile(BuildContext context, ID uid) {
   Alert.show(context, 'Coming soon', 'show profile: $uid');
 }

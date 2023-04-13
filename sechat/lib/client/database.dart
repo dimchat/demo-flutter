@@ -1,5 +1,6 @@
 import 'package:dim_client/dim_client.dart';
 
+import '../sqlite/conversation.dart';
 import '../sqlite/entity.dart';
 import '../sqlite/group.dart';
 import '../sqlite/keys.dart';
@@ -7,7 +8,8 @@ import '../sqlite/message.dart';
 import '../sqlite/session.dart';
 import '../sqlite/user.dart';
 
-class SharedDatabase implements AccountDBI, MessageDBI, SessionDBI {
+class SharedDatabase implements AccountDBI, SessionDBI, MessageDBI,
+                                ConversationDBI, InstantMessageDBI {
 
   PrivateKeyDBI privateKeyTable = PrivateKeyTable();
   MetaDBI metaTable = MetaTable();
@@ -16,12 +18,14 @@ class SharedDatabase implements AccountDBI, MessageDBI, SessionDBI {
   ContactDBI contactTable = ContactTable();
   GroupDBI groupTable = GroupTable();
 
-  ReliableMessageDBI reliableMessageTable = ReliableMessageTable();
-  CipherKeyDBI msgKeyTable = MsgKeyTable();
-
   LoginDBI loginTable = LoginCommandTable();
   ProviderDBI providerTable = ProviderTable();
   StationDBI stationTable = StationTable();
+
+  CipherKeyDBI msgKeyTable = MsgKeyTable();
+  ReliableMessageDBI reliableMessageTable = ReliableMessageTable();
+  InstantMessageDBI instantMessageTable = InstantMessageTable();
+  ConversationDBI conversationTable = ConversationTable();
 
   //
   //  PrivateKey Table
@@ -152,37 +156,6 @@ class SharedDatabase implements AccountDBI, MessageDBI, SessionDBI {
       await groupTable.removeGroup(group: group);
 
   //
-  //  ReliableMessage Table
-  //
-
-  @override
-  Future<Pair<List<ReliableMessage>, int>> getReliableMessages(ID receiver,
-      {int start = 0, int? limit}) async =>
-      await reliableMessageTable.getReliableMessages(receiver,
-          start: start, limit: limit);
-
-  @override
-  Future<bool> cacheReliableMessage(ID receiver, ReliableMessage rMsg) async =>
-      reliableMessageTable.cacheReliableMessage(receiver, rMsg);
-
-  @override
-  Future<bool> removeReliableMessage(ID receiver, ReliableMessage rMsg) async =>
-      await reliableMessageTable.removeReliableMessage(receiver, rMsg);
-
-  //
-  //  MsgKey Table
-  //
-
-  @override
-  Future<SymmetricKey?> getCipherKey(ID sender, ID receiver,
-      {bool generate = false}) async =>
-      await msgKeyTable.getCipherKey(sender, receiver, generate: generate);
-
-  @override
-  Future<void> cacheCipherKey(ID sender, ID receiver, SymmetricKey? key) async =>
-      await msgKeyTable.cacheCipherKey(sender, receiver, key);
-
-  //
   //  Login Table
   //
 
@@ -237,5 +210,69 @@ class SharedDatabase implements AccountDBI, MessageDBI, SessionDBI {
   @override
   Future<bool> removeStations({required ID provider}) async =>
       await stationTable.removeStations(provider: provider);
+
+  //
+  //  MsgKey Table
+  //
+
+  @override
+  Future<SymmetricKey?> getCipherKey(ID sender, ID receiver,
+      {bool generate = false}) async =>
+      await msgKeyTable.getCipherKey(sender, receiver, generate: generate);
+
+  @override
+  Future<void> cacheCipherKey(ID sender, ID receiver, SymmetricKey? key) async =>
+      await msgKeyTable.cacheCipherKey(sender, receiver, key);
+
+  //
+  //  ReliableMessage Table
+  //
+
+  @override
+  Future<Pair<List<ReliableMessage>, int>> getReliableMessages(ID receiver,
+      {int start = 0, int? limit}) async =>
+      await reliableMessageTable.getReliableMessages(receiver,
+          start: start, limit: limit);
+
+  @override
+  Future<bool> cacheReliableMessage(ID receiver, ReliableMessage rMsg) async =>
+      reliableMessageTable.cacheReliableMessage(receiver, rMsg);
+
+  @override
+  Future<bool> removeReliableMessage(ID receiver, ReliableMessage rMsg) async =>
+      await reliableMessageTable.removeReliableMessage(receiver, rMsg);
+
+  //
+  //  InstantMessage Table
+  //
+
+  @override
+  Future<Pair<List<InstantMessage>, int>> getInstantMessages(ID chat,
+      {int start = 0, int? limit}) async =>
+      await instantMessageTable.getInstantMessages(chat, start: start, limit: limit);
+
+  @override
+  Future<bool> saveInstantMessage(ID chat, InstantMessage iMsg) async =>
+      await instantMessageTable.saveInstantMessage(chat, iMsg);
+
+  @override
+  Future<bool> removeInstantMessage(ID chat, InstantMessage iMsg) async =>
+      await instantMessageTable.removeInstantMessage(chat, iMsg);
+
+  //
+  //  Conversation Table
+  //
+
+  @override
+  Future<List<ID>> getConversations() async =>
+      await conversationTable.getConversations();
+
+  @override
+  Future<bool> addConversation(ID chat) async =>
+      await conversationTable.addConversation(chat);
+
+  @override
+  Future<bool> removeConversation(ID chat) async =>
+      await conversationTable.removeConversation(chat);
 
 }

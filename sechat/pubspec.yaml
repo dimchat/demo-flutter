@@ -36,6 +36,7 @@ dependencies:
   dim_client: 0.1.0-dev.4
 
   sqflite: ^2.2.6
+  path_provider: ^2.0.14
 
   flutter_inappwebview: ^5.7.2+3
 

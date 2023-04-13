@@ -3,6 +3,8 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_section_list/flutter_section_list.dart';
 
+import '../client/shared.dart';
+import '../sqlite/conversation.dart';
 import 'chat_box.dart';
 import 'search.dart';
 import 'styles.dart';
@@ -32,13 +34,14 @@ class _ChatListState extends State<ChatHistoryPage> {
   late final _ChatListDataSource dataSource;
 
   void reloadData() {
-    // ChannelManager.instance.conversationChannel.getConversations().then((json) => {
-    //   if (json != null) {
-    //     setState(() {
-    //       dataSource.refresh(Conversation.listFromJson(json));
-    //     })
-    //   }
-    // });
+    GlobalVariable shared = GlobalVariable();
+    shared.database.getConversations().then((conversations) {
+      Conversation.createList(conversations).then((value) {
+        setState(() {
+          dataSource.refresh(value);
+        });
+      });
+    });
   }
 
   @override
@@ -77,15 +80,15 @@ class _ChatListAdapter with SectionAdapterMixin {
   @override
   Widget getItem(BuildContext context, IndexPath indexPath) {
     Conversation info = dataSource.getItem(indexPath.item);
-    Widget icon = info.getIcon(null);
-    return TableView.cell(
-        leading: icon,
+    Widget cell = TableView.cell(
+        leading: info.getIcon(null),
         title: Text(info.name),
         trailing: false,
         onTap: () {
           ChatBox.open(context, info);
         }
     );
+    return cell;
   }
 }
 

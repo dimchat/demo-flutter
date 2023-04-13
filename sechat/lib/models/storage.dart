@@ -1,8 +1,7 @@
 import 'dart:io';
 
 import 'package:path/path.dart' as utils;
-
-import 'channels.dart';
+import 'package:path_provider/path_provider.dart';
 
 class Paths {
 
@@ -27,16 +26,33 @@ class LocalStorage {
   ///  Protected caches directory
   ///  (meta/visa/document, image/audio/video, ...)
   ///
-  /// @return "/sdcard/chat.dim.sechat/caches"
-  Future<String> get cachesDirectory async =>
-      await ChannelManager().storageChannel.cachesDirectory;
+  /// @return '/storage/emulated/0/Android/data/chat.dim.sechat/files'
+  Future<String> get cachesDirectory async {
+    Directory? dir;
+    try {
+      dir = await getDownloadsDirectory();
+    } on UnsupportedError {
+      // Android?
+      dir = await getExternalStorageDirectory();
+    }
+    return dir!.path;
+    // // "/sdcard/chat.dim.sechat/caches"
+    // return await ChannelManager().storageChannel.cachesDirectory;
+  }
 
   ///  Protected temporary directory
   ///  (uploading, downloaded)
   ///
-  /// @return "/sdcard/chat.dim.sechat/tmp"
-  Future<String> get temporaryDirectory async =>
-      await ChannelManager().storageChannel.temporaryDirectory;
+  /// @return '/data/user/0/chat.dim.sechat/cache'
+  Future<String> get temporaryDirectory async {
+    return (await getTemporaryDirectory()).path;
+    // // ['/storage/emulated/0/Android/data/chat.dim.sechat/cache',
+    // //  '/storage/1700-1B1B/Android/data/chat.dim.sechat/cache']
+    // List<Directory>? dirs = await getExternalCacheDirectories();
+    // return dirs![0].path;
+    // // "/sdcard/chat.dim.sechat/tmp"
+    // return await ChannelManager().storageChannel.temporaryDirectory;
+  }
 
   //
   //  Paths
@@ -45,7 +61,7 @@ class LocalStorage {
   ///  Avatar image file path
   ///
   /// @param filename - image filename: hex(md5(data)) + ext
-  /// @return "/sdcard/chat.dim.sechat/caches/avatar/{AA}/{BB}/{filename}"
+  /// @return "{caches}/avatar/{AA}/{BB}/{filename}"
   Future<String> getAvatarFilePath(String filename) async {
     String dir = await cachesDirectory;
     String aa = filename.substring(0, 2);
@@ -57,7 +73,7 @@ class LocalStorage {
   ///  (image, audio, video, ...)
   ///
   /// @param filename - messaged filename: hex(md5(data)) + ext
-  /// @return "/sdcard/chat.dim.sechat/caches/files/{AA}/{BB}/{filename}"
+  /// @return "{caches}/files/{AA}/{BB}/{filename}"
   Future<String> getCacheFilePath(String filename) async {
     String dir = await cachesDirectory;
     String aa = filename.substring(0, 2);
@@ -68,7 +84,7 @@ class LocalStorage {
   ///  Encrypted data file path
   ///
   /// @param filename - messaged filename: hex(md5(data)) + ext
-  /// @return "/sdcard/chat.dim.sechat/tmp/upload/{filename}"
+  /// @return "{tmp}/upload/{filename}"
   Future<String> getUploadFilePath(String filename) async {
     String dir = await temporaryDirectory;
     return Paths.join(dir, 'upload', filename);
@@ -77,7 +93,7 @@ class LocalStorage {
   ///  Encrypted data file path
   ///
   /// @param filename - messaged filename: hex(md5(data)) + ext
-  /// @return "/sdcard/chat.dim.sechat/tmp/download/{filename}"
+  /// @return "{tmp}/download/{filename}"
   Future<String> getDownloadFilePath(String filename) async {
     String dir = await temporaryDirectory;
     return Paths.join(dir, 'download', filename);

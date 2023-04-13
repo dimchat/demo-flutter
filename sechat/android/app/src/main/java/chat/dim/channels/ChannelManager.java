@@ -13,15 +13,23 @@ import io.flutter.plugin.common.StandardMethodCodec;
 
 final class ChannelNames {
 
-    static String SESSION = "chat.dim/session";
+    static final String STORAGE = "chat.dim/fileManager";
+
+    static final String SESSION = "chat.dim/session";
 }
 
 final class ChannelMethods {
 
     //
+    //  Storage channel
+    //
+    static final String CACHES_DIRECTORY = "cachesDirectory";
+    static final String TEMPORARY_DIRECTORY = "temporaryDirectory";
+
+    //
     //  Session channel
     //
-    static  String SEND_MESSAGE_PACKAGE = "queueMessagePackage";
+    static final  String SEND_MESSAGE_PACKAGE = "queueMessagePackage";
 }
 
 public enum ChannelManager {
@@ -36,6 +44,10 @@ public enum ChannelManager {
 
     }
 
+    //
+    //  Channels
+    //
+    private MethodChannel storageChannel = null;
     private MethodChannel sessionChannel = null;
 
     private static MethodChannel createMethodChannel(BinaryMessenger messenger, String name,
@@ -59,6 +71,10 @@ public enum ChannelManager {
         if (sessionChannel == null) {
             sessionChannel = createMethodChannel(messenger,
                     ChannelNames.SESSION, new SessionChannelHandler());
+        }
+        if (storageChannel == null) {
+            storageChannel = createMethodChannel(messenger,
+                    ChannelNames.STORAGE, new StorageChannelHandler());
         }
     }
 }

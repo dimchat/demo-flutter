@@ -31,7 +31,7 @@
 import 'package:dim_client/dim_client.dart';
 import 'package:sqflite/sqflite.dart';
 
-import 'path.dart';
+import '../../models/storage.dart';
 
 
 ///
@@ -60,16 +60,10 @@ class DatabaseConnector {
     String? dir = directory;
     if (dir == null) {
       dir = await getDatabasesPath();
+      Log.debug('internal database: $name in $dir');
       return Paths.join(dir, name);
-    } else {
-      // make sure parent directory exists
-      Log.debug('preparing directory $dir');
-      if (await Paths.mkdirs(dir)) {
-        return Paths.join(dir, name);
-      }
-      // failed to create directory
-      return null;
     }
+    throw Exception('external database: $name in $dir');
   }
 
   Future<Database> _open(String path) async {

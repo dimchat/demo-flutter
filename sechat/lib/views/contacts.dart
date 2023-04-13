@@ -40,7 +40,7 @@ class _ContactListState extends State<ContactListPage> {
       if (user == null) {
 
       } else {
-        shared.database.getContacts(user.identifier).then((contacts) => {
+        shared.database.getContacts(user: user.identifier).then((contacts) => {
           ContactInfo.fromList(contacts).then((array) => {
             setState(() {
               dataSource.refresh(array);

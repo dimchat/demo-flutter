@@ -36,6 +36,7 @@ import 'connector.dart';
 ///  SQLite Database Helper
 ///
 
+
 class DatabaseHandler<T> {
   DatabaseHandler(this.connector) : _statement = null, _resultSet = null;
 
@@ -78,14 +79,14 @@ class DatabaseHandler<T> {
   /// @param extractor - result extractor
   /// @return rows
   /// @throws SQLException on DB error
-  Future<List<T>> executeQuery(String sql, DataRowExtractor<T> extractor) async {
+  Future<List<T>> executeQuery(String sql, OnDataRowExtractFn<T> extractRow) async {
     List<T> rows = [];
     Statement? st = await statement;
     if (st != null) {
       ResultSet res = await st.executeQuery(sql);
       _resultSet = res;
       while (res.next()) {
-        rows.add(extractor.extractRow(res, res.row - 1));
+        rows.add(extractRow(res, res.row - 1));
       }
     }
     return rows;
@@ -134,17 +135,17 @@ class DatabaseHandler<T> {
 
 
 abstract class DataTableHandler<T> extends DatabaseHandler<T> {
-  DataTableHandler(super.connector);
+  DataTableHandler(super.connector, this.onExtract);
 
   // protected
-  DataRowExtractor<T> get extractor;
+  final OnDataRowExtractFn<T> onExtract;
 
   /// INSERT INTO table (columns) VALUES (values);
   Future<int> insert(String table,
       {required List<String> columns, required List values}) async {
     String sql = SQLBuilder.buildInsert(table,
         columns: columns, values: values);
-    return await executeUpdate(sql);
+    return await executeInsert(sql);
   }
 
   /// SELECT DISTINCT columns FROM tables WHERE conditions ...
@@ -157,7 +158,7 @@ abstract class DataTableHandler<T> extends DatabaseHandler<T> {
         columns: columns, conditions: conditions,
         groupBy: groupBy, having: having, orderBy: orderBy,
         offset: offset, limit: limit);
-    return await executeQuery(sql, extractor);
+    return await executeQuery(sql, onExtract);
   }
 
   /// UPDATE table SET name=value WHERE conditions

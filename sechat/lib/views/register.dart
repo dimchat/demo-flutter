@@ -240,10 +240,11 @@ void _submit(BuildContext context, {required String nickname, required String av
 void _generateAccount(BuildContext context, String name, String avatar) {
   GlobalVariable shared = GlobalVariable();
   Register register = Register(shared.database);
-  register.createUser(name: name, avatar: avatar).then((identifier) => {
-    _openMain(context)
-  }).onError((error, stackTrace) => {
-    Alert.show(context, 'Error', '$error')
+  register.createUser(name: name, avatar: avatar).then((identifier) {
+    shared.database.addUser(identifier);
+    _openMain(context);
+  }).onError((error, stackTrace) {
+    Alert.show(context, 'Error', '$error');
   });
 }
 

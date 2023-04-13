@@ -1,4 +1,3 @@
-import '../client/dbi/account.dart';
 import 'helper/sqlite.dart';
 
 
@@ -77,37 +76,29 @@ class EntityDatabase extends DatabaseConnector {
 }
 
 
-class _MetaExtractor implements DataRowExtractor<Meta> {
+Meta _extractMeta(ResultSet resultSet, int index) {
+  int type = resultSet.getInt('type');
+  String json = resultSet.getString('pub_key');
+  Map? key = JSON.decode(json);
 
-  @override
-  Meta extractRow(ResultSet resultSet, int index) {
-    int type = resultSet.getInt('type');
-    String json = resultSet.getString('pub_key');
-    Map? key = JSON.decode(json);
-
-    Map info = {
-      'version': type,
-      'type': type,
-      'key': key,
-    };
-    if (MetaType.hasSeed(type)) {
-      info['seed'] = resultSet.getString('seed');
-      info['fingerprint'] = resultSet.getString('fingerprint');
-    }
-    return Meta.parse(info)!;
+  Map info = {
+    'version': type,
+    'type': type,
+    'key': key,
+  };
+  if (MetaType.hasSeed(type)) {
+    info['seed'] = resultSet.getString('seed');
+    info['fingerprint'] = resultSet.getString('fingerprint');
   }
-
+  return Meta.parse(info)!;
 }
 
-class MetaDB extends DataTableHandler<Meta> implements MetaTable {
-  MetaDB() : super(EntityDatabase());
+class MetaTable extends DataTableHandler<Meta> implements MetaDBI {
+  MetaTable() : super(EntityDatabase(), _extractMeta);
 
   static const String _table = EntityDatabase.tMeta;
   static const List<String> _selectColumns = ["type", "pub_key", "seed", "fingerprint"];
   static const List<String> _insertColumns = ["did", "type", "pub_key", "seed", "fingerprint"];
-
-  @override
-  DataRowExtractor<Meta> get extractor => _MetaExtractor();
 
   @override
   Future<Meta?> getMeta(ID entity) async {
@@ -145,43 +136,35 @@ class MetaDB extends DataTableHandler<Meta> implements MetaTable {
 }
 
 
-class _DocumentExtractor implements DataRowExtractor<Document> {
-
-  @override
-  Document extractRow(ResultSet resultSet, int index) {
-    String did = resultSet.getString('did');
-    String type = resultSet.getString('type');
-    String data = resultSet.getString('data');
-    String signature = resultSet.getString('signature');
-    ID? identifier = ID.parse(did);
-    assert(identifier != null, 'did error: $did');
-    if (type.isEmpty) {
-      type = '*';
-    }
-    Document? doc = Document.create(type, identifier!, data: data, signature: signature);
-    assert(doc != null, 'document error: $did, $type, $data, $signature');
-    if (type == '*') {
-      if (identifier.isUser) {
-        type = Document.kVisa;
-      } else {
-        type = Document.kBulletin;
-      }
-    }
-    doc!['type'] = type;
-    return doc;
+Document _extractDocument(ResultSet resultSet, int index) {
+  String did = resultSet.getString('did');
+  String type = resultSet.getString('type');
+  String data = resultSet.getString('data');
+  String signature = resultSet.getString('signature');
+  ID? identifier = ID.parse(did);
+  assert(identifier != null, 'did error: $did');
+  if (type.isEmpty) {
+    type = '*';
   }
-
+  Document? doc = Document.create(type, identifier!, data: data, signature: signature);
+  assert(doc != null, 'document error: $did, $type, $data, $signature');
+  if (type == '*') {
+    if (identifier.isUser) {
+      type = Document.kVisa;
+    } else {
+      type = Document.kBulletin;
+    }
+  }
+  doc!['type'] = type;
+  return doc;
 }
 
-class DocumentDB extends DataTableHandler<Document> implements DocumentTable {
-  DocumentDB() : super(EntityDatabase());
+class DocumentTable extends DataTableHandler<Document> implements DocumentDBI {
+  DocumentTable() : super(EntityDatabase(), _extractDocument);
 
   static const String _table = EntityDatabase.tDocument;
   static const List<String> _selectColumns = ["did", "type", "data", "signature"];
   static const List<String> _insertColumns = ["did", "type", "data", "signature"];
-
-  @override
-  DataRowExtractor<Document> get extractor => _DocumentExtractor();
 
   @override
   Future<Document?> getDocument(ID entity, String? type) async {

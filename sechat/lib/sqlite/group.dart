@@ -1,27 +1,18 @@
-import '../client/dbi/account.dart';
 import 'helper/sqlite.dart';
 import 'entity.dart';
 
 
-class _MemberExtractor implements DataRowExtractor<ID> {
-
-  @override
-  ID extractRow(ResultSet resultSet, int index) {
-    String member = resultSet.getString('member');
-    return ID.parse(member)!;
-  }
-
+ID _extractMember(ResultSet resultSet, int index) {
+  String member = resultSet.getString('member');
+  return ID.parse(member)!;
 }
 
 class _MemberDB extends DataTableHandler<ID> {
-  _MemberDB() : super(EntityDatabase());
+  _MemberDB() : super(EntityDatabase(), _extractMember);
 
   static const String _table = EntityDatabase.tMember;
   static const List<String> _selectColumns = ["member"];
   static const List<String> _insertColumns = ["gid", "member"];
-
-  @override
-  DataRowExtractor<ID> get extractor => _MemberExtractor();
 
   Future<List<ID>> getMembers(ID group) async {
     SQLConditions cond;
@@ -38,7 +29,7 @@ class _MemberDB extends DataTableHandler<ID> {
   Future<bool> addMember(ID member, {required ID group}) async {
     SQLConditions cond;
     cond = SQLConditions(left: 'gid', comparison: '=', right: group.string);
-    cond.addCondition(SQLConditions.and, left: 'member', comparison: '=', right: member.string);
+    cond.addCondition(SQLConditions.kAnd, left: 'member', comparison: '=', right: member.string);
     List<ID> results = await select(_table, columns: _selectColumns, conditions: cond);
     if (results.isNotEmpty) {
       return false;
@@ -50,38 +41,38 @@ class _MemberDB extends DataTableHandler<ID> {
   Future<bool> removeMember(ID member, {required ID group}) async {
     SQLConditions cond;
     cond = SQLConditions(left: 'gid', comparison: '=', right: group.string);
-    cond.addCondition(SQLConditions.and, left: 'member', comparison: '=', right: member.string);
+    cond.addCondition(SQLConditions.kAnd, left: 'member', comparison: '=', right: member.string);
     return await delete(_table, conditions: cond) > 0;
   }
 
 }
 
 
-class GroupDB implements GroupTable {
-  GroupDB() : _memberTable = _MemberDB();
+class GroupTable implements GroupDBI {
+  GroupTable() : _memberTable = _MemberDB();
 
   final _MemberDB _memberTable;
 
   @override
-  Future<ID?> getFounder(ID group) async {
+  Future<ID?> getFounder({required ID group}) async {
     // TODO: implement getFounder
     Log.error('implement getFounder: $group');
     return null;
   }
 
   @override
-  Future<ID?> getOwner(ID group) async {
+  Future<ID?> getOwner({required ID group}) async {
     // TODO: implement getOwner
     Log.error('implement getOwner: $group');
     return null;
   }
 
   @override
-  Future<List<ID>> getMembers(ID group) async =>
+  Future<List<ID>> getMembers({required ID group}) async =>
       await _memberTable.getMembers(group);
 
   @override
-  Future<bool> saveMembers(List<ID> members, ID group) async =>
+  Future<bool> saveMembers(List<ID> members, {required ID group}) async =>
       await _memberTable.saveMembers(members, group);
 
   @override
@@ -93,21 +84,21 @@ class GroupDB implements GroupTable {
       await _memberTable.removeMember(member, group: group);
 
   @override
-  Future<List<ID>> getAssistants(ID group) async {
+  Future<List<ID>> getAssistants({required ID group}) async {
     // TODO: implement getAssistants
     Log.error('implement getAssistants: $group');
     return [];
   }
 
   @override
-  Future<bool> saveAssistants(List<ID> bots, ID group) async {
+  Future<bool> saveAssistants(List<ID> bots, {required ID group}) async {
     // TODO: implement saveAssistants
     Log.error('implement saveAssistants: $group, $bots');
     return false;
   }
 
   @override
-  Future<bool> removeGroup(ID group) async {
+  Future<bool> removeGroup({required ID group}) async {
     // TODO: implement removeGroup
     Log.error('implement removeGroup: $group');
     return false;

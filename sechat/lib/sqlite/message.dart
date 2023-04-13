@@ -1,4 +1,3 @@
-import '../client/dbi/message.dart';
 import 'helper/sqlite.dart';
 
 
@@ -9,7 +8,7 @@ import 'helper/sqlite.dart';
 ///
 
 
-class ReliableMessageDB implements ReliableMessageTable {
+class ReliableMessageTable implements ReliableMessageDBI {
 
   @override
   Future<bool> cacheReliableMessage(ID receiver, ReliableMessage rMsg) async {

@@ -6,46 +6,32 @@ import '../sqlite/keys.dart';
 import '../sqlite/message.dart';
 import '../sqlite/session.dart';
 import '../sqlite/user.dart';
-import 'dbi/account.dart';
-import 'dbi/message.dart';
-import 'dbi/session.dart';
 
-class SharedDatabase implements AccountDBI, MessageDBI, SessionDBI,
-                                PrivateKeyTable, UserTable, ContactTable,
-                                GroupTable, ProviderTable, StationTable {
+class SharedDatabase implements AccountDBI, MessageDBI, SessionDBI {
 
-  PrivateKeyTable privateKeyTable = PrivateKeyDB();
-  MetaTable metaTable = MetaDB();
-  DocumentTable documentTable = DocumentDB();
-  UserTable userTable = UserDB();
-  ContactTable contactTable = ContactDB();
-  GroupTable groupTable = GroupDB();
+  PrivateKeyDBI privateKeyTable = PrivateKeyTable();
+  MetaDBI metaTable = MetaTable();
+  DocumentDBI documentTable = DocumentTable();
+  UserDBI userTable = UserTable();
+  ContactDBI contactTable = ContactTable();
+  GroupDBI groupTable = GroupTable();
 
-  ReliableMessageTable reliableMessageTable = ReliableMessageDB();
-  MsgKeyTable msgKeyTable = MsgKeyDB();
+  ReliableMessageDBI reliableMessageTable = ReliableMessageTable();
+  CipherKeyDBI msgKeyTable = MsgKeyTable();
 
-  LoginTable loginTable = LoginCommandDB();
-  ProviderTable providerTable = ProviderDB();
-  StationTable stationTable = StationDB();
+  LoginDBI loginTable = LoginCommandTable();
+  ProviderDBI providerTable = ProviderTable();
+  StationDBI stationTable = StationTable();
 
   //
   //  PrivateKey Table
   //
 
   @override
-  Future<bool> storePrivateKey(PrivateKey key, String type, ID user,
-      {required int sign, required int decrypt}) async =>
-      await privateKeyTable.storePrivateKey(key, type, user,
+  Future<bool> savePrivateKey(PrivateKey key, String type, ID user,
+      {int sign = 1, required int decrypt}) async =>
+      await privateKeyTable.savePrivateKey(key, type, user,
           sign: sign, decrypt: decrypt);
-
-  @override
-  Future<bool> savePrivateKey(PrivateKey key, String type, ID user) async {
-    if (key is DecryptKey) {
-      return await storePrivateKey(key, type, user, sign: 1, decrypt: 1);
-    } else {
-      return await storePrivateKey(key, type, user, sign: 1, decrypt: 0);
-    }
-  }
 
   @override
   Future<List<DecryptKey>> getPrivateKeysForDecryption(ID user) async =>
@@ -110,12 +96,12 @@ class SharedDatabase implements AccountDBI, MessageDBI, SessionDBI,
   //
 
   @override
-  Future<List<ID>> getContacts(ID user) async =>
-      await contactTable.getContacts(user);
+  Future<List<ID>> getContacts({required ID user}) async =>
+      await contactTable.getContacts(user: user);
 
   @override
-  Future<bool> saveContacts(List<ID> contacts, ID user) async =>
-      await contactTable.saveContacts(contacts, user);
+  Future<bool> saveContacts(List<ID> contacts, {required ID user}) async =>
+      await contactTable.saveContacts(contacts, user: user);
 
   @override
   Future<bool> addContact(ID contact, {required ID user}) async =>
@@ -130,26 +116,28 @@ class SharedDatabase implements AccountDBI, MessageDBI, SessionDBI,
   //
 
   @override
-  Future<ID?> getFounder(ID group) async => await groupTable.getFounder(group);
+  Future<ID?> getFounder({required ID group}) async =>
+      await groupTable.getFounder(group: group);
 
   @override
-  Future<ID?> getOwner(ID group) async => await groupTable.getOwner(group);
+  Future<ID?> getOwner({required ID group}) async =>
+      await groupTable.getOwner(group: group);
 
   @override
-  Future<List<ID>> getMembers(ID group) async =>
-      await groupTable.getMembers(group);
+  Future<List<ID>> getMembers({required ID group}) async =>
+      await groupTable.getMembers(group: group);
 
   @override
-  Future<bool> saveMembers(List<ID> members, ID group) async =>
-      await groupTable.saveMembers(members, group);
+  Future<bool> saveMembers(List<ID> members, {required ID group}) async =>
+      await groupTable.saveMembers(members, group: group);
 
   @override
-  Future<List<ID>> getAssistants(ID group) async =>
-      await groupTable.getAssistants(group);
+  Future<List<ID>> getAssistants({required ID group}) async =>
+      await groupTable.getAssistants(group: group);
 
   @override
-  Future<bool> saveAssistants(List<ID> bots, ID group) async =>
-      await groupTable.saveAssistants(bots, group);
+  Future<bool> saveAssistants(List<ID> bots, {required ID group}) async =>
+      await groupTable.saveAssistants(bots, group: group);
 
   @override
   Future<bool> addMember(ID member, {required ID group}) async =>
@@ -160,8 +148,8 @@ class SharedDatabase implements AccountDBI, MessageDBI, SessionDBI,
       await groupTable.removeMember(member, group: group);
 
   @override
-  Future<bool> removeGroup(ID group) async =>
-      await groupTable.removeGroup(group);
+  Future<bool> removeGroup({required ID group}) async =>
+      await groupTable.removeGroup(group: group);
 
   //
   //  ReliableMessage Table
@@ -211,16 +199,16 @@ class SharedDatabase implements AccountDBI, MessageDBI, SessionDBI,
   //
 
   @override
-  Future<List<ProviderInfo>> getProviders() async =>
+  Future<List<Pair<ID, int>>> getProviders() async =>
       await providerTable.getProviders();
 
   @override
-  Future<bool> addProvider(ID identifier, {String? name, String? url, int chosen = 0}) async =>
-      await providerTable.addProvider(identifier, name: name, url: url, chosen: chosen);
+  Future<bool> addProvider(ID identifier, {int chosen = 0}) async =>
+      await providerTable.addProvider(identifier, chosen: chosen);
 
   @override
-  Future<bool> updateProvider(ID identifier, {String? name, String? url, int chosen = 0}) async =>
-      await providerTable.updateProvider(identifier, name: name, url: url, chosen: chosen);
+  Future<bool> updateProvider(ID identifier, {int chosen = 0}) async =>
+      await providerTable.updateProvider(identifier, chosen: chosen);
 
   @override
   Future<bool> removeProvider(ID identifier) async =>
@@ -231,47 +219,23 @@ class SharedDatabase implements AccountDBI, MessageDBI, SessionDBI,
   //
 
   @override
-  Future<Set<Triplet<String, int, ID?>>> allNeighbors() async =>
-      await stationTable.allNeighbors();
+  Future<List<Pair<String, int>>> getStations({required ID provider}) async =>
+      await stationTable.getStations(provider: provider);
 
   @override
-  Future<ID?> getNeighbor(String host, int port) async =>
-      await stationTable.getNeighbor(host, port);
+  Future<bool> addStation(String host, int port, {required ID provider, int chosen = 0}) async =>
+      await stationTable.addStation(host, port, provider: provider, chosen: chosen);
 
   @override
-  Future<bool> addNeighbor(String host, int port, [ID? station]) async =>
-      await stationTable.addNeighbor(host, port, station);
+  Future<bool> updateStation(String host, int port, {required ID provider, int chosen = 0}) async =>
+      await stationTable.updateStation(host, port, provider: provider, chosen: chosen);
 
   @override
-  Future<bool> removeNeighbor(String host, int port) async =>
-      await stationTable.removeNeighbor(host, port);
-
-  @override
-  Future<List<StationInfo>> getStations(ID? provider) async =>
-      await stationTable.getStations(provider);
-
-  @override
-  Future<bool> addStation(String host, int port,
-      {ID? station, String? name, int chosen = 0, ID? provider}) async =>
-      await stationTable.addStation(host, port, station: station, name: name, chosen: chosen, provider: provider);
-
-  @override
-  Future<bool> updateStation(String host, int port,
-      {required ID? station, required String? name, required int chosen,
-        required ID? provider}) async =>
-      await stationTable.updateStation(host, port,
-          station: station, name: name, chosen: chosen, provider: provider);
-
-  @override
-  Future<bool> chooseStation(String host, int port, {ID? provider}) async =>
-      await stationTable.chooseStation(host, port, provider: provider);
-
-  @override
-  Future<bool> removeStation(String host, int port, {ID? provider}) async =>
+  Future<bool> removeStation(String host, int port, {required ID provider}) async =>
       await stationTable.removeStation(host, port, provider: provider);
 
   @override
-  Future<bool> removeStations(ID provider) async =>
-      await stationTable.removeStations(provider);
+  Future<bool> removeStations({required ID provider}) async =>
+      await stationTable.removeStations(provider: provider);
 
 }

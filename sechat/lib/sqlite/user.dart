@@ -1,30 +1,22 @@
-import '../client/dbi/account.dart';
 import 'helper/sqlite.dart';
 import 'entity.dart';
 
 
-class _UserExtractor implements DataRowExtractor<ID> {
-
-  @override
-  ID extractRow(ResultSet resultSet, int index) {
-    String user = resultSet.getString('uid');
-    return ID.parse(user)!;
-  }
-
+ID _extractUser(ResultSet resultSet, int index) {
+  String user = resultSet.getString('uid');
+  return ID.parse(user)!;
 }
 
-class UserDB extends DataTableHandler<ID> implements UserTable {
-  UserDB() : super(EntityDatabase());
+class UserTable extends DataTableHandler<ID> implements UserDBI {
+  UserTable() : super(EntityDatabase(), _extractUser);
 
   static const String _table = EntityDatabase.tLocalUser;
   static const List<String> _selectColumns = ["uid"];
   static const List<String> _insertColumns = ["uid", "chosen"];
 
   // const
-  static final SQLConditions kTrue = SQLConditions(left: '\'money\'', comparison: '!=', right: 'love');
-
-  @override
-  DataRowExtractor<ID> get extractor => _UserExtractor();
+  static final SQLConditions kTrue = SQLConditions.kTrue;
+  // SQLConditions(left: '\'money\'', comparison: '<>', right: 'love');
 
   Future<bool> _updateUsers(List<ID> newUsers, List<ID> oldUsers) async {
     assert(!identical(newUsers, oldUsers), 'should not be the same object');
@@ -143,36 +135,20 @@ class UserDB extends DataTableHandler<ID> implements UserTable {
     return localUsers.isEmpty ? null : localUsers[0];
   }
 
-  @override
-  Future<List<ID>> getContacts(ID user) =>
-      throw UnimplementedError('call ContactTable');
-
-  @override
-  Future<bool> saveContacts(List<ID> contacts, ID user) =>
-      throw UnimplementedError('call ContactTable');
-
 }
 
 
-class _ContactExtractor implements DataRowExtractor<ID> {
-
-  @override
-  ID extractRow(ResultSet resultSet, int index) {
-    String user = resultSet.getString('contact');
-    return ID.parse(user)!;
-  }
-
+ID _extractContact(ResultSet resultSet, int index) {
+  String user = resultSet.getString('contact');
+  return ID.parse(user)!;
 }
 
-class ContactDB extends DataTableHandler<ID> implements ContactTable {
-  ContactDB() : super(EntityDatabase());
+class ContactTable extends DataTableHandler<ID> implements ContactDBI {
+  ContactTable() : super(EntityDatabase(), _extractContact);
 
   static const String _table = EntityDatabase.tContact;
   static const List<String> _selectColumns = ["contact", "alias"];
   static const List<String> _insertColumns = ["uid", "contact", "alias"];
-
-  @override
-  DataRowExtractor<ID> get extractor => _ContactExtractor();
 
   Future<bool> _updateContacts(List<ID> contacts, ID user) async {
     SQLConditions cond;
@@ -194,22 +170,14 @@ class ContactDB extends DataTableHandler<ID> implements ContactTable {
   }
 
   @override
-  Future<List<ID>> getLocalUsers() =>
-      throw UnimplementedError('call UserTable');
-
-  @override
-  Future<bool> saveLocalUsers(List<ID> users) =>
-      throw UnimplementedError('call UserTable');
-
-  @override
-  Future<List<ID>> getContacts(ID user) async {
+  Future<List<ID>> getContacts({required ID user}) async {
     SQLConditions cond;
     cond = SQLConditions(left: 'uid', comparison: '=', right: user.string);
     return await select(_table, columns: _selectColumns, conditions: cond);
   }
 
   @override
-  Future<bool> saveContacts(List<ID> contacts, ID user) async {
+  Future<bool> saveContacts(List<ID> contacts, {required ID user}) async {
     return await _updateContacts(contacts, user);
   }
 
@@ -223,7 +191,7 @@ class ContactDB extends DataTableHandler<ID> implements ContactTable {
   Future<bool> removeContact(ID contact, {required ID user}) async {
     SQLConditions cond;
     cond = SQLConditions(left: 'uid', comparison: '=', right: user.string);
-    cond.addCondition(SQLConditions.and,
+    cond.addCondition(SQLConditions.kAnd,
         left: 'contact', comparison: '=', right: contact.string);
     return await delete(_table, conditions: cond) > 0;
   }

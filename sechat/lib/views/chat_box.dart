@@ -4,7 +4,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_section_list/flutter_section_list.dart';
 
 import 'alert.dart';
-import 'channels.dart';
 import 'styles.dart';
 
 class Envelope {
@@ -158,14 +157,14 @@ class _ChatBoxState extends State<ChatBox> {
   late final _HistoryDataSource dataSource;
 
   void reloadData() {
-    ConversationChannel channel = ChannelManager.instance.conversationChannel;
-    channel.getMessages(widget.info.identifier).then((json) => {
-      if (json != null) {
-        setState(() {
-          dataSource.refresh(InstantMessage.listFromJson(json));
-        })
-      }
-    });
+    // ConversationChannel channel = ChannelManager.instance.conversationChannel;
+    // channel.getMessages(widget.info.identifier).then((json) => {
+    //   if (json != null) {
+    //     setState(() {
+    //       dataSource.refresh(InstantMessage.listFromJson(json));
+    //     })
+    //   }
+    // });
   }
 
   @override

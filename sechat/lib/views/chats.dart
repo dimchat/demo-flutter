@@ -3,7 +3,6 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_section_list/flutter_section_list.dart';
 
-import 'channels.dart';
 import 'chat_box.dart';
 import 'search.dart';
 import 'styles.dart';
@@ -33,13 +32,13 @@ class _ChatListState extends State<ChatHistoryPage> {
   late final _ChatListDataSource dataSource;
 
   void reloadData() {
-    ChannelManager.instance.conversationChannel.getConversations().then((json) => {
-      if (json != null) {
-        setState(() {
-          dataSource.refresh(Conversation.listFromJson(json));
-        })
-      }
-    });
+    // ChannelManager.instance.conversationChannel.getConversations().then((json) => {
+    //   if (json != null) {
+    //     setState(() {
+    //       dataSource.refresh(Conversation.listFromJson(json));
+    //     })
+    //   }
+    // });
   }
 
   @override

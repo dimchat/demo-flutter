@@ -1,6 +1,0 @@
-<resources>
-    <string name="app_name">UIKit</string>
-    <string name="camera">Camera</string>
-    <string name="album">Photo Album</string>
-    <string name="title_activity_webview">Web</string>
-</resources>

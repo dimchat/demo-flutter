@@ -21,29 +21,40 @@ void main() {
   SystemChrome.setPreferredOrientations(
       [DeviceOrientation.portraitUp, DeviceOrientation.portraitDown]
   );
+  // Check permission to launch the app: Storage
   PermissionHandler.check(PermissionHandler.minimumPermissions).then((value) {
     if (!value) {
       // not granted for photos/storage, first run?
       Log.warning('not granted for photos/storage, first run?');
-      runApp(const TarsierApp(RegisterPage()));
-      PermissionHandler.check(PermissionHandler.minimumPermissions);
+      runApp(const _Application(RegisterPage()));
     } else {
       // check current user
       Log.debug('check current user');
       GlobalVariable().facebook.currentUser.then((user) {
         Log.info('current user: $user');
         if (user == null) {
-          runApp(const TarsierApp(RegisterPage()));
+          runApp(const _Application(RegisterPage()));
         } else {
-          runApp(const TarsierApp(MainPage()));
+          runApp(const _Application(_MainPage()));
         }
+      }).onError((error, stackTrace) {
+        Log.error('current user error: $error');
       });
     }
+  }).onError((error, stackTrace) {
+    Log.error('check permission error: $error');
   });
 }
 
-class TarsierApp extends StatelessWidget {
-  const TarsierApp(this.home, {super.key});
+void changeToMainPage(BuildContext context) {
+  Navigator.pop(context);
+  Navigator.push(context, CupertinoPageRoute(
+    builder: (context) => const _MainPage(),
+  ));
+}
+
+class _Application extends StatelessWidget {
+  const _Application(this.home);
 
   final Widget home;
 
@@ -58,8 +69,8 @@ class TarsierApp extends StatelessWidget {
   }
 }
 
-class MainPage extends StatelessWidget {
-  const MainPage({super.key});
+class _MainPage extends StatelessWidget {
+  const _MainPage();
 
   @override
   Widget build(BuildContext context) {

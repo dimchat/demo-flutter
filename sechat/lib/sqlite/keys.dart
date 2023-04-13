@@ -57,7 +57,7 @@ class PrivateKeyTable extends DataTableHandler<PrivateKey> implements PrivateKey
   Future<List<DecryptKey>> getPrivateKeysForDecryption(ID user) async {
     SQLConditions cond;
     cond = SQLConditions(left: 'uid', comparison: '=', right: user.string);
-    cond.addCondition(SQLConditions.kAnd, left: 'decrypt', comparison: '<>', right: '0');
+    cond.addCondition(SQLConditions.kAnd, left: 'decrypt', comparison: '<>', right: 0);
     // WHERE uid='$user' AND decrypt=1 ORDER BY type DESC LIMIT 3
     List<PrivateKey> keys = await select(_table, columns: _selectColumns,
         conditions: cond, orderBy: 'type DESC', limit: 3);
@@ -75,7 +75,7 @@ class PrivateKeyTable extends DataTableHandler<PrivateKey> implements PrivateKey
     SQLConditions cond;
     cond = SQLConditions(left: 'uid', comparison: '=', right: user.string);
     cond.addCondition(SQLConditions.kAnd, left: 'type', comparison: '=', right: PrivateKeyDBI.kMeta);
-    cond.addCondition(SQLConditions.kAnd, left: 'sign', comparison: '<>', right: '0');
+    cond.addCondition(SQLConditions.kAnd, left: 'sign', comparison: '<>', right: 0);
     // WHERE uid='$user' AND type='M' AND decrypt=1 ORDER BY id DESC  LIMIT 1
     List<PrivateKey> keys = await select(_table, columns: _selectColumns,
         conditions: cond, orderBy: 'id DESC', limit: 1);

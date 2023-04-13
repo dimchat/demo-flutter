@@ -13,6 +13,12 @@ class RegisterPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    // request permission and check current user,
+    // if found, change to main page
+    _checkCurrentUser(context, () {
+      Log.debug('current user not found');
+    });
+    // build page
     return const CupertinoPageScaffold(
       // A ScrollView that creates custom scroll effects using slivers.
       child: CustomScrollView(
@@ -150,7 +156,7 @@ class _RegisterFormState extends State<_RegisterForm> {
           color: Colors.red,
           borderRadius: const BorderRadius.all(Radius.circular(24)),
           onPressed: () {
-            _submit(context, nickname: nickname, avatarURL: avatarURL, agreed: agreed);
+            _submit(context, name: nickname, avatar: avatarURL, agreed: agreed);
           },
           child: const Text("Let's rock!"),
         ),
@@ -203,11 +209,44 @@ class _RegisterFormState extends State<_RegisterForm> {
   }
 }
 
-//
-//  Generate DIM user
-//
+void _submit(BuildContext context, {required String name, required String avatar, required bool agreed}) {
+  _checkCurrentUser(context, () {
+    if (name.isEmpty) {
+      Alert.show(context, 'Input Name', 'Please input your nickname.');
+    } else if (!agreed) {
+      Alert.show(context, 'Privacy Policy', 'Please read and agree the privacy policy.');
+    } else {
+      GlobalVariable shared = GlobalVariable();
+      Register register = Register(shared.database);
+      register.createUser(name: name, avatar: avatar).then((identifier) {
+        shared.database.addUser(identifier).then((value) {
+          changeToMainPage(context);
+        }).onError((error, stackTrace) {
+          Log.error('add user error: $error');
+        });
+      }).onError((error, stackTrace) {
+        Alert.show(context, 'Error', '$error');
+      });
+    }
+  });
+}
 
-void _submit(BuildContext context, {required String nickname, required String avatarURL, required bool agreed}) {
+void _checkCurrentUser(BuildContext context, void Function() onNotFound) {
+  Log.debug('checking permissions');
+  _requestPermission(context, (context) {
+    GlobalVariable().facebook.currentUser.then((user) {
+      if (user == null) {
+        onNotFound();
+      } else {
+        changeToMainPage(context);
+      }
+    }).onError((error, stackTrace) {
+      Log.error('current user error: $error');
+    });
+  });
+}
+
+void _requestPermission(BuildContext context, void Function(BuildContext context) onGranted) {
   PermissionHandler.request(PermissionHandler.minimumPermissions).then((value) {
     if (!value) {
       // storage permission not granted
@@ -216,41 +255,10 @@ void _submit(BuildContext context, {required String nickname, required String av
         callback: () => PermissionHandler.openAppSettings(),
       );
     } else {
-      // check current user
-      GlobalVariable().facebook.currentUser.then((user) {
-        Log.debug('current user: $user');
-        if (user == null) {
-          // current user not exists, create new one
-          if (nickname.isEmpty) {
-            Alert.show(context, 'Input Name', 'Please input your nickname.');
-          } else if (!agreed) {
-            Alert.show(context, 'Privacy Policy', 'Please read and agree the privacy policy.');
-          } else {
-            _generateAccount(context, nickname, avatarURL);
-          }
-        } else {
-          // current user already exists
-          runApp(const TarsierApp(MainPage()));
-        }
-      });
+      Log.info('permission granted');
+      onGranted(context);
     }
-  });
-}
-
-void _generateAccount(BuildContext context, String name, String avatar) {
-  GlobalVariable shared = GlobalVariable();
-  Register register = Register(shared.database);
-  register.createUser(name: name, avatar: avatar).then((identifier) {
-    shared.database.addUser(identifier);
-    _openMain(context);
   }).onError((error, stackTrace) {
-    Alert.show(context, 'Error', '$error');
+    Log.error('request permission error: $error');
   });
-}
-
-void _openMain(BuildContext context) {
-  Navigator.pop(context);
-  Navigator.push(context, CupertinoPageRoute(
-    builder: (context) => const MainPage(),
-  ));
 }

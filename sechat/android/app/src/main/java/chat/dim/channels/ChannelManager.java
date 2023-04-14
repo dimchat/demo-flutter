@@ -7,7 +7,6 @@ import java.io.ByteArrayOutputStream;
 import java.math.BigDecimal;
 
 import io.flutter.plugin.common.BinaryMessenger;
-import io.flutter.plugin.common.MethodChannel;
 import io.flutter.plugin.common.StandardMessageCodec;
 import io.flutter.plugin.common.StandardMethodCodec;
 
@@ -29,7 +28,12 @@ final class ChannelMethods {
     //
     //  Session channel
     //
-    static final  String SEND_MESSAGE_PACKAGE = "queueMessagePackage";
+    static final String CONNECT = "connect";
+    static final String LOGIN = "login";
+    static final String GET_STATE = "getState";
+    static final String SEND_MESSAGE_PACKAGE = "queueMessagePackage";
+
+    static final String ON_STATE_CHANGED = "onStateChanged";
 }
 
 public enum ChannelManager {
@@ -47,15 +51,9 @@ public enum ChannelManager {
     //
     //  Channels
     //
-    private MethodChannel storageChannel = null;
-    private MethodChannel sessionChannel = null;
+    private StorageChannel storageChannel = null;
+    public SessionChannel sessionChannel = null;
 
-    private static MethodChannel createMethodChannel(BinaryMessenger messenger, String name,
-                                                     MethodChannel.MethodCallHandler handler) {
-        MethodChannel channel = new MethodChannel(messenger, name, new StandardMethodCodec(new MessageCodec()));
-        channel.setMethodCallHandler(handler);
-        return channel;
-    }
     private static class MessageCodec extends StandardMessageCodec {
         @Override
         protected void writeValue(@NonNull ByteArrayOutputStream stream, @Nullable Object value) {
@@ -68,13 +66,12 @@ public enum ChannelManager {
     }
 
     public void initChannels(BinaryMessenger messenger) {
+        StandardMethodCodec codec = new StandardMethodCodec(new MessageCodec());
         if (sessionChannel == null) {
-            sessionChannel = createMethodChannel(messenger,
-                    ChannelNames.SESSION, new SessionChannelHandler());
+            sessionChannel = new SessionChannel(messenger, ChannelNames.SESSION, codec);
         }
         if (storageChannel == null) {
-            storageChannel = createMethodChannel(messenger,
-                    ChannelNames.STORAGE, new StorageChannelHandler());
+            storageChannel = new StorageChannel(messenger, ChannelNames.STORAGE, codec);
         }
     }
 }

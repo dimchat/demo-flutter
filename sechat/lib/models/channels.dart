@@ -19,7 +19,12 @@ class ChannelMethods {
   //
   //  Session channel
   //
+  static const String connect = 'connect';
+  static const String login = 'login';
+  static const String getState = 'getState';
   static const String sendMessagePackage = "queueMessagePackage";
+
+  static const String onStateChanged = 'onStateChanged';
 
 }
 
@@ -60,7 +65,47 @@ class StorageChannel extends MethodChannel {
 }
 
 class SessionChannel extends MethodChannel {
-  SessionChannel(super.name);
+  SessionChannel(super.name) {
+    setMethodCallHandler((call) async {
+      String method = call.method;
+      if (method == ChannelMethods.onStateChanged) {
+        int previous = call.arguments['previous'];
+        int current = call.arguments['current'];
+        Log.warning('onStateChanged: $previous -> $current');
+      }
+    });
+  }
+
+  Future<void> connect(String host, int port) async {
+    try {
+      return await invokeMethod(ChannelMethods.connect, {
+        'host': host, 'port': port,
+      });
+    } on PlatformException catch (e) {
+      Log.error('channel error: $e');
+      return;
+    }
+  }
+
+  Future<bool> login(ID user) async {
+    try {
+      return await invokeMethod(ChannelMethods.login, {
+        'user': user.string,
+      });
+    } on PlatformException catch (e) {
+      Log.error('channel error: $e');
+      return false;
+    }
+  }
+
+  Future<int> getState() async {
+    try {
+      return await invokeMethod(ChannelMethods.getState);
+    } on PlatformException catch (e) {
+      Log.error('channel error: $e');
+      return -1;
+    }
+  }
 
   Future<void> sendMessagePackage(ReliableMessage rMsg, Uint8List data, int priority) async {
     try {

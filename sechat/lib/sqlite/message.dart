@@ -6,7 +6,7 @@ import 'helper/sqlite.dart';
 ///
 ///  Store messages
 ///
-///     file path: '/sdcard/chat.dim.sechat/.dkd/msg.db'
+///     file path: '{sdcard}/Android/data/chat.dim.sechat/files/.dkd/msg.db'
 ///
 
 
@@ -61,7 +61,7 @@ class MessageDatabase extends DatabaseConnector {
 
   static const String tReliableMessage = 't_reliable_message';
 
-  /// returns: '/sdcard/chat.dim.sechat/caches/.dkd/msg.db'
+  /// returns: '{caches}/.dkd/msg.db'
   @override
   Future<String?> get path async {
     String root = await LocalStorage().cachesDirectory;
@@ -96,7 +96,8 @@ class ConversationTable extends DataTableHandler<ID> implements ConversationDBI 
   @override
   Future<List<ID>> getConversations() async {
     SQLConditions cond = SQLConditions.kTrue;
-    return await select(_table, columns: _selectColumns, conditions: cond);
+    return await select(_table, columns: _selectColumns,
+        conditions: cond, orderBy: 'time DESC');
   }
 
   @override
@@ -138,7 +139,8 @@ class InstantMessageTable extends DataTableHandler<InstantMessage> implements In
       {int start = 0, int? limit}) async {
     SQLConditions cond;
     cond = SQLConditions(left: 'cid', comparison: '=', right: chat.string);
-    List<InstantMessage> messages = await select(_table, columns: _selectColumns, conditions: cond);
+    List<InstantMessage> messages = await select(_table, columns: _selectColumns,
+        conditions: cond, orderBy: 'time DESC');
     int remaining = 0;
     if (limit != null && limit == messages.length) {
       // TODO: get number of remaining messages

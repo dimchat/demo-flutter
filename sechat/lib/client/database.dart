@@ -192,7 +192,7 @@ class SharedDatabase implements AccountDBI, SessionDBI, MessageDBI,
   //
 
   @override
-  Future<List<Pair<String, int>>> getStations({required ID provider}) async =>
+  Future<List<Triplet<Pair<String, int>, ID, int>>> getStations({required ID provider}) async =>
       await stationTable.getStations(provider: provider);
 
   @override

@@ -3,7 +3,9 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_section_list/flutter_section_list.dart';
 
+import '../client/session.dart';
 import '../client/shared.dart';
+import '../client/utils/notification.dart' as lnc;
 import '../models/contact.dart';
 import 'alert.dart';
 import 'profile.dart';
@@ -27,12 +29,26 @@ class ContactListPage extends StatefulWidget {
   }
 }
 
-class _ContactListState extends State<ContactListPage> {
+class _ContactListState extends State<ContactListPage> implements lnc.Observer {
   _ContactListState() {
     dataSource = _ContactDataSource();
+
+    var nc = lnc.NotificationCenter();
+    nc.addObserver(this, 'ServerStateChanged');
   }
 
   late final _ContactDataSource dataSource;
+
+  int _sessionState = 0;
+
+  @override
+  Future<void> onReceiveNotification(lnc.Notification notification) async {
+    Map? info = notification.userInfo;
+    int state = info!['state'];
+    setState(() {
+      _sessionState = state;
+    });
+  }
 
   void reloadData() {
     GlobalVariable shared = GlobalVariable();
@@ -64,7 +80,7 @@ class _ContactListState extends State<ContactListPage> {
       appBar: CupertinoNavigationBar(
         backgroundColor: Styles.navigationBarBackground,
         border: Styles.navigationBarBorder,
-        middle: const Text('Contacts'),
+        middle: Text(titleWithState('Contacts', _sessionState)),
         trailing: SearchPage.searchButton(context),
       ),
       body: SectionListView.builder(

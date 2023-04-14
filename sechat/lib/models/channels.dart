@@ -1,5 +1,10 @@
 import 'package:dim_client/dim_client.dart';
 import 'package:flutter/services.dart';
+import 'package:sechat/client/messenger.dart';
+
+import '../client/client.dart';
+import '../client/session.dart';
+import '../client/shared.dart';
 
 class ChannelNames {
 
@@ -21,10 +26,12 @@ class ChannelMethods {
   //
   static const String connect = 'connect';
   static const String login = 'login';
+  static const String setSessionKey = 'setSessionKey';
   static const String getState = 'getState';
   static const String sendMessagePackage = "queueMessagePackage";
 
   static const String onStateChanged = 'onStateChanged';
+  static const String onReceived = 'onReceived';
 
 }
 
@@ -71,7 +78,45 @@ class SessionChannel extends MethodChannel {
       if (method == ChannelMethods.onStateChanged) {
         int previous = call.arguments['previous'];
         int current = call.arguments['current'];
-        Log.warning('onStateChanged: $previous -> $current');
+        int now = call.arguments['now'];
+        _onStateChanged(previous, current, now);
+      } else if (method == ChannelMethods.onReceived) {
+        String json = call.arguments['json'];
+        String remote = call.arguments['remote'];
+        _onReceived(json, remote);
+      }
+    });
+  }
+
+  void _onStateChanged(int previous, int current, int now) {
+    Log.warning('onStateChanged: $previous -> $current');
+    GlobalVariable shared = GlobalVariable();
+    Client? client = shared.terminal;
+    var session = client.session;
+    if (session is SharedSession) {
+      StateMachine fsm = session.fsm;
+      fsm.currentState = SessionState(current);
+      client.exitState(SessionState(previous), fsm, now);
+    }
+  }
+
+  void _onReceived(String json, String remote) {
+    Uint8List data = UTF8.encode(json);
+    Log.warning("received data: ${data.length} bytes from $remote");
+    GlobalVariable shared = GlobalVariable();
+    SharedMessenger? messenger = shared.messenger;
+    if (messenger == null) {
+      assert(false, 'messenger not set');
+      return;
+    }
+    messenger.processPackage(data).then((responses) {
+      remote = remote.replaceAll('/', '');
+      List array = remote.split(':');
+      SocketAddress address = SocketAddress(array[0], int.parse(array[1]));
+      Arrival ship = ArrivalShip();
+      for (Uint8List res in responses) {
+        Log.debug('sending response: ${res.length} bytes to $address');
+        messenger.session.sendResponse(res, ship, remote: address);
       }
     });
   }
@@ -98,6 +143,17 @@ class SessionChannel extends MethodChannel {
     }
   }
 
+  Future<void> setSessionKey(String? session) async {
+    try {
+      return await invokeMethod(ChannelMethods.setSessionKey, {
+        'session': session,
+      });
+    } on PlatformException catch (e) {
+      Log.error('channel error: $e');
+      return;
+    }
+  }
+
   Future<int> getState() async {
     try {
       return await invokeMethod(ChannelMethods.getState);
@@ -118,5 +174,13 @@ class SessionChannel extends MethodChannel {
       return;
     }
   }
+
+}
+
+class ArrivalShip extends Arrival {
+  // TODO: implement Arrival Ship
+
+  @override
+  Uint8List get payload => throw UnimplementedError();
 
 }

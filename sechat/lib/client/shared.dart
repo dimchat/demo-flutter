@@ -1,5 +1,6 @@
 import 'package:dim_client/dim_client.dart';
 
+import 'client.dart';
 import 'database.dart';
 import 'emitter.dart';
 import 'facebook.dart';
@@ -13,6 +14,7 @@ class GlobalVariable {
       : adb = database, mdb = database, sdb = database,
         facebook = SharedFacebook(database), emitter = Emitter() {
     _registerPlugins();
+    terminal = Client(facebook, database);
   }
 
   final AccountDBI adb;
@@ -25,7 +27,8 @@ class GlobalVariable {
   final Emitter emitter;
 
   SharedMessenger? messenger;
-  Terminal? terminal;
+
+  late final Client terminal;
 
 }
 

@@ -109,6 +109,10 @@ class MsgKeyTable extends DataTableHandler<SymmetricKey> implements CipherKeyDBI
 
   @override
   Future<void> cacheCipherKey(ID sender, ID receiver, SymmetricKey? key) async {
+    if (receiver.isBroadcast) {
+      // broadcast message has no key
+      return;
+    }
     if (key != null && await getCipherKey(sender, receiver) == null) {
       // insert new key for (sender => receiver)
       String json = JSON.encode(key.dictionary);
@@ -133,6 +137,10 @@ class MsgKeyTable extends DataTableHandler<SymmetricKey> implements CipherKeyDBI
 
   @override
   Future<SymmetricKey?> getCipherKey(ID sender, ID receiver, {bool generate = false}) async {
+    if (receiver.isBroadcast) {
+      // broadcast message has no key
+      return PlainKey.getInstance();
+    }
     SQLConditions cond;
     cond = SQLConditions(left: 'sender', comparison: '=', right: sender.string);
     cond.addCondition(SQLConditions.kAnd,
@@ -140,7 +148,13 @@ class MsgKeyTable extends DataTableHandler<SymmetricKey> implements CipherKeyDBI
     List<SymmetricKey> keys = await select(_table, columns: _selectColumns,
         conditions: cond, limit: 1);
     // return first record only
-    return keys.isEmpty ? null : keys[0];
+    if (keys.isNotEmpty) {
+      return keys[0];
+    } else if (generate) {
+      return SymmetricKey.generate(SymmetricKey.kAES);
+    } else {
+      return null;
+    }
   }
 
 }

@@ -4,7 +4,6 @@ import 'package:flutter/services.dart';
 
 import 'client/shared.dart';
 
-import 'models/channels.dart';
 import 'views/chats.dart';
 import 'views/customizer.dart';
 import 'views/contacts.dart';
@@ -106,31 +105,10 @@ class _MainPage extends StatelessWidget {
 }
 
 void _connect() async {
-  ChannelManager manager = ChannelManager();
-  SessionChannel channel = manager.sessionChannel;
-  int state = await channel.getState();
-  Log.warning('session state: $state');
   // TODO: get neighbor
-  // String host = '106.52.25.169';
-  String host = '192.168.31.152';
+  String host = '106.52.25.169';
+  // String host = '192.168.31.152';
   int port = 9394;
-  await channel.connect(host, port).then((value) => _login());
-  Future.delayed(const Duration(seconds: 5), () async {
-    state = await channel.getState();
-    Log.warning('session state: $state');
-  });
-}
-
-Future<bool> _login() async {
   GlobalVariable shared = GlobalVariable();
-  User? user = await shared.facebook.currentUser;
-  if (user == null) {
-    Log.error('current user not found');
-    return false;
-  } else {
-    Log.warning('setting current user for login: $user');
-  }
-  ChannelManager manager = ChannelManager();
-  SessionChannel channel = manager.sessionChannel;
-  return await channel.login(user.identifier);
+  await shared.terminal.connect(host, port);
 }

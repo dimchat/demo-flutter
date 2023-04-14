@@ -30,10 +30,12 @@ final class ChannelMethods {
     //
     static final String CONNECT = "connect";
     static final String LOGIN = "login";
+    static final String SET_SESSION_KEY = "setSessionKey";
     static final String GET_STATE = "getState";
     static final String SEND_MESSAGE_PACKAGE = "queueMessagePackage";
 
     static final String ON_STATE_CHANGED = "onStateChanged";
+    static final String ON_RECEIVED = "onReceived";
 }
 
 public enum ChannelManager {

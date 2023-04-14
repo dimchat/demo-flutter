@@ -3,7 +3,9 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_section_list/flutter_section_list.dart';
 
+import '../client/session.dart';
 import '../client/shared.dart';
+import '../client/utils/notification.dart' as lnc;
 import '../sqlite/conversation.dart';
 import 'chat_box.dart';
 import 'search.dart';
@@ -26,12 +28,26 @@ class ChatHistoryPage extends StatefulWidget {
   }
 }
 
-class _ChatListState extends State<ChatHistoryPage> {
+class _ChatListState extends State<ChatHistoryPage> implements lnc.Observer {
   _ChatListState() {
     dataSource = _ChatListDataSource();
+
+    var nc = lnc.NotificationCenter();
+    nc.addObserver(this, 'ServerStateChanged');
   }
 
   late final _ChatListDataSource dataSource;
+
+  int _sessionState = 0;
+
+  @override
+  Future<void> onReceiveNotification(lnc.Notification notification) async {
+    Map? info = notification.userInfo;
+    int state = info!['state'];
+    setState(() {
+      _sessionState = state;
+    });
+  }
 
   void reloadData() {
     GlobalVariable shared = GlobalVariable();
@@ -57,7 +73,7 @@ class _ChatListState extends State<ChatHistoryPage> {
       appBar: CupertinoNavigationBar(
         backgroundColor: Styles.navigationBarBackground,
         border: Styles.navigationBarBorder,
-        middle: const Text('Secure Chat'),
+        middle: Text(titleWithState('Secure Chat', _sessionState)),
         trailing: SearchPage.searchButton(context),
       ),
       body: SectionListView.builder(

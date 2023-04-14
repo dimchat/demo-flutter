@@ -5,9 +5,11 @@ import android.os.Looper;
 
 import androidx.annotation.NonNull;
 
+import java.net.SocketAddress;
 import java.util.HashMap;
 import java.util.Map;
 
+import chat.dim.format.UTF8;
 import chat.dim.protocol.ID;
 import io.flutter.plugin.common.BinaryMessenger;
 import io.flutter.plugin.common.MethodCall;
@@ -28,12 +30,22 @@ public class SessionChannel extends MethodChannel {
         setMethodCallHandler(new SessionChannelHandler());
     }
 
-    public void onStateChanged(SessionState previous, SessionState current) {
+    public void onStateChanged(SessionState previous, SessionState current, long now) {
         Map<String, Object> params = new HashMap<>();
         params.put("previous", previous == null ? -1 : previous.index);
         params.put("current", current == null ? -1 : current.index);
+        params.put("now", now);
         new Handler(Looper.getMainLooper()).post(() ->
                 invokeMethod(ChannelMethods.ON_STATE_CHANGED, params));
+    }
+
+    public void onReceived(byte[] pack, SocketAddress remote) {
+        String json = UTF8.decode(pack);
+        Map<String, Object> params = new HashMap<>();
+        params.put("json", json);
+        params.put("remote", remote.toString());
+        new Handler(Looper.getMainLooper()).post(() ->
+                invokeMethod(ChannelMethods.ON_RECEIVED, params));
     }
 
     static class SessionChannelHandler implements MethodChannel.MethodCallHandler {
@@ -66,6 +78,11 @@ public class SessionChannel extends MethodChannel {
                     // call
                     result.success(login(user));
                     break;
+                case ChannelMethods.SET_SESSION_KEY:
+                    String sessionKey = call.argument("session");
+                    // call
+                    setSessionKey(sessionKey);
+                    result.success(null);
                 default:
                     result.notImplemented();
                     break;
@@ -105,6 +122,12 @@ public class SessionChannel extends MethodChannel {
             assert identifier != null : "user id error: " + user;
             SessionController controller = SessionController.getInstance();
             return controller.login(identifier);
+        }
+
+        private void setSessionKey(String sessionKey) {
+            Log.info("session key: " + sessionKey);
+            SessionController controller = SessionController.getInstance();
+            controller.setSessionKey(sessionKey);
         }
 
     }

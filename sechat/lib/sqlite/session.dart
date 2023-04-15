@@ -1,4 +1,5 @@
-import '../models/storage.dart';
+import '../client/filesys/paths.dart';
+import '../models/local.dart';
 import 'helper/sqlite.dart';
 
 
@@ -34,7 +35,7 @@ class SessionDatabase extends DatabaseConnector {
   @override
   Future<String?> get path async {
     String root = await LocalStorage().cachesDirectory;
-    String dir = Paths.join(root, directory);
+    String dir = Paths.append(root, directory);
     if (await Paths.mkdirs(dir)) {
       // make sure parent directory exists
       Log.debug('created: $dir');
@@ -43,7 +44,7 @@ class SessionDatabase extends DatabaseConnector {
       return null;
     }
     Log.debug('external database: $name in $dir');
-    return Paths.join(dir, name);
+    return Paths.append(dir, name);
   }
 
 }

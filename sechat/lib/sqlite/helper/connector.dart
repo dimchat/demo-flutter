@@ -31,7 +31,7 @@
 import 'package:dim_client/dim_client.dart';
 import 'package:sqflite/sqflite.dart';
 
-import '../../models/storage.dart';
+import '../../client/filesys/paths.dart';
 
 
 ///
@@ -61,7 +61,7 @@ class DatabaseConnector {
     if (dir == null) {
       dir = await getDatabasesPath();
       Log.debug('internal database: $name in $dir');
-      return Paths.join(dir, name);
+      return Paths.append(dir, name);
     }
     throw Exception('external database: $name in $dir');
   }
@@ -98,7 +98,7 @@ class DatabaseConnector {
   static void createTable(Database db, String table,
       {required List<String> fields}) {
     String sql = SQLBuilder.buildCreateTable(table, fields: fields);
-    Log.debug('create table: $sql');
+    Log.colorPrint('createTable: $sql', color: kSqlColor);
     db.execute(sql);
   }
 
@@ -106,11 +106,13 @@ class DatabaseConnector {
       {required String name, required List<String> fields}) {
     String keys = fields.join(',');
     String sql = 'CREATE INDEX $name ON $table ($keys)';
-    Log.debug('create index: $sql');
+    Log.colorPrint('createIndex: $sql', color: kSqlColor);
     db.execute(sql);
   }
 
 }
+
+const String kSqlColor  = '\x1B[94m';
 
 class _Connection extends DBConnection {
   _Connection(this.database);
@@ -153,7 +155,7 @@ class _Statement extends Statement {
       throw Exception('Redundant execution: $sql');
     }
     _sql = sql;
-    Log.debug('executeQuery: $sql');
+    Log.colorPrint('executeQuery: $sql', color: kSqlColor);
     return _ResultSet(await database.rawQuery(sql));
   }
 
@@ -163,7 +165,7 @@ class _Statement extends Statement {
       throw Exception('Redundant execution: $sql');
     }
     _sql = sql;
-    Log.debug('executeInsert: $sql');
+    Log.colorPrint('executeInsert: $sql', color: kSqlColor);
     return await database.rawInsert(sql);
   }
 
@@ -173,7 +175,7 @@ class _Statement extends Statement {
       throw Exception('Redundant execution: $sql');
     }
     _sql = sql;
-    Log.debug('executeUpdate: $sql');
+    Log.colorPrint('executeUpdate: $sql', color: kSqlColor);
     return await database.rawUpdate(sql);
   }
 
@@ -183,7 +185,7 @@ class _Statement extends Statement {
       throw Exception('Redundant execution: $sql');
     }
     _sql = sql;
-    Log.debug('executeDelete: $sql');
+    Log.colorPrint('executeDelete: $sql', color: kSqlColor);
     return await database.rawDelete(sql);
   }
 

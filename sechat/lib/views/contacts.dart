@@ -1,11 +1,13 @@
-import 'package:dim_client/dim_client.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_section_list/flutter_section_list.dart';
 
+import 'package:dim_client/dim_client.dart';
+import 'package:dim_client/dim_client.dart' as lnc;
+
+import '../client/constants.dart';
 import '../client/session.dart';
 import '../client/shared.dart';
-import '../client/utils/notification.dart' as lnc;
 import '../models/contact.dart';
 import 'alert.dart';
 import 'profile.dart';
@@ -34,7 +36,7 @@ class _ContactListState extends State<ContactListPage> implements lnc.Observer {
     dataSource = _ContactDataSource();
 
     var nc = lnc.NotificationCenter();
-    nc.addObserver(this, 'ServerStateChanged');
+    nc.addObserver(this, NotificationNames.kServerStateChanged);
   }
 
   late final _ContactDataSource dataSource;

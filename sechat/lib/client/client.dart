@@ -1,10 +1,10 @@
 import 'package:dim_client/dim_client.dart';
 
 import '../models/channels.dart';
+import 'constants.dart';
 import 'messenger.dart';
 import 'session.dart';
 import 'shared.dart';
-import 'utils/notification.dart';
 
 
 class Client extends Terminal {
@@ -45,7 +45,7 @@ class Client extends Terminal {
     await super.exitState(previous, ctx, now);
     SessionState? current = ctx.currentState;
     NotificationCenter nc = NotificationCenter();
-    nc.postNotification('ServerStateChanged', this, {
+    nc.postNotification(NotificationNames.kServerStateChanged, this, {
       'state': current?.index,
     });
   }

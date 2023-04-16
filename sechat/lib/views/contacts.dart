@@ -54,6 +54,10 @@ class _ContactListState extends State<ContactListPage> implements lnc.Observer {
 
   void reloadData() {
     GlobalVariable shared = GlobalVariable();
+    SessionState? state = shared.terminal.session?.state;
+    if (state != null) {
+      _sessionState = state.index;
+    }
     shared.facebook.currentUser.then((user) => {
       if (user == null) {
 

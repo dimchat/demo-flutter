@@ -47,7 +47,7 @@ class _Client extends HTTPClient {
 
   @override
   Future<void> cleanup() async {
-    int now = DateTime.now().millisecondsSinceEpoch;
+    int now = Time.currentTimeMillis;
     LocalStorage cache = LocalStorage();
     String tmp = await cache.temporaryDirectory;
     await ExternalStorage.cleanup(tmp, now - temporaryExpires);

@@ -1,7 +1,67 @@
 import '../client/filesys/paths.dart';
 import '../models/local.dart';
-import 'conversation.dart';
 import 'helper/sqlite.dart';
+
+
+abstract class ConversationDBI {
+
+  ///  Get all conversations
+  ///
+  /// @return chat box ID list
+  Future<List<ID>> getConversations();
+
+  ///  Add conversation
+  ///
+  /// @param chat - conversation ID
+  /// @param unread - count of unread messages
+  /// @param last   - desc of last visible message
+  /// @param time   - time of last visible message
+  /// @return true on success
+  Future<bool> addConversation(ID chat, [int unread = 0, String? last, DateTime? time]);
+
+  ///  Update conversation
+  ///
+  /// @param chat - conversation ID
+  /// @param unread - count of unread messages
+  /// @param last   - desc of last visible message
+  /// @param time   - time of last visible message
+  /// @return true on success
+  Future<bool> updateConversation(ID chat, int unread, String? last, DateTime? time);
+
+  ///  Remove conversation
+  ///
+  /// @param chat - conversation ID
+  /// @return true on success
+  Future<bool> removeConversation(ID chat);
+
+}
+
+abstract class InstantMessageDBI {
+
+  ///  Get stored messages
+  ///
+  /// @param chat  - conversation ID
+  /// @param start - start position for loading message
+  /// @param limit - max count for loading message
+  /// @return partial messages and remaining count, 0 means there are all messages cached
+  Future<Pair<List<InstantMessage>, int>> getInstantMessages(ID chat,
+      {int start = 0, int? limit});
+
+  ///  Save the message
+  ///
+  /// @param chat - conversation ID
+  /// @param iMsg - instant message
+  /// @return true on success
+  Future<bool> saveInstantMessage(ID chat, InstantMessage iMsg);
+
+  ///  Delete the message
+  ///
+  /// @param chat - conversation ID
+  /// @param iMsg - instant message
+  /// @return true on row(s) affected
+  Future<bool> removeInstantMessage(ID chat, InstantMessage iMsg);
+
+}
 
 
 ///
@@ -34,19 +94,19 @@ class MessageDatabase extends DatabaseConnector {
           "signature VARCHAR(8)",  // last 8 characters
           // "content TEXT",
           "msg TEXT",
-          "read BIT",
         ]);
         DatabaseConnector.createIndex(db, tInstantMessage,
             name: 'cid_index', fields: ['cid']);
         DatabaseConnector.createTable(db, tTrace, fields: [
           "id INTEGER PRIMARY KEY AUTOINCREMENT",
           "cid VARCHAR(64)",
+          "sender VARCHAR(64)",
           "sn INTEGER",
           "signature VARCHAR(8)",  // last 8 characters
           "trace TEXT",
         ]);
         DatabaseConnector.createIndex(db, tTrace,
-            name: 'trace_id_index', fields: ['cid']);
+            name: 'trace_index', fields: ['sender']);
         // reliable message
       }, onUpgrade: (db, oldVersion, newVersion) {
         // TODO:
@@ -102,9 +162,23 @@ class ConversationTable extends DataTableHandler<ID> implements ConversationDBI 
   }
 
   @override
-  Future<bool> addConversation(ID chat) async {
-    List values = [chat.string, 0, '', 0];
+  Future<bool> addConversation(ID chat, [int unread = 0, String? last, DateTime? time]) async {
+    double? seconds = time == null ? null : time.millisecondsSinceEpoch / 1000.0;
+    List values = [chat.string, unread, last, seconds];
     return await insert(_table, columns: _insertColumns, values: values) > 0;
+  }
+
+  @override
+  Future<bool> updateConversation(ID chat, int unread, String? last, DateTime? time) async {
+    double? seconds = time == null ? null : time.millisecondsSinceEpoch / 1000.0;
+    Map<String, dynamic> values = {
+      'unread': unread,
+      'last': last,
+      'time': seconds,
+    };
+    SQLConditions cond;
+    cond = SQLConditions(left: 'cid', comparison: '=', right: chat.string);
+    return await update(_table, values: values, conditions: cond) > 0;
   }
 
   @override
@@ -119,11 +193,8 @@ class ConversationTable extends DataTableHandler<ID> implements ConversationDBI 
 
 InstantMessage _extractInstantMessage(ResultSet resultSet, int index) {
   String json = resultSet.getString('msg');
-  int read = resultSet.getInt('read');
   Map? msg = JSONMap.decode(json);
-  InstantMessage iMsg = InstantMessage.parse(msg)!;
-  iMsg['read'] = read;
-  return iMsg;
+  return InstantMessage.parse(msg)!;
 }
 
 
@@ -131,9 +202,9 @@ class InstantMessageTable extends DataTableHandler<InstantMessage> implements In
   InstantMessageTable() : super(MessageDatabase(), _extractInstantMessage);
 
   static const String _table = MessageDatabase.tInstantMessage;
-  static const List<String> _selectColumns = ["cid", "msg", "read"];
+  static const List<String> _selectColumns = ["msg"];
   static const List<String> _insertColumns = ["cid", "sender",/* "receiver",*/
-    "time", "type", "sn", "signature",/* "content",*/ "msg", "read"];
+    "time", "type", "sn", "signature",/* "content",*/ "msg"];
 
   @override
   Future<Pair<List<InstantMessage>, int>> getInstantMessages(ID chat,
@@ -159,9 +230,8 @@ class InstantMessageTable extends DataTableHandler<InstantMessage> implements In
     if (sig != null) {
       sig = sig.substring(sig.length - 8);
     }
-    int read = iMsg.getInt('read');
     List values = [chat.string, sender,/* receiver,*/ time, iMsg.type,
-      content.sn, sig, /*content.dictionary,*/ iMsg.dictionary, read];
+      content.sn, sig, /*content.dictionary,*/ iMsg.dictionary];
     return await insert(_table, columns: _insertColumns, values: values) > 0;
   }
 
@@ -177,9 +247,6 @@ class InstantMessageTable extends DataTableHandler<InstantMessage> implements In
   }
 
 }
-
-
-// TODO: accessing 't_trace'
 
 
 ReliableMessage _extractReliableMessage(ResultSet resultSet, int index) {

@@ -3,6 +3,8 @@ import 'package:dim_client/dim_client.dart';
 import '../models/channels.dart';
 import 'constants.dart';
 import 'messenger.dart';
+import 'packer.dart';
+import 'processor.dart';
 import 'session.dart';
 import 'shared.dart';
 
@@ -39,6 +41,20 @@ class Client extends Terminal {
     shared.messenger = messenger;
     return messenger;
   }
+
+  @override
+  Packer createPacker(CommonFacebook facebook, ClientMessenger messenger) {
+    return SharedPacker(facebook, messenger);
+  }
+
+  @override
+  Processor createProcessor(CommonFacebook facebook, ClientMessenger messenger) {
+    return SharedProcessor(facebook, messenger);
+  }
+
+  //
+  //  FSM Delegate
+  //
 
   @override
   Future<void> exitState(SessionState previous, SessionStateMachine ctx, int now) async {

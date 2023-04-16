@@ -83,6 +83,7 @@ public class SessionChannel extends MethodChannel {
                     // call
                     setSessionKey(sessionKey);
                     result.success(null);
+                    break;
                 default:
                     result.notImplemented();
                     break;

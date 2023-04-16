@@ -1,15 +1,15 @@
 import 'package:dim_client/dim_client.dart';
 
-import '../sqlite/conversation.dart';
 import '../sqlite/entity.dart';
 import '../sqlite/group.dart';
 import '../sqlite/keys.dart';
 import '../sqlite/message.dart';
 import '../sqlite/session.dart';
+import '../sqlite/trace.dart';
 import '../sqlite/user.dart';
 
 class SharedDatabase implements AccountDBI, SessionDBI, MessageDBI,
-                                ConversationDBI, InstantMessageDBI {
+                                ConversationDBI, InstantMessageDBI, TraceDBI {
 
   PrivateKeyDBI privateKeyTable = PrivateKeyTable();
   MetaDBI metaTable = MetaTable();
@@ -26,6 +26,7 @@ class SharedDatabase implements AccountDBI, SessionDBI, MessageDBI,
   ReliableMessageDBI reliableMessageTable = ReliableMessageTable();
   InstantMessageDBI instantMessageTable = InstantMessageTable();
   ConversationDBI conversationTable = ConversationTable();
+  TraceDBI traceTable = TraceTable();
 
   //
   //  PrivateKey Table
@@ -268,11 +269,37 @@ class SharedDatabase implements AccountDBI, SessionDBI, MessageDBI,
       await conversationTable.getConversations();
 
   @override
-  Future<bool> addConversation(ID chat) async =>
-      await conversationTable.addConversation(chat);
+  Future<bool> addConversation(ID chat, [int unread = 0, String? last, DateTime? time]) async =>
+      await conversationTable.addConversation(chat, unread, last, time);
+
+  @override
+  Future<bool> updateConversation(ID chat, int unread, String? last, DateTime? time) async =>
+      await conversationTable.updateConversation(chat, unread, last, time);
 
   @override
   Future<bool> removeConversation(ID chat) async =>
       await conversationTable.removeConversation(chat);
+
+  //
+  //  Trace Table
+  //
+
+  @override
+  Future<bool> addTrace(String trace, ID cid,
+      {required ID sender, required int sn, required String? signature}) async =>
+      await traceTable.addTrace(trace, cid,
+          sender: sender, sn: sn, signature: signature);
+
+  @override
+  Future<List<String>> getTraces(ID sender, int sn, String? signature) async =>
+      await traceTable.getTraces(sender, sn, signature);
+
+  @override
+  Future<bool> removeTraces(ID sender, int sn, String? signature) async =>
+      await traceTable.removeTraces(sender, sn, signature);
+
+  @override
+  Future<bool> removeAllTraces(ID cid) async =>
+      await traceTable.removeAllTraces(cid);
 
 }

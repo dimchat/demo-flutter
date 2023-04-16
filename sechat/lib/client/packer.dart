@@ -56,4 +56,23 @@ class SharedPacker extends ClientMessagePacker {
     return sMsg;
   }
 
+  @override
+  Future<InstantMessage?> decryptMessage(SecureMessage sMsg) async {
+    InstantMessage? iMsg = await super.decryptMessage(sMsg);
+    if (iMsg != null) {
+      Content content = iMsg.content;
+      if (content is FileContent) {
+        if (!content.containsKey('data') && content.containsKey('URL')) {
+          ID sender = iMsg.sender;
+          ID receiver = iMsg.receiver;
+          SymmetricKey? key = await messenger.getCipherKey(sender, receiver);
+          assert(key != null, 'failed to get password: $sender -> $receiver');
+          // keep password to decrypt data after downloaded
+          content.password = key;
+        }
+      }
+    }
+    return iMsg;
+  }
+
 }

@@ -28,6 +28,7 @@
  * SOFTWARE.
  * =============================================================================
  */
+import 'package:dim_client/dim_client.dart';
 
 ///  Base Task
 abstract class HttpTask {
@@ -43,7 +44,7 @@ abstract class HttpTask {
 
   ///  Update active time
   void touch() {
-    _last = DateTime.now().millisecondsSinceEpoch;
+    _last = Time.currentTimeMillis;
   }
 
   void onError() {
@@ -73,7 +74,7 @@ abstract class HttpTask {
     }
     assert(_last > 0, 'touch() not called');
     // task started, check for expired
-    int now = DateTime.now().millisecondsSinceEpoch;
+    int now = Time.currentTimeMillis;
     int expired = _last + expires;
     if (now > expired) {
       // TODO: send it again?

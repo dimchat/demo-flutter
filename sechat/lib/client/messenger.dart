@@ -2,6 +2,7 @@ import 'dart:typed_data';
 
 import 'package:dim_client/dim_client.dart';
 
+import '../models/conversation.dart';
 import 'compatible.dart';
 
 class SharedMessenger extends ClientMessenger {
@@ -9,12 +10,14 @@ class SharedMessenger extends ClientMessenger {
 
   @override
   void suspendInstantMessage(InstantMessage iMsg, Map info) {
-    // TODO: implement suspendInstantMessage
+    Amanuensis clerk = Amanuensis();
+    clerk.suspendInstantMessage(iMsg);
   }
 
   @override
   void suspendReliableMessage(ReliableMessage rMsg, Map info) {
-    // TODO: implement suspendReliableMessage
+    Amanuensis clerk = Amanuensis();
+    clerk.suspendReliableMessage(rMsg);
   }
 
   @override

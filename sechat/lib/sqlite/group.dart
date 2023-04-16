@@ -3,7 +3,7 @@ import 'entity.dart';
 
 
 ID _extractMember(ResultSet resultSet, int index) {
-  String member = resultSet.getString('member');
+  String? member = resultSet.getString('member');
   return ID.parse(member)!;
 }
 

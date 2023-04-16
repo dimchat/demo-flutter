@@ -77,16 +77,16 @@ class EntityDatabase extends DatabaseConnector {
 
 
 Meta _extractMeta(ResultSet resultSet, int index) {
-  int type = resultSet.getInt('type');
-  String json = resultSet.getString('pub_key');
-  Map? key = JSON.decode(json);
+  int? type = resultSet.getInt('type');
+  String? json = resultSet.getString('pub_key');
+  Map? key = JSON.decode(json!);
 
   Map info = {
     'version': type,
     'type': type,
     'key': key,
   };
-  if (MetaType.hasSeed(type)) {
+  if (MetaType.hasSeed(type!)) {
     info['seed'] = resultSet.getString('seed');
     info['fingerprint'] = resultSet.getString('fingerprint');
   }
@@ -137,13 +137,14 @@ class MetaTable extends DataTableHandler<Meta> implements MetaDBI {
 
 
 Document _extractDocument(ResultSet resultSet, int index) {
-  String did = resultSet.getString('did');
-  String type = resultSet.getString('type');
-  String data = resultSet.getString('data');
-  String signature = resultSet.getString('signature');
+  String? did = resultSet.getString('did');
+  String? type = resultSet.getString('type');
+  String? data = resultSet.getString('data');
+  String? signature = resultSet.getString('signature');
   ID? identifier = ID.parse(did);
   assert(identifier != null, 'did error: $did');
-  if (type.isEmpty) {
+  assert(data != null && signature != null, 'document error: $data, $signature');
+  if (type == null || type.isEmpty) {
     type = '*';
   }
   Document? doc = Document.create(type, identifier!, data: data, signature: signature);

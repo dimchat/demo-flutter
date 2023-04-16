@@ -78,7 +78,7 @@ class SearchCommand extends BaseCommand {
     }
   }
 
-  int get start => getInt('start');
+  int get start => getInt('start') ?? 0;
   set start(int value) => this['start'] = value;
 
   int get limit => this['limit'] ?? 20;

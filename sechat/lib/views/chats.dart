@@ -91,13 +91,20 @@ class _ChatListAdapter with SectionAdapterMixin {
     return dataSource.numberOfConversation;
   }
 
+  Widget? _timeLabel(DateTime? time) {
+    if (time == null) {
+      return null;
+    }
+    return Text(Time.getTimeString(time), style: Styles.sectionItemTrailingTextStyle);
+  }
+
   @override
   Widget getItem(BuildContext context, IndexPath indexPath) {
     Conversation info = dataSource.conversationAtIndex(indexPath.item);
     Widget cell = TableView.cell(
         leading: info.getIcon(null),
         title: Text(info.name),
-        trailing: false,
+        trailing: _timeLabel(info.lastTime),
         onTap: () {
           ChatBox.open(context, info);
         }

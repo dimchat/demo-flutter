@@ -11,7 +11,8 @@ import '../client/shared.dart';
 
 
 class Conversation {
-  Conversation(this.identifier, this.name, this.image, this.unread, this.lastMessage, this.lastTime);
+  Conversation(this.identifier,
+      {this.name = '', this.image, this.unread = 0, this.lastMessage, this.lastTime});
 
   final ID identifier;
   String name;
@@ -149,12 +150,12 @@ class Amanuensis implements lnc.Observer {
   ///  Conversations
   ///
 
-  List<ID>? _allConversations;
+  List<Conversation>? _allConversations;
   final Map<ID, Conversation> _conversationMap = {};
 
   Future<void> loadConversations() async {
     // get ID list from database
-    List<ID>? array = _allConversations;
+    List<Conversation>? array = _allConversations;
     if (array != null) {
       Log.warning('${array.length} conversation(s) exists');
       return;
@@ -165,40 +166,29 @@ class Amanuensis implements lnc.Observer {
     array = await shared.database.getConversations();
     Log.debug('${array.length} conversation(s) loaded');
     // build conversations
-    Conversation chatBox;
-    String name;
-    String? image;
-    int unread;
-    String? lastMessage;
-    DateTime? lastTime;
-    for (ID item in array) {
-      name = await facebook.getName(item);
-      image = (await facebook.getAvatar(item)).first;
+    for (Conversation item in array) {
+      item.name = await facebook.getName(item.identifier);
+      item.image = (await facebook.getAvatar(item.identifier)).first;
       // TODO: get last message & unread count
-      unread = 0;
-      chatBox = Conversation(item, name, image, unread, lastMessage, lastTime);
-      Log.debug('new conversation created: $chatBox');
-      _conversationMap[item] = chatBox;
+      Log.debug('new conversation created: $item');
+      _conversationMap[item.identifier] = item;
     }
     _allConversations = array;
   }
 
   int get numberOfConversation {
-    List<ID>? array = _allConversations;
+    List<Conversation>? array = _allConversations;
     return array == null ? 0 : array.length;
   }
 
   Conversation conversationAtIndex(int index) {
-    List<ID>? array = _allConversations;
+    List<Conversation>? array = _allConversations;
     if (array == null) {
       throw Exception('call loadConversations() first');
     } else if (index < 0 || index >= array.length) {
       throw Exception('out of range: $index, count: ${array.length}');
     }
-    ID cid = array[index];
-    Conversation? chatBox = _conversationMap[cid];
-    assert(chatBox != null, 'conversation not found: $cid');
-    return chatBox!;
+    return array[index];
   }
 
   /// get conversation ID for message envelope
@@ -236,12 +226,13 @@ class Amanuensis implements lnc.Observer {
     GlobalVariable shared = GlobalVariable();
     Conversation? chatBox = _conversationMap[cid];
     if (chatBox == null) {
-      await shared.database.addConversation(cid, unread, last, time);
+      chatBox = Conversation(cid, unread: unread, lastMessage: last, lastTime: time);
+      await shared.database.addConversation(chatBox);
     } else {
       chatBox.unread = unread;
       chatBox.lastMessage = last;
       chatBox.lastTime = time;
-      await shared.database.updateConversation(cid, unread, last, time);
+      await shared.database.updateConversation(chatBox);
     }
   }
 

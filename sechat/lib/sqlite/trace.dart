@@ -41,7 +41,7 @@ abstract class TraceDBI {
 }
 
 String _extractTrace(ResultSet resultSet, int index) {
-  return resultSet.getString('trace');
+  return resultSet.getString('trace')!;
 }
 
 class TraceTable extends DataTableHandler<String> implements TraceDBI {

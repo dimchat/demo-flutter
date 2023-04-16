@@ -158,7 +158,7 @@ class _ContactListAdapter with SectionAdapterMixin {
     return TableView.cell(
         leading: avatar,
         title: Text(info.name),
-        trailing: false,
+        trailing: null,
         onTap: () {
           ProfilePage.open(context, info);
         }
@@ -176,7 +176,7 @@ class _ContactListAdapter with SectionAdapterMixin {
             ),
           ),
           title: const Text('New Friends'),
-          trailing: true,
+          trailing: TableView.defaultTrailing,
           onTap: () {
             Alert.show(context, 'Coming soon', 'Requests from new friends.');
           }
@@ -191,7 +191,7 @@ class _ContactListAdapter with SectionAdapterMixin {
             ),
           ),
           title: const Text('Group Chats'),
-          trailing: true,
+          trailing: TableView.defaultTrailing,
           onTap: () {
             Alert.show(context, 'Coming soon', 'Conversations for groups.');
           }

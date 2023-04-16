@@ -1,4 +1,5 @@
 import '../client/filesys/paths.dart';
+import '../models/conversation.dart';
 import '../models/local.dart';
 import 'helper/sqlite.dart';
 
@@ -8,25 +9,19 @@ abstract class ConversationDBI {
   ///  Get all conversations
   ///
   /// @return chat box ID list
-  Future<List<ID>> getConversations();
+  Future<List<Conversation>> getConversations();
 
   ///  Add conversation
   ///
-  /// @param chat - conversation ID
-  /// @param unread - count of unread messages
-  /// @param last   - desc of last visible message
-  /// @param time   - time of last visible message
+  /// @param chat - conversation info
   /// @return true on success
-  Future<bool> addConversation(ID chat, [int unread = 0, String? last, DateTime? time]);
+  Future<bool> addConversation(Conversation chat);
 
   ///  Update conversation
   ///
-  /// @param chat - conversation ID
-  /// @param unread - count of unread messages
-  /// @param last   - desc of last visible message
-  /// @param time   - time of last visible message
+  /// @param chat - conversation info
   /// @return true on success
-  Future<bool> updateConversation(ID chat, int unread, String? last, DateTime? time);
+  Future<bool> updateConversation(Conversation chat);
 
   ///  Remove conversation
   ///
@@ -141,43 +136,56 @@ class MessageDatabase extends DatabaseConnector {
 }
 
 
-ID _extractChatBox(ResultSet resultSet, int index) {
-  String user = resultSet.getString('cid');
-  return ID.parse(user)!;
+Conversation _extractConversation(ResultSet resultSet, int index) {
+  String? cid = resultSet.getString('cid');
+  int? unread = resultSet.getInt('unread');
+  String? last = resultSet.getString('last');
+  double? seconds = resultSet.getDouble('time');
+  DateTime? time;
+  if (seconds != null) {
+    time = DateTime.fromMillisecondsSinceEpoch((seconds * 1000).toInt());
+  }
+  return Conversation(ID.parse(cid)!, unread: unread!, lastMessage: last, lastTime: time);
 }
 
 
-class ConversationTable extends DataTableHandler<ID> implements ConversationDBI {
-  ConversationTable() : super(MessageDatabase(), _extractChatBox);
+class ConversationTable extends DataTableHandler<Conversation> implements ConversationDBI {
+  ConversationTable() : super(MessageDatabase(), _extractConversation);
 
   static const String _table = MessageDatabase.tChatBox;
   static const List<String> _selectColumns = ["cid", "unread", "last", "time"];
   static const List<String> _insertColumns = ["cid", "unread", "last", "time"];
 
   @override
-  Future<List<ID>> getConversations() async {
+  Future<List<Conversation>> getConversations() async {
     SQLConditions cond = SQLConditions.kTrue;
     return await select(_table, columns: _selectColumns,
         conditions: cond, orderBy: 'time DESC');
   }
 
   @override
-  Future<bool> addConversation(ID chat, [int unread = 0, String? last, DateTime? time]) async {
-    double? seconds = time == null ? null : time.millisecondsSinceEpoch / 1000.0;
-    List values = [chat.string, unread, last, seconds];
+  Future<bool> addConversation(Conversation chat) async {
+    double? seconds;
+    if (chat.lastTime != null) {
+      seconds = chat.lastTime!.millisecondsSinceEpoch / 1000.0;
+    }
+    List values = [chat.identifier.string, chat.unread, chat.lastMessage, seconds];
     return await insert(_table, columns: _insertColumns, values: values) > 0;
   }
 
   @override
-  Future<bool> updateConversation(ID chat, int unread, String? last, DateTime? time) async {
-    double? seconds = time == null ? null : time.millisecondsSinceEpoch / 1000.0;
+  Future<bool> updateConversation(Conversation chat) async {
+    double? seconds;
+    if (chat.lastTime != null) {
+      seconds = chat.lastTime!.millisecondsSinceEpoch / 1000.0;
+    }
     Map<String, dynamic> values = {
-      'unread': unread,
-      'last': last,
+      'unread': chat.unread,
+      'last': chat.lastMessage,
       'time': seconds,
     };
     SQLConditions cond;
-    cond = SQLConditions(left: 'cid', comparison: '=', right: chat.string);
+    cond = SQLConditions(left: 'cid', comparison: '=', right: chat.identifier.string);
     return await update(_table, values: values, conditions: cond) > 0;
   }
 
@@ -192,8 +200,8 @@ class ConversationTable extends DataTableHandler<ID> implements ConversationDBI 
 
 
 InstantMessage _extractInstantMessage(ResultSet resultSet, int index) {
-  String json = resultSet.getString('msg');
-  Map? msg = JSONMap.decode(json);
+  String? json = resultSet.getString('msg');
+  Map? msg = JSONMap.decode(json!);
   return InstantMessage.parse(msg)!;
 }
 
@@ -230,8 +238,9 @@ class InstantMessageTable extends DataTableHandler<InstantMessage> implements In
     if (sig != null) {
       sig = sig.substring(sig.length - 8);
     }
+    String msg = JSON.encode(iMsg.dictionary);
     List values = [chat.string, sender,/* receiver,*/ time, iMsg.type,
-      content.sn, sig, /*content.dictionary,*/ iMsg.dictionary];
+      content.sn, sig, /*content.dictionary,*/ msg];
     return await insert(_table, columns: _insertColumns, values: values) > 0;
   }
 
@@ -250,8 +259,8 @@ class InstantMessageTable extends DataTableHandler<InstantMessage> implements In
 
 
 ReliableMessage _extractReliableMessage(ResultSet resultSet, int index) {
-  String json = resultSet.getString('msg');
-  Map? msg = JSONMap.decode(json);
+  String? json = resultSet.getString('msg');
+  Map? msg = JSONMap.decode(json!);
   return ReliableMessage.parse(msg)!;
 }
 

@@ -1,5 +1,6 @@
 import 'package:dim_client/dim_client.dart';
 
+import '../models/conversation.dart';
 import '../sqlite/entity.dart';
 import '../sqlite/group.dart';
 import '../sqlite/keys.dart';
@@ -265,16 +266,16 @@ class SharedDatabase implements AccountDBI, SessionDBI, MessageDBI,
   //
 
   @override
-  Future<List<ID>> getConversations() async =>
+  Future<List<Conversation>> getConversations() async =>
       await conversationTable.getConversations();
 
   @override
-  Future<bool> addConversation(ID chat, [int unread = 0, String? last, DateTime? time]) async =>
-      await conversationTable.addConversation(chat, unread, last, time);
+  Future<bool> addConversation(Conversation chat) async =>
+      await conversationTable.addConversation(chat);
 
   @override
-  Future<bool> updateConversation(ID chat, int unread, String? last, DateTime? time) async =>
-      await conversationTable.updateConversation(chat, unread, last, time);
+  Future<bool> updateConversation(Conversation chat) async =>
+      await conversationTable.updateConversation(chat);
 
   @override
   Future<bool> removeConversation(ID chat) async =>

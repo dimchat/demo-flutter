@@ -93,4 +93,9 @@ abstract class Styles {
   static const EdgeInsets sectionItemPadding = EdgeInsets.only(
     left: 20, top: 4, bottom: 4,
   );
+
+  static const TextStyle sectionItemTrailingTextStyle = TextStyle(
+    color: CupertinoColors.systemGrey,
+    fontSize: 10,
+  );
 }

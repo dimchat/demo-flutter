@@ -3,7 +3,7 @@ import 'entity.dart';
 
 
 ID _extractUser(ResultSet resultSet, int index) {
-  String user = resultSet.getString('uid');
+  String? user = resultSet.getString('uid');
   return ID.parse(user)!;
 }
 
@@ -139,7 +139,7 @@ class UserTable extends DataTableHandler<ID> implements UserDBI {
 
 
 ID _extractContact(ResultSet resultSet, int index) {
-  String user = resultSet.getString('contact');
+  String? user = resultSet.getString('contact');
   return ID.parse(user)!;
 }
 

@@ -1,8 +1,8 @@
 import 'package:dim_client/dim_client.dart';
 import 'package:flutter/services.dart';
-import 'package:sechat/client/messenger.dart';
 
 import '../client/client.dart';
+import '../client/messenger.dart';
 import '../client/session.dart';
 import '../client/shared.dart';
 

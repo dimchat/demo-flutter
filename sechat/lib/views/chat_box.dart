@@ -3,6 +3,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_section_list/flutter_section_list.dart';
 
+import '../client/shared.dart';
 import '../models/conversation.dart';
 import 'alert.dart';
 import 'styles.dart';
@@ -36,14 +37,12 @@ class _ChatBoxState extends State<ChatBox> {
   late final _HistoryDataSource dataSource;
 
   void reloadData() {
-    // ConversationChannel channel = ChannelManager.instance.conversationChannel;
-    // channel.getMessages(widget.info.identifier).then((json) => {
-    //   if (json != null) {
-    //     setState(() {
-    //       dataSource.refresh(InstantMessage.listFromJson(json));
-    //     })
-    //   }
-    // });
+    GlobalVariable shared = GlobalVariable();
+    shared.database.getInstantMessages(widget.info.identifier).then((pair) {
+      setState(() {
+        dataSource.refresh(pair.first);
+      });
+    });
   }
 
   @override

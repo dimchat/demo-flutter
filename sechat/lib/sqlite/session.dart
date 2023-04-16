@@ -51,8 +51,8 @@ class SessionDatabase extends DatabaseConnector {
 
 
 Pair<LoginCommand, ReliableMessage> _extractCommandMessage(ResultSet resultSet, int index) {
-  Map? cmd = JSONMap.decode(resultSet.getString('cmd'));
-  Map? msg = JSONMap.decode(resultSet.getString('msg'));
+  Map? cmd = JSONMap.decode(resultSet.getString('cmd')!);
+  Map? msg = JSONMap.decode(resultSet.getString('msg')!);
   return Pair(Command.parse(cmd) as LoginCommand, ReliableMessage.parse(msg)!);
 }
 
@@ -83,7 +83,9 @@ class LoginCommandTable extends DataTableHandler<Pair<LoginCommand, ReliableMess
       Log.error('DB error! failed to clear login command: $identifier');
       return false;
     }
-    List values = [identifier.string, content.dictionary, rMsg.dictionary];
+    String cmd = JSON.encode(content.dictionary);
+    String msg = JSON.encode(rMsg.dictionary);
+    List values = [identifier.string, cmd, msg];
     return await insert(_table, columns: _insertColumns, values: values) > 0;
   }
 
@@ -142,9 +144,9 @@ class ServiceProviderDatabase extends DatabaseConnector {
 
 
 Pair<ID, int> _extractProvider(ResultSet resultSet, int index) {
-  String sp = resultSet.getString('pid');
-  int chosen = resultSet.getInt('chosen');
-  return Pair(ID.parse(sp)!, chosen);
+  String? sp = resultSet.getString('pid');
+  int? chosen = resultSet.getInt('chosen');
+  return Pair(ID.parse(sp)!, chosen!);
 }
 
 
@@ -189,11 +191,11 @@ class ProviderTable extends DataTableHandler<Pair<ID, int>> implements ProviderD
 
 
 Triplet<Pair<String, int>, ID, int> _extractStation(ResultSet resultSet, int index) {
-  String host = resultSet.getString('host');
-  int port = resultSet.getInt('port');
-  String sp = resultSet.getString('pid');
-  int chosen = resultSet.getInt('chosen');
-  return Triplet(Pair(host, port), ID.parse(sp)!, chosen);
+  String? host = resultSet.getString('host');
+  int? port = resultSet.getInt('port');
+  String? sp = resultSet.getString('pid');
+  int? chosen = resultSet.getInt('chosen');
+  return Triplet(Pair(host!, port!), ID.parse(sp)!, chosen!);
 }
 
 

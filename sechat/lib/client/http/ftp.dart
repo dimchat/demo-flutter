@@ -31,14 +31,14 @@
 import 'dart:typed_data';
 
 import 'package:dim_client/dim_client.dart';
-import 'package:sechat/client/http/download.dart';
-import 'package:sechat/client/http/upload.dart';
 
 import '../../models/external.dart';
 import '../../models/local.dart';
 import '../constants.dart';
 import '../filesys/paths.dart';
 import 'client.dart';
+import 'download.dart';
+import 'upload.dart';
 
 class _Client extends HTTPClient {
 

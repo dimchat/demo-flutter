@@ -41,8 +41,8 @@ class CryptoKeyDatabase extends DatabaseConnector {
 
 
 PrivateKey _extractPrivateKey(ResultSet resultSet, int index) {
-  String json = resultSet.getString('pri_key');
-  Map? info = JSON.decode(json);
+  String? json = resultSet.getString('pri_key');
+  Map? info = JSON.decode(json!);
   return PrivateKey.parse(info)!;
 }
 
@@ -95,8 +95,8 @@ class PrivateKeyTable extends DataTableHandler<PrivateKey> implements PrivateKey
 
 
 SymmetricKey _extractPassword(ResultSet resultSet, int index) {
-  String json = resultSet.getString('pwd');
-  Map? info = JSON.decode(json);
+  String? json = resultSet.getString('pwd');
+  Map? info = JSON.decode(json!);
   return SymmetricKey.parse(info)!;
 }
 

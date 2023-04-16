@@ -6,11 +6,13 @@ import 'styles.dart';
 
 class TableView {
 
+  static const Widget defaultTrailing = CupertinoListTileChevron();
+
   // default style
   static Widget cell({
         required Widget leading,
         required Widget title,
-        bool trailing = false,
+        Widget? trailing,
         FutureOr<void> Function()? onTap
       }) => Container(
     color: Styles.sectionItemBackground,
@@ -22,7 +24,7 @@ class TableView {
           backgroundColor: Styles.sectionItemBackground,
           leading: leading,
           title: title,
-          trailing: trailing ? const CupertinoListTileChevron() : null,
+          trailing: trailing,
           onTap: onTap,
         ),
         Container(

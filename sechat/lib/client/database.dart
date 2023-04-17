@@ -1,30 +1,32 @@
 import 'package:dim_client/dim_client.dart';
 
 import '../models/conversation.dart';
-import '../sqlite/entity.dart';
+import '../sqlite/contact.dart';
+import '../sqlite/document.dart';
 import '../sqlite/group.dart';
 import '../sqlite/keys.dart';
+import '../sqlite/login.dart';
 import '../sqlite/message.dart';
+import '../sqlite/meta.dart';
 import '../sqlite/session.dart';
 import '../sqlite/trace.dart';
 import '../sqlite/user.dart';
-import 'constants.dart';
 
 class SharedDatabase implements AccountDBI, SessionDBI, MessageDBI,
                                 ConversationDBI, InstantMessageDBI, TraceDBI {
 
-  PrivateKeyDBI privateKeyTable = PrivateKeyTable();
-  MetaDBI metaTable = MetaTable();
-  DocumentDBI documentTable = DocumentTable();
+  PrivateKeyDBI privateKeyTable = PrivateKeyCache();
+  MetaDBI metaTable = MetaCache();
+  DocumentDBI documentTable = DocumentCache();
   UserDBI userTable = UserTable();
   ContactDBI contactTable = ContactTable();
   GroupDBI groupTable = GroupTable();
 
-  LoginDBI loginTable = LoginCommandTable();
+  LoginDBI loginTable = LoginCommandCache();
   ProviderDBI providerTable = ProviderTable();
   StationDBI stationTable = StationTable();
 
-  CipherKeyDBI msgKeyTable = MsgKeyTable();
+  CipherKeyDBI msgKeyTable = MsgKeyCache();
   ReliableMessageDBI reliableMessageTable = ReliableMessageTable();
   InstantMessageDBI instantMessageTable = InstantMessageTable();
   ConversationDBI conversationTable = ConversationTable();
@@ -259,23 +261,11 @@ class SharedDatabase implements AccountDBI, SessionDBI, MessageDBI,
 
   @override
   Future<bool> saveInstantMessage(ID chat, InstantMessage iMsg) async =>
-      await instantMessageTable.saveInstantMessage(chat, iMsg).then((value) {
-        center.postNotification(NotificationNames.kMessageUpdated, this, {
-          'ID': chat,
-          'msg': iMsg,
-        });
-        return value;
-      });
+      await instantMessageTable.saveInstantMessage(chat, iMsg);
 
   @override
   Future<bool> removeInstantMessage(ID chat, InstantMessage iMsg) async =>
-      await instantMessageTable.removeInstantMessage(chat, iMsg).then((value) {
-        center.postNotification(NotificationNames.kMessageUpdated, this, {
-          'ID': chat,
-          'msg': iMsg,
-        });
-        return value;
-      });
+      await instantMessageTable.removeInstantMessage(chat, iMsg);
 
   //
   //  Conversation Table

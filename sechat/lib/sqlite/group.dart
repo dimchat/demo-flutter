@@ -1,3 +1,4 @@
+import '../client/constants.dart';
 import 'helper/sqlite.dart';
 import 'entity.dart';
 
@@ -14,35 +15,121 @@ class _MemberDB extends DataTableHandler<ID> {
   static const List<String> _selectColumns = ["member"];
   static const List<String> _insertColumns = ["gid", "member"];
 
-  Future<List<ID>> getMembers(ID group) async {
+  final Map<ID, List<ID>> _caches = {};
+
+  Future<int> _updateMembers(List<ID> newMembers, List<ID> oldMembers, ID group) async {
+    assert(!identical(newMembers, oldMembers), 'should not be the same object');
     SQLConditions cond;
-    cond = SQLConditions(left: 'gid', comparison: '=', right: group.string);
-    return await select(_table, columns: _selectColumns, conditions: cond);
+
+    // 0. check new members
+    if (newMembers.isEmpty) {
+      assert(oldMembers.isNotEmpty, 'new members empty??');
+      cond = SQLConditions(left: 'gid', comparison: '=', right: group.string);
+      if (await delete(_table, conditions: cond) < 0) {
+        Log.error('failed to clear members for group: $group');
+        return -1;
+      }
+      Log.warning('members cleared for group: $group');
+      _caches.remove(group);
+      return oldMembers.length;
+    }
+    int count = 0;
+
+    // 1. remove
+    for (ID item in oldMembers) {
+      if (newMembers.contains(item)) {
+        continue;
+      }
+      cond = SQLConditions(left: 'gid', comparison: '=', right: group.string);
+      cond.addCondition(SQLConditions.kAnd,
+          left: 'member', comparison: '=', right: item.string);
+      if (await delete(_table, conditions: cond) < 0) {
+        Log.error('failed to remove member: $item, group: $group');
+        return -1;
+      }
+      ++count;
+    }
+
+    // 2. add
+    for (ID item in newMembers) {
+      if (oldMembers.contains(item)) {
+        continue;
+      }
+      List values = [group.string, item.string];
+      if (await insert(_table, columns: _insertColumns, values: values) < 0) {
+        Log.error('failed to add member: $item, group: $group');
+        return -1;
+      }
+      ++count;
+    }
+
+    if (count == 0) {
+      Log.warning('members not changed: $group');
+      return 0;
+    }
+    Log.info('updated $count member(s) for group: $group');
+    _caches[group] = newMembers;
+    return count;
+  }
+
+  Future<List<ID>> getMembers(ID group) async {
+    List<ID>? members = _caches[group];
+    if (members == null) {
+      // cache not found, try to load from database
+      SQLConditions cond;
+      cond = SQLConditions(left: 'gid', comparison: '=', right: group.string);
+      members = await select(_table, columns: _selectColumns, conditions: cond);
+      // add to cache
+      _caches[group] = members;
+    }
+    return members;
   }
 
   Future<bool> saveMembers(List<ID> members, ID group) async {
-    // TODO: implement saveMembers
-    Log.error('implement saveMembers: $group, $members');
-    return false;
+    List<ID> oldMembers = await getMembers(group);
+    int cnt = await _updateMembers(members, oldMembers, group);
+    if (cnt > 0) {
+      var nc = NotificationCenter();
+      nc.postNotification(NotificationNames.kMembersUpdated, this, {
+        'action': 'update',
+        'group': group,
+        'members': members,
+      });
+    }
+    return cnt >= 0;
   }
 
   Future<bool> addMember(ID member, {required ID group}) async {
-    SQLConditions cond;
-    cond = SQLConditions(left: 'gid', comparison: '=', right: group.string);
-    cond.addCondition(SQLConditions.kAnd, left: 'member', comparison: '=', right: member.string);
-    List<ID> results = await select(_table, columns: _selectColumns, conditions: cond);
-    if (results.isNotEmpty) {
-      return false;
+    List<ID> oldMembers = await getMembers(group);
+    List<ID> newMembers = [...oldMembers, member];
+    int cnt = await _updateMembers(newMembers, oldMembers, group);
+    if (cnt > 0) {
+      var nc = NotificationCenter();
+      nc.postNotification(NotificationNames.kContactsUpdated, this, {
+        'action': 'add',
+        'group': group,
+        'member': member,
+        'members': newMembers,
+      });
     }
-    List values = [member.string, group.string];
-    return await insert(_table, columns: _insertColumns, values: values) > 0;
+    return cnt >= 0;
   }
 
   Future<bool> removeMember(ID member, {required ID group}) async {
-    SQLConditions cond;
-    cond = SQLConditions(left: 'gid', comparison: '=', right: group.string);
-    cond.addCondition(SQLConditions.kAnd, left: 'member', comparison: '=', right: member.string);
-    return await delete(_table, conditions: cond) > 0;
+    List<ID> oldMembers = await getMembers(group);
+    List<ID> newMembers = [...oldMembers];
+    newMembers.remove(member);
+    int cnt = await _updateMembers(newMembers, oldMembers, group);
+    if (cnt > 0) {
+      var nc = NotificationCenter();
+      nc.postNotification(NotificationNames.kContactsUpdated, this, {
+        'action': 'remove',
+        'group': group,
+        'member': member,
+        'members': newMembers,
+      });
+    }
+    return cnt >= 0;
   }
 
 }

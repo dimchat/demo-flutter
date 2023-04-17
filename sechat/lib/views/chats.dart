@@ -64,7 +64,6 @@ class _ChatListState extends State<ChatHistoryPage> implements lnc.Observer {
         _sessionState = state;
       });
     } else if (name == NotificationNames.kConversationUpdated) {
-      // _adapter.notifyDataChange();
       await reloadData();
       Log.warning('conversation updated');
     }
@@ -76,7 +75,11 @@ class _ChatListState extends State<ChatHistoryPage> implements lnc.Observer {
     if (state != null) {
       _sessionState = state.index;
     }
-    await dataSource.loadConversations().then((value) => setState);
+    await dataSource.loadConversations().then((value) {
+      setState(() {
+        _adapter.notifyDataChange();
+      });
+    });
   }
 
   @override

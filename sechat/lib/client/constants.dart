@@ -8,9 +8,14 @@ abstract class NotificationNames {
 
   static const String kAccountDeleted = 'AccountDeleted';
 
+  static const String kPrivateKeySaved = 'PrivateKeySaved';
   static const String kMetaSaved = 'MetaSaved';
   static const String kDocumentUpdated = 'DocumentUpdated';
+
+  static const String kLocalUsersUpdated = 'LocalUsersUpdated';
   static const String kContactsUpdated = 'ContactsUpdated';
+
+  static const String kLoginCommandUpdated = 'LoginCommandUpdated';
 
   static const String kGroupCreated = 'GroupCreated';
   static const String kGroupRemoved = 'GroupRemoved';

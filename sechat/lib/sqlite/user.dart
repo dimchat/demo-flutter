@@ -1,3 +1,4 @@
+import '../client/constants.dart';
 import 'helper/sqlite.dart';
 import 'entity.dart';
 
@@ -14,56 +15,78 @@ class UserTable extends DataTableHandler<ID> implements UserDBI {
   static const List<String> _selectColumns = ["uid"];
   static const List<String> _insertColumns = ["uid", "chosen"];
 
-  // const
-  static final SQLConditions kTrue = SQLConditions.kTrue;
-  // SQLConditions(left: '\'money\'', comparison: '<>', right: 'love');
+  List<ID>? _caches;
 
-  Future<bool> _updateUsers(List<ID> newUsers, List<ID> oldUsers) async {
+  Future<int> _updateUsers(List<ID> newUsers, List<ID> oldUsers) async {
     assert(!identical(newUsers, oldUsers), 'should not be the same object');
     SQLConditions cond;
+
     // 0. check new users
     if (newUsers.isEmpty) {
-      assert(false, 'new users empty??');
-      return await delete(_table, conditions: kTrue) > 0;
+      assert(oldUsers.isNotEmpty, 'new users empty??');
+      SQLConditions cond = SQLConditions.kTrue;
+      if (await delete(_table, conditions: cond) < 0) {
+        Log.error('failed to clear local users');
+        return -1;
+      }
+      Log.warning('local users cleared');
+      _caches = null;
+      return oldUsers.length;
+    }
+    int count = 0;
+
+    // 1. remove
+    for (ID item in oldUsers) {
+      if (newUsers.contains(item)) {
+        continue;
+      }
+      cond = SQLConditions(left: 'uid', comparison: '=', right: item.string);
+      if (await delete(_table, conditions: cond) < 0) {
+        Log.error('failed to remove local user: $item');
+        return -1;
+      }
+      ++count;
+    }
+
+    // 2. check current user
+    if (count < oldUsers.length && newUsers.indexOf(oldUsers[0]) > 0) {
+      // 1. some old user(s) not removed,
+      // 2. current user changed, and it's still in the new list;
+      // so,
+      //    we need to erase chosen flags for it
+      Map<String, dynamic> values = {'chosen': 0};
+      SQLConditions cond = SQLConditions.kTrue;
+      if (await update(_table, values: values, conditions: cond) < 0) {
+        Log.error('failed to update local users');
+        return -1;
+      }
+      ++count;
     }
     ID current = newUsers[0];
-    bool resign = true;
-    // 1. check old users
-    if (oldUsers.isNotEmpty) {
-      resign = !oldUsers.contains(current);
-      int count = 0;
-      for (ID item in oldUsers) {
-        if (newUsers.contains(item)) {
-          continue;
-        }
-        // delete records not contain in new users
-        cond = SQLConditions(left: 'uid', comparison: '=', right: item.string);
-        if (await delete(_table, conditions: cond) < 0) {
-          // db error
-          return false;
-        }
-        ++count;
-      }
-      if (resign && count < oldUsers.length) {
-        // current user changed, and not all old users removed,
-        // erase chosen flags for them
-        Map<String, dynamic> values = {'chosen': 0};
-        if (await update(_table, values: values, conditions: kTrue) < 0) {
-          // db error
-          return false;
-        }
-      }
-    }
-    // 2. check current user
-    if (resign) {
-      // add current user with chosen flag = 1
+    int pos = oldUsers.indexOf(current);
+    if (pos < 0) {
+      // current user changed, and it's not in the new list
+      // insert it with 'chosen = 1'
       List values = [current.string, 1];
       if (await insert(_table, columns: _insertColumns, values: values) < 0) {
-        // db error
-        return false;
+        Log.error('failed to add current user: $current');
+        return -1;
       }
+      ++count;
+    } else if (pos > 1) {
+      // current user changed, and it's in the new list,
+      // (of cause it would not be the first one),
+      // update it: 'chosen = 1'
+      Map<String, dynamic> values = {'chosen': 1};
+      SQLConditions cond = SQLConditions(left: 'uid', comparison: '=', right: current.string);
+      if (await update(_table, values: values, conditions: cond) < 0) {
+        Log.error('failed to update current user: $current');
+        return -1;
+      }
+      ++count;
     }
-    // 3. check other new users
+
+    // 3. add other new users
     for (int index = 1; index < newUsers.length; ++index) {
       ID item = newUsers[index];
       if (oldUsers.contains(item)) {
@@ -72,128 +95,109 @@ class UserTable extends DataTableHandler<ID> implements UserDBI {
       // add other user with chosen flag = 0
       List values = [item.string, 0];
       if (await insert(_table, columns: _insertColumns, values: values) < 0) {
-        // db error
-        return false;
+        Log.error('failed to add local user: $item');
+        return -1;
       }
+      ++count;
     }
-    return true;
+
+    if (count == 0) {
+      Log.warning('local users not changed: $newUsers');
+      return 0;
+    }
+    Log.info('local users updated: $newUsers');
+    _caches = newUsers;
+    return count;
   }
 
   @override
-  Future<List<ID>> getLocalUsers() async =>
-      await select(_table, columns: _selectColumns, conditions: kTrue);
+  Future<List<ID>> getLocalUsers() async {
+    List<ID>? users = _caches;
+    if (users == null) {
+      SQLConditions cond = SQLConditions.kTrue;
+      users = await select(_table, columns: _selectColumns,
+          conditions: cond, orderBy: 'chosen DESC');
+      _caches = users;
+    }
+    return users;
+  }
 
   @override
   Future<bool> saveLocalUsers(List<ID> users) async {
-    List<ID> localUsers = await getLocalUsers();
-    return await _updateUsers(users, localUsers);
+    List<ID> oldUsers = await getLocalUsers();
+    int cnt = await _updateUsers(users, oldUsers);
+    if (cnt > 0) {
+      var nc = NotificationCenter();
+      nc.postNotification(NotificationNames.kLocalUsersUpdated, this, {
+        'action': 'update',
+        'users': users,
+      });
+    }
+    return cnt >= 0;
   }
 
   @override
   Future<bool> addUser(ID user) async {
-    List<ID> localUsers = await getLocalUsers();
-    if (localUsers.contains(user)) {
-      return false;
+    List<ID> oldUsers = await getLocalUsers();
+    List<ID> newUsers = [...oldUsers, user];
+    int cnt = await _updateUsers(newUsers, oldUsers);
+    if (cnt > 0) {
+      var nc = NotificationCenter();
+      nc.postNotification(NotificationNames.kLocalUsersUpdated, this, {
+        'action': 'add',
+        'user': user,
+        'users': newUsers,
+      });
     }
-    List<ID> newUsers = [...localUsers, user];
-    return await _updateUsers(newUsers, localUsers);
+    return cnt >= 0;
   }
 
   @override
   Future<bool> removeUser(ID user) async {
-    List<ID> localUsers = await getLocalUsers();
-    if (!localUsers.contains(user)) {
-      return false;
-    }
-    List<ID> newUsers = [...localUsers];
+    List<ID> oldUsers = await getLocalUsers();
+    List<ID> newUsers = [...oldUsers];
     newUsers.remove(user);
-    return await _updateUsers(newUsers, localUsers);
+    int cnt = await _updateUsers(newUsers, oldUsers);
+    if (cnt > 0) {
+      var nc = NotificationCenter();
+      nc.postNotification(NotificationNames.kLocalUsersUpdated, this, {
+        'action': 'remove',
+        'user': user,
+        'users': newUsers,
+      });
+    }
+    return cnt >= 0;
   }
 
   @override
   Future<bool> setCurrentUser(ID user) async {
-    List<ID> localUsers = await getLocalUsers();
-    if (localUsers.isEmpty) {
-      // first user
-      return await _updateUsers([user], localUsers);
-    } else if (localUsers[0] == user) {
-      // not change
-      return false;
+    List<ID> oldUsers = await getLocalUsers();
+    int pos = oldUsers.indexOf(user);
+    if (pos == 0) {
+      Log.warning('current user not changed: $user');
+      return true;
     }
-    List<ID> newUsers = [...localUsers];
-    if (newUsers.contains(user)) {
-      // move to front
-      newUsers.remove(user);
+    List<ID> newUsers = [...oldUsers];
+    if (pos > 0) {
+      newUsers.removeAt(pos);
     }
     newUsers.insert(0, user);
-    return await _updateUsers(newUsers, localUsers);
+    int cnt = await _updateUsers(newUsers, oldUsers);
+    if (cnt > 0) {
+      var nc = NotificationCenter();
+      nc.postNotification(NotificationNames.kLocalUsersUpdated, this, {
+        'action': 'set',
+        'user': user,
+        'users': newUsers,
+      });
+    }
+    return cnt >= 0;
   }
 
   @override
   Future<ID?> getCurrentUser() async {
     List<ID> localUsers = await getLocalUsers();
     return localUsers.isEmpty ? null : localUsers[0];
-  }
-
-}
-
-
-ID _extractContact(ResultSet resultSet, int index) {
-  String? user = resultSet.getString('contact');
-  return ID.parse(user)!;
-}
-
-class ContactTable extends DataTableHandler<ID> implements ContactDBI {
-  ContactTable() : super(EntityDatabase(), _extractContact);
-
-  static const String _table = EntityDatabase.tContact;
-  static const List<String> _selectColumns = ["contact", "alias"];
-  static const List<String> _insertColumns = ["uid", "contact", "alias"];
-
-  Future<bool> _updateContacts(List<ID> contacts, ID user) async {
-    SQLConditions cond;
-    // 0. remove old records
-    cond = SQLConditions(left: 'uid', comparison: '=', right: user.string);
-    if (await delete(_table, conditions: cond) < 0) {
-      // db error
-      return false;
-    }
-    // 1. add new records
-    for (ID item in contacts) {
-      List values = [user.string, item.string, ''];
-      if (await insert(_table, columns: _insertColumns, values: values) < 0) {
-        // db error
-        return false;
-      }
-    }
-    return true;
-  }
-
-  @override
-  Future<List<ID>> getContacts({required ID user}) async {
-    SQLConditions cond;
-    cond = SQLConditions(left: 'uid', comparison: '=', right: user.string);
-    return await select(_table, columns: _selectColumns, conditions: cond);
-  }
-
-  @override
-  Future<bool> saveContacts(List<ID> contacts, {required ID user}) async {
-    return await _updateContacts(contacts, user);
-  }
-
-  @override
-  Future<bool> addContact(ID contact, {required ID user}) async {
-    List values = [user.string, contact.string, ''];
-    return await insert(_table, columns: _insertColumns, values: values) > 0;
-  }
-
-  @override
-  Future<bool> removeContact(ID contact, {required ID user}) async {
-    SQLConditions cond;
-    cond = SQLConditions(left: 'uid', comparison: '=', right: user.string);
-    cond.addCondition(SQLConditions.kAnd,
-        left: 'contact', comparison: '=', right: contact.string);
-    return await delete(_table, conditions: cond) > 0;
   }
 
 }

@@ -1,8 +1,9 @@
+import '../client/constants.dart';
 import 'helper/sqlite.dart';
 
 
 ///
-///  Store private keys, message keys
+///  Store private keys
 ///
 ///     file path: '/data/data/chat.dim.sechat/databases/key.db'
 ///
@@ -20,22 +21,24 @@ class CryptoKeyDatabase extends DatabaseConnector {
           "sign BIT",
           "decrypt BIT",
         ]);
-        // msg key
-        DatabaseConnector.createTable(db, tMsgKey, fields: [
-          "id INTEGER PRIMARY KEY AUTOINCREMENT",
-          "sender VARCHAR(64) NOT NULL",
-          "receiver VARCHAR(64) NOT NULL",
-          "pwd TEXT NOT NULL",
-        ]);
-        DatabaseConnector.createIndex(db, tMsgKey,
-            name: 'direction_index', fields: ['sender', 'receiver']);
+        DatabaseConnector.createIndex(db, tPrivateKey,
+            name: 'user_id_index', fields: ['uid']);
+        // // msg key
+        // DatabaseConnector.createTable(db, tMsgKey, fields: [
+        //   "id INTEGER PRIMARY KEY AUTOINCREMENT",
+        //   "sender VARCHAR(64) NOT NULL",
+        //   "receiver VARCHAR(64) NOT NULL",
+        //   "pwd TEXT NOT NULL",
+        // ]);
+        // DatabaseConnector.createIndex(db, tMsgKey,
+        //     name: 'direction_index', fields: ['sender', 'receiver']);
       });
 
   static const String dbName = 'key.db';
   static const int dbVersion = 1;
 
   static const String tPrivateKey = 't_private_key';
-  static const String tMsgKey     = 't_msg_key';
+  // static const String tMsgKey     = 't_msg_key';
 
 }
 
@@ -59,9 +62,9 @@ class PrivateKeyTable extends DataTableHandler<PrivateKey> implements PrivateKey
     cond = SQLConditions(left: 'uid', comparison: '=', right: user.string);
     cond.addCondition(SQLConditions.kAnd, left: 'decrypt', comparison: '<>', right: 0);
     // WHERE uid='$user' AND decrypt=1 ORDER BY type DESC LIMIT 3
-    List<PrivateKey> keys = await select(_table, columns: _selectColumns,
+    List<PrivateKey> array = await select(_table, columns: _selectColumns,
         conditions: cond, orderBy: 'type DESC', limit: 3);
-    return PrivateKeyDBI.convertDecryptKeys(keys);
+    return PrivateKeyDBI.convertDecryptKeys(array);
   }
 
   @override
@@ -77,15 +80,16 @@ class PrivateKeyTable extends DataTableHandler<PrivateKey> implements PrivateKey
     cond.addCondition(SQLConditions.kAnd, left: 'type', comparison: '=', right: PrivateKeyDBI.kMeta);
     cond.addCondition(SQLConditions.kAnd, left: 'sign', comparison: '<>', right: 0);
     // WHERE uid='$user' AND type='M' AND decrypt=1 ORDER BY id DESC  LIMIT 1
-    List<PrivateKey> keys = await select(_table, columns: _selectColumns,
+    List<PrivateKey> array = await select(_table, columns: _selectColumns,
         conditions: cond, orderBy: 'id DESC', limit: 1);
-    // return first record only
-    return keys.isEmpty ? null : keys[0];
+    // first record only
+    return array.isEmpty ? null : array[0];
   }
 
   @override
   Future<bool> savePrivateKey(PrivateKey key, String type, ID user,
       {int sign = 1, required int decrypt}) async {
+    // 1. save to database
     String json = JSON.encode(key.dictionary);
     List values = [user.string, json, type, sign, decrypt];
     return await insert(_table, columns: _insertColumns, values: values) > 0;
@@ -93,19 +97,118 @@ class PrivateKeyTable extends DataTableHandler<PrivateKey> implements PrivateKey
 
 }
 
+class PrivateKeyCache extends PrivateKeyTable {
+  PrivateKeyCache() {
+    _privateKeyCaches = CacheManager().getPool('private_id_key');
+    _decryptKeysCache = CacheManager().getPool('private_msg_keys');
+  }
 
-SymmetricKey _extractPassword(ResultSet resultSet, int index) {
-  String? json = resultSet.getString('pwd');
-  Map? info = JSON.decode(json!);
-  return SymmetricKey.parse(info)!;
+  late final CachePool<ID, PrivateKey> _privateKeyCaches;
+  late final CachePool<ID, List<DecryptKey>> _decryptKeysCache;
+
+  @override
+  Future<List<DecryptKey>> getPrivateKeysForDecryption(ID user) async {
+    int now = Time.currentTimeMillis;
+    // 1. check memory cache
+    CachePair<List<DecryptKey>>? pair = _decryptKeysCache.fetch(user, now: now);
+    CacheHolder<List<DecryptKey>>? holder = pair?.holder;
+    List<DecryptKey>? value = pair?.value;
+    if (value == null) {
+      if (holder == null) {
+        // not load yet, wait to load
+        _decryptKeysCache.update(user, value: null, life: 128 * 1000, now: now);
+      } else {
+        if (holder.isAlive(now: now)) {
+          // value not exists
+          return [];
+        }
+        // cache expired, wait to reload
+        holder.renewal(duration: 128 * 1000, now: now);
+      }
+      // 2. load from database
+      value = await super.getPrivateKeysForDecryption(user);
+      // update cache
+      _decryptKeysCache.update(user, value: value, life: 36000 * 1000, now: now);
+    }
+    // OK, return cache now
+    return value;
+  }
+
+  @override
+  Future<PrivateKey?> getPrivateKeyForVisaSignature(ID user) async {
+    int now = Time.currentTimeMillis;
+    // 1. check memory cache
+    CachePair<PrivateKey>? pair = _privateKeyCaches.fetch(user, now: now);
+    CacheHolder<PrivateKey>? holder = pair?.holder;
+    PrivateKey? value = pair?.value;
+    if (value == null) {
+      if (holder == null) {
+        // not load yet, wait to load
+        _privateKeyCaches.update(user, value: null, life: 128 * 1000, now: now);
+      } else {
+        if (holder.isAlive(now: now)) {
+          // value not exists
+          return null;
+        }
+        // cache expired, wait to reload
+        holder.renewal(duration: 128 * 1000, now: now);
+      }
+      // 2. load from database
+      value = await super.getPrivateKeyForVisaSignature(user);
+      // update cache
+      _privateKeyCaches.update(user, value: value, life: 36000 * 1000, now: now);
+    }
+    // OK, return cache now
+    return value;
+  }
+
+  @override
+  Future<bool> savePrivateKey(PrivateKey key, String type, ID user,
+      {int sign = 1, required int decrypt}) async {
+
+    // 1. update memory cache
+    if (type == PrivateKeyDBI.kMeta) {
+      // update 'id_key'
+      _privateKeyCaches.update(user, value: key, life: 36000 * 1000);
+    } else {
+      // add to old keys
+      List<DecryptKey> decryptKeys = await getPrivateKeysForDecryption(user);
+      List<PrivateKey> privateKeys = PrivateKeyDBI.convertPrivateKeys(decryptKeys);
+      List<PrivateKey>? keys = PrivateKeyDBI.insertKey(key, privateKeys);
+      if (keys == null) {
+        // key already exists, nothing changed
+        return false;
+      }
+      // update 'msg_keys'
+      decryptKeys = PrivateKeyDBI.convertDecryptKeys(keys);
+      _decryptKeysCache.update(user, value: decryptKeys, life: 36000 * 1000);
+    }
+
+    // 2. save to database
+    if (await super.savePrivateKey(key, type, user, sign: sign, decrypt: decrypt)) {
+      //
+    } else {
+      Log.error('failed to save private key: $user');
+      return false;
+    }
+
+    // 3. post notification
+    var nc = NotificationCenter();
+    nc.postNotification(NotificationNames.kPrivateKeySaved, this, {
+      'user': user,
+      'key': key,
+    });
+    return true;
+  }
+
 }
 
-class MsgKeyTable extends DataTableHandler<SymmetricKey> implements CipherKeyDBI {
-  MsgKeyTable() : super(CryptoKeyDatabase(), _extractPassword);
 
-  static const String _table = CryptoKeyDatabase.tMsgKey;
-  static const List<String> _selectColumns = ["pwd"];
-  static const List<String> _insertColumns = ["sender", "receiver", "pwd"];
+class MsgKeyCache implements CipherKeyDBI {
+  MsgKeyCache();
+
+  /// receiver => {sender => key}
+  final Map<ID, Map<ID, SymmetricKey>> _caches = {};
 
   @override
   Future<void> cacheCipherKey(ID sender, ID receiver, SymmetricKey? key) async {
@@ -113,25 +216,17 @@ class MsgKeyTable extends DataTableHandler<SymmetricKey> implements CipherKeyDBI
       // broadcast message has no key
       return;
     }
-    if (key != null && await getCipherKey(sender, receiver) == null) {
-      // insert new key for (sender => receiver)
-      String json = JSON.encode(key.dictionary);
-      List values = [sender.string, receiver.string, json];
-      await insert(_table, columns: _insertColumns, values: values);
-      return;
-    }
-    // build condition
-    SQLConditions cond;
-    cond = SQLConditions(left: 'sender', comparison: '=', right: sender.string);
-    cond.addCondition(SQLConditions.kAnd,
-        left: 'receiver', comparison: '=', right: receiver.string);
-    if (key == null) {
-      // remove old key for (sender => receiver)
-      await delete(_table, conditions: cond);
+    Map<ID, SymmetricKey>? keyMap = _caches[receiver];
+    if (key != null) {
+      if (keyMap == null) {
+        keyMap = {};
+        _caches[receiver] = keyMap;
+      }
+      keyMap[sender] = key;
+    } else if (keyMap == null || keyMap.remove(sender) == null) {
+      Log.warning('cipher key not exists: $sender -> $receiver');
     } else {
-      // update key for (sender => receiver)
-      String json = JSON.encode(key.dictionary);
-      await update(_table, values: {'pwd': json}, conditions: cond);
+      Log.debug("cipher key removed: $sender -> $receiver");
     }
   }
 
@@ -141,20 +236,23 @@ class MsgKeyTable extends DataTableHandler<SymmetricKey> implements CipherKeyDBI
       // broadcast message has no key
       return PlainKey.getInstance();
     }
-    SQLConditions cond;
-    cond = SQLConditions(left: 'sender', comparison: '=', right: sender.string);
-    cond.addCondition(SQLConditions.kAnd,
-        left: 'receiver', comparison: '=', right: receiver.string);
-    List<SymmetricKey> keys = await select(_table, columns: _selectColumns,
-        conditions: cond, limit: 1);
-    // return first record only
-    if (keys.isNotEmpty) {
-      return keys[0];
-    } else if (generate) {
-      return SymmetricKey.generate(SymmetricKey.kAES);
-    } else {
-      return null;
+    SymmetricKey? key;
+    // check cache first
+    Map<ID, SymmetricKey>? keyMap = _caches[receiver];
+    if (keyMap != null) {
+      key = keyMap[sender];
     }
+    if (generate) {
+      if (keyMap == null) {
+        keyMap = {};
+        _caches[receiver] = keyMap;
+      }
+      // create new key
+      key = SymmetricKey.generate(SymmetricKey.kAES);
+      keyMap[sender] = key!;
+      Log.warning('cipher key generated: $sender -> $receiver');
+    }
+    return key;
   }
 
 }

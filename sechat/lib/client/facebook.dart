@@ -30,4 +30,22 @@ class SharedFacebook extends ClientFacebook {
     return Pair(path, url);
   }
 
+  @override
+  Future<bool> saveDocument(Document doc) async {
+    ID identifier = doc.identifier;
+    if (!doc.isValid) {
+      Meta? meta = await getMeta(identifier);
+      if (meta == null) {
+        Log.error('meta not found: $identifier');
+        return false;
+      } else if (doc.verify(meta.key)) {
+        Log.debug('document verified: $identifier');
+      } else {
+        Log.error('failed to verify document: $identifier');
+        return false;
+      }
+    }
+    return await database.saveDocument(doc);
+  }
+
 }

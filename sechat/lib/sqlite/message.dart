@@ -72,7 +72,7 @@ class MessageDatabase extends DatabaseConnector {
         // conversation
         DatabaseConnector.createTable(db, tChatBox, fields: [
           "id INTEGER PRIMARY KEY AUTOINCREMENT",
-          "cid VARCHAR(64)",
+          "cid VARCHAR(64) NOT NULL UNIQUE",
           "unread INTEGER",     // count of unread messages
           "last VARCHAR(128)",  // desc of last message
           "time INTEGER",       // time of last message
@@ -80,25 +80,25 @@ class MessageDatabase extends DatabaseConnector {
         // instant message
         DatabaseConnector.createTable(db, tInstantMessage, fields: [
           "id INTEGER PRIMARY KEY AUTOINCREMENT",
-          "cid VARCHAR(64)",
+          "cid VARCHAR(64) NOT NULL",
           "sender VARCHAR(64)",
           // "receiver VARCHAR(64)",
-          "time INTEGER",
+          "time INTEGER NOT NULL",
           "type INTEGER",
           "sn INTEGER",
           "signature VARCHAR(8)",  // last 8 characters
           // "content TEXT",
-          "msg TEXT",
+          "msg TEXT NOT NULL",
         ]);
         DatabaseConnector.createIndex(db, tInstantMessage,
             name: 'cid_index', fields: ['cid']);
         DatabaseConnector.createTable(db, tTrace, fields: [
           "id INTEGER PRIMARY KEY AUTOINCREMENT",
-          "cid VARCHAR(64)",
-          "sender VARCHAR(64)",
-          "sn INTEGER",
+          "cid VARCHAR(64) NOT NULL",
+          "sender VARCHAR(64) NOT NULL",
+          "sn INTEGER NOT NULL",
           "signature VARCHAR(8)",  // last 8 characters
-          "trace TEXT",
+          "trace TEXT NOT NULL",
         ]);
         DatabaseConnector.createIndex(db, tTrace,
             name: 'trace_index', fields: ['sender']);

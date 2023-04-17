@@ -14,8 +14,8 @@ class CryptoKeyDatabase extends DatabaseConnector {
         // private key
         DatabaseConnector.createTable(db, tPrivateKey, fields: [
           "id INTEGER PRIMARY KEY AUTOINCREMENT",
-          "uid VARCHAR(64)",
-          "pri_key TEXT",
+          "uid VARCHAR(64) NOT NULL",
+          "pri_key TEXT NOT NULL",
           "type CHAR(1)",
           "sign BIT",
           "decrypt BIT",
@@ -23,9 +23,9 @@ class CryptoKeyDatabase extends DatabaseConnector {
         // msg key
         DatabaseConnector.createTable(db, tMsgKey, fields: [
           "id INTEGER PRIMARY KEY AUTOINCREMENT",
-          "sender VARCHAR(64)",
-          "receiver VARCHAR(64)",
-          "pwd TEXT",
+          "sender VARCHAR(64) NOT NULL",
+          "receiver VARCHAR(64) NOT NULL",
+          "pwd TEXT NOT NULL",
         ]);
         DatabaseConnector.createIndex(db, tMsgKey,
             name: 'direction_index', fields: ['sender', 'receiver']);

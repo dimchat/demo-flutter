@@ -70,6 +70,9 @@ class FileTransfer implements UploadDelegate, DownloadDelegate {
 
   late final HTTPClient _http;
 
+  final NotificationCenter _center = NotificationCenter();
+  NotificationCenter get center => _center;
+
   ///  Upload avatar image data for user
   ///
   /// @param data     - image data
@@ -335,8 +338,7 @@ class FileTransfer implements UploadDelegate, DownloadDelegate {
     Log.error('onUploadError: $request, error: $error');
     Map info = _uploadInfo(request);
     info['error'] = error;
-    NotificationCenter nc = NotificationCenter();
-    nc.postNotification(NotificationNames.kFileUploadFailure, this, info);
+    center.postNotification(NotificationNames.kFileUploadFailure, this, info);
   }
 
   @override
@@ -344,8 +346,7 @@ class FileTransfer implements UploadDelegate, DownloadDelegate {
     Log.error('onUploadFailed: $request, error: $error');
     Map info = _uploadInfo(request);
     info['error'] = error;
-    NotificationCenter nc = NotificationCenter();
-    nc.postNotification(NotificationNames.kFileUploadFailure, this, info);
+    center.postNotification(NotificationNames.kFileUploadFailure, this, info);
   }
 
   @override
@@ -356,8 +357,7 @@ class FileTransfer implements UploadDelegate, DownloadDelegate {
     };
     Map info = _uploadInfo(request);
     info['response'] = response;
-    NotificationCenter nc = NotificationCenter();
-    nc.postNotification(NotificationNames.kFileUploadSuccess, this, info);
+    center.postNotification(NotificationNames.kFileUploadSuccess, this, info);
   }
 
   //
@@ -367,8 +367,7 @@ class FileTransfer implements UploadDelegate, DownloadDelegate {
   @override
   void onDownloadError(DownloadRequest request, Error error) {
     Log.error('onDownloadError: $request, error: $error');
-    NotificationCenter nc = NotificationCenter();
-    nc.postNotification(NotificationNames.kFileDownloadFailure, this, {
+    center.postNotification(NotificationNames.kFileDownloadFailure, this, {
       'request': request,
       'url': request.url,
       'path': request.path,
@@ -379,8 +378,7 @@ class FileTransfer implements UploadDelegate, DownloadDelegate {
   @override
   void onDownloadFailed(DownloadRequest request, Exception error) {
     Log.error('onDownloadFailed: $request, error: $error');
-    NotificationCenter nc = NotificationCenter();
-    nc.postNotification(NotificationNames.kFileDownloadFailure, this, {
+    center.postNotification(NotificationNames.kFileDownloadFailure, this, {
       'request': request,
       'url': request.url,
       'path': request.path,
@@ -391,8 +389,7 @@ class FileTransfer implements UploadDelegate, DownloadDelegate {
   @override
   void onDownloadSuccess(DownloadRequest request, String path) {
     Log.error('onDownloadSuccess: $request, path: $path');
-    NotificationCenter nc = NotificationCenter();
-    nc.postNotification(NotificationNames.kFileDownloadSuccess, this, {
+    center.postNotification(NotificationNames.kFileDownloadSuccess, this, {
       'request': request,
       'url': request.url,
       'path': request.path,

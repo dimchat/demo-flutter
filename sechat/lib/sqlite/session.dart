@@ -16,9 +16,9 @@ class SessionDatabase extends DatabaseConnector {
         // login command
         DatabaseConnector.createTable(db, tLogin, fields: [
           "id INTEGER PRIMARY KEY AUTOINCREMENT",
-          "uid VARCHAR(64)",
-          "cmd TEXT",
-          "msg TEXT",
+          "uid VARCHAR(64) NOT NULL",
+          "cmd TEXT NOT NULL",
+          "msg TEXT NOT NULL",
         ]);
         DatabaseConnector.createIndex(db, tLogin,
             name: 'uid_index', fields: ['uid']);
@@ -105,15 +105,15 @@ class ServiceProviderDatabase extends DatabaseConnector {
         // provider
         DatabaseConnector.createTable(db, tProvider, fields: [
           "id INTEGER PRIMARY KEY AUTOINCREMENT",
-          "pid VARCHAR(64)",
+          "pid VARCHAR(64) NOT NULL UNIQUE",
           "chosen INTEGER",
         ]);
         // station
         DatabaseConnector.createTable(db, tStation, fields: [
           "id INTEGER PRIMARY KEY AUTOINCREMENT",
-          "pid VARCHAR(64)",
-          "host VARCHAR(128)",  // IP or domain name
-          "port INTEGER",
+          "pid VARCHAR(64) NOT NULL",
+          "host VARCHAR(128) NOT NULL",  // IP or domain name
+          "port INTEGER NOT NULL",
           "chosen INTEGER",
         ]);
         DatabaseConnector.createIndex(db, tStation,
@@ -121,10 +121,10 @@ class ServiceProviderDatabase extends DatabaseConnector {
         // access speed
         DatabaseConnector.createTable(db, tSpeed, fields: [
           "id INTEGER PRIMARY KEY AUTOINCREMENT",
-          "host VARCHAR(128)",  // IP or domain name
-          "port INTEGER",
-          "time INTEGER",       // last test time
-          "duration INTEGER",   // respond time
+          "host VARCHAR(128) NOT NULL",  // IP or domain name
+          "port INTEGER NOT NULL",
+          "time INTEGER NOT NULL",       // last test time
+          "duration INTEGER NOT NULL",   // respond time
         ]);
         DatabaseConnector.createIndex(db, tSpeed,
             name: 'ip_index', fields: ['host']);

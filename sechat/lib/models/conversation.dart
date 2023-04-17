@@ -35,13 +35,21 @@ class Conversation {
     }
   }
 
+  @override
+  String toString() {
+    Type clazz = runtimeType;
+    return '<$clazz id="$identifier" name="$name" image="$image">\n'
+        '\t<unread>$unread</unread>\n'
+        '\t<msg>$lastMessage</msg>\n\t<time>$lastTime</time>\n</$clazz>';
+  }
+
 }
 
 class Amanuensis implements lnc.Observer {
   factory Amanuensis() => _instance;
   static final Amanuensis _instance = Amanuensis._internal();
   Amanuensis._internal() {
-    lnc.NotificationCenter nc = lnc.NotificationCenter();
+    var nc = lnc.NotificationCenter();
     nc.addObserver(this, NotificationNames.kMetaSaved);
     nc.addObserver(this, NotificationNames.kDocumentUpdated);
     nc.addObserver(this, NotificationNames.kMembersUpdated);
@@ -154,8 +162,9 @@ class Amanuensis implements lnc.Observer {
   final Map<ID, Conversation> _conversationMap = {};
 
   Future<void> loadConversations() async {
+    List<Conversation>? array;
     // get ID list from database
-    List<Conversation>? array = _allConversations;
+    array = _allConversations;
     if (array != null) {
       Log.warning('${array.length} conversation(s) exists');
       return;
@@ -218,22 +227,33 @@ class Amanuensis implements lnc.Observer {
   }
 
   Future<void> _update(ID cid, InstantMessage iMsg) async {
+    Content content = iMsg.content;
     // TODO:
     int unread = 0;
-    String? last;
+    String? last = content.getString('text');
     DateTime? time = iMsg.time;
+    Log.warning('update last message: $last for conversation: $cid');
 
     GlobalVariable shared = GlobalVariable();
     Conversation? chatBox = _conversationMap[cid];
     if (chatBox == null) {
+      // new conversation
       chatBox = Conversation(cid, unread: unread, lastMessage: last, lastTime: time);
+      _conversationMap[cid] = chatBox;
+      _allConversations?.insert(0, chatBox);
       await shared.database.addConversation(chatBox);
     } else {
+      // conversation exists
       chatBox.unread = unread;
       chatBox.lastMessage = last;
       chatBox.lastTime = time;
       await shared.database.updateConversation(chatBox);
     }
+    var nc = NotificationCenter();
+    nc.postNotification(NotificationNames.kConversationUpdated, this, {
+      'ID': cid,
+      'msg': iMsg,
+    });
   }
 
   Future<bool> saveInstantMessage(InstantMessage iMsg) async {

@@ -32,30 +32,51 @@ class ChatHistoryPage extends StatefulWidget {
 
 class _ChatListState extends State<ChatHistoryPage> implements lnc.Observer {
   _ChatListState() : dataSource = Amanuensis() {
+    _adapter = _ChatListAdapter(dataSource: dataSource);
+
     var nc = lnc.NotificationCenter();
     nc.addObserver(this, NotificationNames.kServerStateChanged);
+    nc.addObserver(this, NotificationNames.kConversationUpdated);
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
+    var nc = lnc.NotificationCenter();
+    nc.removeObserver(this, NotificationNames.kServerStateChanged);
+    nc.removeObserver(this, NotificationNames.kConversationUpdated);
   }
 
   final Amanuensis dataSource;
+
+  late final _ChatListAdapter _adapter;
+  late SectionListView _listView;
 
   int _sessionState = 0;
 
   @override
   Future<void> onReceiveNotification(lnc.Notification notification) async {
+    String name = notification.name;
     Map? info = notification.userInfo;
-    int state = info!['state'];
-    setState(() {
-      _sessionState = state;
-    });
+    if (name == NotificationNames.kServerStateChanged) {
+      int state = info!['state'];
+      setState(() {
+        _sessionState = state;
+      });
+    } else if (name == NotificationNames.kConversationUpdated) {
+      // _adapter.notifyDataChange();
+      await reloadData();
+      Log.warning('conversation updated');
+    }
   }
 
-  void reloadData() {
+  Future<void> reloadData() async {
     GlobalVariable shared = GlobalVariable();
     SessionState? state = shared.terminal.session?.state;
     if (state != null) {
       _sessionState = state.index;
     }
-    dataSource.loadConversations().then((value) => setState);
+    await dataSource.loadConversations().then((value) => setState);
   }
 
   @override
@@ -66,6 +87,9 @@ class _ChatListState extends State<ChatHistoryPage> implements lnc.Observer {
 
   @override
   Widget build(BuildContext context) {
+    _listView = SectionListView.builder(
+      adapter: _adapter,
+    );
     return Scaffold(
       backgroundColor: Styles.backgroundColor,
       appBar: CupertinoNavigationBar(
@@ -74,9 +98,7 @@ class _ChatListState extends State<ChatHistoryPage> implements lnc.Observer {
         middle: Text(titleWithState('Secure Chat', _sessionState)),
         trailing: SearchPage.searchButton(context),
       ),
-      body: SectionListView.builder(
-        adapter: _ChatListAdapter(dataSource: dataSource),
-      ),
+      body: _listView,
     );
   }
 }
@@ -91,24 +113,34 @@ class _ChatListAdapter with SectionAdapterMixin {
     return dataSource.numberOfConversation;
   }
 
+  @override
+  Widget getItem(BuildContext context, IndexPath indexPath) {
+    Conversation info = dataSource.conversationAtIndex(indexPath.item);
+    Log.warning('show item: $info');
+    Widget cell = TableView.cell(
+        leading: info.getIcon(null),
+        title: Text(info.name),
+        subtitle: _lastMessage(info.lastMessage),
+        trailing: _timeLabel(info.lastTime),
+        onTap: () {
+          Log.warning('tap: $info');
+          ChatBox.open(context, info);
+        }
+    );
+    return cell;
+  }
+
+  Widget? _lastMessage(String? last) {
+    if (last == null) {
+      return null;
+    }
+    return Text(last);
+  }
+
   Widget? _timeLabel(DateTime? time) {
     if (time == null) {
       return null;
     }
     return Text(Time.getTimeString(time), style: Styles.sectionItemTrailingTextStyle);
-  }
-
-  @override
-  Widget getItem(BuildContext context, IndexPath indexPath) {
-    Conversation info = dataSource.conversationAtIndex(indexPath.item);
-    Widget cell = TableView.cell(
-        leading: info.getIcon(null),
-        title: Text(info.name),
-        trailing: _timeLabel(info.lastTime),
-        onTap: () {
-          ChatBox.open(context, info);
-        }
-    );
-    return cell;
   }
 }

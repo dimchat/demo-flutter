@@ -1,8 +1,11 @@
-import 'package:dim_client/dim_client.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_section_list/flutter_section_list.dart';
 
+import 'package:dim_client/dim_client.dart';
+import 'package:dim_client/dim_client.dart' as lnc;
+
+import '../client/constants.dart';
 import '../client/shared.dart';
 import '../models/conversation.dart';
 import 'alert.dart';
@@ -27,21 +30,41 @@ class ChatBox extends StatefulWidget {
   State<ChatBox> createState() => _ChatBoxState();
 }
 
-class _ChatBoxState extends State<ChatBox> {
+class _ChatBoxState extends State<ChatBox> implements lnc.Observer {
   _ChatBoxState() {
     dataSource = _HistoryDataSource();
+    var nc = lnc.NotificationCenter();
+    nc.addObserver(this, NotificationNames.kMessageUpdated);
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
+    var nc = lnc.NotificationCenter();
+    nc.removeObserver(this, NotificationNames.kMessageUpdated);
+  }
+
+  @override
+  Future<void> onReceiveNotification(lnc.Notification notification) async {
+    Map? userInfo = notification.userInfo;
+    ID? cid = userInfo?['ID'];
+    if (cid == widget.info.identifier) {
+      reloadData();
+    }
   }
 
   TextEditingController textController = TextEditingController();
 
   late final _HistoryDataSource dataSource;
 
-  void reloadData() {
+  Future<void> reloadData() async {
     GlobalVariable shared = GlobalVariable();
-    shared.database.getInstantMessages(widget.info.identifier).then((pair) {
-      setState(() {
-        dataSource.refresh(pair.first);
-      });
+    User? user = await shared.facebook.currentUser;
+    dataSource.me = user?.identifier;
+    var pair = await shared.database.getInstantMessages(widget.info.identifier);
+    Log.warning('message updated: ${pair.first.length}');
+    setState(() {
+      dataSource.refresh(pair.first);
     });
   }
 
@@ -95,12 +118,12 @@ class _ChatBoxState extends State<ChatBox> {
         child: CupertinoTextField(
           controller: textController,
           placeholder: 'Input text message',
-          onSubmitted: (value) => _sendText(context, textController),
+          onSubmitted: (value) => _sendText(widget.info, context, textController),
         ),
       ),
       CupertinoButton(
         child: const Icon(Icons.send),
-        onPressed: () => _sendText(context, textController),
+        onPressed: () => _sendText(widget.info, context, textController),
       ),
     ],
   );
@@ -114,86 +137,129 @@ class _HistoryAdapter with SectionAdapterMixin {
 
   @override
   int numberOfItems(int section) {
-    WeakReference<int> wr;
     return dataSource.getItemCount();
   }
 
   @override
   Widget getItem(BuildContext context, IndexPath indexPath) {
-    InstantMessage info = dataSource.getItem(indexPath.item);
-    ID? sender = info.sender;
-    // TODO: get current user
-    ID me = ID.kFounder;
-    bool isMe = sender == me;
+    InstantMessage iMsg = dataSource.getItem(indexPath.item);
+    ID sender = iMsg.sender;
+    DateTime? time = iMsg.time;
+    Content content = iMsg.content;
+    if (content is Command) {
+      return _showCommand(content, sender, context: context);
+    }
+    bool isMe = sender == dataSource.me;
     bool isGroupChat = conversation.identifier.isGroup;
     const radius = Radius.circular(12);
     const borderRadius = BorderRadius.all(radius);
     return Container(
       margin: const EdgeInsets.only(left: 8, top: 4, right: 8, bottom: 4),
       // color: Colors.yellowAccent,
-      child: Row(
-        mainAxisAlignment: isMe ? MainAxisAlignment.end : MainAxisAlignment.start,
-        crossAxisAlignment: CrossAxisAlignment.start,
+      child: Column(
         children: [
-          if (!isMe)
-            Container(
-              width: 48,
-              height: 48,
-              color: Colors.yellow,
-              child: IconButton(
-                icon: const Icon(CupertinoIcons.photo),
-                onPressed: () => _openProfile(context, sender),
-              ),
-            ),
-          Column(
+          if (time != null)
+            Text(Time.getTimeString(time)),
+          Row(
+            mainAxisAlignment: isMe ? MainAxisAlignment.end : MainAxisAlignment.start,
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              if (!isMe && (isGroupChat || sender != conversation.identifier))
+              if (!isMe)
                 Container(
-                  margin: const EdgeInsets.only(left: 8),
-                  child: Text(sender.string,
-                    style: const TextStyle(color: Colors.grey),
+                  width: 48,
+                  height: 48,
+                  color: Colors.yellow,
+                  child: IconButton(
+                    icon: const Icon(CupertinoIcons.photo),
+                    onPressed: () => _openProfile(context, sender),
                   ),
                 ),
-              Container(
-                margin: const EdgeInsets.fromLTRB(8, 4, 8, 4),
-                padding: const EdgeInsets.fromLTRB(16, 12, 16, 12),
-                constraints: const BoxConstraints(maxWidth: 240),
-                decoration: BoxDecoration(
-                  color: isMe ? Colors.lightGreen : Colors.white,
-                  borderRadius: isMe
-                      ? borderRadius.subtract(
-                      const BorderRadius.only(topRight: radius))
-                      : borderRadius.subtract(
-                      const BorderRadius.only(topLeft: radius)),
-                ),
-                child: Text('$sender: ${info.content}'),
+              Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  if (!isMe && (isGroupChat || sender != conversation.identifier))
+                    Container(
+                      margin: const EdgeInsets.only(left: 8),
+                      child: Text(sender.string,
+                        style: const TextStyle(color: Colors.grey),
+                      ),
+                    ),
+                  Container(
+                    margin: const EdgeInsets.fromLTRB(8, 4, 8, 4),
+                    padding: const EdgeInsets.fromLTRB(16, 12, 16, 12),
+                    constraints: const BoxConstraints(maxWidth: 240),
+                    decoration: BoxDecoration(
+                      color: isMe ? Colors.lightGreen : Colors.white,
+                      borderRadius: isMe
+                          ? borderRadius.subtract(
+                          const BorderRadius.only(topRight: radius))
+                          : borderRadius.subtract(
+                          const BorderRadius.only(topLeft: radius)),
+                    ),
+                    child: _showContent(content, sender, context: context),
+                  ),
+                ],
               ),
+              if (isMe)
+                Container(
+                  color: Colors.yellow,
+                  child: IconButton(
+                    icon: const Icon(CupertinoIcons.photo),
+                    onPressed: () {
+
+                    },
+                  ),
+                ),
             ],
           ),
-          if (isMe)
-            Container(
-              color: Colors.yellow,
-              child: IconButton(
-                icon: const Icon(CupertinoIcons.photo),
-                onPressed: () {
-
-                },
-              ),
-            ),
         ],
       ),
     );
+  }
+
+  Widget _showCommand(Command content, ID sender, {required BuildContext context}) {
+    return Text(content.cmd);
+  }
+
+  Widget _showContent(Content content, ID sender, {required BuildContext context}) {
+    if (content is ImageContent) {
+      return _showImageContent(content, sender, context: context);
+    } else if (content is AudioContent) {
+      return _showAudioContent(content, sender, context: context);
+    } else if (content is VideoContent) {
+      return _showVideoContent(content, sender, context: context);
+    }
+    return Text('${content["text"]}');
+  }
+
+  Widget _showImageContent(ImageContent content, ID sender, {required BuildContext context}) {
+    String? filename = content.filename;
+    String? url = content.url;
+    return Text('Image[$filename]: $url');
+  }
+
+  Widget _showAudioContent(AudioContent content, ID sender, {required BuildContext context}) {
+    String? filename = content.filename;
+    String? url = content.url;
+    return Text('Voice[$filename]: $url');
+  }
+
+  Widget _showVideoContent(VideoContent content, ID sender, {required BuildContext context}) {
+    String? filename = content.filename;
+    String? url = content.url;
+    return Text('Movie[$filename]: $url');
   }
 }
 
 class _HistoryDataSource {
 
+  ID? me;
+
   List<InstantMessage> messages = [];
 
   void refresh(List<InstantMessage> history) {
     Log.debug('refreshing ${history.length} message(s)');
-    messages = history.reversed.toList();
+    messages = history;
   }
 
   int getItemCount() {
@@ -207,9 +273,12 @@ class _HistoryDataSource {
 
 //--------
 
-void _sendText(BuildContext context, TextEditingController controller) {
+void _sendText(Conversation chat, BuildContext context, TextEditingController controller) {
   String text = controller.text;
-  Alert.show(context, 'Message', text);
+  if (text.isNotEmpty) {
+    GlobalVariable shared = GlobalVariable();
+    shared.emitter.sendText(text, chat.identifier);
+  }
   controller.text = '';
 }
 

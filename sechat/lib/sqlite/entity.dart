@@ -14,35 +14,35 @@ class EntityDatabase extends DatabaseConnector {
         // meta
         DatabaseConnector.createTable(db, tMeta, fields: [
           "id INTEGER PRIMARY KEY AUTOINCREMENT",
-          "did VARCHAR(64)",
-          "type INTEGER",
-          "pub_key TEXT",
-          "seed VARCHAR(20)",
-          "fingerprint VARCHAR(88)",
+          "did VARCHAR(64) NOT NULL UNIQUE",
+          "type INTEGER NOT NULL",
+          "pub_key TEXT NOT NULL",
+          "seed VARCHAR(32)",
+          "fingerprint VARCHAR(172)",
         ]);
         DatabaseConnector.createIndex(db, tMeta,
             name: 'meta_id_index', fields: ['did']);
         // document
         DatabaseConnector.createTable(db, tDocument, fields: [
           "id INTEGER PRIMARY KEY AUTOINCREMENT",
-          "did VARCHAR(64)",
-          "type VARCHAR(8)",
-          "data TEXT",
-          "signature VARCHAR(88)",
+          "did VARCHAR(64) NOT NULL",
+          "type VARCHAR(16)",
+          "data TEXT NOT NULL",
+          "signature VARCHAR(172) NOT NULL",
         ]);
         DatabaseConnector.createIndex(db, tDocument,
             name: 'doc_id_index', fields: ['did']);
         // local user
         DatabaseConnector.createTable(db, tLocalUser, fields: [
           "id INTEGER PRIMARY KEY AUTOINCREMENT",
-          "uid VARCHAR(64)",
+          "uid VARCHAR(64) NOT NULL UNIQUE",
           "chosen BIT",
         ]);
         // contact
         DatabaseConnector.createTable(db, tContact, fields: [
           "id INTEGER PRIMARY KEY AUTOINCREMENT",
-          "uid VARCHAR(64)",
-          "contact VARCHAR(64)",
+          "uid VARCHAR(64) NOT NULL",
+          "contact VARCHAR(64) NOT NULL",
           "alias VARCHAR(32)",
         ]);
         DatabaseConnector.createIndex(db, tContact,
@@ -51,8 +51,8 @@ class EntityDatabase extends DatabaseConnector {
         // member
         DatabaseConnector.createTable(db, tMember, fields: [
           "id INTEGER PRIMARY KEY AUTOINCREMENT",
-          "gid VARCHAR(64)",
-          "member VARCHAR(64)",
+          "gid VARCHAR(64) NOT NULL",
+          "member VARCHAR(64) NOT NULL",
         ]);
         DatabaseConnector.createIndex(db, tMember,
             name: 'group_id_index', fields: ['gid']);

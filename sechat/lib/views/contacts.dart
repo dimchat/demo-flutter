@@ -39,6 +39,13 @@ class _ContactListState extends State<ContactListPage> implements lnc.Observer {
     nc.addObserver(this, NotificationNames.kServerStateChanged);
   }
 
+  @override
+  void dispose() {
+    super.dispose();
+    var nc = lnc.NotificationCenter();
+    nc.removeObserver(this, NotificationNames.kServerStateChanged);
+  }
+
   late final _ContactDataSource dataSource;
 
   int _sessionState = 0;
@@ -52,25 +59,21 @@ class _ContactListState extends State<ContactListPage> implements lnc.Observer {
     });
   }
 
-  void reloadData() {
+  Future<void> reloadData() async {
     GlobalVariable shared = GlobalVariable();
     SessionState? state = shared.terminal.session?.state;
     if (state != null) {
       _sessionState = state.index;
     }
-    shared.facebook.currentUser.then((user) => {
-      if (user == null) {
-
-      } else {
-        shared.database.getContacts(user: user.identifier).then((contacts) => {
-          ContactInfo.fromList(contacts).then((array) => {
-            setState(() {
-              dataSource.refresh(array);
-            })
-          })
-        })
-      }
-    });
+    User? user = await shared.facebook.currentUser;
+    if (user == null) {
+      Log.error('current user not set');
+      return;
+    }
+    List<ID> contacts = await shared.database.getContacts(user: user.identifier);
+    await ContactInfo.fromList(contacts).then((array) => setState(() {
+      dataSource.refresh(array);
+    }));
   }
 
   @override

@@ -2,6 +2,7 @@ import 'dart:typed_data';
 
 import 'package:dim_client/dim_client.dart';
 
+import '../models/conversation.dart';
 import 'constants.dart';
 import 'http/ftp.dart';
 import 'http/upload.dart';
@@ -9,7 +10,7 @@ import 'shared.dart';
 
 class Emitter implements Observer {
   Emitter() {
-    NotificationCenter nc = NotificationCenter();
+    var nc = NotificationCenter();
     nc.addObserver(this, NotificationNames.kFileUploadSuccess);
     nc.addObserver(this, NotificationNames.kFileUploadFailure);
   }
@@ -110,7 +111,8 @@ class Emitter implements Observer {
   }
 
   static Future<void> _saveInstantMessage(InstantMessage iMsg) async {
-    // TODO: save instant message
+    Amanuensis clerk = Amanuensis();
+    await clerk.saveInstantMessage(iMsg);
   }
 
   ///  Send file content message with password

@@ -8,6 +8,7 @@ import '../sqlite/message.dart';
 import '../sqlite/session.dart';
 import '../sqlite/trace.dart';
 import '../sqlite/user.dart';
+import 'constants.dart';
 
 class SharedDatabase implements AccountDBI, SessionDBI, MessageDBI,
                                 ConversationDBI, InstantMessageDBI, TraceDBI {
@@ -28,6 +29,9 @@ class SharedDatabase implements AccountDBI, SessionDBI, MessageDBI,
   InstantMessageDBI instantMessageTable = InstantMessageTable();
   ConversationDBI conversationTable = ConversationTable();
   TraceDBI traceTable = TraceTable();
+
+  final NotificationCenter _center = NotificationCenter();
+  NotificationCenter get center => _center;
 
   //
   //  PrivateKey Table
@@ -255,11 +259,23 @@ class SharedDatabase implements AccountDBI, SessionDBI, MessageDBI,
 
   @override
   Future<bool> saveInstantMessage(ID chat, InstantMessage iMsg) async =>
-      await instantMessageTable.saveInstantMessage(chat, iMsg);
+      await instantMessageTable.saveInstantMessage(chat, iMsg).then((value) {
+        center.postNotification(NotificationNames.kMessageUpdated, this, {
+          'ID': chat,
+          'msg': iMsg,
+        });
+        return value;
+      });
 
   @override
   Future<bool> removeInstantMessage(ID chat, InstantMessage iMsg) async =>
-      await instantMessageTable.removeInstantMessage(chat, iMsg);
+      await instantMessageTable.removeInstantMessage(chat, iMsg).then((value) {
+        center.postNotification(NotificationNames.kMessageUpdated, this, {
+          'ID': chat,
+          'msg': iMsg,
+        });
+        return value;
+      });
 
   //
   //  Conversation Table

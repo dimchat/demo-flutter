@@ -19,6 +19,8 @@ abstract class NotificationNames {
   static const String kHistoryUpdated = 'HistoryUpdated';
   static const String kMessageUpdated = 'MessageUpdated';
 
+  static const String kConversationUpdated = 'ConversationUpdated';
+
   static const String kSearchUpdated = 'SearchUpdated';
 
   static const String kFileDownloadSuccess = 'FileDownloadSuccess';

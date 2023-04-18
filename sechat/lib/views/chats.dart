@@ -127,7 +127,7 @@ class _ChatListAdapter with SectionAdapterMixin {
         trailing: _timeLabel(info.lastTime),
         onTap: () {
           Log.warning('tap: $info');
-          ChatBox.open(context, info);
+          ChatBox.open(context, info.identifier);
         }
     );
     return cell;

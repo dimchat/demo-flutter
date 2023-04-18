@@ -139,7 +139,7 @@ class _UserTable extends DataTableHandler<ID> implements UserDBI {
       return true;
     }
     List<ID> newUsers = [...oldUsers];
-    newUsers.remove(user);
+    newUsers.removeWhere((element) => element == user);
     return await updateUsers(newUsers, oldUsers) >= 0;
   }
 
@@ -188,6 +188,9 @@ class UserCache extends _UserTable {
     List<ID> oldUsers = await getLocalUsers();
     int cnt = await updateUsers(users, oldUsers);
     if (cnt > 0) {
+      // clear to reload
+      _caches = null;
+      // post notification
       var nc = NotificationCenter();
       nc.postNotification(NotificationNames.kLocalUsersUpdated, this, {
         'action': 'update',
@@ -207,6 +210,9 @@ class UserCache extends _UserTable {
     List<ID> newUsers = [...oldUsers, user];
     int cnt = await updateUsers(newUsers, oldUsers);
     if (cnt > 0) {
+      // clear to reload
+      _caches = null;
+      // post notification
       var nc = NotificationCenter();
       nc.postNotification(NotificationNames.kLocalUsersUpdated, this, {
         'action': 'add',
@@ -225,9 +231,12 @@ class UserCache extends _UserTable {
       return true;
     }
     List<ID> newUsers = [...oldUsers];
-    newUsers.remove(user);
+    newUsers.removeWhere((element) => element == user);
     int cnt = await updateUsers(newUsers, oldUsers);
     if (cnt > 0) {
+      // clear to reload
+      _caches = null;
+      // post notification
       var nc = NotificationCenter();
       nc.postNotification(NotificationNames.kLocalUsersUpdated, this, {
         'action': 'remove',
@@ -253,6 +262,9 @@ class UserCache extends _UserTable {
     newUsers.insert(0, user);
     int cnt = await updateUsers(newUsers, oldUsers);
     if (cnt > 0) {
+      // clear to reload
+      _caches = null;
+      // post notification
       var nc = NotificationCenter();
       nc.postNotification(NotificationNames.kLocalUsersUpdated, this, {
         'action': 'set',

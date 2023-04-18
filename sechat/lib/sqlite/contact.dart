@@ -101,7 +101,7 @@ class _ContactTable extends DataTableHandler<ID> implements ContactDBI {
       return true;
     }
     List<ID> newContacts = [...oldContacts];
-    newContacts.remove(contact);
+    newContacts.removeWhere((element) => element == contact);
     return await updateContacts(newContacts, oldContacts, user) >= 0;
   }
 
@@ -128,6 +128,9 @@ class ContactCache extends _ContactTable {
     List<ID> oldContacts = await getContacts(user: user);
     int cnt = await updateContacts(contacts, oldContacts, user);
     if (cnt > 0) {
+      // clear to reload
+      _caches.remove(user);
+      // post notification
       var nc = NotificationCenter();
       nc.postNotification(NotificationNames.kContactsUpdated, this, {
         'action': 'update',
@@ -148,6 +151,9 @@ class ContactCache extends _ContactTable {
     List<ID> newContacts = [...oldContacts, contact];
     int cnt = await updateContacts(newContacts, oldContacts, user);
     if (cnt > 0) {
+      // clear to reload
+      _caches.remove(user);
+      // post notification
       var nc = NotificationCenter();
       nc.postNotification(NotificationNames.kContactsUpdated, this, {
         'action': 'add',
@@ -167,9 +173,12 @@ class ContactCache extends _ContactTable {
       return true;
     }
     List<ID> newContacts = [...oldContacts];
-    newContacts.remove(contact);
+    newContacts.removeWhere((element) => element == contact);
     int cnt = await updateContacts(newContacts, oldContacts, user);
     if (cnt > 0) {
+      // clear to reload
+      _caches.remove(user);
+      // post notification
       var nc = NotificationCenter();
       nc.postNotification(NotificationNames.kContactsUpdated, this, {
         'action': 'remove',

@@ -1,12 +1,13 @@
 import 'package:dim_client/dim_client.dart';
 import 'package:flutter/cupertino.dart';
 
+import '../client/shared.dart';
 import '../models/contact.dart';
 import 'alert.dart';
 import 'browser.dart';
 import 'styles.dart';
 
-class SettingsPage extends StatelessWidget {
+class SettingsPage extends StatefulWidget {
   const SettingsPage({super.key});
 
   static BottomNavigationBarItem barItem() {
@@ -14,6 +15,40 @@ class SettingsPage extends StatelessWidget {
       icon: Icon(CupertinoIcons.gear),
       label: 'Settings',
     );
+  }
+
+  @override
+  State<StatefulWidget> createState() {
+    return _SettingsState();
+  }
+
+}
+
+class _SettingsState extends State<SettingsPage> {
+  _SettingsState() {
+    ID me = ID.kFounder;
+    _me = ContactInfo(identifier: me, type: me.type, name: 'me');
+  }
+
+  late ContactInfo _me;
+
+  @override
+  void initState() {
+    super.initState();
+    reloadData();
+  }
+
+  Future<void> reloadData() async {
+    GlobalVariable shared = GlobalVariable();
+    await shared.facebook.currentUser.then((user) async {
+      ID? identifier = user?.identifier;
+      if (identifier != null) {
+        ContactInfo info = await ContactInfo.from(identifier);
+        setState(() {
+          _me = info;
+        });
+      }
+    });
   }
 
   @override
@@ -43,7 +78,7 @@ class SettingsPage extends StatelessWidget {
                   topMargin: 0,
                   additionalDividerMargin: 32,
                   children: [
-                    _me(context),
+                    _myAccount(context),
                   ],
                 ),
                 CupertinoListSection(
@@ -69,13 +104,8 @@ class SettingsPage extends StatelessWidget {
     );
   }
 
-  ContactInfo _currentUser() {
-    // TODO: get current user info
-    ID me = ID.kFounder;
-    return ContactInfo(identifier: me, type: me.type, name: 'me');
-  }
-  Widget _me(BuildContext context) {
-    ContactInfo user = _currentUser();
+  Widget _myAccount(BuildContext context) {
+    ContactInfo user = _me;
     return CupertinoListTile(
       padding: const EdgeInsets.all(16),
       leadingSize: 64,

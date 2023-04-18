@@ -7,8 +7,9 @@ import 'package:dim_client/dim_client.dart' as lnc;
 
 import '../client/constants.dart';
 import '../client/shared.dart';
-import '../models/conversation.dart';
+import '../models/contact.dart';
 import 'alert.dart';
+import 'profile.dart';
 import 'styles.dart';
 
 ///
@@ -17,13 +18,17 @@ import 'styles.dart';
 class ChatBox extends StatefulWidget {
   const ChatBox(this.info, {super.key});
 
-  final Conversation info;
+  final ContactInfo info;
 
-  static void open(BuildContext context, Conversation info) {
-    showCupertinoDialog(
-      context: context,
-      builder: (context) => ChatBox(info),
-    );
+  static void open(BuildContext context, ID identifier) {
+    ContactInfo.from(identifier).then((info) {
+      showCupertinoDialog(
+        context: context,
+        builder: (context) => ChatBox(info),
+      );
+    }).onError((error, stackTrace) {
+      Alert.show(context, 'Error', '$error');
+    });
   }
 
   @override
@@ -132,7 +137,7 @@ class _ChatBoxState extends State<ChatBox> implements lnc.Observer {
 class _HistoryAdapter with SectionAdapterMixin {
   _HistoryAdapter({required this.conversation, required this.dataSource});
 
-  final Conversation conversation;
+  final ContactInfo conversation;
   final _HistoryDataSource dataSource;
 
   @override
@@ -159,7 +164,9 @@ class _HistoryAdapter with SectionAdapterMixin {
       child: Column(
         children: [
           if (time != null)
-            Text(Time.getTimeString(time)),
+            Text(Time.getTimeString(time),
+              style: const TextStyle(color: Colors.grey, fontSize: 10),
+            ),
           Row(
             mainAxisAlignment: isMe ? MainAxisAlignment.end : MainAxisAlignment.start,
             crossAxisAlignment: CrossAxisAlignment.start,
@@ -171,7 +178,7 @@ class _HistoryAdapter with SectionAdapterMixin {
                   color: Colors.yellow,
                   child: IconButton(
                     icon: const Icon(CupertinoIcons.photo),
-                    onPressed: () => _openProfile(context, sender),
+                    onPressed: () => _openProfile(context, sender, conversation),
                   ),
                 ),
               Column(
@@ -273,7 +280,7 @@ class _HistoryDataSource {
 
 //--------
 
-void _sendText(Conversation chat, BuildContext context, TextEditingController controller) {
+void _sendText(ContactInfo chat, BuildContext context, TextEditingController controller) {
   String text = controller.text;
   if (text.isNotEmpty) {
     GlobalVariable shared = GlobalVariable();
@@ -282,10 +289,15 @@ void _sendText(Conversation chat, BuildContext context, TextEditingController co
   controller.text = '';
 }
 
-void _openDetail(BuildContext context, Conversation info) {
-  Alert.show(context, 'Coming soon', 'show detail: $info');
+void _openDetail(BuildContext context, ContactInfo info) {
+  ID identifier = info.identifier;
+  if (identifier.isUser) {
+    _openProfile(context, identifier, info);
+  } else {
+    Alert.show(context, 'Coming soon', 'show group detail: $info');
+  }
 }
 
-void _openProfile(BuildContext context, ID uid) {
-  Alert.show(context, 'Coming soon', 'show profile: $uid');
+void _openProfile(BuildContext context, ID uid, ContactInfo chatBox) {
+  ProfilePage.open(context, uid, fromWhere: chatBox.identifier);
 }

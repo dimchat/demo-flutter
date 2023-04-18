@@ -34,29 +34,39 @@ class ContactListPage extends StatefulWidget {
 class _ContactListState extends State<ContactListPage> implements lnc.Observer {
   _ContactListState() {
     dataSource = _ContactDataSource();
+    _adapter = _ContactListAdapter(dataSource: dataSource);
 
     var nc = lnc.NotificationCenter();
     nc.addObserver(this, NotificationNames.kServerStateChanged);
+    nc.addObserver(this, NotificationNames.kContactsUpdated);
   }
 
   @override
   void dispose() {
     super.dispose();
     var nc = lnc.NotificationCenter();
+    nc.removeObserver(this, NotificationNames.kContactsUpdated);
     nc.removeObserver(this, NotificationNames.kServerStateChanged);
   }
 
   late final _ContactDataSource dataSource;
 
+  late final _ContactListAdapter _adapter;
+
   int _sessionState = 0;
 
   @override
   Future<void> onReceiveNotification(lnc.Notification notification) async {
+    String name = notification.name;
     Map? info = notification.userInfo;
-    int state = info!['state'];
-    setState(() {
-      _sessionState = state;
-    });
+    if (name == NotificationNames.kServerStateChanged) {
+      int state = info!['state'];
+      setState(() {
+        _sessionState = state;
+      });
+    } else if (name == NotificationNames.kContactsUpdated) {
+      reloadData();
+    }
   }
 
   Future<void> reloadData() async {
@@ -73,6 +83,7 @@ class _ContactListState extends State<ContactListPage> implements lnc.Observer {
     List<ID> contacts = await shared.database.getContacts(user: user.identifier);
     await ContactInfo.fromList(contacts).then((array) => setState(() {
       dataSource.refresh(array);
+      _adapter.notifyDataChange();
     }));
   }
 
@@ -93,7 +104,7 @@ class _ContactListState extends State<ContactListPage> implements lnc.Observer {
         trailing: SearchPage.searchButton(context),
       ),
       body: SectionListView.builder(
-        adapter: _ContactListAdapter(dataSource: dataSource),
+        adapter: _adapter,
       ),
     );
   }
@@ -163,7 +174,7 @@ class _ContactListAdapter with SectionAdapterMixin {
         title: Text(info.name),
         trailing: null,
         onTap: () {
-          ProfilePage.open(context, info);
+          ProfilePage.open(context, info.identifier);
         }
     );
   }

@@ -28,11 +28,11 @@ class ContactInfo {
 
   Widget getIcon(double? size) {
     String? url = image;
-    if (url != null) {
+    if (url != null && url.isNotEmpty) {
       if (url.startsWith('file://')) {
         return Image.file(File(url), width: size, height: size);
-      } else {
-        return Image.network(url, width: size, height: size);
+      // } else {
+      //   return Image.network(url, width: size, height: size);
       }
     }
     if (isGroup) {

@@ -24,6 +24,41 @@ class Alert {
       ),
     );
   }
+
+  static void confirm(BuildContext context, String title, String message,
+      {String? okTitle, VoidCallback? okAction,
+        String? cancelTitle, VoidCallback? cancelAction}) {
+    okTitle ??= 'OK';
+    cancelTitle ??= 'Cancel';
+    showCupertinoDialog(
+      context: context,
+      builder: (context) => CupertinoAlertDialog(
+        title: Text(title),
+        content: Text(message),
+        actions: [
+          CupertinoDialogAction(
+            onPressed: () {
+              Navigator.pop(context);
+              if (okAction != null) {
+                okAction();
+              }
+            },
+            child: Text(okTitle!),
+          ),
+          CupertinoDialogAction(
+            onPressed: () {
+              Navigator.pop(context);
+              if (cancelAction != null) {
+                cancelAction();
+              }
+            },
+            isDestructiveAction: true,
+            child: Text(cancelTitle!),
+          ),
+        ],
+      ),
+    );
+  }
 }
 
 class Config {

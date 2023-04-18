@@ -97,7 +97,7 @@ class _MemberTable extends DataTableHandler<ID> {
       return true;
     }
     List<ID> newMembers = [...oldMembers];
-    newMembers.remove(member);
+    newMembers.removeWhere((element) => element == member);
     return await updateMembers(newMembers, oldMembers, group) >= 0;
   }
 
@@ -140,6 +140,9 @@ class _MemberCache extends _MemberTable {
     List<ID> oldMembers = await getMembers(group);
     int cnt = await updateMembers(members, oldMembers, group);
     if (cnt > 0) {
+      // clear to reload
+      _cache.erase(group);
+      // post notification
       var nc = NotificationCenter();
       nc.postNotification(NotificationNames.kMembersUpdated, this, {
         'action': 'update',
@@ -160,6 +163,9 @@ class _MemberCache extends _MemberTable {
     List<ID> newMembers = [...oldMembers, member];
     int cnt = await updateMembers(newMembers, oldMembers, group);
     if (cnt > 0) {
+      // clear to reload
+      _cache.erase(group);
+      // post notification
       var nc = NotificationCenter();
       nc.postNotification(NotificationNames.kContactsUpdated, this, {
         'action': 'add',
@@ -179,9 +185,12 @@ class _MemberCache extends _MemberTable {
       return true;
     }
     List<ID> newMembers = [...oldMembers];
-    newMembers.remove(member);
+    newMembers.removeWhere((element) => element == member);
     int cnt = await updateMembers(newMembers, oldMembers, group);
     if (cnt > 0) {
+      // clear to reload
+      _cache.erase(group);
+      // post notification
       var nc = NotificationCenter();
       nc.postNotification(NotificationNames.kContactsUpdated, this, {
         'action': 'remove',

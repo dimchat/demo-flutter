@@ -29,6 +29,7 @@
  * =============================================================================
  */
 import 'package:dim_client/dim_client.dart';
+import 'package:dio/dio.dart';
 
 import '../filesys/paths.dart';
 import 'task.dart';
@@ -109,9 +110,20 @@ class DownloadTask extends DownloadRequest {
   DownloadTask(super.url, super.path, {required super.delegate});
 
   static Future<Error?> _download(Uri url, String filePath) async {
-    // TODO: get file data from remote url to local file path
-    Log.warning('download $url to $filePath');
-    return null;
+    Log.info('download $url to $filePath');
+    try {
+      Response res = await Dio().downloadUri(url, filePath);
+      if (res.statusCode == 200) {
+        Log.info('download success: $url -> $filePath');
+        return null;
+      } else {
+        Log.error('download failed: $url -> $res');
+      }
+    } on DioError catch (e) {
+      Log.error('download failed: $e');
+    }
+    // failed
+    return Error();
   }
 
   void run() async {

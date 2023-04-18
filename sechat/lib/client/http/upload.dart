@@ -31,6 +31,7 @@
 import 'dart:typed_data';
 
 import 'package:dim_client/dim_client.dart';
+import 'package:dio/dio.dart';
 
 import 'task.dart';
 
@@ -131,14 +132,40 @@ class UploadTask extends UploadRequest {
   final Uint8List data;   // file data
 
   static Future<String?> _post(Uri url, String name, String filename, Uint8List data) async {
-    // TODO: post data with filename to remote url
-    Log.warning('upload $filename to $url');
+    Log.info('upload $filename to $url');
+    try {
+      FormData formData = FormData.fromMap({
+        name: MultipartFile.fromBytes(data, filename: filename),
+      });
+      Response res = await Dio().postUri(url, data: formData);
+      if (res.statusCode == 200) {
+        Log.info('upload success: $filename -> $url');
+        return res.data.toString();
+      } else {
+        Log.error('upload failed: $url -> $res');
+      }
+    } on DioError catch (e) {
+      Log.error('upload failed: $e');
+    }
+    // failed
     return null;
   }
 
+  /// response: {
+  ///        "code": {{code}},
+  ///        "message": "{{message}}",
+  ///        "filename": "{{filename}}",
+  ///        "url": "{{url}}"
+  ///    }
   static Uri? _fetch(String json) {
-    // TODO: fetch URL from json response
-    Log.warning('fetch download URL from response: $json');
+    try {
+      Map info = JSON.decode(json);
+      String url = info['url'];
+      return Uri.parse(url);
+    } catch (e) {
+      Log.error('failed to fetch download url: $json');
+    }
+    // response error
     return null;
   }
 

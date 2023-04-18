@@ -48,7 +48,7 @@ abstract class HttpTask {
   }
 
   void onError() {
-    assert(_flag == 0, 'flag updated before');
+    assert(_flag == 0, 'flag updated before: $_flag');
     _flag = -1;
   }
 
@@ -67,10 +67,11 @@ abstract class HttpTask {
   HttpTaskStatus get status {
     if (_flag == -1) {
       return HttpTaskStatus.error;
-    } else if (_flag == 0) {
-      return HttpTaskStatus.waiting;
     } else if (_flag == 2) {
       return HttpTaskStatus.finished;
+    } else if (_last == 0) {
+      assert(_flag == 0, 'status error, flag: $_flag');
+      return HttpTaskStatus.waiting;
     }
     assert(_last > 0, 'touch() not called');
     // task started, check for expired

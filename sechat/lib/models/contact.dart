@@ -48,9 +48,9 @@ class ContactInfo {
     int type = identifier.type;
     String? image;
     if (EntityType.isUser(type)) {
-      Document? doc = await shared.facebook.getDocument(identifier, '*');
-      if (doc != null) {
-        image = doc.getProperty('avatar');
+      Pair<String?, Uri?> pair = await shared.facebook.getAvatar(identifier);
+      if (pair.first != null) {
+        image = pair.first;
       }
     }
     return ContactInfo(identifier: identifier, type: type, name: name, image: image);

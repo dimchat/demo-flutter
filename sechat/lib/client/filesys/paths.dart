@@ -56,7 +56,14 @@ class Paths {
   /// @param filename - file name
   /// @return file extension
   static String? extension(String filename) {
-    return utils.extension(filename);
+    String ext = utils.extension(filename);
+    if (ext.isEmpty) {
+      return null;
+    } else if (ext.startsWith('.')) {
+      return ext.substring(1);
+    } else {
+      return ext;
+    }
   }
 
   ///  Get parent directory

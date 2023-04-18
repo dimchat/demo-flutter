@@ -275,8 +275,16 @@ abstract class HTTPClient implements UploadDelegate, DownloadDelegate {
   /// Start a background thread
   Future<void> cleanup();
 
-  void start() {
-    // TODO:
+  Future<void> start() async {
+    Log.warning('starting HTTP client ...');
+    while (true) {
+      if (await process()) {
+        // it's busy
+      } else {
+        cleanup();
+        await Future.delayed(const Duration(milliseconds: 512));
+      }
+    }
   }
 
   //

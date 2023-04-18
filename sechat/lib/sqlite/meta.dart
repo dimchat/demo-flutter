@@ -20,8 +20,8 @@ Meta _extractMeta(ResultSet resultSet, int index) {
   return Meta.parse(info)!;
 }
 
-class MetaTable extends DataTableHandler<Meta> implements MetaDBI {
-  MetaTable() : super(EntityDatabase(), _extractMeta);
+class _MetaTable extends DataTableHandler<Meta> implements MetaDBI {
+  _MetaTable() : super(EntityDatabase(), _extractMeta);
 
   static const String _table = EntityDatabase.tMeta;
   static const List<String> _selectColumns = ["type", "pub_key", "seed", "fingerprint"];
@@ -56,7 +56,7 @@ class MetaTable extends DataTableHandler<Meta> implements MetaDBI {
 
 }
 
-class MetaCache extends MetaTable {
+class MetaCache extends _MetaTable {
 
   final CachePool<ID, Meta> _cache = CacheManager().getPool('meta');
 

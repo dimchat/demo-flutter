@@ -58,8 +58,8 @@ Pair<LoginCommand, ReliableMessage> _extractCommandMessage(ResultSet resultSet, 
 }
 
 
-class LoginCommandTable extends DataTableHandler<Pair<LoginCommand, ReliableMessage>> implements LoginDBI {
-  LoginCommandTable() : super(LoginDatabase(), _extractCommandMessage);
+class _LoginCommandTable extends DataTableHandler<Pair<LoginCommand, ReliableMessage>> implements LoginDBI {
+  _LoginCommandTable() : super(LoginDatabase(), _extractCommandMessage);
 
   static const String _table = LoginDatabase.tLogin;
   static const List<String> _selectColumns = ["cmd", "msg"];
@@ -91,7 +91,7 @@ class LoginCommandTable extends DataTableHandler<Pair<LoginCommand, ReliableMess
 
 }
 
-class LoginCommandCache extends LoginCommandTable {
+class LoginCommandCache extends _LoginCommandTable {
   LoginCommandCache() {
     _cache = CacheManager().getPool('login_command');
   }

@@ -49,8 +49,8 @@ PrivateKey _extractPrivateKey(ResultSet resultSet, int index) {
   return PrivateKey.parse(info)!;
 }
 
-class PrivateKeyTable extends DataTableHandler<PrivateKey> implements PrivateKeyDBI {
-  PrivateKeyTable() : super(CryptoKeyDatabase(), _extractPrivateKey);
+class _PrivateKeyTable extends DataTableHandler<PrivateKey> implements PrivateKeyDBI {
+  _PrivateKeyTable() : super(CryptoKeyDatabase(), _extractPrivateKey);
 
   static const String _table = CryptoKeyDatabase.tPrivateKey;
   static const List<String> _selectColumns = ["pri_key"];
@@ -97,7 +97,7 @@ class PrivateKeyTable extends DataTableHandler<PrivateKey> implements PrivateKey
 
 }
 
-class PrivateKeyCache extends PrivateKeyTable {
+class PrivateKeyCache extends _PrivateKeyTable {
   PrivateKeyCache() {
     _privateKeyCaches = CacheManager().getPool('private_id_key');
     _decryptKeysCache = CacheManager().getPool('private_msg_keys');

@@ -203,7 +203,7 @@ class Emitter implements Observer {
       return;
     }
     // save instant message
-    _saveInstantMessage(result.first);
+    await _saveInstantMessage(result.first);
   }
 
 }

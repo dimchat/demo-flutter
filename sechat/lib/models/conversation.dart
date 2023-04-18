@@ -239,15 +239,23 @@ class Amanuensis implements lnc.Observer {
     if (chatBox == null) {
       // new conversation
       chatBox = Conversation(cid, unread: unread, lastMessage: last, lastTime: time);
-      _conversationMap[cid] = chatBox;
-      _allConversations?.insert(0, chatBox);
-      await shared.database.addConversation(chatBox);
+      if (await shared.database.addConversation(chatBox)) {
+        // add to cache
+        _conversationMap[cid] = chatBox;
+        // _allConversations?.insert(0, chatBox);
+      } else {
+        Log.error('failed to add conversation: $chatBox');
+        return;
+      }
     } else {
       // conversation exists
       chatBox.unread = unread;
       chatBox.lastMessage = last;
       chatBox.lastTime = time;
-      await shared.database.updateConversation(chatBox);
+      if (await shared.database.updateConversation(chatBox)) {} else {
+        Log.error('failed to update conversation: $chatBox');
+        return;
+      }
     }
     var nc = NotificationCenter();
     nc.postNotification(NotificationNames.kConversationUpdated, this, {

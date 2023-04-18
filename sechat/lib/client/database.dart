@@ -2,6 +2,7 @@ import 'package:dim_client/dim_client.dart';
 
 import '../models/conversation.dart';
 import '../sqlite/contact.dart';
+import '../sqlite/conversation.dart';
 import '../sqlite/document.dart';
 import '../sqlite/group.dart';
 import '../sqlite/keys.dart';
@@ -15,22 +16,25 @@ import '../sqlite/user.dart';
 class SharedDatabase implements AccountDBI, SessionDBI, MessageDBI,
                                 ConversationDBI, InstantMessageDBI, TraceDBI {
 
+  /// Account
   PrivateKeyDBI privateKeyTable = PrivateKeyCache();
   MetaDBI metaTable = MetaCache();
   DocumentDBI documentTable = DocumentCache();
-  UserDBI userTable = UserTable();
-  ContactDBI contactTable = ContactTable();
-  GroupDBI groupTable = GroupTable();
+  UserDBI userTable = UserCache();
+  ContactDBI contactTable = ContactCache();
+  GroupDBI groupTable = GroupCache();
 
+  /// Session
   LoginDBI loginTable = LoginCommandCache();
-  ProviderDBI providerTable = ProviderTable();
-  StationDBI stationTable = StationTable();
+  ProviderDBI providerTable = ProviderCache();
+  StationDBI stationTable = StationCache();
 
+  /// Message
   CipherKeyDBI msgKeyTable = MsgKeyCache();
   ReliableMessageDBI reliableMessageTable = ReliableMessageTable();
   InstantMessageDBI instantMessageTable = InstantMessageTable();
-  ConversationDBI conversationTable = ConversationTable();
   TraceDBI traceTable = TraceTable();
+  ConversationDBI conversationTable = ConversationCache();
 
   final NotificationCenter _center = NotificationCenter();
   NotificationCenter get center => _center;

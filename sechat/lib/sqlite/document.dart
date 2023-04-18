@@ -27,8 +27,8 @@ Document _extractDocument(ResultSet resultSet, int index) {
   return doc;
 }
 
-class DocumentTable extends DataTableHandler<Document> implements DocumentDBI {
-  DocumentTable() : super(EntityDatabase(), _extractDocument);
+class _DocumentTable extends DataTableHandler<Document> implements DocumentDBI {
+  _DocumentTable() : super(EntityDatabase(), _extractDocument);
 
   static const String _table = EntityDatabase.tDocument;
   static const List<String> _selectColumns = ["did", "type", "data", "signature"];
@@ -71,7 +71,7 @@ class DocumentTable extends DataTableHandler<Document> implements DocumentDBI {
 
 }
 
-class DocumentCache extends DocumentTable {
+class DocumentCache extends _DocumentTable {
 
   final CachePool<ID, Document> _cache = CacheManager().getPool('document');
 

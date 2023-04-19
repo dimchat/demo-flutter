@@ -2,10 +2,11 @@ import 'dart:typed_data';
 
 import 'package:dim_client/dim_client.dart';
 
+import '../channels/manager.dart';
+import '../channels/transfer.dart';
 import '../models/conversation.dart';
 import 'constants.dart';
 import 'http/ftp.dart';
-import 'http/upload.dart';
 import 'shared.dart';
 
 class Emitter implements Observer {
@@ -18,19 +19,20 @@ class Emitter implements Observer {
   /// filename => task
   final Map<String, InstantMessage> _outgoing = {};
 
-  FileTransfer? _ftp;
+  FileTransferChannel? _ftp;
 
   // private
-  FileTransfer get ftp {
-    FileTransfer? transfer = _ftp;
-    if (transfer == null) {
-      transfer = FileTransfer();
-      _ftp = transfer;
+  FileTransferChannel get ftp {
+    FileTransferChannel? channel = _ftp;
+    if (channel == null) {
+      ChannelManager man = ChannelManager();
+      channel = man.ftpChannel;
       // TODO: Configuration
-      transfer.api = 'http://106.52.25.169:8081/{ID}/upload?md5={MD5}&salt={SALT}';
-      transfer.secret = '12345678';
+      String api = 'http://106.52.25.169:8081/{ID}/upload?md5={MD5}&salt={SALT}';
+      String secret = '12345678';
+      channel.setUploadConfig(api: api, secret: secret);
     }
-    return transfer;
+    return channel;
   }
 
   void _addTask(String filename, InstantMessage item) {
@@ -53,20 +55,17 @@ class Emitter implements Observer {
   Future<void> onReceiveNotification(Notification notification) async {
     String name = notification.name;
     Map info = notification.userInfo!;
-    UploadRequest request = info['request'];
     if (name == NotificationNames.kFileUploadSuccess) {
-      Map response = info['response'];
-      Uri url = response['url'];
-      await _onUploadSuccess(request, url);
+      String filename = info['filename'];
+      Uri url = info['url'];
+      await _onUploadSuccess(filename, url);
     } else if (name == NotificationNames.kFileUploadFailure) {
-      var error = info['error'];
-      _onUploadFailed(request, error);
+      String filename = info['filename'];
+      _onUploadFailed(filename);
     }
   }
 
-  Future<void> _onUploadSuccess(UploadRequest request, Uri url) async {
-    Log.info('onUploadSuccess: $request, url: $url');
-    String filename = FileTransfer.filenameFromRequest(request);
+  Future<void> _onUploadSuccess(String filename, Uri url) async {
     InstantMessage? iMsg = _popTask(filename);
     if (iMsg == null) {
       Log.error('failed to get task: $filename, url: $url');
@@ -83,12 +82,10 @@ class Emitter implements Observer {
     });
   }
 
-  Future<void> _onUploadFailed(UploadRequest request, var error) async {
-    Log.error('onUploadFailed: $request, error: $error');
-    String filename = FileTransfer.filenameFromRequest(request);
+  Future<void> _onUploadFailed(String filename) async {
     InstantMessage? iMsg = _popTask(filename);
     if (iMsg == null) {
-      Log.error('failed to get task: $filename, error: $error');
+      Log.error('failed to get task: $filename');
       return;
     }
     Log.info('get task for file: $filename');

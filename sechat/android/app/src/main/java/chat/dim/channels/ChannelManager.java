@@ -12,18 +12,12 @@ import io.flutter.plugin.common.StandardMethodCodec;
 
 final class ChannelNames {
 
-    static final String STORAGE = "chat.dim/fileManager";
-
     static final String SESSION = "chat.dim/session";
+
+    static final String FILE_TRANSFER = "chat.dim/ftp";
 }
 
 final class ChannelMethods {
-
-    //
-    //  Storage channel
-    //
-    static final String CACHES_DIRECTORY = "cachesDirectory";
-    static final String TEMPORARY_DIRECTORY = "temporaryDirectory";
 
     //
     //  Session channel
@@ -36,6 +30,21 @@ final class ChannelMethods {
 
     static final String ON_STATE_CHANGED = "onStateChanged";
     static final String ON_RECEIVED = "onReceived";
+
+    //
+    //  FTP Channel
+    //
+    static final String SET_UPLOAD_API = "setUploadAPI";
+
+    static final String UPLOAD_AVATAR = "uploadAvatar";
+    static final String UPLOAD_FILE = "uploadEncryptFile";
+    static final String DOWNLOAD_AVATAR = "downloadAvatar";
+    static final String DOWNLOAD_FILE = "downloadEncryptedFile";
+
+    static final String ON_UPLOAD_SUCCESS = "onUploadSuccess";
+    static final String ON_UPLOAD_FAILURE = "onUploadFailed";
+    static final String ON_DOWNLOAD_SUCCESS = "onDownloadSuccess";
+    static final String ON_DOWNLOAD_FAILURE = "onDownloadFailed";
 }
 
 public enum ChannelManager {
@@ -53,8 +62,8 @@ public enum ChannelManager {
     //
     //  Channels
     //
-    private StorageChannel storageChannel = null;
     public SessionChannel sessionChannel = null;
+    public FileTransferChannel fileChannel = null;
 
     private static class MessageCodec extends StandardMessageCodec {
         @Override
@@ -72,8 +81,8 @@ public enum ChannelManager {
         if (sessionChannel == null) {
             sessionChannel = new SessionChannel(messenger, ChannelNames.SESSION, codec);
         }
-        if (storageChannel == null) {
-            storageChannel = new StorageChannel(messenger, ChannelNames.STORAGE, codec);
+        if (fileChannel == null) {
+            fileChannel = new FileTransferChannel(messenger, ChannelNames.FILE_TRANSFER, codec);
         }
     }
 }

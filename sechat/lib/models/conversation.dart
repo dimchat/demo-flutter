@@ -161,13 +161,13 @@ class Amanuensis implements lnc.Observer {
   List<Conversation>? _allConversations;
   final Map<ID, Conversation> _conversationMap = {};
 
-  Future<void> loadConversations() async {
+  Future<List<Conversation>> loadConversations() async {
     List<Conversation>? array;
     // get ID list from database
     array = _allConversations;
     if (array != null) {
       Log.warning('${array.length} conversation(s) exists');
-      return;
+      return array;
     }
     GlobalVariable shared = GlobalVariable();
     SharedFacebook facebook = shared.facebook;
@@ -183,6 +183,8 @@ class Amanuensis implements lnc.Observer {
       _conversationMap[item.identifier] = item;
     }
     _allConversations = array;
+    Log.warning('${array.length} conversation(s) loaded');
+    return array;
   }
 
   int get numberOfConversation {

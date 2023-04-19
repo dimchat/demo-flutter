@@ -1,6 +1,7 @@
 import 'package:dim_client/dim_client.dart';
 
-import '../models/channels.dart';
+import '../channels/manager.dart';
+import '../channels/session.dart';
 import 'constants.dart';
 import 'messenger.dart';
 import 'packer.dart';

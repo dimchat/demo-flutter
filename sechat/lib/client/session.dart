@@ -2,7 +2,7 @@ import 'dart:typed_data';
 
 import 'package:dim_client/dim_client.dart';
 
-import '../models/channels.dart';
+import '../channels/manager.dart';
 
 String titleWithState(String title, int state) {
   String sub;

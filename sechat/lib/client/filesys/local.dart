@@ -32,7 +32,7 @@ import 'dart:io';
 
 import 'package:path_provider/path_provider.dart';
 
-import '../client/filesys/paths.dart';
+import 'paths.dart';
 
 class LocalStorage {
   factory LocalStorage() => _instance;

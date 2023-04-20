@@ -28,83 +28,14 @@
  * SOFTWARE.
  * =============================================================================
  */
-import 'dart:io';
 import 'dart:typed_data';
 
 import 'package:dim_client/dim_client.dart';
 
-import '../client/filesys/paths.dart';
-import '../client/filesys/resource.dart';
+import 'resource.dart';
 
 ///  RAM access
 abstract class ExternalStorage {
-
-  ///  Forbid the gallery from scanning media files
-  ///
-  /// @param dir - data directory
-  /// @return true on success
-  static Future<bool> setNoMedia(String dir) async {
-    if (Platform.isAndroid) {
-      Log.debug('Forbid the gallery from scanning media files');
-      String path = Paths.append(dir, '.nomedia');
-      if (await Paths.exists(path)) {
-        // already exists
-        return true;
-      }
-      Storage file = Storage();
-      file.data = UTF8.encode(promise);
-      return await file.write(path) > 0;
-    } else {
-      Log.warning('TODO: Forbid the gallery from scanning media files');
-      return false;
-    }
-  }
-  static const String promise = 'Moky loves May Lee forever!';
-
-  ///  Delete expired files in this directory cyclically
-  ///
-  /// @param dir     - directory
-  /// @param expired - expired time (milliseconds, from Jan 1, 1970 UTC)
-  static Future<void> cleanup(String dir, int expired, {bool recursive = true}) async {
-    if (await FileSystemEntity.isDirectory(dir)) {
-      _cleanDir(Directory(dir), expired, recursive);
-    } else {
-      Log.error('directory error: $dir');
-    }
-  }
-  static Future<void> _cleanDir(Directory dir, int expired, bool recursive) async {
-    // get all entities in this directory, let links be links
-    List<FileSystemEntity> array = dir.listSync(followLinks: false);
-    for (FileSystemEntity item in array) {
-      if (item is Directory) {
-        // sub directory
-        if (recursive) {
-          await _cleanDir(item, expired, true);
-        } else {
-          Log.warning('ignore sub directory: $item');
-        }
-      } else if (item is File) {
-        // regular file
-        await _cleanFile(item, expired);
-      } if (item is Link) {
-        // symbol link
-        _cleanLink(item, expired, recursive);
-      } else {
-        // others?
-        Log.error('unknown entity: $item');
-      }
-    }
-  }
-  static Future<void> _cleanFile(File file, int expired) async {
-    FileStat stat = await file.stat();
-    DateTime last = stat.modified;
-    if (last.millisecondsSinceEpoch < expired) {
-      Log.debug('cleaning expired file: $last, $file');
-    }
-  }
-  static Future<void> _cleanLink(Link link, int expired, bool recursive) async {
-    Log.warning('ignore link: $link');
-  }
 
   //-------- read
 

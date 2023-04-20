@@ -32,43 +32,20 @@ import 'dart:typed_data';
 
 import 'package:dim_client/dim_client.dart';
 
-import '../../models/external.dart';
-import '../../models/local.dart';
-import '../constants.dart';
+import '../../channels/manager.dart';
+import '../filesys/external.dart';
+import '../filesys/local.dart';
 import '../filesys/paths.dart';
-import 'client.dart';
-import 'download.dart';
-import 'upload.dart';
 
-class _Client extends HTTPClient {
-
-  // static const int cachesExpires = 365 * 24 * 3600 * 1000;
-  static const int temporaryExpires = 7 * 24 * 3600 * 1000;
-
-  @override
-  Future<void> cleanup() async {
-    int now = Time.currentTimeMillis;
-    LocalStorage cache = LocalStorage();
-    String tmp = await cache.temporaryDirectory;
-    await ExternalStorage.cleanup(tmp, now - temporaryExpires);
-  }
-
-}
-
-class FileTransfer implements UploadDelegate, DownloadDelegate {
+class FileTransfer {
   factory FileTransfer() => _instance;
   static final FileTransfer _instance = FileTransfer._internal();
-  FileTransfer._internal() {
-    _http = _Client();
-    _http.start();
-  }
+  FileTransfer._internal();
 
   // Upload API
   String api = 'https://sechat.dim.chat/{ID}/upload?md5={MD5}&salt={SALT}';
   // Upload key (hex)
   String secret = '12345678';
-
-  late final HTTPClient _http;
 
   final NotificationCenter _center = NotificationCenter();
   NotificationCenter get center => _center;
@@ -81,11 +58,8 @@ class FileTransfer implements UploadDelegate, DownloadDelegate {
   /// @return remote URL if same file uploaded before
   /// @throws IOException on failed to create temporary file
   Future<Uri?> uploadAvatar(Uint8List data, String filename, ID sender) async {
-    // filename = Paths.filename(filename);
-    filename = filenameFromData(data, filename);
-    LocalStorage cache = LocalStorage();
-    String path = await cache.getAvatarFilePath(filename);
-    return await _upload(data, path, 'avatar', sender);
+    ChannelManager man = ChannelManager();
+    return await man.ftpChannel.uploadAvatar(data, filename, sender);
   }
 
   ///  Upload encrypted file data for user
@@ -96,18 +70,8 @@ class FileTransfer implements UploadDelegate, DownloadDelegate {
   /// @return remote URL if same file uploaded before
   /// @throws IOException on failed to create temporary file
   Future<Uri?> uploadEncryptData(Uint8List data, String filename, ID sender) async {
-    // filename = Paths.filename(filename);
-    filename = filenameFromData(data, filename);
-    LocalStorage cache = LocalStorage();
-    String path = await cache.getUploadFilePath(filename);
-    return await _upload(data, path, 'file', sender);
-  }
-
-  Future<Uri?> _upload(Uint8List data, String path, String name, ID sender) async {
-    Uri url = Uri.parse(api);
-    Uint8List key = Hex.decode(secret)!;
-    return await _http.upload(api: url, secret: key, data: data, path: path,
-        name: name, sender: sender, delegate: this);
+    ChannelManager man = ChannelManager();
+    return await man.ftpChannel.uploadEncryptData(data, filename, sender);
   }
 
   static bool _isEncoded(String filename, String? ext) {
@@ -130,21 +94,6 @@ class FileTransfer implements UploadDelegate, DownloadDelegate {
       // get filename from data
       filename = Hex.encode(MD5.digest(data));
       return ext == null || ext.isEmpty ? filename : '$filename.$ext';
-    }
-  }
-
-  static String _filenameFromURL(Uri url) {
-    String urlString = url.toString();
-    String filename = Paths.filename(urlString)!;
-    Uint8List data = UTF8.encode(urlString);
-    return filenameFromData(data, filename);
-  }
-
-  static String filenameFromRequest(UploadRequest request) {
-    if (request is UploadTask) {
-      return request.filename;
-    } else {
-      return Paths.filename(request.path!)!;
     }
   }
 
@@ -224,10 +173,8 @@ class FileTransfer implements UploadDelegate, DownloadDelegate {
   /// @param url      - avatar URL
   /// @return local path if same file downloaded before
   Future<String?> downloadAvatar(Uri url) async {
-    String filename = _filenameFromURL(url);
-    LocalStorage cache = LocalStorage();
-    String path = await cache.getAvatarFilePath(filename);
-    return await _http.download(url: url, path: path, delegate: this);
+    ChannelManager man = ChannelManager();
+    return await man.ftpChannel.downloadAvatar(url);
   }
 
   ///  Download encrypted file data for user
@@ -235,10 +182,8 @@ class FileTransfer implements UploadDelegate, DownloadDelegate {
   /// @param url      - relay URL
   /// @return temporary path if same file downloaded before
   Future<String?> _downloadEncryptedFile(Uri url) async {
-    String filename = _filenameFromURL(url);
-    LocalStorage cache = LocalStorage();
-    String path = await cache.getDownloadFilePath(filename);
-    return await _http.download(url: url, path: path, delegate: this);
+    ChannelManager man = ChannelManager();
+    return await man.ftpChannel.downloadFile(url);
   }
 
   ///  Decrypt temporary file with password from received message
@@ -308,92 +253,6 @@ class FileTransfer implements UploadDelegate, DownloadDelegate {
     String aa = string.substring(0, 2);
     String bb = string.substring(2, 4);
     return Paths.append(dir, aa, bb, string);
-  }
-
-  //
-  //  UploadDelegate
-  //
-
-  static Map _uploadInfo(UploadRequest request) {
-    if (request is UploadTask) {
-      return {
-        'request': request,
-        'api': request.url,
-        'name': request.name,
-        'filename': request.filename,
-      };
-    } else {
-      return {
-        'request': request,
-        'api': request.url,
-        'path': request.path,
-        'name': request.name,
-        'sender': request.sender,
-      };
-    }
-  }
-
-  @override
-  Future<void> onUploadError(UploadRequest request, Error error) async {
-    Log.error('onUploadError: $request, error: $error');
-    Map info = _uploadInfo(request);
-    info['error'] = error;
-    center.postNotification(NotificationNames.kFileUploadFailure, this, info);
-  }
-
-  @override
-  Future<void> onUploadFailed(UploadRequest request, Exception error) async {
-    Log.error('onUploadFailed: $request, error: $error');
-    Map info = _uploadInfo(request);
-    info['error'] = error;
-    center.postNotification(NotificationNames.kFileUploadFailure, this, info);
-  }
-
-  @override
-  Future<void> onUploadSuccess(UploadRequest request, Uri url) async {
-    Log.error('onUploadSuccess: $request, url: $url');
-    Map response = {
-      'url': url,
-    };
-    Map info = _uploadInfo(request);
-    info['response'] = response;
-    center.postNotification(NotificationNames.kFileUploadSuccess, this, info);
-  }
-
-  //
-  //  DownloadDelegate
-  //
-
-  @override
-  void onDownloadError(DownloadRequest request, Error error) {
-    Log.error('onDownloadError: $request, error: $error');
-    center.postNotification(NotificationNames.kFileDownloadFailure, this, {
-      'request': request,
-      'url': request.url,
-      'path': request.path,
-      'error': error,
-    });
-  }
-
-  @override
-  void onDownloadFailed(DownloadRequest request, Exception error) {
-    Log.error('onDownloadFailed: $request, error: $error');
-    center.postNotification(NotificationNames.kFileDownloadFailure, this, {
-      'request': request,
-      'url': request.url,
-      'path': request.path,
-      'error': error,
-    });
-  }
-
-  @override
-  void onDownloadSuccess(DownloadRequest request, String path) {
-    Log.error('onDownloadSuccess: $request, path: $path');
-    center.postNotification(NotificationNames.kFileDownloadSuccess, this, {
-      'request': request,
-      'url': request.url,
-      'path': request.path,
-    });
   }
 
 }

@@ -1,6 +1,6 @@
 import '../client/constants.dart';
 import '../client/filesys/paths.dart';
-import '../models/local.dart';
+import '../client/filesys/local.dart';
 import 'helper/sqlite.dart';
 
 

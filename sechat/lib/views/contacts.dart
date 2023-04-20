@@ -19,12 +19,10 @@ import '../widgets/tableview.dart';
 class ContactListPage extends StatefulWidget {
   const ContactListPage({super.key});
 
-  static BottomNavigationBarItem barItem() {
-    return const BottomNavigationBarItem(
-      icon: Icon(CupertinoIcons.group),
-      label: 'Contacts',
-    );
-  }
+  static BottomNavigationBarItem barItem() => const BottomNavigationBarItem(
+    icon: Icon(CupertinoIcons.group),
+    label: 'Contacts',
+  );
 
   @override
   State<StatefulWidget> createState() => _ContactListState();
@@ -32,8 +30,8 @@ class ContactListPage extends StatefulWidget {
 
 class _ContactListState extends State<ContactListPage> implements lnc.Observer {
   _ContactListState() {
-    dataSource = _ContactDataSource();
-    _adapter = _ContactListAdapter(dataSource: dataSource);
+    _dataSource = _ContactDataSource();
+    _adapter = _ContactListAdapter(dataSource: _dataSource);
 
     var nc = lnc.NotificationCenter();
     nc.addObserver(this, NotificationNames.kServerStateChanged);
@@ -48,8 +46,7 @@ class _ContactListState extends State<ContactListPage> implements lnc.Observer {
     nc.removeObserver(this, NotificationNames.kServerStateChanged);
   }
 
-  late final _ContactDataSource dataSource;
-
+  late final _ContactDataSource _dataSource;
   late final _ContactListAdapter _adapter;
 
   int _sessionState = 0;
@@ -81,7 +78,7 @@ class _ContactListState extends State<ContactListPage> implements lnc.Observer {
     }
     List<ID> contacts = await shared.database.getContacts(user: user.identifier);
     await ContactInfo.fromList(contacts).then((array) => setState(() {
-      dataSource.refresh(array);
+      _dataSource.refresh(array);
       _adapter.notifyDataChange();
     }));
   }
@@ -93,47 +90,36 @@ class _ContactListState extends State<ContactListPage> implements lnc.Observer {
   }
 
   @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: Styles.backgroundColor,
-      appBar: CupertinoNavigationBar(
-        backgroundColor: Styles.navigationBarBackground,
-        border: Styles.navigationBarBorder,
-        middle: Text(titleWithState('Contacts', _sessionState)),
-        trailing: SearchPage.searchButton(context),
-      ),
-      body: SectionListView.builder(
-        adapter: _adapter,
-      ),
-    );
-  }
+  Widget build(BuildContext context) => Scaffold(
+    backgroundColor: Styles.backgroundColor,
+    appBar: CupertinoNavigationBar(
+      backgroundColor: Styles.navigationBarBackground,
+      border: Styles.navigationBarBorder,
+      middle: Text(titleWithState('Contacts', _sessionState)),
+      trailing: SearchPage.searchButton(context),
+    ),
+    body: SectionListView.builder(
+      adapter: _adapter,
+    ),
+  );
 }
 
 class _ContactListAdapter with SectionAdapterMixin {
+  _ContactListAdapter({required _ContactDataSource dataSource})
+      : _dataSource = dataSource;
 
-  final _ContactDataSource dataSource;
-
-  _ContactListAdapter({required this.dataSource});
-
-  @override
-  int numberOfSections() {
-    // includes fixed section
-    return dataSource.getSectionCount() + 1;
-  }
+  final _ContactDataSource _dataSource;
 
   @override
-  bool shouldExistSectionHeader(int section) {
-    if (section == 0) {
-      // fixed section
-      return false;
-    }
-    return true;
-  }
+  int numberOfSections() =>
+      // includes fixed section
+      _dataSource.getSectionCount() + 1;
 
   @override
-  bool shouldSectionHeaderStick(int section) {
-    return true;
-  }
+  bool shouldExistSectionHeader(int section) => section > 0;
+
+  @override
+  bool shouldSectionHeaderStick(int section) => true;
 
   @override
   Widget getSectionHeader(BuildContext context, int section) {
@@ -141,7 +127,7 @@ class _ContactListAdapter with SectionAdapterMixin {
       // fixed section
       return const Text('...');
     }
-    String title = dataSource.getSection(section - 1);
+    String title = _dataSource.getSection(section - 1);
     return Container(
       color: Styles.sectionHeaderBackground,
       padding: Styles.sectionHeaderPadding,
@@ -157,7 +143,7 @@ class _ContactListAdapter with SectionAdapterMixin {
       // fixed section
       return 2;
     }
-    return dataSource.getItemCount(section - 1);
+    return _dataSource.getItemCount(section - 1);
   }
 
   @override
@@ -166,7 +152,7 @@ class _ContactListAdapter with SectionAdapterMixin {
       // fixed section
       return getFixedItem(context, indexPath.item);
     }
-    ContactInfo info = dataSource.getItem(indexPath.section - 1, indexPath.item);
+    ContactInfo info = _dataSource.getItem(indexPath.section - 1, indexPath.item);
     Widget avatar = Facade.fromID(info.identifier);
     return TableView.cell(
         leading: avatar,
@@ -217,31 +203,21 @@ class _ContactListAdapter with SectionAdapterMixin {
 
 class _ContactDataSource {
 
-  List<String> sections = [];
-  Map<int, List<ContactInfo>> items = {};
+  List<String> _sections = [];
+  Map<int, List<ContactInfo>> _items = {};
 
   void refresh(List<ContactInfo> contacts) {
     Log.debug('refreshing ${contacts.length} contact(s)');
     ContactSorter sorter = ContactSorter.build(contacts);
-    sections = sorter.sectionNames;
-    items = sorter.sectionItems;
+    _sections = sorter.sectionNames;
+    _items = sorter.sectionItems;
   }
 
-  int getSectionCount() {
-    return sections.length;
-  }
+  int getSectionCount() => _sections.length;
 
-  String getSection(int sec) {
-    return sections[sec];
-  }
+  String getSection(int sec) => _sections[sec];
 
-  int getItemCount(int sec) {
-    List<ContactInfo>? contacts = items[sec];
-    return contacts!.length;
-  }
+  int getItemCount(int sec) => _items[sec]?.length ?? 0;
 
-  ContactInfo getItem(int sec, int idx) {
-    List<ContactInfo>? contacts = items[sec];
-    return contacts![idx];
-  }
+  ContactInfo getItem(int sec, int idx) => _items[sec]![idx];
 }

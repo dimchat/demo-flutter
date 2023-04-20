@@ -38,7 +38,8 @@ class ChatBox extends StatefulWidget {
 
 class _ChatBoxState extends State<ChatBox> implements lnc.Observer {
   _ChatBoxState() {
-    dataSource = _HistoryDataSource();
+    _dataSource = _HistoryDataSource();
+
     var nc = lnc.NotificationCenter();
     nc.addObserver(this, NotificationNames.kMessageUpdated);
   }
@@ -59,18 +60,19 @@ class _ChatBoxState extends State<ChatBox> implements lnc.Observer {
     }
   }
 
-  TextEditingController textController = TextEditingController();
+  final TextEditingController _controller = TextEditingController();
 
-  late final _HistoryDataSource dataSource;
+  late final _HistoryDataSource _dataSource;
+
+  User? _currentUser;
 
   Future<void> _reload() async {
     GlobalVariable shared = GlobalVariable();
-    User? user = await shared.facebook.currentUser;
-    dataSource.me = user?.identifier;
+    _currentUser = await shared.facebook.currentUser;
     var pair = await shared.database.getInstantMessages(widget.info.identifier);
     Log.warning('message updated: ${pair.first.length}');
     setState(() {
-      dataSource.refresh(pair.first);
+      _dataSource.refresh(pair.first);
     });
   }
 
@@ -106,9 +108,8 @@ class _ChatBoxState extends State<ChatBox> implements lnc.Observer {
         flex: 1,
         child: SectionListView.builder(
           reverse: true,
-          adapter: _HistoryAdapter(
-              conversation: widget.info,
-              dataSource: dataSource,
+          adapter: _HistoryAdapter(_currentUser, widget.info,
+              dataSource: _dataSource,
           ),
         ),
       ),
@@ -122,41 +123,43 @@ class _ChatBoxState extends State<ChatBox> implements lnc.Observer {
       Expanded(
         flex: 1,
         child: CupertinoTextField(
-          controller: textController,
+          controller: _controller,
           placeholder: 'Input text message',
-          onSubmitted: (value) => _sendText(widget.info, context, textController),
+          onSubmitted: (value) => _sendText(widget.info, context, _controller),
         ),
       ),
       CupertinoButton(
         child: const Icon(Icons.send),
-        onPressed: () => _sendText(widget.info, context, textController),
+        onPressed: () => _sendText(widget.info, context, _controller),
       ),
     ],
   );
 }
 
 class _HistoryAdapter with SectionAdapterMixin {
-  _HistoryAdapter({required this.conversation, required this.dataSource});
+  _HistoryAdapter(User? currentUser, ContactInfo conversation, {required _HistoryDataSource dataSource})
+      : _currentUser = currentUser, _conversation = conversation, _dataSource = dataSource;
 
-  final ContactInfo conversation;
-  final _HistoryDataSource dataSource;
+  final User? _currentUser;
+  final ContactInfo _conversation;
+  final _HistoryDataSource _dataSource;
 
   @override
   int numberOfItems(int section) {
-    return dataSource.getItemCount();
+    return _dataSource.getItemCount();
   }
 
   @override
   Widget getItem(BuildContext context, IndexPath indexPath) {
-    InstantMessage iMsg = dataSource.getItem(indexPath.item);
+    InstantMessage iMsg = _dataSource.getItem(indexPath.item);
     ID sender = iMsg.sender;
     DateTime? time = iMsg.time;
     Content content = iMsg.content;
     if (content is Command) {
       return _showCommand(content, sender, context: context);
     }
-    bool isMe = sender == dataSource.me;
-    bool isGroupChat = conversation.identifier.isGroup;
+    bool isMe = sender == _currentUser?.identifier;
+    bool isGroupChat = _conversation.identifier.isGroup;
     const radius = Radius.circular(12);
     const borderRadius = BorderRadius.all(radius);
     return Container(
@@ -175,12 +178,12 @@ class _HistoryAdapter with SectionAdapterMixin {
               if (!isMe)
                 IconButton(
                   icon: Facade.fromID(sender),
-                  onPressed: () => _openProfile(context, sender, conversation),
+                  onPressed: () => _openProfile(context, sender, _conversation),
                 ),
               Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  if (!isMe && (isGroupChat || sender != conversation.identifier))
+                  if (!isMe && (isGroupChat || sender != _conversation.identifier))
                     Container(
                       margin: const EdgeInsets.only(left: 8),
                       child: Text(sender.string,
@@ -253,22 +256,16 @@ class _HistoryAdapter with SectionAdapterMixin {
 
 class _HistoryDataSource {
 
-  ID? me;
-
-  List<InstantMessage> messages = [];
+  List<InstantMessage> _messages = [];
 
   void refresh(List<InstantMessage> history) {
     Log.debug('refreshing ${history.length} message(s)');
-    messages = history;
+    _messages = history;
   }
 
-  int getItemCount() {
-    return messages.length;
-  }
+  int getItemCount() => _messages.length;
 
-  InstantMessage getItem(int index) {
-    return messages[index];
-  }
+  InstantMessage getItem(int index) => _messages[index];
 }
 
 //--------

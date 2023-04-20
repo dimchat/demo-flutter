@@ -67,8 +67,8 @@ class _FacadeState extends State<Facade> {
         setState(() {
           Log.warning('Facade reloaded: ${widget._provider}');
         });
-      } else {
-        Log.error('Facade reload failed: ${widget._provider}');
+      // } else {
+      //   Log.error('Facade reload failed: ${widget._provider}');
       }
     });
   }

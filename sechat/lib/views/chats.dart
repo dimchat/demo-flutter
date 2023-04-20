@@ -30,8 +30,8 @@ class ChatHistoryPage extends StatefulWidget {
 }
 
 class _ChatListState extends State<ChatHistoryPage> implements lnc.Observer {
-  _ChatListState() : dataSource = Amanuensis() {
-    _adapter = _ChatListAdapter(dataSource: dataSource);
+  _ChatListState() : _clerk = Amanuensis() {
+    _adapter = _ChatListAdapter(dataSource: _clerk);
 
     var nc = lnc.NotificationCenter();
     nc.addObserver(this, NotificationNames.kServerStateChanged);
@@ -46,7 +46,7 @@ class _ChatListState extends State<ChatHistoryPage> implements lnc.Observer {
     nc.removeObserver(this, NotificationNames.kConversationUpdated);
   }
 
-  final Amanuensis dataSource;
+  final Amanuensis _clerk;
 
   late final _ChatListAdapter _adapter;
   late SectionListView _listView;
@@ -74,7 +74,7 @@ class _ChatListState extends State<ChatHistoryPage> implements lnc.Observer {
     if (state != null) {
       _sessionState = state.index;
     }
-    await dataSource.loadConversations().then((value) {
+    await _clerk.loadConversations().then((value) {
       setState(() {
         _adapter.notifyDataChange();
       });
@@ -106,18 +106,16 @@ class _ChatListState extends State<ChatHistoryPage> implements lnc.Observer {
 }
 
 class _ChatListAdapter with SectionAdapterMixin {
-  _ChatListAdapter({required this.dataSource});
+  _ChatListAdapter({required Amanuensis dataSource}) : _dataSource = dataSource;
 
-  final Amanuensis dataSource;
+  final Amanuensis _dataSource;
 
   @override
-  int numberOfItems(int section) {
-    return dataSource.numberOfConversation;
-  }
+  int numberOfItems(int section) => _dataSource.numberOfConversation;
 
   @override
   Widget getItem(BuildContext context, IndexPath indexPath) {
-    Conversation info = dataSource.conversationAtIndex(indexPath.item);
+    Conversation info = _dataSource.conversationAtIndex(indexPath.item);
     Log.warning('show item: $info');
     Widget cell = TableView.cell(
         leading: Facade.fromID(info.identifier),

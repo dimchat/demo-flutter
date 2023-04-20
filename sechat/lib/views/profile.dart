@@ -7,7 +7,8 @@ import 'package:dim_client/dim_client.dart' as lnc;
 import '../client/constants.dart';
 import '../client/shared.dart';
 import '../models/contact.dart';
-import 'alert.dart';
+import '../widgets/alert.dart';
+import '../widgets/facade.dart';
 import 'chat_box.dart';
 
 class ProfilePage extends StatefulWidget {
@@ -28,9 +29,7 @@ class ProfilePage extends StatefulWidget {
   }
 
   @override
-  State<StatefulWidget> createState() {
-    return _ProfileState();
-  }
+  State<StatefulWidget> createState() => _ProfileState();
 
 }
 
@@ -54,11 +53,11 @@ class _ProfileState extends State<ProfilePage> implements lnc.Observer {
     Map? userInfo = notification.userInfo;
     ID? contact = userInfo?['contact'];
     if (contact == widget.info.identifier) {
-      await reloadData();
+      await _reload();
     }
   }
 
-  Future<void> reloadData() async {
+  Future<void> _reload() async {
     GlobalVariable shared = GlobalVariable();
     User? user = await shared.facebook.currentUser;
     if (user == null) {
@@ -74,7 +73,7 @@ class _ProfileState extends State<ProfilePage> implements lnc.Observer {
   @override
   void initState() {
     super.initState();
-    reloadData();
+    _reload();
   }
 
   @override
@@ -124,7 +123,7 @@ class _ProfileState extends State<ProfilePage> implements lnc.Observer {
     );
   }
 
-  Widget _avatarImage() => widget.info.getIcon(256);
+  Widget _avatarImage() => Facade.fromID(widget.info.identifier, width: 256, height: 256);
 
   Widget _idLabel() => Row(
     mainAxisAlignment: MainAxisAlignment.center,

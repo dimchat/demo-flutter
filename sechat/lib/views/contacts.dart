@@ -9,11 +9,12 @@ import '../client/constants.dart';
 import '../client/session.dart';
 import '../client/shared.dart';
 import '../models/contact.dart';
-import 'alert.dart';
+import '../widgets/alert.dart';
+import '../widgets/facade.dart';
 import 'profile.dart';
 import 'search.dart';
 import 'styles.dart';
-import 'tableview.dart';
+import '../widgets/tableview.dart';
 
 class ContactListPage extends StatefulWidget {
   const ContactListPage({super.key});
@@ -26,9 +27,7 @@ class ContactListPage extends StatefulWidget {
   }
 
   @override
-  State<StatefulWidget> createState() {
-    return _ContactListState();
-  }
+  State<StatefulWidget> createState() => _ContactListState();
 }
 
 class _ContactListState extends State<ContactListPage> implements lnc.Observer {
@@ -65,11 +64,11 @@ class _ContactListState extends State<ContactListPage> implements lnc.Observer {
         _sessionState = state;
       });
     } else if (name == NotificationNames.kContactsUpdated) {
-      reloadData();
+      _reload();
     }
   }
 
-  Future<void> reloadData() async {
+  Future<void> _reload() async {
     GlobalVariable shared = GlobalVariable();
     SessionState? state = shared.terminal.session?.state;
     if (state != null) {
@@ -90,7 +89,7 @@ class _ContactListState extends State<ContactListPage> implements lnc.Observer {
   @override
   void initState() {
     super.initState();
-    reloadData();
+    _reload();
   }
 
   @override
@@ -168,7 +167,7 @@ class _ContactListAdapter with SectionAdapterMixin {
       return getFixedItem(context, indexPath.item);
     }
     ContactInfo info = dataSource.getItem(indexPath.section - 1, indexPath.item);
-    Widget avatar = info.getIcon(null);
+    Widget avatar = Facade.fromID(info.identifier);
     return TableView.cell(
         leading: avatar,
         title: Text(info.name),

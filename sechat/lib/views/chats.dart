@@ -9,10 +9,11 @@ import '../client/constants.dart';
 import '../client/session.dart';
 import '../client/shared.dart';
 import '../models/conversation.dart';
+import '../widgets/facade.dart';
 import 'chat_box.dart';
 import 'search.dart';
 import 'styles.dart';
-import 'tableview.dart';
+import '../widgets/tableview.dart';
 
 class ChatHistoryPage extends StatefulWidget {
   const ChatHistoryPage({super.key});
@@ -25,9 +26,7 @@ class ChatHistoryPage extends StatefulWidget {
   }
 
   @override
-  State<StatefulWidget> createState() {
-    return _ChatListState();
-  }
+  State<StatefulWidget> createState() => _ChatListState();
 }
 
 class _ChatListState extends State<ChatHistoryPage> implements lnc.Observer {
@@ -64,12 +63,12 @@ class _ChatListState extends State<ChatHistoryPage> implements lnc.Observer {
         _sessionState = state;
       });
     } else if (name == NotificationNames.kConversationUpdated) {
-      await reloadData();
+      await _reload();
       Log.warning('conversation updated');
     }
   }
 
-  Future<void> reloadData() async {
+  Future<void> _reload() async {
     GlobalVariable shared = GlobalVariable();
     SessionState? state = shared.terminal.session?.state;
     if (state != null) {
@@ -85,7 +84,7 @@ class _ChatListState extends State<ChatHistoryPage> implements lnc.Observer {
   @override
   void initState() {
     super.initState();
-    reloadData();
+    _reload();
   }
 
   @override
@@ -121,7 +120,7 @@ class _ChatListAdapter with SectionAdapterMixin {
     Conversation info = dataSource.conversationAtIndex(indexPath.item);
     Log.warning('show item: $info');
     Widget cell = TableView.cell(
-        leading: info.getIcon(null),
+        leading: Facade.fromID(info.identifier),
         title: Text(info.name),
         subtitle: _lastMessage(info.lastMessage),
         trailing: _timeLabel(info.lastTime),

@@ -8,7 +8,8 @@ import 'package:dim_client/dim_client.dart' as lnc;
 import '../client/constants.dart';
 import '../client/shared.dart';
 import '../models/contact.dart';
-import 'alert.dart';
+import '../widgets/alert.dart';
+import '../widgets/facade.dart';
 import 'profile.dart';
 import 'styles.dart';
 
@@ -54,7 +55,7 @@ class _ChatBoxState extends State<ChatBox> implements lnc.Observer {
     Map? userInfo = notification.userInfo;
     ID? cid = userInfo?['ID'];
     if (cid == widget.info.identifier) {
-      reloadData();
+      _reload();
     }
   }
 
@@ -62,7 +63,7 @@ class _ChatBoxState extends State<ChatBox> implements lnc.Observer {
 
   late final _HistoryDataSource dataSource;
 
-  Future<void> reloadData() async {
+  Future<void> _reload() async {
     GlobalVariable shared = GlobalVariable();
     User? user = await shared.facebook.currentUser;
     dataSource.me = user?.identifier;
@@ -76,7 +77,7 @@ class _ChatBoxState extends State<ChatBox> implements lnc.Observer {
   @override
   void initState() {
     super.initState();
-    reloadData();
+    _reload();
   }
 
   @override
@@ -172,14 +173,9 @@ class _HistoryAdapter with SectionAdapterMixin {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               if (!isMe)
-                Container(
-                  width: 48,
-                  height: 48,
-                  color: Colors.yellow,
-                  child: IconButton(
-                    icon: const Icon(CupertinoIcons.photo),
-                    onPressed: () => _openProfile(context, sender, conversation),
-                  ),
+                IconButton(
+                  icon: Facade.fromID(sender),
+                  onPressed: () => _openProfile(context, sender, conversation),
                 ),
               Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -208,14 +204,11 @@ class _HistoryAdapter with SectionAdapterMixin {
                 ],
               ),
               if (isMe)
-                Container(
-                  color: Colors.yellow,
-                  child: IconButton(
-                    icon: const Icon(CupertinoIcons.photo),
-                    onPressed: () {
-
-                    },
-                  ),
+                IconButton(
+                  icon: Facade.fromID(sender),
+                  onPressed: () {
+                    // do nothing
+                  },
                 ),
             ],
           ),

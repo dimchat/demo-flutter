@@ -168,7 +168,6 @@ class ConversationCache extends _ConversationTable {
       // update cache
       if (!identical(old, chat)) {
         old.name = chat.name;
-        old.image = chat.image;
         old.unread = chat.unread;
         old.lastTime = chat.lastTime;
         old.lastMessage = chat.lastMessage;

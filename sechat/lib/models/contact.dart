@@ -1,18 +1,13 @@
-import 'dart:io';
-
 import 'package:dim_client/dim_client.dart';
-import 'package:flutter/cupertino.dart';
 
 import '../client/shared.dart';
 
 class ContactInfo {
-  ContactInfo({required this.identifier, required this.type,
-    required this.name, this.image});
+  ContactInfo({required this.identifier, required this.type, required this.name});
 
   final ID identifier;
   final int type;
   final String name;
-  final String? image;
 
   bool get isUser  => EntityType.isUser(type);
   bool get isGroup => EntityType.isGroup(type);
@@ -20,25 +15,9 @@ class ContactInfo {
   @override
   String toString() {
     if (isUser) {
-      return '<User id="$identifier" type=$type name="$name" avatar="$image" />';
+      return '<User id="$identifier" type=$type name="$name" />';
     } else {
       return '<Group id="$identifier" type=$type name="$name" />';
-    }
-  }
-
-  Widget getIcon(double? size) {
-    String? url = image;
-    if (url != null && url.isNotEmpty) {
-      if (url.startsWith('file://')) {
-        return Image.file(File(url), width: size, height: size);
-      // } else {
-      //   return Image.network(url, width: size, height: size);
-      }
-    }
-    if (isGroup) {
-      return Icon(CupertinoIcons.person_2_fill, size: size);
-    } else {
-      return Icon(CupertinoIcons.profile_circled, size: size);
     }
   }
 
@@ -46,14 +25,7 @@ class ContactInfo {
     GlobalVariable shared = GlobalVariable();
     String name = await shared.facebook.getName(identifier);
     int type = identifier.type;
-    String? image;
-    if (EntityType.isUser(type)) {
-      Pair<String?, Uri?> pair = await shared.facebook.getAvatar(identifier);
-      if (pair.first != null) {
-        image = pair.first;
-      }
-    }
-    return ContactInfo(identifier: identifier, type: type, name: name, image: image);
+    return ContactInfo(identifier: identifier, type: type, name: name);
   }
 
   static Future<List<ContactInfo>> fromList(List<ID> contacts) async {

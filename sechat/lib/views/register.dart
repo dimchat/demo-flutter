@@ -4,8 +4,9 @@ import 'package:flutter/material.dart';
 
 import '../client/shared.dart';
 import '../main.dart';
-import 'alert.dart';
-import 'browser.dart';
+import '../models/config.dart';
+import '../widgets/alert.dart';
+import '../widgets/browser.dart';
 import 'permissions.dart';
 
 class RegisterPage extends StatelessWidget {
@@ -106,9 +107,7 @@ class _RegisterForm extends StatefulWidget {
   const _RegisterForm();
 
   @override
-  State<StatefulWidget> createState() {
-    return _RegisterFormState();
-  }
+  State<StatefulWidget> createState() => _RegisterFormState();
 }
 
 class _RegisterFormState extends State<_RegisterForm> {

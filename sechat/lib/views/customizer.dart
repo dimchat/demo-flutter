@@ -2,9 +2,11 @@ import 'package:dim_client/dim_client.dart';
 import 'package:flutter/cupertino.dart';
 
 import '../client/shared.dart';
+import '../models/config.dart';
 import '../models/contact.dart';
-import 'alert.dart';
-import 'browser.dart';
+import '../widgets/alert.dart';
+import '../widgets/browser.dart';
+import '../widgets/facade.dart';
 import 'styles.dart';
 
 class SettingsPage extends StatefulWidget {
@@ -18,9 +20,7 @@ class SettingsPage extends StatefulWidget {
   }
 
   @override
-  State<StatefulWidget> createState() {
-    return _SettingsState();
-  }
+  State<StatefulWidget> createState() => _SettingsState();
 
 }
 
@@ -32,13 +32,7 @@ class _SettingsState extends State<SettingsPage> {
 
   late ContactInfo _me;
 
-  @override
-  void initState() {
-    super.initState();
-    reloadData();
-  }
-
-  Future<void> reloadData() async {
+  Future<void> _reload() async {
     GlobalVariable shared = GlobalVariable();
     await shared.facebook.currentUser.then((user) async {
       ID? identifier = user?.identifier;
@@ -49,6 +43,12 @@ class _SettingsState extends State<SettingsPage> {
         });
       }
     });
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    _reload();
   }
 
   @override
@@ -109,7 +109,7 @@ class _SettingsState extends State<SettingsPage> {
     return CupertinoListTile(
       padding: const EdgeInsets.all(16),
       leadingSize: 64,
-      leading: user.getIcon(64),
+      leading: Facade.fromID(user.identifier, width: 64, height: 64),
       title: Text(user.name),
       subtitle: Text(user.identifier.string),
       trailing: const CupertinoListTileChevron(),

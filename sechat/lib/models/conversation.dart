@@ -1,5 +1,3 @@
-import 'package:flutter/cupertino.dart';
-
 import 'package:dim_client/dim_client.dart';
 import 'package:dim_client/dim_client.dart' as lnc;
 
@@ -12,33 +10,20 @@ import '../client/shared.dart';
 
 class Conversation {
   Conversation(this.identifier,
-      {this.name = '', this.image, this.unread = 0, this.lastMessage, this.lastTime});
+      {this.name = '', this.unread = 0, this.lastMessage, this.lastTime});
 
   final ID identifier;
   String name;
-  String? image;  // local file path for avatar or group icon
 
   int unread;           // count of unread messages
 
   String? lastMessage;  // description of last message
   DateTime? lastTime;   // time of last message
 
-  Widget getIcon(double? size) {
-    String? icon = image;
-    if (icon != null && icon.isNotEmpty) {
-      // TODO: build icon from local file path
-      return Icon(CupertinoIcons.photo, size: size);
-    } else if (identifier.isUser) {
-      return Icon(CupertinoIcons.profile_circled, size: size);
-    } else {
-      return Icon(CupertinoIcons.person_2_fill, size: size);
-    }
-  }
-
   @override
   String toString() {
     Type clazz = runtimeType;
-    return '<$clazz id="$identifier" name="$name" image="$image">\n'
+    return '<$clazz id="$identifier" name="$name">\n'
         '\t<unread>$unread</unread>\n'
         '\t<msg>$lastMessage</msg>\n\t<time>$lastTime</time>\n</$clazz>';
   }
@@ -177,7 +162,6 @@ class Amanuensis implements lnc.Observer {
     // build conversations
     for (Conversation item in array) {
       item.name = await facebook.getName(item.identifier);
-      item.image = (await facebook.getAvatar(item.identifier)).first;
       // TODO: get last message & unread count
       Log.debug('new conversation created: $item');
       _conversationMap[item.identifier] = item;

@@ -26,6 +26,7 @@ class ChannelMethods {
   //  FTP Channel
   //
   static const String setUploadAPI = "setUploadAPI";
+  static const String setRootDirectory = "setRootDirectory";
 
   static const String uploadAvatar = "uploadAvatar";
   static const String uploadFile = "uploadEncryptFile";

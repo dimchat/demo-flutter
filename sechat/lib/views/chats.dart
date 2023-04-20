@@ -9,7 +9,6 @@ import '../client/constants.dart';
 import '../client/session.dart';
 import '../client/shared.dart';
 import '../models/conversation.dart';
-import '../widgets/facade.dart';
 import 'chat_box.dart';
 import 'search.dart';
 import 'styles.dart';
@@ -118,7 +117,7 @@ class _ChatListAdapter with SectionAdapterMixin {
     Conversation info = _dataSource.conversationAtIndex(indexPath.item);
     Log.warning('show item: $info');
     Widget cell = TableView.cell(
-        leading: Facade.fromID(info.identifier),
+        leading: info.getImage(),
         title: Text(info.name),
         subtitle: _lastMessage(info.lastMessage),
         trailing: _timeLabel(info.lastTime),

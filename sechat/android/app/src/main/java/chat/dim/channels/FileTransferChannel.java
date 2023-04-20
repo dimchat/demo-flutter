@@ -155,6 +155,12 @@ public class FileTransferChannel extends MethodChannel implements UploadDelegate
                     result.success(null);
                     break;
                 }
+                case ChannelMethods.SET_ROOT_DIRECTORY: {
+                    String root = call.argument("root");
+                    ftp.setRootDirectory(root);
+                    result.success(null);
+                    break;
+                }
                 default:
                     result.notImplemented();
                     break;

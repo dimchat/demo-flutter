@@ -30,9 +30,12 @@
  */
 import 'dart:io';
 
-import 'package:dim_client/dim_client.dart';
 import 'package:flutter/cupertino.dart';
 
+import 'package:dim_client/dim_client.dart';
+import 'package:dim_client/dim_client.dart' as lnc;
+
+import '../client/constants.dart';
 import '../client/shared.dart';
 
 /// ImageView
@@ -59,7 +62,43 @@ abstract class FacadeProvider {
 
 }
 
-class _FacadeState extends State<Facade> {
+class _FacadeState extends State<Facade> implements lnc.Observer {
+  _FacadeState() {
+    var nc = lnc.NotificationCenter();
+    nc.addObserver(this, NotificationNames.kDocumentUpdated);
+    nc.addObserver(this, NotificationNames.kFileDownloadSuccess);
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
+    var nc = lnc.NotificationCenter();
+    nc.removeObserver(this, NotificationNames.kFileDownloadSuccess);
+    nc.removeObserver(this, NotificationNames.kDocumentUpdated);
+  }
+
+  @override
+  Future<void> onReceiveNotification(lnc.Notification notification) async {
+    String name = notification.name;
+    Map? info = notification.userInfo;
+    FacadeProvider provider = widget._provider;
+    if (name == NotificationNames.kDocumentUpdated) {
+      ID? identifier = info?['ID'];
+      if (identifier == null) {
+        Log.error('notification error: $notification');
+      } else if (provider is _AvatarProvider) {
+        if (identifier == provider.identifier) {
+          Log.info('document updated, refreshing facade: $identifier');
+          _reload();
+        }
+      }
+    } else if (name == NotificationNames.kFileDownloadSuccess) {
+      // TODO:
+      Log.warning('TODO: file downloaded, checking facade');
+    } else {
+      Log.error('notification error: $notification');
+    }
+  }
 
   Future<void> _reload() async {
     widget._provider.reload().then((ok) {
@@ -67,8 +106,6 @@ class _FacadeState extends State<Facade> {
         setState(() {
           Log.warning('Facade reloaded: ${widget._provider}');
         });
-      // } else {
-      //   Log.error('Facade reload failed: ${widget._provider}');
       }
     });
   }

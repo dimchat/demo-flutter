@@ -22,7 +22,7 @@ class ChatBox extends StatefulWidget {
   final ContactInfo info;
 
   static void open(BuildContext context, ID identifier) {
-    ContactInfo.from(identifier).then((info) {
+    ContactInfo.fromID(identifier).then((info) {
       showCupertinoDialog(
         context: context,
         builder: (context) => ChatBox(info),

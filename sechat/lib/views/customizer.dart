@@ -6,7 +6,6 @@ import '../models/config.dart';
 import '../models/contact.dart';
 import '../widgets/alert.dart';
 import '../widgets/browser.dart';
-import '../widgets/facade.dart';
 import 'styles.dart';
 
 class SettingsPage extends StatefulWidget {
@@ -27,7 +26,7 @@ class SettingsPage extends StatefulWidget {
 class _SettingsState extends State<SettingsPage> {
   _SettingsState() {
     ID me = ID.kFounder;
-    _me = ContactInfo(identifier: me, type: me.type, name: 'me');
+    _me = ContactInfo(identifier: me);
   }
 
   late ContactInfo _me;
@@ -37,7 +36,7 @@ class _SettingsState extends State<SettingsPage> {
     await shared.facebook.currentUser.then((user) async {
       ID? identifier = user?.identifier;
       if (identifier != null) {
-        ContactInfo info = await ContactInfo.from(identifier);
+        ContactInfo info = await ContactInfo.fromID(identifier);
         setState(() {
           _me = info;
         });
@@ -105,13 +104,13 @@ class _SettingsState extends State<SettingsPage> {
   }
 
   Widget _myAccount(BuildContext context) {
-    ContactInfo user = _me;
+    ContactInfo current = _me;
     return CupertinoListTile(
       padding: const EdgeInsets.all(16),
       leadingSize: 64,
-      leading: Facade.fromID(user.identifier, width: 64, height: 64),
-      title: Text(user.name),
-      subtitle: Text(user.identifier.string),
+      leading: current.getImage(width: 64, height: 64),
+      title: Text(current.name),
+      subtitle: Text(current.identifier.string),
       trailing: const CupertinoListTileChevron(),
       onTap: () => {
         Alert.show(context, 'Coming soon', 'Edit profile')

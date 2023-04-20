@@ -10,7 +10,6 @@ import '../client/session.dart';
 import '../client/shared.dart';
 import '../models/contact.dart';
 import '../widgets/alert.dart';
-import '../widgets/facade.dart';
 import 'profile.dart';
 import 'search.dart';
 import 'styles.dart';
@@ -77,10 +76,11 @@ class _ContactListState extends State<ContactListPage> implements lnc.Observer {
       return;
     }
     List<ID> contacts = await shared.database.getContacts(user: user.identifier);
-    await ContactInfo.fromList(contacts).then((array) => setState(() {
+    List<ContactInfo> array = await ContactInfo.fromList(contacts);
+    setState(() {
       _dataSource.refresh(array);
       _adapter.notifyDataChange();
-    }));
+    });
   }
 
   @override
@@ -153,15 +153,7 @@ class _ContactListAdapter with SectionAdapterMixin {
       return getFixedItem(context, indexPath.item);
     }
     ContactInfo info = _dataSource.getItem(indexPath.section - 1, indexPath.item);
-    Widget avatar = Facade.fromID(info.identifier);
-    return TableView.cell(
-        leading: avatar,
-        title: Text(info.name),
-        trailing: null,
-        onTap: () {
-          ProfilePage.open(context, info.identifier);
-        }
-    );
+    return ProfilePage.cell(info);
   }
 
   Widget getFixedItem(BuildContext context, int item) {

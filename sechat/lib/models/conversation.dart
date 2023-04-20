@@ -1,3 +1,5 @@
+import 'package:flutter/cupertino.dart';
+
 import 'package:dim_client/dim_client.dart';
 import 'package:dim_client/dim_client.dart' as lnc;
 
@@ -6,6 +8,7 @@ import '../client/facebook.dart';
 import '../client/messenger.dart';
 import '../client/protocol/search.dart';
 import '../client/shared.dart';
+import '../widgets/facade.dart';
 
 
 class Conversation {
@@ -19,6 +22,9 @@ class Conversation {
 
   String? lastMessage;  // description of last message
   DateTime? lastTime;   // time of last message
+
+  Widget getImage({double? width, double? height}) =>
+      Facade.fromID(identifier, width: width, height: height);
 
   @override
   String toString() {

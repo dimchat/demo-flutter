@@ -12,8 +12,6 @@ import '../client/session.dart';
 import '../client/shared.dart';
 import '../models/contact.dart';
 import '../widgets/alert.dart';
-import '../widgets/facade.dart';
-import '../widgets/tableview.dart';
 import 'profile.dart';
 import 'styles.dart';
 
@@ -95,10 +93,11 @@ class _SearchState extends State<SearchPage> implements lnc.Observer {
       Log.error('search tag not match, ignore this response: $tag <> $_searchTag');
       return;
     }
-    ContactInfo.fromList(ID.convert(users)).then((array) => setState(() {
+    List<ContactInfo> array = await ContactInfo.fromList(ID.convert(users));
+    setState(() {
       _dataSource.refresh(array);
       _adapter.notifyDataChange();
-    }));
+    });
   }
 
   @override
@@ -169,15 +168,7 @@ class _SearchResultAdapter with SectionAdapterMixin {
   @override
   Widget getItem(BuildContext context, IndexPath indexPath) {
     ContactInfo info = _dataSource.getItem(indexPath.section - 1, indexPath.item);
-    Widget avatar = Facade.fromID(info.identifier);
-    return TableView.cell(
-        leading: avatar,
-        title: Text(info.name),
-        trailing: null,
-        onTap: () {
-          ProfilePage.open(context, info.identifier);
-        }
-    );
+    return ProfilePage.cell(info);
   }
 
 }

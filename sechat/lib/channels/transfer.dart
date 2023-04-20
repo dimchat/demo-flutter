@@ -4,6 +4,7 @@ import 'package:dim_client/dim_client.dart';
 
 import '../client/constants.dart';
 import '../client/filesys/paths.dart';
+import '../models/local.dart';
 import 'manager.dart';
 
 class FileTransferChannel extends MethodChannel {
@@ -21,6 +22,18 @@ class FileTransferChannel extends MethodChannel {
 
   /// upload task will be expired after 10 minutes
   static int uploadExpires = 10 * 60 * 1000;
+
+  /// root directory for local storage
+  String? _root;
+
+  Future<void> _prepare() async {
+    if (_root == null) {
+      LocalStorage dos = LocalStorage();
+      String root = await dos.cachesDirectory;
+      await setRootDirectory(root);
+      _root = root;
+    }
+  }
 
   /// MethCallHandler
   Future<void> _handle(MethodCall call) async {
@@ -72,6 +85,13 @@ class FileTransferChannel extends MethodChannel {
     });
   }
 
+  /// set root directory for local storage
+  Future<void> setRootDirectory(String root) async {
+    _invoke(ChannelMethods.setRootDirectory, {
+      'root': root,
+    });
+  }
+
   ///  Upload avatar image data for user
   ///
   /// @param data     - image data
@@ -109,6 +129,7 @@ class FileTransferChannel extends MethodChannel {
   }
 
   Future<Uri?> _doUpload(String method, Uint8List data, String filename, ID sender) async {
+    await _prepare();
     // 1. check old task
     Uri? url = _uploads[filename];
     if (url == null) {
@@ -128,6 +149,9 @@ class FileTransferChannel extends MethodChannel {
         'filename': filename,
         'sender': sender.string,
       });
+      if (url != null) {
+        Log.error('same file uploaded: $filename -> $url');
+      }
       int now = Time.currentTimeMillis;
       int expired = now + uploadExpires;
       while (url == null || url == _upWaiting) {
@@ -166,6 +190,7 @@ class FileTransferChannel extends MethodChannel {
   }
 
   Future<String?> _doDownload(String method, Uri url) async {
+    await _prepare();
     // 1. check old task
     String? path = _downloads[url];
     if (path == null) {
@@ -183,6 +208,9 @@ class FileTransferChannel extends MethodChannel {
       path = await _invoke(method, {
         'url': url.toString(),
       });
+      if (path != null) {
+        Log.warning('found cached file: $path -> $url');
+      }
       int now = Time.currentTimeMillis;
       int expired = now + uploadExpires;
       while (path == null || path == _downWaiting) {

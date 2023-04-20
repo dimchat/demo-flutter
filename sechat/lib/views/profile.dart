@@ -8,7 +8,7 @@ import '../client/constants.dart';
 import '../client/shared.dart';
 import '../models/contact.dart';
 import '../widgets/alert.dart';
-import '../widgets/facade.dart';
+import '../widgets/tableview.dart';
 import 'chat_box.dart';
 
 class ProfilePage extends StatefulWidget {
@@ -18,7 +18,7 @@ class ProfilePage extends StatefulWidget {
   final ID? fromWhere;
 
   static void open(BuildContext context, ID identifier, {ID? fromWhere}) {
-    ContactInfo.from(identifier).then((info) {
+    ContactInfo.fromID(identifier).then((info) {
       showCupertinoDialog(
         context: context,
         builder: (context) => ProfilePage(info, fromWhere),
@@ -27,6 +27,8 @@ class ProfilePage extends StatefulWidget {
       Alert.show(context, 'Error', '$error');
     });
   }
+
+  static Widget cell(ContactInfo info) => _ProfileTableCell.fromContact(info);
 
   @override
   State<StatefulWidget> createState() => _ProfileState();
@@ -123,7 +125,7 @@ class _ProfileState extends State<ProfilePage> implements lnc.Observer {
     );
   }
 
-  Widget _avatarImage() => Facade.fromID(widget.info.identifier, width: 256, height: 256);
+  Widget _avatarImage() => widget.info.getImage(width: 256, height: 256);
 
   Widget _idLabel() => Row(
     mainAxisAlignment: MainAxisAlignment.center,
@@ -227,4 +229,59 @@ void _doRemove(BuildContext ctx, ID contact, ID user) {
   });
 }
 
+//
+//  Profile Table Cell
+//
 
+class _ProfileTableCell extends StatefulWidget {
+  const _ProfileTableCell(this.info);
+
+  final ContactInfo info;
+
+  static _ProfileTableCell fromContact(ContactInfo info) => _ProfileTableCell(info);
+
+  @override
+  State<StatefulWidget> createState() => _ProfileTableState();
+
+}
+
+class _ProfileTableState extends State<_ProfileTableCell> implements lnc.Observer {
+  _ProfileTableState() {
+
+    var nc = lnc.NotificationCenter();
+    nc.addObserver(this, NotificationNames.kDocumentUpdated);
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
+    var nc = lnc.NotificationCenter();
+    nc.removeObserver(this, NotificationNames.kDocumentUpdated);
+  }
+
+  @override
+  Future<void> onReceiveNotification(lnc.Notification notification) async {
+    String name = notification.name;
+    Map? info = notification.userInfo;
+    assert(name == NotificationNames.kDocumentUpdated, 'notification error: $notification');
+    ID? identifier = info?['ID'];
+    if (identifier == null) {
+      Log.error('notification error: $notification');
+    } else if (identifier == widget.info.identifier) {
+      setState(() {
+        //
+      });
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) => TableView.cell(
+      leading: widget.info.getImage(),
+      title: Text(widget.info.name),
+      subtitle: Text(widget.info.identifier.string),
+      onTap: () {
+        ProfilePage.open(context, widget.info.identifier);
+      }
+  );
+
+}

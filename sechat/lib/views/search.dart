@@ -73,21 +73,21 @@ class _SearchState extends State<SearchPage> implements lnc.Observer {
     }
   }
 
-  Future<void> _reload(SearchCommand? cmd) async {
+  Future<void> _reload(SearchCommand? command) async {
     GlobalVariable shared = GlobalVariable();
     SessionState? state = shared.terminal.session?.state;
     if (state != null) {
       _sessionState = state.index;
     }
-    if (cmd == null) {
+    if (command == null) {
       return;
     }
-    List? users = cmd['users'];
+    List? users = command['users'];
     if (users == null) {
       Log.error('users not found in search response');
       return;
     }
-    int? tag = cmd['tag'];
+    int? tag = command['tag'];
     Log.debug('respond with search tag: $tag');
     if (tag != _searchTag) {
       Log.error('search tag not match, ignore this response: $tag <> $_searchTag');
@@ -129,9 +129,10 @@ class _SearchState extends State<SearchPage> implements lnc.Observer {
       Alert.show(context, 'Error', 'Failed to send command');
       return;
     } else {
-      // FIXME: Null check operator used on a null value
-      // _dataSource.refresh([]);
-      // _adapter.notifyDataChange();
+      setState(() {
+        _dataSource.refresh([]);
+        _adapter.notifyDataChange();
+      });
     }
     // build command
     SearchCommand command = SearchCommand.fromKeywords(keywords);

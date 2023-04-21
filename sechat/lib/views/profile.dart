@@ -39,6 +39,7 @@ class _ProfileState extends State<ProfilePage> implements lnc.Observer {
   _ProfileState() {
     var nc = lnc.NotificationCenter();
     nc.addObserver(this, NotificationNames.kContactsUpdated);
+    nc.addObserver(this, NotificationNames.kDocumentUpdated);
   }
 
   bool _isFriend = false;
@@ -47,15 +48,31 @@ class _ProfileState extends State<ProfilePage> implements lnc.Observer {
   void dispose() {
     super.dispose();
     var nc = lnc.NotificationCenter();
+    nc.removeObserver(this, NotificationNames.kDocumentUpdated);
     nc.removeObserver(this, NotificationNames.kContactsUpdated);
   }
 
   @override
   Future<void> onReceiveNotification(lnc.Notification notification) async {
+    String name = notification.name;
     Map? userInfo = notification.userInfo;
-    ID? contact = userInfo?['contact'];
-    if (contact == widget.info.identifier) {
-      await _reload();
+    if (name == NotificationNames.kDocumentUpdated) {
+      ID? identifier = userInfo?['ID'];
+      assert(identifier != null, 'notification error: $notification');
+      if (identifier == widget.info.identifier) {
+        Log.info('document updated: $identifier');
+        setState(() {
+          // update name in title
+        });
+      }
+    } else if (name == NotificationNames.kContactsUpdated) {
+      ID? contact = userInfo?['contact'];
+      Log.info('contact updated: $contact');
+      if (contact == widget.info.identifier) {
+        await _reload();
+      }
+    } else {
+      Log.error('notification error: $notification');
     }
   }
 
@@ -65,6 +82,7 @@ class _ProfileState extends State<ProfilePage> implements lnc.Observer {
     if (user == null) {
       Log.error('current user not found, failed to reload data');
     } else {
+      Log.debug('reloading profile: ${widget.info}');
       List<ID> contacts = await shared.facebook.getContacts(user.identifier);
       setState(() {
         _isFriend = contacts.contains(widget.info.identifier);
@@ -108,7 +126,10 @@ class _ProfileState extends State<ProfilePage> implements lnc.Observer {
       children: [
         const SizedBox(height: 32,),
         _avatarImage(),
-        _idLabel(),
+        const SizedBox(height: 8,),
+        SizedBox(width: 300,
+          child: _idLabel(),
+        ),
         const SizedBox(height: 64,),
         if (!_isFriend)
           _addButton(context),
@@ -136,9 +157,11 @@ class _ProfileState extends State<ProfilePage> implements lnc.Observer {
           fontWeight: FontWeight.bold,
         ),
       ),
-      Text(widget.info.identifier.string,
-        style: const TextStyle(fontSize: 12,
-          color: Colors.teal,
+      Expanded(
+        child: Text(widget.info.identifier.string,
+          style: const TextStyle(fontSize: 12,
+            color: Colors.teal,
+          ),
         ),
       ),
     ],

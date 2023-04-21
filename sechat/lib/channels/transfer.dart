@@ -242,7 +242,7 @@ class FileTransferChannel extends MethodChannel {
     // post notification async
     var nc = NotificationCenter();
     nc.postNotification(notification, this, {
-      'url': url.toString(),
+      'url': url,
       'path': path,
     });
     return path;

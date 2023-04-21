@@ -75,7 +75,7 @@ abstract class Styles {
   //
   //  Section
   //
-  static const Color sectionHeaderBackground = CupertinoColors.lightBackgroundGray;
+  static const Color sectionHeaderBackground = CupertinoColors.secondarySystemBackground;
   static const EdgeInsets sectionHeaderPadding = EdgeInsets.only(
       left: 16, top: 4, bottom: 4,
   );

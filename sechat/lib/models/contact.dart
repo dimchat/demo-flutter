@@ -59,7 +59,7 @@ class ContactSorter {
     Map<String, List<ContactInfo>> map = {};
     for (ContactInfo item in contacts) {
       String name = item.name;
-      String prefix = name.isEmpty ? '#' : name.substring(0, 1);
+      String prefix = name.isEmpty ? '#' : name.substring(0, 1).toUpperCase();
       // TODO: convert for Pinyin
       Log.debug('[$prefix] contact: $item');
       set.add(prefix);
@@ -74,7 +74,9 @@ class ContactSorter {
     sorter.sectionNames = [];
     sorter.sectionItems = {};
     int index = 0;
-    for (String prefix in set) {
+    List<String> array = set.toList();
+    array.sort();
+    for (String prefix in array) {
       sorter.sectionNames.add(prefix);
       sorter.sectionItems[index] = map[prefix]!;
       index += 1;

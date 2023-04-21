@@ -9,11 +9,9 @@ import '../client/constants.dart';
 import '../client/session.dart';
 import '../client/shared.dart';
 import '../models/contact.dart';
-import '../widgets/alert.dart';
 import 'profile.dart';
 import 'search.dart';
 import 'styles.dart';
-import '../widgets/tableview.dart';
 
 class ContactListPage extends StatefulWidget {
   const ContactListPage({super.key});
@@ -112,22 +110,21 @@ class _ContactListAdapter with SectionAdapterMixin {
 
   @override
   int numberOfSections() =>
-      // includes fixed section
-      _dataSource.getSectionCount() + 1;
+      _dataSource.getSectionCount();// + 1;  // includes fixed section
 
   @override
-  bool shouldExistSectionHeader(int section) => section > 0;
+  bool shouldExistSectionHeader(int section) => true;//section > 0;
 
   @override
   bool shouldSectionHeaderStick(int section) => true;
 
   @override
   Widget getSectionHeader(BuildContext context, int section) {
-    if (section == 0) {
-      // fixed section
-      return const Text('...');
-    }
-    String title = _dataSource.getSection(section - 1);
+    // if (section == 0) {
+    //   // fixed section
+    //   return const Text('...');
+    // }
+    String title = _dataSource.getSection(section);// - 1);
     return Container(
       color: Styles.sectionHeaderBackground,
       padding: Styles.sectionHeaderPadding,
@@ -139,24 +136,27 @@ class _ContactListAdapter with SectionAdapterMixin {
 
   @override
   int numberOfItems(int section) {
-    if (section == 0) {
-      // fixed section
-      return 2;
-    }
-    return _dataSource.getItemCount(section - 1);
+    // if (section == 0) {
+    //   // fixed section
+    //   return 2;
+    // }
+    return _dataSource.getItemCount(section);// - 1);
   }
 
   @override
   Widget getItem(BuildContext context, IndexPath indexPath) {
-    if (indexPath.section == 0) {
-      // fixed section
-      return getFixedItem(context, indexPath.item);
-    }
-    ContactInfo info = _dataSource.getItem(indexPath.section - 1, indexPath.item);
+    int section = indexPath.section;// - 1;
+    int index = indexPath.item;
+    // if (indexPath.section == 0) {
+    //   // fixed section
+    //   return _fixedItem(context, index);
+    // }
+    ContactInfo info = _dataSource.getItem(section, index);
     return ProfilePage.cell(info);
   }
 
-  Widget getFixedItem(BuildContext context, int item) {
+  /*
+  Widget _fixedItem(BuildContext context, int item) {
     if (item == 0) {
       return TableView.cell(
           leading: Container(
@@ -187,10 +187,12 @@ class _ContactListAdapter with SectionAdapterMixin {
             Alert.show(context, 'Coming soon', 'Conversations for groups.');
           }
       );
+    } else {
+      // error
+      return const Text('error');
     }
-    // error
-    return const Text('error');
   }
+   */
 }
 
 class _ContactDataSource {

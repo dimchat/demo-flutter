@@ -32,6 +32,10 @@ class FileTransferChannel extends MethodChannel {
       String root = await dos.cachesDirectory;
       await setRootDirectory(root);
       _root = root;
+      // TODO: Configuration
+      String api = 'http://106.52.25.169:8081/{ID}/upload?md5={MD5}&salt={SALT}';
+      String secret = '12345678';
+      await setUploadConfig(api: api, secret: secret);
     }
   }
 

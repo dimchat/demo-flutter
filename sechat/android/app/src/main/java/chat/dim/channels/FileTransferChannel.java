@@ -40,11 +40,11 @@ public class FileTransferChannel extends MethodChannel implements UploadDelegate
         // request info
         if (request instanceof UploadTask) {
             UploadTask task = (UploadTask) request;
-            info.put("api", request.url);
+            info.put("api", request.url.toString());
             info.put("name", request.name);
             info.put("filename", task.filename);
         } else {
-            info.put("api", request.url);
+            info.put("api", request.url.toString());
             info.put("path", request.path);
             info.put("name", request.name);
             info.put("sender", request.sender.toString());
@@ -138,7 +138,7 @@ public class FileTransferChannel extends MethodChannel implements UploadDelegate
                     String filename = call.argument("filename");
                     ID sender = ID.parse(call.argument("sender"));
                     URL url = ftp.uploadEncryptData(data, filename, sender);
-                    result.success(url.toString());
+                    result.success(url == null ? null : url.toString());
                     break;
                 }
                 case ChannelMethods.UPLOAD_AVATAR: {
@@ -146,7 +146,7 @@ public class FileTransferChannel extends MethodChannel implements UploadDelegate
                     String filename = call.argument("filename");
                     ID sender = ID.parse(call.argument("sender"));
                     URL url = ftp.uploadAvatar(data, filename, sender);
-                    result.success(url.toString());
+                    result.success(url == null ? null : url.toString());
                     break;
                 }
                 case ChannelMethods.SET_UPLOAD_API: {

@@ -42,14 +42,6 @@ class FileTransfer {
   static final FileTransfer _instance = FileTransfer._internal();
   FileTransfer._internal();
 
-  // Upload API
-  String api = 'https://sechat.dim.chat/{ID}/upload?md5={MD5}&salt={SALT}';
-  // Upload key (hex)
-  String secret = '12345678';
-
-  final NotificationCenter _center = NotificationCenter();
-  NotificationCenter get center => _center;
-
   ///  Upload avatar image data for user
   ///
   /// @param data     - image data

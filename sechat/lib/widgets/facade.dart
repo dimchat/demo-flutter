@@ -46,7 +46,7 @@ class Facade extends StatefulWidget {
   final FacadeProvider _provider;
 
   static Facade fromID(ID identifier, {double? width, double? height}) {
-    return Facade(_AvatarProvider(identifier, width ?? 36, height ?? 36));
+    return Facade(_AvatarProvider(identifier, width ?? 32, height ?? 32));
   }
 
   @override
@@ -155,7 +155,10 @@ class _AvatarProvider implements FacadeProvider {
     if (img == null) {
       String? path = _path;
       if (path != null) {
-        img = Image.file(File(path), width: width, height: height);
+        img = Image.file(File(path), width: width, height: height, fit: BoxFit.cover);
+        if (identifier.isUser) {
+          img = ClipOval(child: img);
+        }
       } else if (identifier.isUser) {
         img = Icon(CupertinoIcons.profile_circled, size: width,);
       } else {

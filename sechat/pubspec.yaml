@@ -36,6 +36,8 @@ dependencies:
 
   dio: ^5.1.1
 
+  image_picker: 0.8.7+3
+
   dim_client: 0.1.0-dev.6
 
   sqflite: ^2.2.6

@@ -6,6 +6,7 @@ import '../models/config.dart';
 import '../models/contact.dart';
 import '../widgets/alert.dart';
 import '../widgets/browser.dart';
+import 'account.dart';
 import 'styles.dart';
 
 class SettingsPage extends StatefulWidget {
@@ -112,9 +113,7 @@ class _SettingsState extends State<SettingsPage> {
       title: Text(current.name),
       subtitle: Text(current.identifier.string),
       trailing: const CupertinoListTileChevron(),
-      onTap: () => {
-        Alert.show(context, 'Coming soon', 'Edit profile')
-      },
+      onTap: () => AccountPage.open(context),
     );
   }
 

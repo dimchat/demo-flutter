@@ -19,22 +19,6 @@ class Emitter implements Observer {
   /// filename => task
   final Map<String, InstantMessage> _outgoing = {};
 
-  FileTransferChannel? _ftp;
-
-  // private
-  FileTransferChannel get ftp {
-    FileTransferChannel? channel = _ftp;
-    if (channel == null) {
-      ChannelManager man = ChannelManager();
-      channel = man.ftpChannel;
-      // TODO: Configuration
-      String api = 'http://106.52.25.169:8081/{ID}/upload?md5={MD5}&salt={SALT}';
-      String secret = '12345678';
-      channel.setUploadConfig(api: api, secret: secret);
-    }
-    return channel;
-  }
-
   void _addTask(String filename, InstantMessage item) {
     _outgoing[filename] = item;
   }
@@ -134,6 +118,8 @@ class Emitter implements Observer {
     Uint8List encrypted = password.encrypt(data);
     filename = FileTransfer.filenameFromData(encrypted, filename);
     ID sender = iMsg.sender;
+    ChannelManager man = ChannelManager();
+    FileTransferChannel ftp = man.ftpChannel;
     Uri? url = await ftp.uploadEncryptData(encrypted, filename, sender);
     if (url == null) {
       // add task for upload

@@ -26,6 +26,12 @@ class ProfilePage extends StatefulWidget {
     }).onError((error, stackTrace) {
       Alert.show(context, 'Error', '$error');
     });
+    // query for update
+    GlobalVariable shared = GlobalVariable();
+    shared.messenger?.queryDocument(identifier);
+    if (identifier.isGroup) {
+      shared.messenger?.queryMembers(identifier);
+    }
   }
 
   static Widget cell(ContactInfo info) => _ProfileTableCell.fromContact(info);
@@ -199,7 +205,7 @@ void _sendMessage(BuildContext ctx, ContactInfo info, ID? fromWhere) {
     // this page is open from a chat box
     Navigator.pop(ctx);
   } else {
-    ChatBox.open(ctx, info.identifier);
+    ChatBox.open(ctx, info);
   }
 }
 

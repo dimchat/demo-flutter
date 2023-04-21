@@ -2,7 +2,6 @@ import 'dart:io';
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:image_picker/image_picker.dart';
 
 import 'package:dim_client/dim_client.dart';
 
@@ -11,6 +10,7 @@ import '../client/filesys/paths.dart';
 import '../client/http/ftp.dart';
 import '../client/shared.dart';
 import '../widgets/alert.dart';
+import '../widgets/picker.dart';
 import 'styles.dart';
 
 class AccountPage extends StatefulWidget {
@@ -89,8 +89,7 @@ class _AccountState extends State<AccountPage> {
   );
 
   Widget _body(BuildContext context) => Column(
-    mainAxisAlignment: MainAxisAlignment.center,
-    crossAxisAlignment: CrossAxisAlignment.center,
+    mainAxisAlignment: MainAxisAlignment.start,
     children: [
       const SizedBox(height: 32,),
       _avatarImage(),
@@ -100,8 +99,8 @@ class _AccountState extends State<AccountPage> {
       _idLabel(),
       const SizedBox(height: 32,),
       _saveButton(context),
-      const SizedBox(height: 8,),
-      _exportButton(context),
+      // const SizedBox(height: 8,),
+      // _exportButton(context),
       const SizedBox(height: 64,),
     ],
   );
@@ -160,6 +159,7 @@ class _AccountState extends State<AccountPage> {
     ),
   );
 
+  /*
   Widget _exportButton(BuildContext context) => SizedBox(
     width: 256,
     child: CupertinoButton(
@@ -168,71 +168,32 @@ class _AccountState extends State<AccountPage> {
       onPressed: () => _exportKey(context),
     ),
   );
+   */
 
-  void _editAvatar(BuildContext context) {
-    showCupertinoModalPopup(context: context, builder: (context) {
-      return CupertinoActionSheet(
-        title: const Text('Photo'),
-        message: const Text('Take a photo from your camera or album'),
-        actions: [
-          CupertinoActionSheetAction(
-            onPressed: () => _openPicker(context, true),
-            child: const Text('Camera'),
-          ),
-          CupertinoActionSheetAction(
-            onPressed: () => _openPicker(context, false),
-            child: const Text('Album'),
-          ),
-          CupertinoActionSheetAction(
-            onPressed: () => Navigator.pop(context),
-            isDestructiveAction: true,
-            child: const Text('Cancel'),
-          ),
-        ],
-      );
+  void _editAvatar(BuildContext context) => openImagePicker(context, onPicked: (path) {
+    setState(() {
+      _avatarPath = path;
+      // _avatarUrl = _upWaiting;
     });
-  }
-
-  void _openPicker(BuildContext context, bool camera) {
-    Navigator.pop(context);
-    ImagePicker picker = ImagePicker();
-    ImageSource source = camera ? ImageSource.camera : ImageSource.gallery;
-    picker.pickImage(source: source).then((file) {
-      if (file == null) {
-        Log.error('failed to get image file');
+  }, onRead: (path, data) {
+    String? ext = Paths.extension(path);
+    if (ext == null || ext.toLowerCase() != 'png') {
+      ext = 'jpeg';
+    }
+    String filename = FileTransfer.filenameFromData(data, 'avatar.$ext');
+    FileTransfer ftp = FileTransfer();
+    ftp.uploadAvatar(data, filename, widget.user.identifier).then((url) {
+      if (url == null) {
+        Log.error('failed to upload avatar: $filename');
+        // _avatarUrl = _upError;
       } else {
-        String path = file.path;
-        String? ext = Paths.extension(path);
-        if (ext == null || ext.toLowerCase() != 'png') {
-          ext = 'jpeg';
-        }
-        setState(() {
-          _avatarPath = path;
-          // _avatarUrl = _upWaiting;
-        });
-        file.readAsBytes().then((data) {
-          Log.debug('image file length: ${data.length}, path: ${file.path}');
-          FileTransfer ftp = FileTransfer();
-          String filename = FileTransfer.filenameFromData(data, 'avatar.$ext');
-          ftp.uploadAvatar(data, filename, widget.user.identifier).then((url) {
-            if (url == null) {
-              Log.warning('failed to upload avatar: $filename');
-              // _avatarUrl = _upError;
-            } else {
-              Log.warning('avatar uploaded: $filename -> $url');
-              _avatarUrl = url;
-            }
-          }).onError((error, stackTrace) {
-            Alert.show(context, 'Upload Failed', '$error');
-          });
-        }).onError((error, stackTrace) {
-          Alert.show(context, 'Image File Error', '$error');
-        });
+        Log.warning('avatar uploaded: $filename -> $url');
+        _avatarUrl = url;
       }
     }).onError((error, stackTrace) {
-      Alert.show(context, '${camera ? 'Camera' : 'Gallery'} Error', '$error');
+      Alert.show(context, 'Upload Failed', '$error');
     });
-  }
+  });
 
   void _saveInfo(BuildContext context) async {
     // 1. get old visa document
@@ -250,6 +211,10 @@ class _AccountState extends State<AccountPage> {
       PrivateKey? key = PrivateKey.generate(AsymmetricKey.kRSA);
       assert(key is EncryptKey, 'failed to create visa key');
       visa.key = key as EncryptKey;
+    } else {
+      Document? doc = Document.parse(visa?.copyMap(false));
+      assert(doc is Visa, 'failed to create visa document');
+      visa = doc as Visa;
     }
     // 2. get sign key
     GlobalVariable shared = GlobalVariable();
@@ -259,7 +224,7 @@ class _AccountState extends State<AccountPage> {
           Alert.show(context, 'Error', 'Failed to get private key');
           return null;
         });
-    if (visa == null || sKey == null) {
+    if (sKey == null) {
       assert(false, 'should not happen');
       return;
     }
@@ -279,8 +244,10 @@ class _AccountState extends State<AccountPage> {
     shared.messenger?.broadcastDocument();
   }
 
+  /*
   void _exportKey(BuildContext context) {
     Alert.show(context, 'Coming soon', 'Export private key');
   }
+   */
 
 }

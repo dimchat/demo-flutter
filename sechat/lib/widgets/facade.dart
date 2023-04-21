@@ -40,8 +40,7 @@ import '../client/shared.dart';
 
 /// ImageView
 class Facade extends StatefulWidget {
-  const Facade(FacadeProvider provider, {super.key})
-      : _provider = provider;
+  const Facade(this._provider, {super.key});
 
   final FacadeProvider _provider;
 
@@ -103,11 +102,9 @@ class _FacadeState extends State<Facade> implements lnc.Observer {
 
   late Widget _image;
 
-  void _resetImage(FacadeProvider provider) {
-    setState(() {
-      _image = provider.image;
-    });
-  }
+  void _resetImage(FacadeProvider provider) => setState(() {
+    _image = provider.image;
+  });
 
   @override
   void initState() {
@@ -143,7 +140,8 @@ class _AvatarProvider implements FacadeProvider {
   @override
   String toString() {
     Type clazz = runtimeType;
-    return '<$clazz id="$identifier" width=$width height=$height path="$_path" url=$_url />';
+    return '<$clazz id="$identifier" width=$width height=$height'
+        ' path="$_path" url="$_url" />';
   }
 
   @override

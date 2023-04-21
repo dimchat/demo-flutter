@@ -167,7 +167,6 @@ class ConversationCache extends _ConversationTable {
     if (await super.updateConversation(chat)) {
       // update cache
       if (!identical(old, chat)) {
-        old.name = chat.name;
         old.unread = chat.unread;
         old.lastTime = chat.lastTime;
         old.lastMessage = chat.lastMessage;

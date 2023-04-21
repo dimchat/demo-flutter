@@ -1,5 +1,3 @@
-import 'package:flutter/cupertino.dart';
-
 import 'package:dim_client/dim_client.dart';
 import 'package:dim_client/dim_client.dart' as lnc;
 
@@ -8,23 +6,17 @@ import '../client/facebook.dart';
 import '../client/messenger.dart';
 import '../client/protocol/search.dart';
 import '../client/shared.dart';
-import '../widgets/facade.dart';
+import 'contact.dart';
 
 
-class Conversation {
-  Conversation(this.identifier,
-      {this.name = '', this.unread = 0, this.lastMessage, this.lastTime});
-
-  final ID identifier;
-  String name;
+class Conversation extends ContactInfo {
+  Conversation(super.identifier,
+      {this.unread = 0, this.lastMessage, this.lastTime});
 
   int unread;           // count of unread messages
 
   String? lastMessage;  // description of last message
   DateTime? lastTime;   // time of last message
-
-  Widget getImage({double? width, double? height}) =>
-      Facade.fromID(identifier, width: width, height: height);
 
   @override
   String toString() {
@@ -161,13 +153,12 @@ class Amanuensis implements lnc.Observer {
       return array;
     }
     GlobalVariable shared = GlobalVariable();
-    SharedFacebook facebook = shared.facebook;
     // get ID list from database
     array = await shared.database.getConversations();
     Log.debug('${array.length} conversation(s) loaded');
     // build conversations
     for (Conversation item in array) {
-      item.name = await facebook.getName(item.identifier);
+      item.reloadData();
       // TODO: get last message & unread count
       Log.debug('new conversation created: $item');
       _conversationMap[item.identifier] = item;
@@ -221,7 +212,6 @@ class Amanuensis implements lnc.Observer {
   Future<void> _update(ID cid, InstantMessage iMsg) async {
     Content content = iMsg.content;
     // TODO:
-    int unread = 0;
     String? last = content.getString('text');
     DateTime? time = iMsg.time;
     Log.warning('update last message: $last for conversation: $cid');
@@ -230,7 +220,7 @@ class Amanuensis implements lnc.Observer {
     Conversation? chatBox = _conversationMap[cid];
     if (chatBox == null) {
       // new conversation
-      chatBox = Conversation(cid, unread: unread, lastMessage: last, lastTime: time);
+      chatBox = Conversation(cid, unread: 0, lastMessage: last, lastTime: time);
       if (await shared.database.addConversation(chatBox)) {
         // add to cache
         _conversationMap[cid] = chatBox;
@@ -241,7 +231,7 @@ class Amanuensis implements lnc.Observer {
       }
     } else {
       // conversation exists
-      chatBox.unread = unread;
+      chatBox.unread += 1;
       chatBox.lastMessage = last;
       chatBox.lastTime = time;
       if (await shared.database.updateConversation(chatBox)) {} else {
@@ -251,6 +241,7 @@ class Amanuensis implements lnc.Observer {
     }
     var nc = NotificationCenter();
     nc.postNotification(NotificationNames.kConversationUpdated, this, {
+      'action': 'update',
       'ID': cid,
       'msg': iMsg,
     });

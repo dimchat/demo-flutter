@@ -25,12 +25,10 @@ class SettingsPage extends StatefulWidget {
 }
 
 class _SettingsState extends State<SettingsPage> {
-  _SettingsState() {
-    ID me = ID.kFounder;
-    _me = ContactInfo(identifier: me);
-  }
 
-  late ContactInfo _me;
+  ID? _identifier;
+  String? _nickname;
+  Widget? _avatar;
 
   Future<void> _reload() async {
     GlobalVariable shared = GlobalVariable();
@@ -39,7 +37,9 @@ class _SettingsState extends State<SettingsPage> {
       if (identifier != null) {
         ContactInfo info = await ContactInfo.fromID(identifier);
         setState(() {
-          _me = info;
+          _identifier = info.identifier;
+          _nickname = info.name;
+          _avatar = info.getImage(width: 64, height: 64);
         });
       }
     });
@@ -105,13 +105,12 @@ class _SettingsState extends State<SettingsPage> {
   }
 
   Widget _myAccount(BuildContext context) {
-    ContactInfo current = _me;
     return CupertinoListTile(
       padding: const EdgeInsets.all(16),
       leadingSize: 64,
-      leading: current.getImage(width: 64, height: 64),
-      title: Text(current.name),
-      subtitle: Text(current.identifier.string),
+      leading: _avatar,
+      title: Text('$_nickname'),
+      subtitle: Text('$_identifier'),
       trailing: const CupertinoListTileChevron(),
       onTap: () => AccountPage.open(context),
     );

@@ -117,17 +117,36 @@ class _ChatListAdapter with SectionAdapterMixin {
     Conversation info = _dataSource.conversationAtIndex(indexPath.item);
     Log.warning('show item: $info');
     Widget cell = TableView.cell(
-        leading: info.getImage(),
+        leading: _leading(info),
         title: Text(info.name),
         subtitle: _lastMessage(info.lastMessage),
         trailing: _timeLabel(info.lastTime),
         onTap: () {
           Log.warning('tap: $info');
-          ChatBox.open(context, info.identifier);
+          ChatBox.open(context, info);
         }
     );
     return cell;
   }
+
+  Widget _leading(Conversation info) => Stack(
+    alignment: const AlignmentDirectional(1.5, -1.5),
+    children: [
+      info.getImage(),
+      if (info.unread > 0)
+        _badge(info.unread),
+    ],
+  );
+  Widget _badge(int unread) => ClipOval(
+    child: Container(
+      alignment: Alignment.center,
+      width: 12, height: 12,
+      color: Colors.red,
+      child: Text(unread < 100 ? unread.toString() : '...',
+        style: const TextStyle(color: Colors.white, fontSize: 8),
+      ),
+    ),
+  );
 
   Widget? _lastMessage(String? last) {
     if (last == null) {

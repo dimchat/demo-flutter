@@ -122,11 +122,10 @@ class Emitter implements Observer {
     FileTransferChannel ftp = man.ftpChannel;
     Uri? url = await ftp.uploadEncryptData(encrypted, filename, sender);
     if (url == null) {
-      // add task for upload
-      _addTask(filename, iMsg);
-      Log.info('waiting upload filename: ${content.filename} -> $filename');
+      Log.error('failed to upload: ${content.filename} -> $filename');
+      // TODO: mark message failed
     } else {
-      // already upload before, set URL and send out immediately
+      // upload success
       Log.info('uploaded filename: ${content.filename} -> $filename => $url');
       content.url = url.toString();
       await _sendInstantMessage(iMsg);

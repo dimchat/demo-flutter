@@ -5,7 +5,7 @@ import '../client/shared.dart';
 import '../widgets/facade.dart';
 
 class ContactInfo {
-  ContactInfo({required this.identifier}) : _name = identifier.name;
+  ContactInfo(this.identifier) : _name = identifier.name;
 
   final ID identifier;
   String? _name;
@@ -95,7 +95,7 @@ class _ContactManager {
   Future<ContactInfo> getContact(ID identifier) async{
     ContactInfo? info = _contacts[identifier];
     if (info == null) {
-      info = ContactInfo(identifier: identifier);
+      info = ContactInfo(identifier);
       await info.reloadData();
       _contacts[identifier] = info;
     }

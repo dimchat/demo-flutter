@@ -149,16 +149,46 @@ class InstantMessageTable extends DataTableHandler<InstantMessage> implements In
       sig = sig.substring(sig.length - 8);
     }
     String msg = JSON.encode(iMsg.dictionary);
-    List values = [chat.string, sender,/* receiver,*/ time, iMsg.type,
-      content.sn, sig, /*content.dictionary,*/ msg];
-    if (await insert(_table, columns: _insertColumns, values: values) <= 0) {
-      Log.error('failed to save message: $sender -> $chat');
-      return false;
+
+    // check old record
+    SQLConditions cond;
+    cond = SQLConditions(left: 'cid', comparison: '=', right: chat.string);
+    cond.addCondition(SQLConditions.kAnd, left: 'sender', comparison: '=', right: sender);
+    cond.addCondition(SQLConditions.kAnd, left: 'sn', comparison: '=', right: content.sn);
+    List<InstantMessage> messages = await select(_table, columns: _selectColumns,
+        conditions: cond, limit: 1);
+
+    String act;
+    if (messages.isNotEmpty) {
+      Map<String, dynamic> values = {
+        // 'cid': chat.string,
+        // 'sender': sender,
+        // // 'receiver': receiver,
+        'time': time,
+        'type': iMsg.type,
+        // 'sn': content.sn,
+        'signature': sig,
+        // 'content': JSON.encode(content.dictionary),
+        'msg': msg,
+      };
+      if (await update(_table, values: values, conditions: cond) < 1) {
+        Log.error('failed to update message: $sender -> $chat');
+        return false;
+      }
+      act = 'update';
+    } else {
+      List values = [chat.string, sender,/* receiver,*/ time, iMsg.type,
+        content.sn, sig, /*JSON.encode(content.dictionary),*/ msg];
+      if (await insert(_table, columns: _insertColumns, values: values) <= 0) {
+        Log.error('failed to save message: $sender -> $chat');
+        return false;
+      }
+      act = 'add';
     }
     // post notification
     var nc = NotificationCenter();
     nc.postNotification(NotificationNames.kMessageUpdated, this, {
-      'action': 'add',
+      'action': act,
       'ID': chat,
       'msg': iMsg,
     });

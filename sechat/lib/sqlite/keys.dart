@@ -242,7 +242,8 @@ class MsgKeyCache implements CipherKeyDBI {
     if (keyMap != null) {
       key = keyMap[sender];
     }
-    if (generate) {
+    // if key not found, generate it
+    if (key == null && generate) {
       if (keyMap == null) {
         keyMap = {};
         _caches[receiver] = keyMap;

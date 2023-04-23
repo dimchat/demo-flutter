@@ -36,11 +36,13 @@ class _SettingsState extends State<SettingsPage> {
       ID? identifier = user?.identifier;
       if (identifier != null) {
         ContactInfo info = await ContactInfo.fromID(identifier);
-        setState(() {
-          _identifier = info.identifier;
-          _nickname = info.name;
-          _avatar = info.getImage(width: 64, height: 64);
-        });
+        if (mounted) {
+          setState(() {
+            _identifier = info.identifier;
+            _nickname = info.name;
+            _avatar = info.getImage(width: 64, height: 64);
+          });
+        }
       }
     });
   }

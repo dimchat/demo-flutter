@@ -232,8 +232,10 @@ class Amanuensis implements lnc.Observer {
     } else {
       // conversation exists
       chatBox.unread += 1;
-      chatBox.lastMessage = last;
-      chatBox.lastTime = time;
+      if (last != null) {
+        chatBox.lastMessage = last;
+        chatBox.lastTime = time;
+      }
       if (await shared.database.updateConversation(chatBox)) {} else {
         Log.error('failed to update conversation: $chatBox');
         return;

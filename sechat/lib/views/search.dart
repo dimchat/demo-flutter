@@ -65,9 +65,11 @@ class _SearchState extends State<SearchPage> implements lnc.Observer {
     Map? info = notification.userInfo;
     if (name == NotificationNames.kServerStateChanged) {
       int state = info!['state'];
-      setState(() {
-        _sessionState = state;
-      });
+      if (mounted) {
+        setState(() {
+          _sessionState = state;
+        });
+      }
     } else if (name == NotificationNames.kSearchUpdated) {
       _reload(info?['cmd']);
     }
@@ -94,10 +96,12 @@ class _SearchState extends State<SearchPage> implements lnc.Observer {
       return;
     }
     List<ContactInfo> array = await ContactInfo.fromList(ID.convert(users));
-    setState(() {
-      _dataSource.refresh(array);
-      _adapter.notifyDataChange();
-    });
+    if (mounted) {
+      setState(() {
+        _dataSource.refresh(array);
+        _adapter.notifyDataChange();
+      });
+    }
   }
 
   @override
@@ -129,10 +133,12 @@ class _SearchState extends State<SearchPage> implements lnc.Observer {
       Alert.show(context, 'Error', 'Failed to send command');
       return;
     } else {
-      setState(() {
-        _dataSource.refresh([]);
-        _adapter.notifyDataChange();
-      });
+      if (mounted) {
+        setState(() {
+          _dataSource.refresh([]);
+          _adapter.notifyDataChange();
+        });
+      }
     }
     // build command
     SearchCommand command = SearchCommand.fromKeywords(keywords);

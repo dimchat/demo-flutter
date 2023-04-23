@@ -2,6 +2,7 @@ import 'dart:typed_data';
 
 import 'package:dim_client/dim_client.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:flutter_image_compress/flutter_image_compress.dart';
 import 'package:image_picker/image_picker.dart';
 
 import 'alert.dart';
@@ -57,4 +58,12 @@ void _openImagePicker(BuildContext context, bool camera, OnImagePicked? onPicked
     String name = camera ? 'Camera' : 'Gallery';
     Alert.show(context, '$name Error', '$error');
   });
+}
+
+Future<Uint8List> compressThumbnail(Uint8List jpeg) async {
+  return await FlutterImageCompress.compressWithList(jpeg,
+    minHeight: 128,
+    minWidth: 128,
+    quality: 20,
+  );
 }

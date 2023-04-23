@@ -2,7 +2,6 @@ import 'dart:typed_data';
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_image_compress/flutter_image_compress.dart';
 import 'package:flutter_section_list/flutter_section_list.dart';
 
 import 'package:dim_client/dim_client.dart';
@@ -14,6 +13,7 @@ import '../models/contact.dart';
 import '../models/conversation.dart';
 import '../widgets/alert.dart';
 import '../widgets/facade.dart';
+import '../widgets/message.dart';
 import '../widgets/picker.dart';
 import 'profile.dart';
 import 'styles.dart';
@@ -79,9 +79,11 @@ class _ChatBoxState extends State<ChatBox> implements lnc.Observer {
     _currentUser = await shared.facebook.currentUser;
     var pair = await shared.database.getInstantMessages(widget.info.identifier);
     Log.warning('message updated: ${pair.first.length}');
-    setState(() {
-      _dataSource.refresh(pair.first);
-    });
+    if (mounted) {
+      setState(() {
+        _dataSource.refresh(pair.first);
+      });
+    }
   }
 
   @override
@@ -179,24 +181,26 @@ class _HistoryAdapter with SectionAdapterMixin {
                 children: [
                   if (!isMe && (isGroupChat || sender != _conversation.identifier))
                     Container(
-                      margin: const EdgeInsets.only(left: 8),
-                      child: Text(sender.string,
-                        style: const TextStyle(color: Colors.grey),
+                      margin: const EdgeInsets.only(left: 2),
+                      constraints: const BoxConstraints(maxWidth: 240),
+                      child: NameView.fromID(sender,
+                        style: const TextStyle(color: Colors.grey,
+                            fontSize: 12,
+                            overflow: TextOverflow.ellipsis,
+                        ),
                       ),
                     ),
                   Container(
-                    margin: const EdgeInsets.fromLTRB(8, 4, 8, 4),
-                    padding: const EdgeInsets.fromLTRB(16, 12, 16, 12),
+                    margin: const EdgeInsets.fromLTRB(2, 8, 2, 8),
                     constraints: const BoxConstraints(maxWidth: 240),
-                    decoration: BoxDecoration(
-                      color: isMe ? Colors.lightGreen : Colors.white,
+                    child: ClipRRect(
                       borderRadius: isMe
                           ? borderRadius.subtract(
                           const BorderRadius.only(topRight: radius))
                           : borderRadius.subtract(
                           const BorderRadius.only(topLeft: radius)),
+                      child: _showContent(content, sender, isMe, context: context),
                     ),
-                    child: _showContent(content, sender, context: context),
                   ),
                 ],
               ),
@@ -218,7 +222,7 @@ class _HistoryAdapter with SectionAdapterMixin {
     return Text(content.cmd);
   }
 
-  Widget _showContent(Content content, ID sender, {required BuildContext context}) {
+  Widget _showContent(Content content, ID sender, bool isMe, {required BuildContext context}) {
     if (content is ImageContent) {
       return _showImageContent(content, sender, context: context);
     } else if (content is AudioContent) {
@@ -226,13 +230,15 @@ class _HistoryAdapter with SectionAdapterMixin {
     } else if (content is VideoContent) {
       return _showVideoContent(content, sender, context: context);
     }
-    return Text('${content["text"]}');
+    return Container(
+      color: isMe ? Colors.lightGreen : Colors.white,
+      padding: const EdgeInsets.fromLTRB(16, 12, 16, 12),
+      child: Text('${content["text"]}'),
+    );
   }
 
   Widget _showImageContent(ImageContent content, ID sender, {required BuildContext context}) {
-    String? filename = content.filename;
-    String? url = content.url;
-    return Text('Image[$filename]: $url');
+    return ImageContentView.fromContent(content);
   }
 
   Widget _showAudioContent(AudioContent content, ID sender, {required BuildContext context}) {
@@ -347,14 +353,10 @@ void _sendText(BuildContext context, TextEditingController controller, ContactIn
 }
 
 void _sendImage(BuildContext context, ContactInfo chat) {
-  openImagePicker(context, onRead: (path, data) async {
-    Uint8List thumbnail = await FlutterImageCompress.compressWithList(data,
-        minHeight: 128,
-        minWidth: 128,
-        quality: 20,
-    );
+  openImagePicker(context, onRead: (path, jpeg) async {
+    Uint8List thumbnail = await compressThumbnail(jpeg);
     GlobalVariable shared = GlobalVariable();
-    shared.emitter.sendImage(data, thumbnail, chat.identifier);
+    shared.emitter.sendImage(jpeg, thumbnail, chat.identifier);
   });
 }
 

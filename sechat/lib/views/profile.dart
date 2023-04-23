@@ -67,9 +67,11 @@ class _ProfileState extends State<ProfilePage> implements lnc.Observer {
       assert(identifier != null, 'notification error: $notification');
       if (identifier == widget.info.identifier) {
         Log.info('document updated: $identifier');
-        setState(() {
-          // update name in title
-        });
+        if (mounted) {
+          setState(() {
+            // update name in title
+          });
+        }
       }
     } else if (name == NotificationNames.kContactsUpdated) {
       ID? contact = userInfo?['contact'];
@@ -90,9 +92,11 @@ class _ProfileState extends State<ProfilePage> implements lnc.Observer {
     } else {
       Log.debug('reloading profile: ${widget.info}');
       List<ID> contacts = await shared.facebook.getContacts(user.identifier);
-      setState(() {
-        _isFriend = contacts.contains(widget.info.identifier);
-      });
+      if (mounted) {
+        setState(() {
+          _isFriend = contacts.contains(widget.info.identifier);
+        });
+      }
     }
   }
 
@@ -133,7 +137,7 @@ class _ProfileState extends State<ProfilePage> implements lnc.Observer {
         const SizedBox(height: 32,),
         _avatarImage(),
         const SizedBox(height: 8,),
-        SizedBox(width: 300,
+        SizedBox(width: 296,
           child: _idLabel(),
         ),
         const SizedBox(height: 64,),
@@ -297,9 +301,11 @@ class _ProfileTableState extends State<_ProfileTableCell> implements lnc.Observe
     if (identifier == null) {
       Log.error('notification error: $notification');
     } else if (identifier == widget.info.identifier) {
-      setState(() {
-        //
-      });
+      if (mounted) {
+        setState(() {
+          //
+        });
+      }
     }
   }
 

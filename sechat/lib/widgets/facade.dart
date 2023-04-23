@@ -40,9 +40,9 @@ import '../client/shared.dart';
 
 /// ImageView
 class Facade extends StatefulWidget {
-  const Facade(this._provider, {super.key});
+  const Facade(this.provider, {super.key});
 
-  final FacadeProvider _provider;
+  final FacadeProvider provider;
 
   static Facade fromID(ID identifier, {double? width, double? height}) {
     return Facade(_AvatarProvider(identifier, width ?? 32, height ?? 32));
@@ -81,7 +81,7 @@ class _FacadeState extends State<Facade> implements lnc.Observer {
   Future<void> onReceiveNotification(lnc.Notification notification) async {
     String name = notification.name;
     Map? userInfo = notification.userInfo;
-    FacadeProvider provider = widget._provider;
+    FacadeProvider provider = widget.provider;
     if (name == NotificationNames.kDocumentUpdated) {
       ID? identifier = userInfo?['ID'];
       assert(identifier != null, 'notification error: $notification');
@@ -102,15 +102,19 @@ class _FacadeState extends State<Facade> implements lnc.Observer {
 
   late Widget _image;
 
-  void _resetImage(FacadeProvider provider) => setState(() {
-    _image = provider.image;
-  });
+  void _resetImage(FacadeProvider provider) {
+    if (mounted) {
+      setState(() {
+        _image = provider.image;
+      });
+    }
+  }
 
   @override
   void initState() {
     super.initState();
     // init image
-    FacadeProvider provider = widget._provider;
+    FacadeProvider provider = widget.provider;
     _image = provider.image;
     // reload image
     provider.reload().then((ok) {
@@ -154,9 +158,11 @@ class _AvatarProvider implements FacadeProvider {
       String? path = _path;
       if (path != null) {
         img = Image.file(File(path), width: width, height: height, fit: BoxFit.cover);
-        if (identifier.isUser) {
-          img = ClipOval(child: img);
-        }
+        Radius radius = Radius.elliptical(width / 8, height / 8);
+        img = ClipRRect(
+          borderRadius: BorderRadius.all(radius),
+          child: img,
+        );
       } else if (identifier.isUser) {
         img = Icon(CupertinoIcons.profile_circled, size: width,);
       } else {

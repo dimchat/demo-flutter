@@ -54,9 +54,11 @@ class _ContactListState extends State<ContactListPage> implements lnc.Observer {
     Map? info = notification.userInfo;
     if (name == NotificationNames.kServerStateChanged) {
       int state = info!['state'];
-      setState(() {
-        _sessionState = state;
-      });
+      if (mounted) {
+        setState(() {
+          _sessionState = state;
+        });
+      }
     } else if (name == NotificationNames.kContactsUpdated) {
       _reload();
     }
@@ -75,10 +77,12 @@ class _ContactListState extends State<ContactListPage> implements lnc.Observer {
     }
     List<ID> contacts = await shared.database.getContacts(user: user.identifier);
     List<ContactInfo> array = await ContactInfo.fromList(contacts);
-    setState(() {
-      _dataSource.refresh(array);
-      _adapter.notifyDataChange();
-    });
+    if (mounted) {
+      setState(() {
+        _dataSource.refresh(array);
+        _adapter.notifyDataChange();
+      });
+    }
   }
 
   @override

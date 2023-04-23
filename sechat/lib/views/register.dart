@@ -139,11 +139,9 @@ class _RegisterFormState extends State<_RegisterForm> {
                   fontSize: 20,
                   height: 1.6,
                 ),
-                onChanged: (value) {
-                  setState(() {
-                    nickname = value;
-                  });
-                },
+                onChanged: (value) => setState(() {
+                  nickname = value;
+                }),
               ),
             ),
           ],
@@ -187,11 +185,9 @@ class _RegisterFormState extends State<_RegisterForm> {
                     : CupertinoColors.systemGrey,
               ),
             ),
-            onPressed: () {
-              setState(() {
-                agreed = !agreed;
-              });
-            },
+            onPressed: () => setState(() {
+              agreed = !agreed;
+            }),
         ),
         const Text('Agreed with the'),
         TextButton(

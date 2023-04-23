@@ -52,11 +52,13 @@ class _AccountState extends State<AccountPage> {
     ID identifier = widget.user.identifier;
     String name = await facebook.getName(identifier);
     var pair = await facebook.getAvatar(identifier);
-    setState(() {
-      _nickname = name;
-      _avatarPath = pair.first;
-      _avatarUrl = pair.second;
-    });
+    if (mounted) {
+      setState(() {
+        _nickname = name;
+        _avatarPath = pair.first;
+        _avatarUrl = pair.second;
+      });
+    }
   }
 
   @override
@@ -105,22 +107,26 @@ class _AccountState extends State<AccountPage> {
     ],
   );
 
-  Widget _avatarImage() => ClipOval(
+  Widget _avatarImage() => ClipRRect(
+    borderRadius: const BorderRadius.all(Radius.circular(32)),
     child: Stack(
       alignment: AlignmentDirectional.bottomCenter,
       children: [
-        Container(width: 256, height: 256, color: Styles.backgroundColor,),
+        if (_avatarPath == null)
+        Container(width: 256, height: 256, color: Styles.backgroundColor),
         if (_avatarPath != null)
-          Image.file(File(_avatarPath!), width: 256, height: 256, fit: BoxFit.cover,),
+        Image.file(File(_avatarPath!), width: 256, height: 256, fit: BoxFit.cover),
         SizedBox(
           width: 256,
+          height: 36,
           child: TextButton(
             onPressed: () => _editAvatar(context),
             style: ButtonStyle(
-              backgroundColor: MaterialStateProperty.all<Color>(Colors.lightGreen),
+              backgroundColor: MaterialStateProperty.all<Color>(Colors.black38),
               foregroundColor: MaterialStateProperty.all<Color>(Colors.white),
+              shape: MaterialStateProperty.all(const LinearBorder()),
             ),
-            child: const Text('Edit'),
+            child: const Text('Change Avatar'),
           ),
         )
       ],
@@ -171,10 +177,12 @@ class _AccountState extends State<AccountPage> {
    */
 
   void _editAvatar(BuildContext context) => openImagePicker(context, onPicked: (path) {
-    setState(() {
-      _avatarPath = path;
-      // _avatarUrl = _upWaiting;
-    });
+    if (mounted) {
+      setState(() {
+        _avatarPath = path;
+        // _avatarUrl = _upWaiting;
+      });
+    }
   }, onRead: (path, data) {
     String? ext = Paths.extension(path);
     if (ext == null || ext.toLowerCase() != 'png') {

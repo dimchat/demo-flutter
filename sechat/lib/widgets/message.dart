@@ -9,12 +9,11 @@ import '../client/http/ftp.dart';
 
 /// ImageView
 class ImageContentView extends StatefulWidget {
-  const ImageContentView(this.content, {super.key});
+  const ImageContentView(this.content, {this.color, this.padding, super.key});
 
   final ImageContent content;
-
-  static ImageContentView fromContent(ImageContent content) =>
-      ImageContentView(content);
+  final Color? color;
+  final EdgeInsetsGeometry? padding;
 
   @override
   State<StatefulWidget> createState() => _ImageContentState();
@@ -57,8 +56,8 @@ class _ImageContentState extends State<ImageContentView> {
       return img;
     }
     return Container(
-      color: Colors.lightGreen,
-      padding: const EdgeInsets.fromLTRB(16, 12, 16, 12),
+      color: widget.color,
+      padding: widget.padding,
       child: const Text('Image error'),
     );
   }

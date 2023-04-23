@@ -15,6 +15,7 @@ import '../widgets/alert.dart';
 import '../widgets/facade.dart';
 import '../widgets/message.dart';
 import '../widgets/picker.dart';
+import '../widgets/audio.dart';
 import 'profile.dart';
 import 'styles.dart';
 
@@ -199,7 +200,11 @@ class _HistoryAdapter with SectionAdapterMixin {
                           const BorderRadius.only(topRight: radius))
                           : borderRadius.subtract(
                           const BorderRadius.only(topLeft: radius)),
-                      child: _showContent(content, sender, isMe, context: context),
+                      child: _showContent(content, sender,
+                          color: isMe ? Colors.lightGreen : Colors.white,
+                          padding: const EdgeInsets.fromLTRB(16, 12, 16, 12),
+                          context: context
+                      ),
                     ),
                   ),
                 ],
@@ -219,39 +224,27 @@ class _HistoryAdapter with SectionAdapterMixin {
   }
 
   Widget _showCommand(Command content, ID sender, {required BuildContext context}) {
+    // TODO: show command message
     return Text(content.cmd);
   }
 
-  Widget _showContent(Content content, ID sender, bool isMe, {required BuildContext context}) {
+  Widget _showContent(Content content, ID sender,
+      {Color? color, EdgeInsetsGeometry? padding, required BuildContext context}) {
     if (content is ImageContent) {
-      return _showImageContent(content, sender, context: context);
+      return ImageContentView(content, color: color, padding: padding);
     } else if (content is AudioContent) {
-      return _showAudioContent(content, sender, context: context);
+      return AudioContentView(content, color: color, padding: padding);
     } else if (content is VideoContent) {
-      return _showVideoContent(content, sender, context: context);
+      return Text('Movie[${content.filename}]: ${content.url}');
+    } else {
+      return Container(
+        color: color,
+        padding: padding,
+        child: Text('${content["text"]}'),
+      );
     }
-    return Container(
-      color: isMe ? Colors.lightGreen : Colors.white,
-      padding: const EdgeInsets.fromLTRB(16, 12, 16, 12),
-      child: Text('${content["text"]}'),
-    );
   }
 
-  Widget _showImageContent(ImageContent content, ID sender, {required BuildContext context}) {
-    return ImageContentView.fromContent(content);
-  }
-
-  Widget _showAudioContent(AudioContent content, ID sender, {required BuildContext context}) {
-    String? filename = content.filename;
-    String? url = content.url;
-    return Text('Voice[$filename]: $url');
-  }
-
-  Widget _showVideoContent(VideoContent content, ID sender, {required BuildContext context}) {
-    String? filename = content.filename;
-    String? url = content.url;
-    return Text('Movie[$filename]: $url');
-  }
 }
 
 class _HistoryDataSource {
@@ -320,18 +313,14 @@ class _InputState extends State<_InputTray> {
       if (_isVoice)
       Expanded(
         flex: 1,
-        child: TextButton(
-          child: const Text('Press and record'),
-          onPressed: () {
-          },
-        ),
+        child: RecordButton(widget.info.identifier),
       ),
-      if (_controller.text.isEmpty)
+      if (_controller.text.isEmpty || _isVoice)
       CupertinoButton(
         child: const Icon(Icons.add_circle_outline),
         onPressed: () => _sendImage(context, widget.info),
       ),
-      if (_controller.text.isNotEmpty)
+      if (_controller.text.isNotEmpty && !_isVoice)
       CupertinoButton(
         child: const Icon(Icons.send),
         onPressed: () => _sendText(context, _controller, widget.info),

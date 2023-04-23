@@ -7,7 +7,7 @@ import '../main.dart';
 import '../models/config.dart';
 import '../widgets/alert.dart';
 import '../widgets/browser.dart';
-import 'permissions.dart';
+import '../widgets/permissions.dart';
 
 class RegisterPage extends StatelessWidget {
   const RegisterPage({super.key});
@@ -242,7 +242,7 @@ void _checkCurrentUser(BuildContext context, void Function() onNotFound) {
 }
 
 void _requestPermission(BuildContext context, void Function(BuildContext context) onGranted) {
-  PermissionHandler.request(PermissionHandler.minimumPermissions).then((value) {
+  PermissionHandler.request(PermissionHandler.primaryPermissions).then((value) {
     if (!value) {
       // storage permission not granted
       Alert.show(context, 'Permission denied',

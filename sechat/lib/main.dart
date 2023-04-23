@@ -7,9 +7,9 @@ import 'client/shared.dart';
 import 'views/chats.dart';
 import 'views/customizer.dart';
 import 'views/contacts.dart';
-import 'views/permissions.dart';
 import 'views/register.dart';
 import 'views/styles.dart';
+import 'widgets/permissions.dart';
 
 void main() {
   // Set log level
@@ -22,7 +22,7 @@ void main() {
       [DeviceOrientation.portraitUp, DeviceOrientation.portraitDown]
   );
   // Check permission to launch the app: Storage
-  PermissionHandler.check(PermissionHandler.minimumPermissions).then((value) {
+  PermissionHandler.check(PermissionHandler.primaryPermissions).then((value) {
     if (!value) {
       // not granted for photos/storage, first run?
       Log.warning('not granted for photos/storage, first run?');

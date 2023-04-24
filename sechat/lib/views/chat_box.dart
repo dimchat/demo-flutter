@@ -8,6 +8,7 @@ import 'package:dim_client/dim_client.dart';
 import 'package:dim_client/dim_client.dart' as lnc;
 
 import '../client/constants.dart';
+import '../client/filesys/external.dart';
 import '../client/shared.dart';
 import '../models/contact.dart';
 import '../models/conversation.dart';
@@ -313,7 +314,9 @@ class _InputState extends State<_InputTray> {
       if (_isVoice)
       Expanded(
         flex: 1,
-        child: RecordButton(widget.info.identifier),
+        child: RecordButton(widget.info.identifier,
+            onComplected: (path, duration) => _sendVoice(context, path, duration, widget.info),
+        ),
       ),
       if (_controller.text.isEmpty || _isVoice)
       CupertinoButton(
@@ -346,6 +349,15 @@ void _sendImage(BuildContext context, ContactInfo chat) {
     Uint8List thumbnail = await compressThumbnail(jpeg);
     GlobalVariable shared = GlobalVariable();
     shared.emitter.sendImage(jpeg, thumbnail, chat.identifier);
+  });
+}
+
+void _sendVoice(BuildContext context, String path, double duration, ContactInfo chat) {
+  ExternalStorage.loadBinary(path).then((data) {
+    GlobalVariable shared = GlobalVariable();
+    shared.emitter.sendVoice(data, duration, chat.identifier);
+  }).onError((error, stackTrace) {
+    Alert.show(context, 'Error', 'Failed to load voice file: $path');
   });
 }
 

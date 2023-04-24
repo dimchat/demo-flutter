@@ -22,7 +22,7 @@ void main() {
       [DeviceOrientation.portraitUp, DeviceOrientation.portraitDown]
   );
   // Check permission to launch the app: Storage
-  PermissionHandler.check(PermissionHandler.primaryPermissions).then((value) {
+  checkPrimaryPermissions().then((value) {
     if (!value) {
       // not granted for photos/storage, first run?
       Log.warning('not granted for photos/storage, first run?');

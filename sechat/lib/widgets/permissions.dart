@@ -1,9 +1,13 @@
 import 'dart:io';
 
+import 'package:dim_client/dim_client.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:permission_handler/permission_handler.dart';
-import 'package:permission_handler/permission_handler.dart' as permission_handler;
+import 'package:permission_handler/permission_handler.dart' as lib;
 
-const List<Permission> allPermissions = [
+import 'alert.dart';
+
+const List<Permission> _allPermissions = [
   /// Android: Camera
   /// iOS: Photos (Camera Roll and Camera)
   Permission.camera,
@@ -51,7 +55,7 @@ const List<Permission> allPermissions = [
   // Permission.audio,
 ];
 
-class PermissionHandler {
+class _PermissionHandler {
 
   static List<Permission> get primaryPermissions {
     if (Platform.isIOS) {
@@ -101,7 +105,7 @@ class PermissionHandler {
         Permission.notification,
       ];
     } else {
-      return allPermissions;
+      return _allPermissions;
     }
   }
 
@@ -127,7 +131,45 @@ class PermissionHandler {
     return true;
   }
 
-  static void openAppSettings() async {
-    permission_handler.openAppSettings();
-  }
+  static void openAppSettings() async => lib.openAppSettings();
+}
+
+Future<bool> checkPrimaryPermissions() async {
+  return await _PermissionHandler.check(_PermissionHandler.primaryPermissions);
+}
+
+void requestPrimaryPermissions(BuildContext context,
+    {required void Function(BuildContext context) onGranted}) {
+  _PermissionHandler.request(_PermissionHandler.primaryPermissions).then((value) {
+    if (!value) {
+      // base permissions not granted
+      Alert.show(context, 'Permission denied',
+        'You should grant the permission to continue using this app.',
+        callback: () => _PermissionHandler.openAppSettings(),
+      );
+    } else {
+      Log.info('permission granted');
+      onGranted(context);
+    }
+  }).onError((error, stackTrace) {
+    Log.error('request permission error: $error');
+  });
+}
+
+void requestSecondaryPermissions(BuildContext context,
+    {required void Function(BuildContext context) onGranted}) {
+  _PermissionHandler.request(_PermissionHandler.secondaryPermissions).then((value) {
+    if (!value) {
+      // advanced permissions not granted
+      Alert.show(context, 'Permission denied',
+        'You should grant the permission to continue using this function.',
+        callback: () => _PermissionHandler.openAppSettings(),
+      );
+    } else {
+      Log.info('permission granted');
+      onGranted(context);
+    }
+  }).onError((error, stackTrace) {
+    Log.error('request permission error: $error');
+  });
 }

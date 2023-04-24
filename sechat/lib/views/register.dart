@@ -228,7 +228,7 @@ void _submit(BuildContext context, {required String name, required String avatar
 
 void _checkCurrentUser(BuildContext context, void Function() onNotFound) {
   Log.debug('checking permissions');
-  _requestPermission(context, (context) {
+  requestPrimaryPermissions(context, onGranted: (context) {
     GlobalVariable().facebook.currentUser.then((user) {
       if (user == null) {
         onNotFound();
@@ -238,22 +238,5 @@ void _checkCurrentUser(BuildContext context, void Function() onNotFound) {
     }).onError((error, stackTrace) {
       Log.error('current user error: $error');
     });
-  });
-}
-
-void _requestPermission(BuildContext context, void Function(BuildContext context) onGranted) {
-  PermissionHandler.request(PermissionHandler.primaryPermissions).then((value) {
-    if (!value) {
-      // storage permission not granted
-      Alert.show(context, 'Permission denied',
-        'You should grant the permission to continue using this app.',
-        callback: () => PermissionHandler.openAppSettings(),
-      );
-    } else {
-      Log.info('permission granted');
-      onGranted(context);
-    }
-  }).onError((error, stackTrace) {
-    Log.error('request permission error: $error');
   });
 }

@@ -192,12 +192,10 @@ class _RegisterFormState extends State<_RegisterForm> {
         const Text('Agreed with the'),
         TextButton(
           child: const Text('DIM Privacy Policy'),
-          onPressed: () {
-            Browser.open(context,
-              Config().termsURL,
-              'Terms',
-            );
-          },
+          onPressed: () => Config().termsURL.then((url) => Browser.open(context,
+            url: url,
+            title: 'Terms',
+          )),
         ),
       ],
     );

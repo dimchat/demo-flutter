@@ -111,23 +111,21 @@ class _ChatBoxState extends State<ChatBox> implements lnc.Observer {
   }
 
   @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: Styles.backgroundColor,
-      appBar: CupertinoNavigationBar(
-        backgroundColor: Styles.navigationBarBackground,
-        border: Styles.navigationBarBorder,
-        middle: Text(widget.info.name),
-        trailing: IconButton(
-          iconSize: Styles.navigationBarIconSize,
-          color: Styles.navigationBarIconColor,
-          icon: const Icon(Icons.more_horiz),
-          onPressed: () => _openDetail(context, widget.info),
-        ),
+  Widget build(BuildContext context) => Scaffold(
+    backgroundColor: Styles.backgroundColor,
+    appBar: CupertinoNavigationBar(
+      backgroundColor: Styles.navigationBarBackground,
+      border: Styles.navigationBarBorder,
+      middle: Text(widget.info.name),
+      trailing: IconButton(
+        iconSize: Styles.navigationBarIconSize,
+        color: Styles.navigationBarIconColor,
+        icon: const Icon(Icons.more_horiz),
+        onPressed: () => _openDetail(context, widget.info),
       ),
-      body: _body(context),
-    );
-  }
+    ),
+    body: _body(context),
+  );
 
   Widget _body(BuildContext context) => Column(
     mainAxisAlignment: MainAxisAlignment.end,

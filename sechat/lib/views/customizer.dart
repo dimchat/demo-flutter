@@ -1,4 +1,5 @@
 import 'package:flutter/cupertino.dart';
+import 'package:flutter/material.dart';
 
 import 'package:dim_client/dim_client.dart';
 import 'package:dim_client/dim_client.dart' as lnc;
@@ -7,9 +8,9 @@ import '../client/constants.dart';
 import '../client/shared.dart';
 import '../models/config.dart';
 import '../models/contact.dart';
-import '../widgets/alert.dart';
 import '../widgets/browser.dart';
 import 'account.dart';
+import 'network.dart';
 import 'styles.dart';
 
 class SettingsPage extends StatelessWidget {
@@ -56,7 +57,7 @@ class SettingsPage extends StatelessWidget {
                   topMargin: 0,
                   additionalDividerMargin: 32,
                   children: [
-                    _setting(context),
+                    _network(context),
                   ],
                 ),
                 CupertinoListSection(
@@ -64,6 +65,7 @@ class SettingsPage extends StatelessWidget {
                   additionalDividerMargin: 32,
                   children: [
                     _term(context),
+                    _source(context),
                     _about(context),
                   ],
                 ),
@@ -77,46 +79,50 @@ class SettingsPage extends StatelessWidget {
 
   Widget _myAccount(BuildContext context) => _MyAccountSection();
 
-  Widget _setting(BuildContext context) {
-    return CupertinoListTile(
-      padding: const EdgeInsets.all(16),
-      leading: const Icon(CupertinoIcons.settings),
-      title: const Text('Setting'),
-      additionalInfo: const Text('stations'),
-      trailing: const CupertinoListTileChevron(),
-      onTap: () => {
-        Alert.show(context, 'Coming soon', 'Setting stations')
-      },
-    );
-  }
+  Widget _network(BuildContext context) => CupertinoListTile(
+    padding: const EdgeInsets.all(16),
+    leading: const Icon(CupertinoIcons.settings),
+    title: const Text('Network'),
+    additionalInfo: const Text('stations'),
+    trailing: const CupertinoListTileChevron(),
+    onTap: () => showCupertinoDialog(
+      context: context,
+      builder: (context) => const NetworkSettingPage(),
+    ),
+  );
 
-  Widget _term(BuildContext context) {
-    Config config = Config();
-    return CupertinoListTile(
-      padding: const EdgeInsets.all(16),
-      leading: const Icon(CupertinoIcons.doc_text),
-      title: const Text('Terms'),
-      trailing: const CupertinoListTileChevron(),
-      onTap: () => Browser.open(context,
-        config.termsURL,
-        'Terms',
-      ),
-    );
-  }
+  Widget _source(BuildContext context) => CupertinoListTile(
+    padding: const EdgeInsets.all(16),
+    leading: const Icon(Icons.code),
+    title: const Text('Source'),
+    trailing: const CupertinoListTileChevron(),
+    onTap: () => Config().termsURL.then((url) => Browser.open(context,
+      url: 'https://github.com/dimchat/demo-flutter',
+      title: 'Open Source',
+    )),
+  );
 
-  Widget _about(BuildContext context) {
-    Config config = Config();
-    return CupertinoListTile(
-      padding: const EdgeInsets.all(16),
-      leading: const Icon(CupertinoIcons.info),
-      title: const Text('About'),
-      trailing: const CupertinoListTileChevron(),
-      onTap: () => Browser.open(context,
-        config.aboutURL,
-        'About',
-      ),
-    );
-  }
+  Widget _term(BuildContext context) => CupertinoListTile(
+    padding: const EdgeInsets.all(16),
+    leading: const Icon(CupertinoIcons.doc_text),
+    title: const Text('Terms'),
+    trailing: const CupertinoListTileChevron(),
+    onTap: () => Config().termsURL.then((url) => Browser.open(context,
+      url: url,
+      title: 'Terms',
+    )),
+  );
+
+  Widget _about(BuildContext context) => CupertinoListTile(
+    padding: const EdgeInsets.all(16),
+    leading: const Icon(CupertinoIcons.info),
+    title: const Text('About'),
+    trailing: const CupertinoListTileChevron(),
+    onTap: () => Config().aboutURL.then((url) => Browser.open(context,
+      url: url,
+      title: 'About',
+    )),
+  );
 }
 
 class _MyAccountSection extends StatefulWidget {

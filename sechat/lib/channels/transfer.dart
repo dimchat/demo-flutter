@@ -5,6 +5,7 @@ import 'package:dim_client/dim_client.dart';
 import '../client/constants.dart';
 import '../client/filesys/paths.dart';
 import '../client/filesys/local.dart';
+import '../models/config.dart';
 import 'manager.dart';
 
 class FileTransferChannel extends MethodChannel {
@@ -32,10 +33,14 @@ class FileTransferChannel extends MethodChannel {
       String root = await dos.cachesDirectory;
       await setRootDirectory(root);
       _root = root;
-      // TODO: Configuration
-      String api = 'http://106.52.25.169:8081/{ID}/upload?md5={MD5}&salt={SALT}';
-      String secret = '12345678';
-      await setUploadConfig(api: api, secret: secret);
+      // config for upload
+      Config config = Config();
+      List api = await config.uploadAPI;
+      String secret = await config.uploadKey;
+      Log.warning('setUploadConfig: $secret, $api');
+      assert(api.isNotEmpty, 'upload API not found');
+      // TODO: pick up the fastest API for upload
+      await setUploadConfig(api: api[0], secret: secret);
     }
   }
 

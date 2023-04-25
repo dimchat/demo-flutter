@@ -107,54 +107,50 @@ class _ProfileState extends State<ProfilePage> implements lnc.Observer {
   }
 
   @override
-  Widget build(BuildContext context) {
-    return CupertinoPageScaffold(
-      // A ScrollView that creates custom scroll effects using slivers.
-      child: CustomScrollView(
-        // A list of sliver widgets.
-        slivers: <Widget>[
-          CupertinoSliverNavigationBar(
-            // This title is visible in both collapsed and expanded states.
-            // When the "middle" parameter is omitted, the widget provided
-            // in the "largeTitle" parameter is used instead in the collapsed state.
-            largeTitle: Text(widget.info.name),
-          ),
-          // This widget fills the remaining space in the viewport.
-          // Drag the scrollable area to collapse the CupertinoSliverNavigationBar.
-          SliverFillRemaining(
-            hasScrollBody: false,
-            fillOverscroll: true,
-            child: _body(context),
-          ),
-        ],
-      ),
-    );
-  }
-
-  Widget _body(BuildContext context) {
-    return Column(
-      children: [
-        const SizedBox(height: 32,),
-        _avatarImage(),
-        const SizedBox(height: 8,),
-        SizedBox(width: 296,
-          child: _idLabel(),
+  Widget build(BuildContext context) => CupertinoPageScaffold(
+    // A ScrollView that creates custom scroll effects using slivers.
+    child: CustomScrollView(
+      // A list of sliver widgets.
+      slivers: <Widget>[
+        CupertinoSliverNavigationBar(
+          // This title is visible in both collapsed and expanded states.
+          // When the "middle" parameter is omitted, the widget provided
+          // in the "largeTitle" parameter is used instead in the collapsed state.
+          largeTitle: Text(widget.info.name),
         ),
-        const SizedBox(height: 64,),
-        if (!_isFriend)
-          _addButton(context),
-        if (_isFriend)
-          Column(
-            children: [
-              _sendButton(context),
-              const SizedBox(height: 8,),
-              _deleteButton(context),
-            ],
-          ),
-        const SizedBox(height: 64,),
+        // This widget fills the remaining space in the viewport.
+        // Drag the scrollable area to collapse the CupertinoSliverNavigationBar.
+        SliverFillRemaining(
+          hasScrollBody: false,
+          fillOverscroll: true,
+          child: _body(context),
+        ),
       ],
-    );
-  }
+    ),
+  );
+
+  Widget _body(BuildContext context) => Column(
+    children: [
+      const SizedBox(height: 32,),
+      _avatarImage(),
+      const SizedBox(height: 8,),
+      SizedBox(width: 296,
+        child: _idLabel(),
+      ),
+      const SizedBox(height: 64,),
+      if (!_isFriend)
+        _addButton(context),
+      if (_isFriend)
+        Column(
+          children: [
+            _sendButton(context),
+            const SizedBox(height: 8,),
+            _deleteButton(context),
+          ],
+        ),
+      const SizedBox(height: 64,),
+    ],
+  );
 
   Widget _avatarImage() => widget.info.getImage(width: 256, height: 256);
 

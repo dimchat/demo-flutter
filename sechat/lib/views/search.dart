@@ -94,8 +94,9 @@ class _SearchState extends State<SearchPage> implements lnc.Observer {
       return;
     }
     int? tag = command['tag'];
-    Log.debug('respond with search tag: $tag');
-    if (tag != _searchTag) {
+    if (tag == _searchTag) {
+      Log.debug('respond with search tag: $tag');
+    } else {
       Log.error('search tag not match, ignore this response: $tag <> $_searchTag');
       return;
     }

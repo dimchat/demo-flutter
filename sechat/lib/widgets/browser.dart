@@ -29,19 +29,30 @@
  * =============================================================================
  */
 import 'package:flutter/cupertino.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter_inappwebview/flutter_inappwebview.dart';
 
-class Browser extends StatelessWidget {
-  Browser({super.key, required this.url, required this.title});
+class Browser extends StatefulWidget {
+  const Browser({super.key, required this.url, required this.title});
 
   final String url;
   final String title;
 
-  static void open(BuildContext context, String url, String title) {
+  static void open(BuildContext context,
+      {required String url, required String title}) {
     Navigator.push(context, CupertinoPageRoute(
       builder: (context) => Browser(url: url, title: title),
     ));
   }
+
+  @override
+  State<Browser> createState() => _BrowserState();
+
+}
+
+class _BrowserState extends State<Browser> {
+
+  int _progress = 0;
 
   final InAppWebViewGroupOptions options = InAppWebViewGroupOptions(
     crossPlatform: InAppWebViewOptions(
@@ -57,17 +68,37 @@ class Browser extends StatelessWidget {
   );
 
   @override
-  Widget build(BuildContext context) {
-    return CupertinoPageScaffold(
-        navigationBar: CupertinoNavigationBar(
-          middle: Text(title),
-        ),
-        child: InAppWebView(
+  Widget build(BuildContext context) => CupertinoPageScaffold(
+    navigationBar: CupertinoNavigationBar(
+      middle: Text(widget.title),
+      trailing: _progress <= 99 ? const SizedBox(width: 16, height: 16,
+          child: CircularProgressIndicator(strokeWidth: 2.0)) : null,
+    ),
+    child: Stack(
+      alignment: AlignmentDirectional.bottomStart,
+      children: [
+        InAppWebView(
           initialUrlRequest: URLRequest(
-            url: Uri.parse(url),
+            url: Uri.parse(widget.url),
           ),
           initialOptions: options,
+          onProgressChanged: (controller, progress) => setState(() {
+            _progress = progress;
+          }),
         ),
-    );
-  }
+        if (_progress <= 99)
+        Container(
+          color: Colors.black54,
+          padding: const EdgeInsets.fromLTRB(4, 2, 4, 2),
+          child: Text('$_progress% | ${widget.url}',
+            style: const TextStyle(
+              fontSize: 10,
+              color: Colors.white,
+              overflow: TextOverflow.ellipsis,
+            ),
+          ),
+        ),
+      ],
+    ),
+  );
 }

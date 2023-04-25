@@ -43,7 +43,7 @@ class ServiceProviderDatabase extends DatabaseConnector {
         // TODO:
       });
 
-  static const String dbName = 'mkm.db';
+  static const String dbName = 'sp.db';
   static const int dbVersion = 1;
 
   static const String tProvider = 't_provider';

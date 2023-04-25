@@ -40,7 +40,7 @@ dependencies:
   image_picker: 0.8.7+3
   flutter_sound: ^9.2.13
 
-  dim_client: 0.1.0-dev.6
+  dim_client: 0.1.0-dev.7
 
   sqflite: ^2.2.6
 

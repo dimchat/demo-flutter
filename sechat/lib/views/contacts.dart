@@ -33,12 +33,14 @@ class _ContactListState extends State<ContactListPage> implements lnc.Observer {
     var nc = lnc.NotificationCenter();
     nc.addObserver(this, NotificationNames.kServerStateChanged);
     nc.addObserver(this, NotificationNames.kContactsUpdated);
+    nc.addObserver(this, NotificationNames.kDocumentUpdated);
   }
 
   @override
   void dispose() {
     super.dispose();
     var nc = lnc.NotificationCenter();
+    nc.removeObserver(this, NotificationNames.kDocumentUpdated);
     nc.removeObserver(this, NotificationNames.kContactsUpdated);
     nc.removeObserver(this, NotificationNames.kServerStateChanged);
   }
@@ -61,6 +63,8 @@ class _ContactListState extends State<ContactListPage> implements lnc.Observer {
       }
     } else if (name == NotificationNames.kContactsUpdated) {
       _reload();
+    } else if (name == NotificationNames.kDocumentUpdated) {
+      _reload();
     }
   }
 
@@ -68,7 +72,11 @@ class _ContactListState extends State<ContactListPage> implements lnc.Observer {
     GlobalVariable shared = GlobalVariable();
     SessionState? state = shared.terminal.session?.state;
     if (state != null) {
-      _sessionState = state.index;
+      if (mounted) {
+        setState(() {
+          _sessionState = state.index;
+        });
+      }
     }
     User? user = await shared.facebook.currentUser;
     if (user == null) {

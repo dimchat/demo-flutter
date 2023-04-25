@@ -1,11 +1,14 @@
 import 'dart:io';
 import 'dart:typed_data';
 
-import 'package:dim_client/dim_client.dart';
 import 'package:flutter/material.dart';
-import 'package:sechat/client/shared.dart';
 
+import 'package:dim_client/dim_client.dart';
+import 'package:dim_client/dim_client.dart' as lnc;
+
+import '../client/constants.dart';
 import '../client/http/ftp.dart';
+import '../client/shared.dart';
 
 /// ImageView
 class ImageContentView extends StatefulWidget {
@@ -22,7 +25,7 @@ class ImageContentView extends StatefulWidget {
 
 class _ImageContentState extends State<ImageContentView> {
 
-  Widget? _image;
+  String? _path;
 
   void _reload() {
     FileTransfer ftp = FileTransfer();
@@ -33,7 +36,7 @@ class _ImageContentState extends State<ImageContentView> {
       }
       if (mounted) {
         setState(() {
-          _image = Image.file(File(path));
+          _path = path;
         });
       }
     });
@@ -42,18 +45,18 @@ class _ImageContentState extends State<ImageContentView> {
   @override
   void initState() {
     super.initState();
-    Uint8List? bytes = widget.content.thumbnail;
-    if (bytes != null) {
-      _image = Image.memory(bytes);
-    }
     _reload();
   }
 
   @override
   Widget build(BuildContext context) {
-    Widget? img = _image;
-    if (img != null) {
-      return img;
+    String? path = _path;
+    if (path != null) {
+      return Image.file(File(path));
+    }
+    Uint8List? bytes = widget.content.thumbnail;
+    if (bytes != null) {
+      return Image.memory(bytes);
     }
     return Container(
       color: widget.color,
@@ -66,22 +69,44 @@ class _ImageContentState extends State<ImageContentView> {
 
 /// NameView
 class NameView extends StatefulWidget {
-  const NameView(this.identifier, this.style, {super.key});
+  const NameView(this.identifier, {required this.style, super.key});
 
   final ID identifier;
   final TextStyle? style;
-
-  static NameView fromID(ID identifier, {required TextStyle? style}) =>
-      NameView(identifier, style);
 
   @override
   State<StatefulWidget> createState() => _NameState();
 
 }
 
-class _NameState extends State<NameView> {
+class _NameState extends State<NameView> implements lnc.Observer {
+  _NameState() {
+
+    var nc = lnc.NotificationCenter();
+    nc.addObserver(this, NotificationNames.kDocumentUpdated);
+  }
 
   String? _name;
+
+  @override
+  void dispose() {
+    super.dispose();
+    var nc = lnc.NotificationCenter();
+    nc.removeObserver(this, NotificationNames.kDocumentUpdated);
+  }
+
+  @override
+  Future<void> onReceiveNotification(lnc.Notification notification) async {
+    String name = notification.name;
+    Map? info = notification.userInfo;
+    assert(name == NotificationNames.kDocumentUpdated, 'notification error: $notification');
+    ID? identifier = info?['ID'];
+    if (identifier == null) {
+      Log.error('notification error: $notification');
+    } else if (identifier == widget.identifier) {
+      _reload();
+    }
+  }
 
   void _reload() {
     GlobalVariable shared = GlobalVariable();

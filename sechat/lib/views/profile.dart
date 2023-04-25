@@ -34,7 +34,7 @@ class ProfilePage extends StatefulWidget {
     }
   }
 
-  static Widget cell(ContactInfo info) => _ProfileTableCell.fromContact(info);
+  static Widget cell(ContactInfo info) => _ProfileTableCell(info);
 
   @override
   State<StatefulWidget> createState() => _ProfileState();
@@ -271,8 +271,6 @@ class _ProfileTableCell extends StatefulWidget {
 
   final ContactInfo info;
 
-  static _ProfileTableCell fromContact(ContactInfo info) => _ProfileTableCell(info);
-
   @override
   State<StatefulWidget> createState() => _ProfileTableState();
 
@@ -301,12 +299,23 @@ class _ProfileTableState extends State<_ProfileTableCell> implements lnc.Observe
     if (identifier == null) {
       Log.error('notification error: $notification');
     } else if (identifier == widget.info.identifier) {
-      if (mounted) {
-        setState(() {
-          //
-        });
-      }
+      _reload();
     }
+  }
+
+  Future<void> _reload() async {
+    await widget.info.reloadData();
+    if (mounted) {
+      setState(() {
+        //
+      });
+    }
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    _reload();
   }
 
   @override

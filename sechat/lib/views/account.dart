@@ -39,12 +39,20 @@ class AccountPage extends StatefulWidget {
 
 class _AccountState extends State<AccountPage> {
 
+  final FocusNode _focusNode = FocusNode();
+
   String? _nickname;
   String? _avatarPath;
   Uri? _avatarUrl;
 
   // static final Uri _upWaiting = Uri.parse('https://chat.dim.sechat/up/waiting');
   // static final Uri _upError = Uri.parse('https://chat.dim.sechat/up/error');
+
+  @override
+  void dispose() {
+    _focusNode.dispose();
+    super.dispose();
+  }
 
   Future<void> _reload() async {
     GlobalVariable shared = GlobalVariable();
@@ -144,6 +152,8 @@ class _AccountState extends State<AccountPage> {
         fontSize: 20,
         height: 1.6,
       ),
+      focusNode: _focusNode,
+      onTapOutside: (event) => _focusNode.unfocus(),
       onChanged: (value) => _nickname = value,
     ),
   );

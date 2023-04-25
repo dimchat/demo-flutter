@@ -73,7 +73,11 @@ class _ChatListState extends State<ChatHistoryPage> implements lnc.Observer {
     GlobalVariable shared = GlobalVariable();
     SessionState? state = shared.terminal.session?.state;
     if (state != null) {
-      _sessionState = state.index;
+      if (mounted) {
+        setState(() {
+          _sessionState = state.index;
+        });
+      }
     }
     await _clerk.loadConversations().then((value) {
       if (mounted) {
@@ -120,18 +124,81 @@ class _ChatListAdapter with SectionAdapterMixin {
   Widget getItem(BuildContext context, IndexPath indexPath) {
     Conversation info = _dataSource.conversationAtIndex(indexPath.item);
     Log.warning('show item: $info');
-    Widget cell = TableView.cell(
-        leading: _leading(info),
-        title: Text(info.name),
-        subtitle: _lastMessage(info.lastMessage),
-        trailing: _timeLabel(info.lastTime),
-        onTap: () {
-          Log.warning('tap: $info');
-          ChatBox.open(context, info);
-        }
-    );
-    return cell;
+    return _ChatTableCell(info);
   }
+
+}
+
+/// TableCell for Conversations
+class _ChatTableCell extends StatefulWidget {
+  const _ChatTableCell(this.info);
+
+  final Conversation info;
+
+  @override
+  State<StatefulWidget> createState() => _ChatTableState();
+
+}
+
+class _ChatTableState extends State<_ChatTableCell> implements lnc.Observer {
+  _ChatTableState() {
+
+    var nc = lnc.NotificationCenter();
+    nc.addObserver(this, NotificationNames.kDocumentUpdated);
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
+    var nc = lnc.NotificationCenter();
+    nc.removeObserver(this, NotificationNames.kDocumentUpdated);
+  }
+
+  @override
+  Future<void> onReceiveNotification(lnc.Notification notification) async {
+    String name = notification.name;
+    Map? userInfo = notification.userInfo;
+    ID? cid = userInfo?['ID'];
+    if (cid == null) {
+      Log.error('notification error: $notification');
+    }
+    if (name == NotificationNames.kDocumentUpdated) {
+      if (cid == widget.info.identifier) {
+        _reload();
+      } else {
+        // TODO: check members for group chat?
+      }
+    } else {
+      assert(false, 'notification error: $notification');
+    }
+  }
+
+  Future<void> _reload() async {
+    await widget.info.reloadData();
+    if (mounted) {
+      setState(() {
+        //
+      });
+    }
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    _reload();
+  }
+
+  @override
+  Widget build(BuildContext context) => TableView.cell(
+      leading: _leading(widget.info),
+      title: Text(widget.info.name),
+      subtitle: _lastMessage(widget.info.lastMessage),
+      trailing: _timeLabel(widget.info.lastTime),
+      onTap: () {
+        Log.warning('tap: ${widget.info}');
+        ChatBox.open(context, widget.info);
+      }
+  );
 
   Widget _leading(Conversation info) => Stack(
     alignment: const AlignmentDirectional(1.5, -1.5),

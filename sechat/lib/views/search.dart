@@ -79,7 +79,11 @@ class _SearchState extends State<SearchPage> implements lnc.Observer {
     GlobalVariable shared = GlobalVariable();
     SessionState? state = shared.terminal.session?.state;
     if (state != null) {
-      _sessionState = state.index;
+      if (mounted) {
+        setState(() {
+          _sessionState = state.index;
+        });
+      }
     }
     if (command == null) {
       return;

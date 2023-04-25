@@ -54,21 +54,37 @@ class _ChatBoxState extends State<ChatBox> implements lnc.Observer {
 
     var nc = lnc.NotificationCenter();
     nc.addObserver(this, NotificationNames.kMessageUpdated);
+    nc.addObserver(this, NotificationNames.kDocumentUpdated);
   }
 
   @override
   void dispose() {
     super.dispose();
     var nc = lnc.NotificationCenter();
+    nc.removeObserver(this, NotificationNames.kDocumentUpdated);
     nc.removeObserver(this, NotificationNames.kMessageUpdated);
   }
 
   @override
   Future<void> onReceiveNotification(lnc.Notification notification) async {
+    String name = notification.name;
     Map? userInfo = notification.userInfo;
     ID? cid = userInfo?['ID'];
-    if (cid == widget.info.identifier) {
-      _reload();
+    if (cid == null) {
+      Log.error('notification error: $notification');
+    }
+    if (name == NotificationNames.kMessageUpdated) {
+      if (cid == widget.info.identifier) {
+        _reload();
+      }
+    } else if (name == NotificationNames.kDocumentUpdated) {
+      if (cid == widget.info.identifier) {
+        _reload();
+      } else {
+        // TODO: check members for group chat?
+      }
+    } else {
+      assert(false, 'notification error: $notification');
     }
   }
 
@@ -185,7 +201,7 @@ class _HistoryAdapter with SectionAdapterMixin {
                     Container(
                       margin: const EdgeInsets.only(left: 2),
                       constraints: const BoxConstraints(maxWidth: 240),
-                      child: NameView.fromID(sender,
+                      child: NameView(sender,
                         style: const TextStyle(color: Colors.grey,
                             fontSize: 12,
                             overflow: TextOverflow.ellipsis,
@@ -277,8 +293,16 @@ class _InputTray extends StatefulWidget {
 class _InputState extends State<_InputTray> {
 
   final TextEditingController _controller = TextEditingController();
+  final FocusNode _focusNode = FocusNode();
 
   bool _isVoice = false;
+
+  @override
+  void dispose() {
+    _focusNode.dispose();
+    _controller.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) => Row(
@@ -306,7 +330,10 @@ class _InputState extends State<_InputTray> {
           maxLines: 8,
           controller: _controller,
           placeholder: 'Input text message',
-          textInputAction: TextInputAction.send,
+          keyboardType: TextInputType.multiline,
+          textInputAction: TextInputAction.newline,
+          focusNode: _focusNode,
+          onTapOutside: (event) => _focusNode.unfocus(),
           onSubmitted: (value) => _sendText(context, _controller, widget.info),
           onChanged: (value) => setState(() {}),
         ),

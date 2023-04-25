@@ -1,6 +1,9 @@
-import 'package:dim_client/dim_client.dart';
 import 'package:flutter/cupertino.dart';
 
+import 'package:dim_client/dim_client.dart';
+import 'package:dim_client/dim_client.dart' as lnc;
+
+import '../client/constants.dart';
 import '../client/shared.dart';
 import '../models/config.dart';
 import '../models/contact.dart';
@@ -9,7 +12,7 @@ import '../widgets/browser.dart';
 import 'account.dart';
 import 'styles.dart';
 
-class SettingsPage extends StatefulWidget {
+class SettingsPage extends StatelessWidget {
   const SettingsPage({super.key});
 
   static BottomNavigationBarItem barItem() {
@@ -17,40 +20,6 @@ class SettingsPage extends StatefulWidget {
       icon: Icon(CupertinoIcons.gear),
       label: 'Settings',
     );
-  }
-
-  @override
-  State<StatefulWidget> createState() => _SettingsState();
-
-}
-
-class _SettingsState extends State<SettingsPage> {
-
-  ID? _identifier;
-  String? _nickname;
-  Widget? _avatar;
-
-  Future<void> _reload() async {
-    GlobalVariable shared = GlobalVariable();
-    await shared.facebook.currentUser.then((user) async {
-      ID? identifier = user?.identifier;
-      if (identifier != null) {
-        ContactInfo info = await ContactInfo.fromID(identifier);
-        if (mounted) {
-          setState(() {
-            _identifier = info.identifier;
-            _nickname = info.name;
-            _avatar = info.getImage(width: 64, height: 64);
-          });
-        }
-      }
-    });
-  }
-
-  @override
-  void initState() {
-    super.initState();
-    _reload();
   }
 
   @override
@@ -106,17 +75,7 @@ class _SettingsState extends State<SettingsPage> {
     );
   }
 
-  Widget _myAccount(BuildContext context) {
-    return CupertinoListTile(
-      padding: const EdgeInsets.all(16),
-      leadingSize: 64,
-      leading: _avatar,
-      title: Text('$_nickname'),
-      subtitle: Text('$_identifier'),
-      trailing: const CupertinoListTileChevron(),
-      onTap: () => AccountPage.open(context),
-    );
-  }
+  Widget _myAccount(BuildContext context) => _MyAccountSection();
 
   Widget _setting(BuildContext context) {
     return CupertinoListTile(
@@ -158,4 +117,79 @@ class _SettingsState extends State<SettingsPage> {
       ),
     );
   }
+}
+
+class _MyAccountSection extends StatefulWidget {
+
+  @override
+  State<StatefulWidget> createState() => _MyAccountState();
+
+}
+
+class _MyAccountState extends State<_MyAccountSection> implements lnc.Observer {
+  _MyAccountState() {
+
+    var nc = lnc.NotificationCenter();
+    nc.addObserver(this, NotificationNames.kDocumentUpdated);
+  }
+
+  ContactInfo? _info;
+
+  @override
+  void dispose() {
+    super.dispose();
+    var nc = lnc.NotificationCenter();
+    nc.removeObserver(this, NotificationNames.kDocumentUpdated);
+  }
+
+  @override
+  Future<void> onReceiveNotification(lnc.Notification notification) async {
+    String name = notification.name;
+    Map? info = notification.userInfo;
+    assert(name == NotificationNames.kDocumentUpdated, 'notification error: $notification');
+    ID? identifier = info?['ID'];
+    GlobalVariable shared = GlobalVariable();
+    User? user = await shared.facebook.currentUser;
+    if (identifier == null) {
+      Log.error('notification error: $notification');
+    } else if (identifier == user?.identifier) {
+      _reload();
+    }
+  }
+
+  void _reload() {
+    GlobalVariable shared = GlobalVariable();
+    shared.facebook.currentUser.then((user) async {
+      if (user == null) {
+        Log.error('failed to get current user');
+        return;
+      }
+      ContactInfo? info = _info;
+      info ??= ContactInfo(user.identifier);
+      await info.reloadData();
+      if (mounted) {
+        setState(() {
+          _info = info;
+        });
+      }
+    });
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    _reload();
+  }
+
+  @override
+  Widget build(BuildContext context) => CupertinoListTile(
+    padding: const EdgeInsets.all(16),
+    leadingSize: 64,
+    leading: _info?.getImage(width: 64, height: 64),
+    title: Text('${_info?.name}'),
+    subtitle: Text('${_info?.identifier}'),
+    trailing: const CupertinoListTileChevron(),
+    onTap: () => AccountPage.open(context),
+  );
+
 }

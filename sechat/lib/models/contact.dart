@@ -1,14 +1,16 @@
+import 'dart:io';
+
 import 'package:dim_client/dim_client.dart';
 import 'package:flutter/cupertino.dart';
 
 import '../client/shared.dart';
-import '../widgets/facade.dart';
 
 class ContactInfo {
   ContactInfo(this.identifier) : _name = identifier.name;
 
   final ID identifier;
   String? _name;
+  String? _path;  // image path
 
   int get type => identifier.type;
 
@@ -17,8 +19,23 @@ class ContactInfo {
 
   String get name => _name ?? '';
 
-  Widget getImage({double? width, double? height}) =>
-      Facade.fromID(identifier, width: width, height: height);
+  Widget getImage({double? width, double? height}) {
+    String? path = _path;
+    if (path != null) {
+      width ??= 32;
+      height ??= 32;
+      Image img = Image.file(File(path), width: width, height: height, fit: BoxFit.cover);
+      Radius radius = Radius.elliptical(width / 8, height / 8);
+      return ClipRRect(
+        borderRadius: BorderRadius.all(radius),
+        child: img,
+      );
+    } else if (identifier.isUser) {
+      return Icon(CupertinoIcons.profile_circled, size: width,);
+    } else {
+      return Icon(CupertinoIcons.group, size: width,);
+    }
+  }
 
   @override
   String toString() {
@@ -32,6 +49,8 @@ class ContactInfo {
   Future<void> reloadData() async {
     GlobalVariable shared = GlobalVariable();
     _name = await shared.facebook.getName(identifier);
+    Pair<String?, Uri?> pair = await shared.facebook.getAvatar(identifier);
+    _path = pair.first;
   }
 
   static Future<ContactInfo> fromID(ID identifier) async =>
@@ -78,11 +97,19 @@ class ContactSorter {
     array.sort();
     for (String prefix in array) {
       sorter.sectionNames.add(prefix);
-      sorter.sectionItems[index] = map[prefix]!;
+      sorter.sectionItems[index] = _sortContacts(map[prefix]);
       index += 1;
     }
     return sorter;
   }
+}
+
+List<ContactInfo> _sortContacts(List<ContactInfo>? contacts) {
+  if (contacts == null) {
+    return [];
+  }
+  contacts.sort((a, b) => a.name.compareTo(b.name));
+  return contacts;
 }
 
 class _ContactManager {

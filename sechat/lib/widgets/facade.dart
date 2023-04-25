@@ -116,6 +116,7 @@ class _FacadeState extends State<Facade> implements lnc.Observer {
     // init image
     FacadeProvider provider = widget.provider;
     _image = provider.image;
+    Log.debug('reload provider: $provider, $_image');
     // reload image
     provider.reload().then((ok) {
       if (ok) {
@@ -131,7 +132,8 @@ class _FacadeState extends State<Facade> implements lnc.Observer {
 }
 
 class _AvatarProvider implements FacadeProvider {
-  _AvatarProvider(this.identifier, this.width, this.height);
+  _AvatarProvider(this.identifier, this.width, this.height)
+      : _path = null, _url = null, _image = null;
 
   final ID identifier;
   final double width;

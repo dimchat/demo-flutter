@@ -44,7 +44,13 @@ class SharedPacker extends ClientMessagePacker {
       }
     }
 
-    SecureMessage? sMsg = await super.encryptMessage(iMsg);
+    SecureMessage? sMsg;
+    try {
+      sMsg = await super.encryptMessage(iMsg);
+    } on RangeError catch (e) {
+      Log.error('failed to encrypt message: $e');
+      return null;
+    }
     ID receiver = iMsg.receiver;
     if (receiver.isGroup) {
       // reuse group message keys

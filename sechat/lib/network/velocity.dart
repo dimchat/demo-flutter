@@ -1,0 +1,280 @@
+/* license: https://mit-license.org
+ *
+ *  DIM-SDK : Decentralized Instant Messaging Software Development Kit
+ *
+ *                               Written in 2023 by Moky <albert.moky@gmail.com>
+ *
+ * =============================================================================
+ * The MIT License (MIT)
+ *
+ * Copyright (c) 2023 Albert Moky
+ *
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
+ *
+ * The above copyright notice and this permission notice shall be included in all
+ * copies or substantial portions of the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+ * SOFTWARE.
+ * =============================================================================
+ */
+import 'dart:io';
+import 'dart:typed_data';
+
+import 'package:dim_client/dim_client.dart';
+
+import '../channels/manager.dart';
+import '../channels/session.dart';
+import '../client/constants.dart';
+import '../client/messenger.dart';
+import '../client/shared.dart';
+import '../models/station.dart';
+
+class VelocityMeter {
+  VelocityMeter(this.info);
+
+  final StationInfo info;
+
+  String get host => info.host;
+  int get port => info.port;
+  ID? get identifier => info.identifier;
+  double? get responseTime => info.responseTime;
+
+  int _startTime = 0;
+
+  @override
+  String toString() {
+    Type clazz = runtimeType;
+    return '<$clazz host="$host", port=$port id="$identifier" rt=$responseTime />';
+  }
+
+  static Future<VelocityMeter> ping(StationInfo info) async {
+    NotificationCenter nc = NotificationCenter();
+    VelocityMeter meter = VelocityMeter(info);
+    nc.postNotification(NotificationNames.kStationSpeedUpdated, meter, {
+      'state': 'start',
+      'meter': meter,
+    });
+    Socket? socket = await meter._connect(const Duration(seconds: 16));
+    if (socket == null) {
+      nc.postNotification(NotificationNames.kStationSpeedUpdated, meter, {
+        'state': 'failed',
+        'meter': meter,
+      });
+    } else {
+      nc.postNotification(NotificationNames.kStationSpeedUpdated, meter, {
+        'state': 'connected',
+        'meter': meter,
+      });
+      int now = Time.currentTimeMillis;
+      int expired = now + 30 * 1000;
+      while (now < expired) {
+        if (await meter._run()) {
+          // task finished
+          break;
+        }
+        await Future.delayed(const Duration(milliseconds: 128));
+        now = Time.currentTimeMillis;
+      }
+      nc.postNotification(NotificationNames.kStationSpeedUpdated, meter, {
+        'state': 'finished',
+        'meter': meter,
+      });
+      socket.destroy();
+    }
+    return meter;
+  }
+
+  Future<Socket?> _connect(Duration timeout) async {
+    Uint8List? data = await _getPack();
+    if (data == null) {
+      assert(false, 'failed to get message package');
+      return null;
+    }
+    Log.debug('connecting to $host:$port ...');
+    _startTime = Time.currentTimeMillis;
+    Socket socket;
+    try {
+      socket = await Socket.connect(host, port, timeout: timeout);
+    } on SocketException catch (e) {
+      Log.error('failed to connect $host:$port, $e');
+      return null;
+    }
+    Log.debug('connected, sending ${data.length} bytes to $host:$port ...');
+    socket.add(data);
+    Log.debug('sent, waiting response from $host:$port ...');
+    socket.listen((pack) async {
+      Log.debug('received ${pack.length} bytes from $host:$port');
+      _buffer.add(pack);
+    }, onDone: () {
+      Log.warning('speed task finished: $info');
+      socket.destroy();
+    });
+    return socket;
+  }
+
+  final BytesBuilder _buffer = BytesBuilder(copy: false);
+  int _start = 0;
+  int _end = 0;
+
+  Future<bool> _run() async {
+    if (_end == _buffer.length) {
+      // no new income data now
+      return false;
+    }
+    Uint8List? pack = await _extract();
+    while (pack != null) {
+      if (await _process(pack)) {
+        // done!
+        return true;
+      }
+      pack = await _extract();
+    }
+    return false;
+  }
+
+  Future<Uint8List?> _extract() async {
+    assert(_end <= _buffer.length, 'out of range: $_end, ${_buffer.length}');
+    _end = _buffer.length;
+    if (_start == _end) {
+      // buffer empty
+      return null;
+    }
+    assert(_start < _end, 'out of range: $_start, $_end');
+    Uint8List pack = _buffer.toBytes().sublist(_start, _end);
+    // MTP packing
+    ChannelManager manager = ChannelManager();
+    SessionChannel channel = manager.sessionChannel;
+    Map info = await channel.unpackData(pack);
+    int offset = info['position'];
+    Log.error('position: $offset, pack length: ${pack.length}');
+    if (offset <= 0) {
+      // incomplete, waiting for more data
+      return null;
+    } else {
+      _start += offset;
+    }
+    return info['payload'];
+  }
+
+  Future<bool> _process(Uint8List data) async {
+    ReliableMessage? rMsg = await _decodeMsg(data);
+    if (rMsg == null) {
+      return false;
+    }
+    ID sender = rMsg.sender;
+    if (sender.type != EntityType.kStation) {
+      Log.error('sender not a station: $sender');
+      return false;
+    }
+    double? duration = (Time.currentTimeMillis - _startTime) / 1000.0;
+    // OK
+    info.identifier = sender;
+    info.responseTime = duration;
+    Log.warning('station ($host:$port) $sender responded within $duration seconds');
+
+    GlobalVariable shared = GlobalVariable();
+    await shared.database.addSpeed(host, port,
+        identifier: sender, time: DateTime.now(), duration: duration);
+    return true;
+  }
+
+}
+
+Future<ReliableMessage?> _decodeMsg(Uint8List data) async {
+  String? json = UTF8.decode(data);
+  if (json == null) {
+    Log.error('failed to decode data: ${data.length} byte(s)');
+    return null;
+  } else if (json.startsWith('{') && json.endsWith('}')) {} else {
+    Log.warning('ignore pack: $json');
+    return null;
+  }
+  Map? info = JSONMap.decode(json);
+  if (info == null) {
+    Log.error('failed to decode message info: $json');
+    return null;
+  }
+  ReliableMessage? rMsg = ReliableMessage.parse(info);
+  if (rMsg == null) {
+    Log.error('failed to parse message: $info');
+  }
+  return rMsg;
+}
+
+Future<Uint8List?> _getPack() async {
+  Uint8List? pack = _pack;
+  if (pack == null) {
+    ReliableMessage? rMsg = await _packMsg();
+    if (rMsg == null) {
+      return null;
+    }
+    String json = JSONMap.encode(rMsg.dictionary);
+    Uint8List data = UTF8.encode(json);
+    // MTP packing
+    ChannelManager manager = ChannelManager();
+    SessionChannel channel = manager.sessionChannel;
+    pack = await channel.packData(data);
+    Log.warning('packed ${data.length} bytes to ${pack.length} bytes');
+    _pack = pack;
+  }
+  return pack;
+}
+Uint8List? _pack;
+
+Future<ReliableMessage?> _packMsg() async {
+  GlobalVariable shared = GlobalVariable();
+  SharedMessenger? messenger = shared.messenger;
+  if (messenger == null) {
+    assert(false, 'messenger not found');
+    return null;
+  }
+  InstantMessage? iMsg = await _getMsg();
+  if (iMsg == null) {
+    assert(false, 'failed to get message');
+    return null;
+  }
+  // encrypt message
+  SecureMessage? sMsg = await messenger.encryptMessage(iMsg);
+  if (sMsg == null) {
+    assert(false, 'failed to encrypt message: $iMsg');
+    return null;
+  }
+  // sign message
+  ReliableMessage? rMsg = await messenger.signMessage(sMsg);
+  if (rMsg == null) {
+    assert(false, 'failed to sign message: $rMsg');
+  }
+  return rMsg;
+}
+
+Future<InstantMessage?> _getMsg() async {
+  GlobalVariable shared = GlobalVariable();
+  // get current user
+  User? user = await shared.facebook.currentUser;
+  if (user == null) {
+    assert(false, 'current user not found');
+    return null;
+  }
+  ID uid = user.identifier;
+  ID sid = Station.kAny;
+  // create message envelope and handshake command
+  Envelope env = Envelope.create(sender: uid, receiver: sid);
+  Content content = HandshakeCommand.start();
+  content.group = Station.kEvery;
+  // create instant message with meta & visa
+  InstantMessage iMsg = InstantMessage.create(env, content);
+  iMsg.setMap('meta', await user.meta);
+  iMsg.setMap('visa', await user.visa);
+  return iMsg;
+}

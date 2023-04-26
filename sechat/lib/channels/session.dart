@@ -22,9 +22,9 @@ class SessionChannel extends MethodChannel {
       int now = arguments['now'];
       _onStateChanged(previous, current, now);
     } else if (method == ChannelMethods.onReceived) {
-      String json = arguments['json'];
+      Uint8List payload = arguments['payload'];
       String remote = arguments['remote'];
-      _onReceived(json, remote);
+      _onReceived(payload, remote);
     }
   }
 
@@ -40,8 +40,7 @@ class SessionChannel extends MethodChannel {
     }
   }
 
-  void _onReceived(String json, String remote) {
-    Uint8List data = UTF8.encode(json);
+  void _onReceived(Uint8List data, String remote) {
     Log.warning("received data: ${data.length} bytes from $remote");
     GlobalVariable shared = GlobalVariable();
     SharedMessenger? messenger = shared.messenger;
@@ -101,11 +100,23 @@ class SessionChannel extends MethodChannel {
 
   /// send message with data pack & priority
   Future<void> sendMessagePackage(ReliableMessage rMsg, Uint8List data, int priority) async {
-    String b64 = Base64.encode(data);
     return await _invoke(ChannelMethods.sendMessagePackage, {
       'msg': rMsg.dictionary,
-      'data': b64,
+      'data': data,
       'priority': priority,
+    });
+  }
+
+  /// pack message payload to network package
+  Future<Uint8List> packData(Uint8List payload) async {
+    return await _invoke(ChannelMethods.packData, {
+      'payload': payload,
+    });
+  }
+  /// unpack payload from network package
+  Future<Map> unpackData(Uint8List data) async {
+    return await _invoke(ChannelMethods.unpackData, {
+      'data': data,
     });
   }
 

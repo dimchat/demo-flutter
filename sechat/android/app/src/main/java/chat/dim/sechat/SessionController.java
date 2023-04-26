@@ -36,13 +36,31 @@ public enum SessionController implements SessionState.Delegate, Docker.Delegate 
     public ClientSession session = null;
 
     public void connect(String host, int port) {
-        SessionController controller = this;
+        // 0. check old session
+        ClientSession cs = session;
+        if (cs != null) {
+            Station station = cs.getStation();
+            String oHost = station.getHost();
+            int oPort = station.getPort();
+            if (oPort == port && host.equals(oHost)) {
+                Log.info("checking connection state: " + station);
+                SessionState state = cs.getState();
+                if (state.equals(SessionState.Order.RUNNING)) {
+                    Log.warning("the station is already connected: " + state);
+                    return;
+                }
+            }
+            Log.warning("close old session: " + cs);
+            cs.stop();
+            session = null;
+        }
+        Log.warning("connection to " + host + ":" + port);
         // 1. create station
         Station station = new Station(host, port);
         station.setDataSource(facebook);
         // 2. create session for station
-        ClientSession cs = new SharedSession(station, database);
-        cs.start(controller);
+        cs = new SharedSession(station, database);
+        cs.start(this);
         session = cs;
     }
 

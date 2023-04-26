@@ -48,7 +48,7 @@ class MessageDatabase extends DatabaseConnector {
           "cid VARCHAR(64) NOT NULL UNIQUE",
           "unread INTEGER",     // count of unread messages
           "last VARCHAR(128)",  // desc of last message
-          "time INTEGER",       // time of last message
+          "time INTEGER",       // time of last message (seconds)
         ]);
         // instant message
         DatabaseConnector.createTable(db, tInstantMessage, fields: [
@@ -56,10 +56,10 @@ class MessageDatabase extends DatabaseConnector {
           "cid VARCHAR(64) NOT NULL",
           "sender VARCHAR(64)",
           // "receiver VARCHAR(64)",
-          "time INTEGER NOT NULL",
+          "time INTEGER NOT NULL",  // time of message (seconds)
           "type INTEGER",
           "sn INTEGER",
-          "signature VARCHAR(8)",  // last 8 characters
+          "signature VARCHAR(8)",   // last 8 characters
           // "content TEXT",
           "msg TEXT NOT NULL",
         ]);
@@ -143,6 +143,11 @@ class InstantMessageTable extends DataTableHandler<InstantMessage> implements In
     String sender = iMsg.sender.string;
     // String receiver = iMsg.receiver.string;
     int? time = iMsg.time?.millisecondsSinceEpoch;
+    if (time == null) {
+      time = 0;
+    } else {
+      time = time ~/ 1000;
+    }
     Content content = iMsg.content;
     String? sig = iMsg.getString('signature');
     if (sig != null) {

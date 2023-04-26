@@ -3,6 +3,7 @@ abstract class NotificationNames {
 
   static const String kServiceProviderUpdated = 'ServiceProviderUpdated';
   static const String kStationsUpdated = 'StationsUpdated';
+  static const String kStationSpeedUpdated = 'StationSpeedUpdated';
 
   static const String kServerStateChanged = 'ServerStateChanged';
 

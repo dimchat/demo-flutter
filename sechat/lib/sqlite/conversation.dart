@@ -36,11 +36,7 @@ Conversation _extractConversation(ResultSet resultSet, int index) {
   String? cid = resultSet.getString('cid');
   int? unread = resultSet.getInt('unread');
   String? last = resultSet.getString('last');
-  double? seconds = resultSet.getDouble('time');
-  DateTime? time;
-  if (seconds != null) {
-    time = DateTime.fromMillisecondsSinceEpoch((seconds * 1000).toInt());
-  }
+  DateTime? time = resultSet.getTime('time');
   return Conversation(ID.parse(cid)!, unread: unread!, lastMessage: last, lastTime: time);
 }
 
@@ -71,14 +67,16 @@ class _ConversationTable extends DataTableHandler<Conversation> implements Conve
 
   @override
   Future<bool> updateConversation(Conversation chat) async {
-    double? seconds;
-    if (chat.lastTime != null) {
-      seconds = chat.lastTime!.millisecondsSinceEpoch / 1000.0;
+    int? time = chat.lastTime?.millisecondsSinceEpoch;
+    if (time == null) {
+      time = 0;
+    } else {
+      time = time ~/ 1000;
     }
     Map<String, dynamic> values = {
       'unread': chat.unread,
       'last': chat.lastMessage,
-      'time': seconds,
+      'time': time,
     };
     SQLConditions cond;
     cond = SQLConditions(left: 'cid', comparison: '=', right: chat.identifier.string);

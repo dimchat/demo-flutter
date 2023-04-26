@@ -22,6 +22,9 @@ class ChannelMethods {
   static const String onStateChanged = "onStateChanged";
   static const String onReceived = "onReceived";
 
+  static const String packData = "packData";
+  static const String unpackData = "unpackData";
+
   //
   //  FTP Channel
   //

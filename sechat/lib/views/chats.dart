@@ -9,10 +9,10 @@ import '../client/constants.dart';
 import '../client/session.dart';
 import '../client/shared.dart';
 import '../models/conversation.dart';
+import '../widgets/tableview.dart';
 import 'chat_box.dart';
 import 'search.dart';
 import 'styles.dart';
-import '../widgets/tableview.dart';
 
 class ChatHistoryPage extends StatefulWidget {
   const ChatHistoryPage({super.key});
@@ -91,6 +91,10 @@ class _ChatListState extends State<ChatHistoryPage> implements lnc.Observer {
   @override
   void initState() {
     super.initState();
+    // 1. try connect to a neighbor station
+    GlobalVariable shared = GlobalVariable();
+    shared.terminal.reconnect();
+    // 2. load chat history
     _reload();
   }
 

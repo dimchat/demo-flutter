@@ -31,6 +31,9 @@ final class ChannelMethods {
     static final String ON_STATE_CHANGED = "onStateChanged";
     static final String ON_RECEIVED = "onReceived";
 
+    static final String PACK_DATA = "packData";
+    static final String UNPACK_DATA = "unpackData";
+
     //
     //  FTP Channel
     //

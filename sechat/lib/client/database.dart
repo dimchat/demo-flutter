@@ -9,12 +9,15 @@ import '../sqlite/keys.dart';
 import '../sqlite/login.dart';
 import '../sqlite/message.dart';
 import '../sqlite/meta.dart';
-import '../sqlite/session.dart';
+import '../sqlite/service.dart';
+import '../sqlite/speed.dart';
+import '../sqlite/station.dart';
 import '../sqlite/trace.dart';
 import '../sqlite/user.dart';
 
 class SharedDatabase implements AccountDBI, SessionDBI, MessageDBI,
-                                ConversationDBI, InstantMessageDBI, TraceDBI {
+                                ConversationDBI, InstantMessageDBI, TraceDBI,
+                                SpeedDBI {
 
   /// Account
   PrivateKeyDBI privateKeyTable = PrivateKeyCache();
@@ -28,6 +31,7 @@ class SharedDatabase implements AccountDBI, SessionDBI, MessageDBI,
   LoginDBI loginTable = LoginCommandCache();
   ProviderDBI providerTable = ProviderCache();
   StationDBI stationTable = StationCache();
+  SpeedDBI speedTable = SpeedTable();
 
   /// Message
   CipherKeyDBI msgKeyTable = MsgKeyCache();
@@ -222,6 +226,25 @@ class SharedDatabase implements AccountDBI, SessionDBI, MessageDBI,
   @override
   Future<bool> removeStations({required ID provider}) async =>
       await stationTable.removeStations(provider: provider);
+
+  //
+  //  Speed Table
+  //
+
+  @override
+  Future<List<Triplet<Pair<String, int>, ID, Pair<DateTime, double>>>>
+  getSpeeds(String host, int port) async =>
+      await speedTable.getSpeeds(host, port);
+
+  @override
+  Future<bool> addSpeed(String host, int port,
+      {required ID identifier, required DateTime time, required double duration}) async =>
+      await speedTable.addSpeed(host, port,
+          identifier: identifier, time: time, duration: duration);
+
+  @override
+  Future<bool> removeExpired(DateTime? expired) async =>
+      await speedTable.removeExpired(expired);
 
   //
   //  MsgKey Table

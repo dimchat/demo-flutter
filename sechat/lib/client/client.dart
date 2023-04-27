@@ -2,7 +2,8 @@ import 'package:dim_client/dim_client.dart';
 
 import '../channels/manager.dart';
 import '../channels/session.dart';
-import '../models/config.dart';
+import '../models/station.dart';
+import '../network/neighbor.dart';
 import 'constants.dart';
 import 'messenger.dart';
 import 'packer.dart';
@@ -16,12 +17,12 @@ class Client extends Terminal {
 
   /// connect to the neighbor station
   Future<ClientMessenger?> reconnect() async {
-    Pair<String, int>? station = await _neighbor();
+    StationInfo? station = await getNeighborStation();
     if (station == null) {
       Log.error('failed to get neighbor station');
       return null;
     }
-    return await connect(station.first, station.second);
+    return await connect(station.host, station.port);
   }
 
   @override
@@ -110,91 +111,3 @@ class Client extends Terminal {
   String get deviceManufacturer => "HUAWEI";
 
 }
-
-/// get neighbor station
-Future<Pair<String, int>?> _neighbor() async {
-  GlobalVariable shared = GlobalVariable();
-  SessionDBI database = shared.sdb;
-  await _updateStations(database);
-  // check service provider
-  List<Pair<ID, int>> providers = await database.getProviders();
-  if (providers.isEmpty) {
-    return null;
-  }
-  ID pid = providers.first.first;
-  List<_StationInfo> stations = await database.getStations(provider: pid);
-  // TODO: take the nearest station
-  return stations[0].first;
-}
-
-Future<bool> _updateStations(SessionDBI database) async {
-  // 1. get stations from config
-  Config config = Config();
-  Map info = await config.info;
-  ID? pid = ID.parse(info['ID']);
-  List? stations = info['stations'];
-  if (pid == null || stations == null || stations.isEmpty) {
-    assert(false, 'config error: $info');
-    return false;
-  }
-
-  // 2. check service provider
-  List<Pair<ID, int>> providers = await database.getProviders();
-  if (providers.isEmpty) {
-    // database empty, add first provider
-    if (await database.addProvider(pid, chosen: 1)) {
-      Log.warning('first provider added: $pid');
-    } else {
-      Log.error('failed to add provider: $pid');
-      return false;
-    }
-  } else {
-    // check with providers from database
-    bool exists = false;
-    for (var item in providers) {
-      if (item.first == pid) {
-        exists = true;
-        break;
-      }
-    }
-    if (!exists) {
-      if (await database.addProvider(pid, chosen: 0)) {
-        Log.warning('provider added: $pid');
-      } else {
-        Log.error('failed to add provider: $pid');
-        return false;
-      }
-    }
-  }
-
-  // 3. check neighbor stations
-  List<_StationInfo> currentStations = await database.getStations(provider: pid);
-  String host;
-  int port;
-  for (Map item in stations) {
-    host = item['host'];
-    port = item['port'];
-    if (_contains(Pair(host, port), currentStations)) {
-      Log.debug('station exists: $item');
-    } else if (await database.addStation(host, port, provider: pid)) {
-      Log.warning('station added: $item, $pid');
-    } else {
-      Log.error('failed to add station: $item');
-      return false;
-    }
-  }
-
-  // OK
-  return true;
-}
-
-bool _contains(Pair<String, int> srv, List<_StationInfo> stations) {
-  for (var item in stations) {
-    if (item.first == srv) {
-      return true;
-    }
-  }
-  return false;
-}
-
-typedef _StationInfo = Triplet<Pair<String, int>, ID, int>;

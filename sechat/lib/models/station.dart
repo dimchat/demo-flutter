@@ -65,6 +65,34 @@ class StationInfo {
   /// get stations for speed tested
   static List<StationInfo> getStations(String host, int port, {ID? provider}) =>
       _StationManager().getStations(host, port, provider: provider);
+
+  /// sort stations with response time (chosen first)
+  static List<StationInfo> sortStations(List<StationInfo> stations) {
+    stations.sort((a, b) {
+      // chosen first
+      if (a.chosen > b.chosen) {
+        return -1;
+      } else if (a.chosen < b.chosen) {
+        return 1;
+      }
+      // sort with response time
+      double? art = a.responseTime;
+      double? brt = b.responseTime;
+      if (art == null) {
+        return brt == null ? 0 : 1;
+      } else if (brt == null) {
+        return -1;
+      } else if (art > brt) {
+        return 1;
+      } else if (art < brt) {
+        return -1;
+      } else {
+        return 0;
+      }
+    });
+    return stations;
+  }
+
 }
 
 class _StationManager {

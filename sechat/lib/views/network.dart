@@ -9,6 +9,7 @@ import '../client/constants.dart';
 import '../client/shared.dart';
 import '../models/station.dart';
 import '../network/velocity.dart';
+import '../widgets/alert.dart';
 import '../widgets/tableview.dart';
 import 'styles.dart';
 
@@ -28,6 +29,7 @@ class _NetworkState extends State<NetworkSettingPage> {
 
   late final _StationDataSource _dataSource;
   late final _StationListAdapter _adapter;
+  bool _refreshing = false;
 
   Future<void> _reload() async {
     await _dataSource.reload();
@@ -47,15 +49,48 @@ class _NetworkState extends State<NetworkSettingPage> {
   @override
   Widget build(BuildContext context) => Scaffold(
     backgroundColor: Styles.backgroundColor,
-    appBar: const CupertinoNavigationBar(
+    appBar: CupertinoNavigationBar(
       backgroundColor: Styles.navigationBarBackground,
       border: Styles.navigationBarBorder,
-      middle: Text('Relay Stations'),
+      middle: const Text('Relay Stations'),
+      trailing: IconButton(
+          icon: const Icon(CupertinoIcons.refresh, size: 16),
+          onPressed: _refreshing ? null : () => _confirmRefresh(context)),
     ),
     body: SectionListView.builder(
       adapter: _adapter,
     ),
   );
+
+  void _confirmRefresh(BuildContext context) {
+    Alert.confirm(context,
+        'Refresh Stations',
+        'The fastest station will be connected automatically next time.',
+        okAction: _refreshStations
+    );
+  }
+  void _refreshStations() {
+    setState(() {
+      _refreshing = true;
+    });
+    int sections = _dataSource.getSectionCount();
+    int items;
+    StationInfo info;
+    for (int sec = 0; sec < sections; ++sec) {
+      items = _dataSource.getItemCount(sec);
+      for (int idx = 0; idx < items; ++idx) {
+        info = _dataSource.getItem(sec, idx);
+        VelocityMeter.ping(info);
+      }
+    }
+    Future.delayed(const Duration(seconds: 5)).then((value) {
+      if (mounted) {
+        setState(() {
+          _refreshing = false;
+        });
+      }
+    });
+  }
 }
 
 class _StationListAdapter with SectionAdapterMixin {
@@ -69,7 +104,7 @@ class _StationListAdapter with SectionAdapterMixin {
       _dataSource.getSectionCount();
 
   @override
-  bool shouldExistSectionHeader(int section) => true;
+  bool shouldExistSectionHeader(int section) => section > 0;  // hide 'gsp'
 
   @override
   bool shouldSectionHeaderStick(int section) => true;
@@ -94,16 +129,47 @@ class _StationListAdapter with SectionAdapterMixin {
 
 class _StationDataSource {
 
-  List<Pair<ID, int>> _sections = [];
+  List<ID> _sections = [];
   final Map<ID, List<StationInfo>> _items = {};
+
+  static List<ID> _sortProviders(List<Pair<ID, int>> records) {
+    // 1. sort records
+    records.sort((a, b) {
+      if (a.first.isBroadcast) {
+        if (b.first.isBroadcast) {} else {
+          return -1;
+        }
+      } else if (b.first.isBroadcast) {
+        return 1;
+      }
+      // sort with chosen order
+      return b.second - a.second;
+    });
+    List<ID> providers = [];
+    for (var item in records) {
+      providers.add(item.first);
+    }
+    // 2. set GSP to the front
+    int pos = providers.indexOf(ProviderDBI.kGSP);
+    if (pos < 0) {
+      // gsp not exists, insert to the front
+      providers.insert(0, ProviderDBI.kGSP);
+    } else if (pos > 0) {
+      // move to the front
+      providers.removeAt(pos);
+      providers.insert(0, ProviderDBI.kGSP);
+    }
+    return providers;
+  }
 
   Future<void> reload() async {
     GlobalVariable shared = GlobalVariable();
     SessionDBI database = shared.sdb;
-    var providers = await database.getProviders();
-    for (var item in providers) {
-      var stations = await database.getStations(provider: item.first);
-      _items[item.first] = await StationInfo.fromList(stations);
+    var records = await database.getProviders();
+    List<ID> providers = _sortProviders(records);
+    for (ID pid in providers) {
+      var stations = await database.getStations(provider: pid);
+      _items[pid] = StationInfo.sortStations(await StationInfo.fromList(stations));
     }
     _sections = providers;
   }
@@ -111,17 +177,17 @@ class _StationDataSource {
   int getSectionCount() => _sections.length;
 
   String getSection(int sec) {
-    ID pid = _sections[sec].first;
+    ID pid = _sections[sec];
     return 'Provider ($pid)';
   }
 
   int getItemCount(int sec) {
-    ID pid = _sections[sec].first;
+    ID pid = _sections[sec];
     return _items[pid]?.length ?? 0;
   }
 
   StationInfo getItem(int sec, int idx) {
-    ID pid = _sections[sec].first;
+    ID pid = _sections[sec];
     return _items[pid]![idx];
   }
 }
@@ -164,25 +230,31 @@ class _StationCellState extends State<_StationCell> implements lnc.Observer {
       Log.debug('test state: $state, $meter');
       if (state == 'start') {
         Log.debug('start to test station speed: $meter');
-        setState(() {
-          widget.info.testTime = DateTime.now();
-          widget.info.responseTime = null;
-        });
+        if (mounted) {
+          setState(() {
+            widget.info.testTime = DateTime.now();
+            widget.info.responseTime = null;
+          });
+        }
       } else if (state == 'connected') {
         Log.debug('connected to station: $meter');
       } else if (state == 'failed' || meter.responseTime == null) {
         Log.error('speed task failed: $meter, $state');
-        setState(() {
-          widget.info.testTime = DateTime.now();
-          widget.info.responseTime = -1;
-        });
+        if (mounted) {
+          setState(() {
+            widget.info.testTime = DateTime.now();
+            widget.info.responseTime = -1;
+          });
+        }
       } else {
         assert(state == 'finished', 'meta state error: $userInfo');
         Log.debug('refreshing $meter -> ${widget.info}, $state');
-        setState(() {
-          widget.info.testTime = DateTime.now();
-          widget.info.responseTime = meter.responseTime;
-        });
+        if (mounted) {
+          setState(() {
+            widget.info.testTime = DateTime.now();
+            widget.info.responseTime = meter.responseTime;
+          });
+        }
       }
     } else {
       Log.error('notification error: $notification');
@@ -191,9 +263,10 @@ class _StationCellState extends State<_StationCell> implements lnc.Observer {
 
   void _reload() async {
     await widget.info.reloadData();
-    setState(() {
-    });
-    await VelocityMeter.ping(widget.info);
+    if (mounted) {
+      setState(() {
+      });
+    }
   }
 
   @override
@@ -215,6 +288,16 @@ class _StationCellState extends State<_StationCell> implements lnc.Observer {
     ),
   );
 
+  bool _isCurrentStation(StationInfo info) {
+    GlobalVariable shared = GlobalVariable();
+    Station? current = shared.terminal.session?.station;
+    if (current == null) {
+      return false;
+    } else {
+      return current.port == info.port && current.host == info.host;
+    }
+  }
+
   String _getName(StationInfo info) {
     String? name = info.name;
     name ??= info.identifier?.string;
@@ -225,10 +308,12 @@ class _StationCellState extends State<_StationCell> implements lnc.Observer {
     }
   }
   Icon _getChosen(StationInfo info) {
-    if (info.chosen == 0) {
-      return const Icon(CupertinoIcons.cloud);
+    if (_isCurrentStation(info)) {
+      return Icon(CupertinoIcons.cloud_upload_fill, color: _getColor(info));
+    } else if (info.chosen == 0) {
+      return Icon(CupertinoIcons.cloud, color: _getColor(info));
     } else {
-      return const Icon(CupertinoIcons.cloud_fill);
+      return Icon(CupertinoIcons.cloud_fill, color: _getColor(info));
     }
   }
   String _getResult(StationInfo info) {

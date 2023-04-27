@@ -62,9 +62,9 @@ class _ContactListState extends State<ContactListPage> implements lnc.Observer {
         });
       }
     } else if (name == NotificationNames.kContactsUpdated) {
-      _reload();
+      await _reload();
     } else if (name == NotificationNames.kDocumentUpdated) {
-      _reload();
+      await _reload();
     }
   }
 

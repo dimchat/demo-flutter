@@ -29,6 +29,12 @@ abstract class InstantMessageDBI {
   /// @return true on row(s) affected
   Future<bool> removeInstantMessage(ID chat, InstantMessage iMsg);
 
+  ///  Delete all messages in this conversation
+  ///
+  /// @param chat - conversation ID
+  /// @return true on row(s) affected
+  Future<bool> removeInstantMessages(ID chat);
+
 }
 
 
@@ -218,6 +224,23 @@ class InstantMessageTable extends DataTableHandler<InstantMessage> implements In
       'action': 'remove',
       'ID': chat,
       'msg': iMsg,
+    });
+    return true;
+  }
+
+  @override
+  Future<bool> removeInstantMessages(ID chat) async {
+    SQLConditions cond;
+    cond = SQLConditions(left: 'cid', comparison: '=', right: chat.string);
+    if (await delete(_table, conditions: cond) < 0) {
+      Log.error('failed to remove messages: $chat');
+      return false;
+    }
+    // post notification
+    var nc = NotificationCenter();
+    nc.postNotification(NotificationNames.kMessageUpdated, this, {
+      'action': 'clear',
+      'ID': chat,
     });
     return true;
   }

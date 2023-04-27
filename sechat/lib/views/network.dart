@@ -35,9 +35,15 @@ class _NetworkState extends State<NetworkSettingPage> {
     await _dataSource.reload();
     if (mounted) {
       setState(() {
-
       });
     }
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
+    GlobalVariable shared = GlobalVariable();
+    shared.terminal.reconnect();
   }
 
   @override
@@ -68,6 +74,13 @@ class _NetworkState extends State<NetworkSettingPage> {
         'The fastest station will be connected automatically next time.',
         okAction: _refreshStations
     );
+    // // TEST:
+    // GlobalVariable shared = GlobalVariable();
+    // final ID gsp = ProviderDBI.kGSP;
+    // // shared.database.addStation('203.195.224.155', 9394, provider: gsp);
+    // // shared.database.addStation('47.254.237.224', 9394, provider: gsp);
+    // // shared.database.removeStation('203.195.224.155', 9394, provider: gsp);
+    // shared.database.removeStations(provider: gsp);
   }
   void _refreshStations() {
     setState(() {
@@ -261,7 +274,7 @@ class _StationCellState extends State<_StationCell> implements lnc.Observer {
     }
   }
 
-  void _reload() async {
+  Future<void> _reload() async {
     await widget.info.reloadData();
     if (mounted) {
       setState(() {

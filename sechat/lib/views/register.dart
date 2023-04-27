@@ -71,7 +71,7 @@ class _RegisterBody extends StatelessWidget {
           ],
         ),
         SizedBox(
-          height: 256,
+          height: 32,
         ),
       ],
     );
@@ -194,7 +194,7 @@ class _RegisterFormState extends State<_RegisterForm> {
           child: const Text('DIM Privacy Policy'),
           onPressed: () => Config().termsURL.then((url) => Browser.open(context,
             url: url,
-            title: 'Terms',
+            title: 'Privacy Policy',
           )),
         ),
       ],

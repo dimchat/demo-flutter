@@ -168,7 +168,7 @@ class _ChatTableState extends State<_ChatTableCell> implements lnc.Observer {
     }
     if (name == NotificationNames.kDocumentUpdated) {
       if (cid == widget.info.identifier) {
-        _reload();
+        await _reload();
       } else {
         // TODO: check members for group chat?
       }

@@ -1,6 +1,7 @@
 import 'package:dim_client/dim_client.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_localizations/flutter_localizations.dart';
 
 import 'client/shared.dart';
 import 'views/chats.dart';
@@ -68,6 +69,9 @@ class _Application extends StatelessWidget {
       barBackgroundColor: Styles.themeBarBackgroundColor,
     ),
     home: home,
+    localizationsDelegates: const [
+      GlobalMaterialLocalizations.delegate,
+    ],
   );
 }
 

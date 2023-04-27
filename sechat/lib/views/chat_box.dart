@@ -17,6 +17,7 @@ import '../widgets/facade.dart';
 import '../widgets/message.dart';
 import '../widgets/picker.dart';
 import '../widgets/audio.dart';
+import '../widgets/preview.dart';
 import 'profile.dart';
 import 'styles.dart';
 
@@ -27,6 +28,8 @@ class ChatBox extends StatefulWidget {
   const ChatBox(this.info, {super.key});
 
   final ContactInfo info;
+
+  static int maxCountOfMessages = 2048;
 
   static void open(BuildContext context, ContactInfo info) {
     showCupertinoDialog(
@@ -75,11 +78,11 @@ class _ChatBoxState extends State<ChatBox> implements lnc.Observer {
     }
     if (name == NotificationNames.kMessageUpdated) {
       if (cid == widget.info.identifier) {
-        _reload();
+        await _reload();
       }
     } else if (name == NotificationNames.kDocumentUpdated) {
       if (cid == widget.info.identifier) {
-        _reload();
+        await _reload();
       } else {
         // TODO: check members for group chat?
       }
@@ -95,7 +98,8 @@ class _ChatBoxState extends State<ChatBox> implements lnc.Observer {
   Future<void> _reload() async {
     GlobalVariable shared = GlobalVariable();
     _currentUser = await shared.facebook.currentUser;
-    var pair = await shared.database.getInstantMessages(widget.info.identifier);
+    var pair = await shared.database.getInstantMessages(widget.info.identifier,
+        limit: ChatBox.maxCountOfMessages);
     Log.warning('message updated: ${pair.first.length}');
     if (mounted) {
       setState(() {
@@ -165,88 +169,169 @@ class _HistoryAdapter with SectionAdapterMixin {
   Widget getItem(BuildContext context, IndexPath indexPath) {
     InstantMessage iMsg = _dataSource.getItem(indexPath.item);
     ID sender = iMsg.sender;
-    DateTime? time = iMsg.time;
     Content content = iMsg.content;
-    if (content is Command) {
-      return _showCommand(content, sender, context: context);
-    }
+    Widget? timeLabel = _getTimeLabel(iMsg, indexPath);
+    Widget? cmdLabel = _getCommandLabel(content, sender);
+    Widget? nameLabel;
     bool isMe = sender == _currentUser?.identifier;
     bool isGroupChat = _conversation.identifier.isGroup;
-    const radius = Radius.circular(12);
-    const borderRadius = BorderRadius.all(radius);
+    if (!isMe && (isGroupChat || sender != _conversation.identifier)) {
+      nameLabel = _getNameLabel(sender);
+    }
+    Widget bodyView = _showContent(context, content, sender,
+      color: isMe ? Colors.lightGreen : Colors.white,
+      padding: const EdgeInsets.fromLTRB(16, 12, 16, 12),
+    );
+    int mainFlex = 3;
+    if (content is FileContent) {
+      mainFlex = 1;
+    }
     return Container(
       margin: const EdgeInsets.only(left: 8, top: 4, right: 8, bottom: 4),
       // color: Colors.yellowAccent,
       child: Column(
         children: [
-          if (time != null)
-            Text(Time.getTimeString(time),
-              style: const TextStyle(color: Colors.grey, fontSize: 10),
+          if (timeLabel != null)
+            timeLabel,
+          if (cmdLabel != null)
+            cmdLabel,
+          if (cmdLabel == null)
+            _getContentFrame(context, sender, isMe, mainFlex,
+              image: Facade.fromID(sender),
+              name: nameLabel,
+              body: bodyView,
             ),
-          Row(
-            mainAxisAlignment: isMe ? MainAxisAlignment.end : MainAxisAlignment.start,
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              if (!isMe)
-                IconButton(
-                  icon: Facade.fromID(sender),
-                  onPressed: () => _openProfile(context, sender, _conversation),
-                ),
-              Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  if (!isMe && (isGroupChat || sender != _conversation.identifier))
-                    Container(
-                      margin: const EdgeInsets.only(left: 2),
-                      constraints: const BoxConstraints(maxWidth: 240),
-                      child: NameView(sender,
-                        style: const TextStyle(color: Colors.grey,
-                            fontSize: 12,
-                            overflow: TextOverflow.ellipsis,
-                        ),
-                      ),
-                    ),
-                  Container(
-                    margin: const EdgeInsets.fromLTRB(2, 8, 2, 8),
-                    constraints: const BoxConstraints(maxWidth: 240),
-                    child: ClipRRect(
-                      borderRadius: isMe
-                          ? borderRadius.subtract(
-                          const BorderRadius.only(topRight: radius))
-                          : borderRadius.subtract(
-                          const BorderRadius.only(topLeft: radius)),
-                      child: _showContent(content, sender,
-                          color: isMe ? Colors.lightGreen : Colors.white,
-                          padding: const EdgeInsets.fromLTRB(16, 12, 16, 12),
-                          context: context
-                      ),
-                    ),
-                  ),
-                ],
-              ),
-              if (isMe)
-                IconButton(
-                  icon: Facade.fromID(sender),
-                  onPressed: () {
-                    // do nothing
-                  },
-                ),
-            ],
-          ),
         ],
       ),
     );
   }
 
-  Widget _showCommand(Command content, ID sender, {required BuildContext context}) {
-    // TODO: show command message
-    return Text(content.cmd);
+  Widget? _getTimeLabel(InstantMessage iMsg, IndexPath indexPath) {
+    DateTime? time = iMsg.time;
+    if (time == null) {
+      return null;
+    }
+    int total = _dataSource.getItemCount();
+    if (indexPath.item < total - 1) {
+      DateTime? prev = _dataSource.getItem(indexPath.item + 1).time;
+      if (prev != null) {
+        int delta = time.millisecondsSinceEpoch - prev.millisecondsSinceEpoch;
+        if (-120000 < delta && delta < 120000) {
+          return null;
+        }
+      }
+    }
+    return Text(Time.getTimeString(time),
+      style: const TextStyle(color: Colors.grey, fontSize: 10),
+    );
   }
 
-  Widget _showContent(Content content, ID sender,
-      {Color? color, EdgeInsetsGeometry? padding, required BuildContext context}) {
+  Widget? _getCommandLabel(Content content, ID sender) {
+    // TODO: show command message
+    String? text;
+    if (content is Command) {
+      text = content.cmd;
+    } else {
+      text = content['text'];
+      if (text == null) {
+      } else if (text.startsWith('Document not accept')) {
+      } else if (text.startsWith('Document received')) {
+      } else {
+        text = null;
+      }
+    }
+    if (text == null) {
+      return null;
+    }
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: [
+        Expanded(flex: 1, child: Container()),
+        Expanded(flex: 2,
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: [
+              ClipRRect(
+                borderRadius: const BorderRadius.all(Radius.circular(4)),
+                child: Container(
+                  padding: const EdgeInsets.fromLTRB(8, 4, 8, 4),
+                  color: CupertinoColors.lightBackgroundGray,
+                  child: Text(text,
+                    style: const TextStyle(
+                      fontSize: 10, color: CupertinoColors.systemGrey,
+                    ),
+                  ),
+                ),
+              ),
+            ],
+          ),
+        ),
+        Expanded(flex: 1, child: Container()),
+      ],
+    );
+  }
+
+  Widget _getNameLabel(ID sender) => Container(
+    margin: const EdgeInsets.only(left: 2),
+    constraints: const BoxConstraints(maxWidth: 240),
+    child: NameView(sender,
+      style: const TextStyle(color: Colors.grey,
+        fontSize: 12,
+        overflow: TextOverflow.ellipsis,
+      ),
+    ),
+  );
+
+  Widget _getContentFrame(BuildContext context, ID sender, bool isMe, int mainFlex,
+      {required Widget image, Widget? name, required Widget body}) {
+    const radius = Radius.circular(12);
+    const borderRadius = BorderRadius.all(radius);
+    return Row(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        if (isMe)
+          Expanded(flex: 1, child: Container()),
+        if (!isMe)
+          IconButton(
+              padding: const EdgeInsets.fromLTRB(8, 4, 8, 4),
+              onPressed: () => _openProfile(context, sender, _conversation),
+              icon: image
+          ),
+        Expanded(flex: mainFlex, child: Column(
+          crossAxisAlignment: isMe ? CrossAxisAlignment.end : CrossAxisAlignment.start,
+          children: [
+            if (name != null)
+              name,
+            Container(
+              margin: const EdgeInsets.fromLTRB(2, 8, 2, 8),
+              // constraints: const BoxConstraints(maxWidth: 240),
+              child: ClipRRect(
+                borderRadius: isMe
+                    ? borderRadius.subtract(
+                    const BorderRadius.only(topRight: radius))
+                    : borderRadius.subtract(
+                    const BorderRadius.only(topLeft: radius)),
+                child: body,
+              ),
+            ),
+          ],
+        )),
+        if (isMe)
+          Container(
+            padding: const EdgeInsets.fromLTRB(8, 4, 8, 4),
+            child: image,
+          ),
+        if (!isMe)
+          Expanded(flex: 1, child: Container()),
+      ],
+    );
+  }
+
+  Widget _showContent(BuildContext ctx, Content content, ID sender,
+      {Color? color, EdgeInsetsGeometry? padding}) {
     if (content is ImageContent) {
-      return ImageContentView(content, color: color, padding: padding);
+      return ImageContentView(content, color: color, padding: padding,
+          onTap: () => previewImageContent(ctx, content, _dataSource.allMessages));
     } else if (content is AudioContent) {
       return AudioContentView(content, color: color, padding: padding);
     } else if (content is VideoContent) {
@@ -255,7 +340,7 @@ class _HistoryAdapter with SectionAdapterMixin {
       return Container(
         color: color,
         padding: padding,
-        child: Text('${content["text"]}'),
+        child: SelectableText('${content["text"]}'),
       );
     }
   }
@@ -265,6 +350,8 @@ class _HistoryAdapter with SectionAdapterMixin {
 class _HistoryDataSource {
 
   List<InstantMessage> _messages = [];
+
+  List<InstantMessage> get allMessages => _messages;
 
   void refresh(List<InstantMessage> history) {
     Log.debug('refreshing ${history.length} message(s)');

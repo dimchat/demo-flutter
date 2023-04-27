@@ -12,11 +12,13 @@ import '../client/shared.dart';
 
 /// ImageView
 class ImageContentView extends StatefulWidget {
-  const ImageContentView(this.content, {this.color, this.padding, super.key});
+  const ImageContentView(this.content, {this.color, this.padding, this.onTap, super.key});
 
   final ImageContent content;
   final Color? color;
   final EdgeInsetsGeometry? padding;
+
+  final VoidCallback? onTap;
 
   @override
   State<StatefulWidget> createState() => _ImageContentState();
@@ -52,7 +54,10 @@ class _ImageContentState extends State<ImageContentView> {
   Widget build(BuildContext context) {
     String? path = _path;
     if (path != null) {
-      return Image.file(File(path));
+      return GestureDetector(
+        onTap: widget.onTap,
+        child: Image.file(File(path)),
+      );
     }
     Uint8List? bytes = widget.content.thumbnail;
     if (bytes != null) {

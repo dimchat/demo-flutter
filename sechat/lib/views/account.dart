@@ -159,7 +159,7 @@ class _AccountState extends State<AccountPage> {
   );
 
   Widget _idLabel() => Expanded(
-    child: Text(widget.user.identifier.string,
+    child: SelectableText(widget.user.identifier.string,
       style: const TextStyle(fontSize: 12,
         color: Colors.teal,
       ),

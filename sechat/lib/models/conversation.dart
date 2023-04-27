@@ -158,7 +158,7 @@ class Amanuensis implements lnc.Observer {
     Log.debug('${array.length} conversation(s) loaded');
     // build conversations
     for (Conversation item in array) {
-      item.reloadData();
+      await item.reloadData();
       // TODO: get last message & unread count
       Log.debug('new conversation created: $item');
       _conversationMap[item.identifier] = item;
@@ -166,6 +166,53 @@ class Amanuensis implements lnc.Observer {
     _allConversations = array;
     Log.warning('${array.length} conversation(s) loaded');
     return array;
+  }
+
+  Future<bool> clearConversation(ID identifier) async {
+    GlobalVariable shared = GlobalVariable();
+    // 1. clear messages
+    if (await shared.database.removeInstantMessages(identifier)) {} else {
+      Log.error('failed to clear messages in conversation: $identifier');
+      return false;
+    }
+    // 2. update cache
+    Conversation? chat = _conversationMap[identifier];
+    if (chat != null) {
+      chat.unread = 0;
+      chat.lastMessage = null;
+      chat.lastTime = null;
+      // 3. update database
+      if (await shared.database.updateConversation(chat)) {} else {
+        Log.error('failed to update conversation: $chat');
+        return false;
+      }
+    }
+    // OK
+    Log.warning('conversation cleared: $identifier');
+    return true;
+  }
+
+  Future<bool> removeConversation(ID identifier) async {
+    GlobalVariable shared = GlobalVariable();
+    // 1. clear messages
+    if (await shared.database.removeInstantMessages(identifier)) {} else {
+      Log.error('failed to clear messages in conversation: $identifier');
+      return false;
+    }
+    // 2. remove from database
+    if (await shared.database.removeConversation(identifier)) {} else {
+      Log.error('failed to remove conversation: $identifier');
+      return false;
+    }
+    // 3. remove from cache
+    Conversation? chat = _conversationMap[identifier];
+    if (chat != null) {
+      _allConversations?.remove(chat);
+      _conversationMap.remove(identifier);
+    }
+    // OK
+    Log.warning('conversation cleared: $identifier');
+    return true;
   }
 
   int get numberOfConversation {
@@ -222,6 +269,7 @@ class Amanuensis implements lnc.Observer {
       // new conversation
       chatBox = Conversation(cid, unread: 0, lastMessage: last, lastTime: time);
       if (await shared.database.addConversation(chatBox)) {
+        await chatBox.reloadData();
         // add to cache
         _conversationMap[cid] = chatBox;
         // _allConversations?.insert(0, chatBox);

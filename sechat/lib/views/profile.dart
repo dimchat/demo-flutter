@@ -7,6 +7,7 @@ import 'package:dim_client/dim_client.dart' as lnc;
 import '../client/constants.dart';
 import '../client/shared.dart';
 import '../models/contact.dart';
+import '../models/conversation.dart';
 import '../widgets/alert.dart';
 import '../widgets/tableview.dart';
 import 'chat_box.dart';
@@ -123,7 +124,9 @@ class _ProfileState extends State<ProfilePage> implements lnc.Observer {
         SliverFillRemaining(
           hasScrollBody: false,
           fillOverscroll: true,
-          child: _body(context),
+          child: SingleChildScrollView(
+            child: _body(context),
+          ),
         ),
       ],
     ),
@@ -134,10 +137,10 @@ class _ProfileState extends State<ProfilePage> implements lnc.Observer {
       const SizedBox(height: 32,),
       _avatarImage(),
       const SizedBox(height: 8,),
-      SizedBox(width: 296,
+      SizedBox(width: 300,
         child: _idLabel(),
       ),
-      const SizedBox(height: 64,),
+      const SizedBox(height: 32,),
       if (!_isFriend)
         _addButton(context),
       if (_isFriend)
@@ -145,6 +148,9 @@ class _ProfileState extends State<ProfilePage> implements lnc.Observer {
           children: [
             _sendButton(context),
             const SizedBox(height: 8,),
+            if (widget.fromWhere != null)
+            _clearButton(context),
+            if (widget.fromWhere == null)
             _deleteButton(context),
           ],
         ),
@@ -164,7 +170,7 @@ class _ProfileState extends State<ProfilePage> implements lnc.Observer {
         ),
       ),
       Expanded(
-        child: Text(widget.info.identifier.string,
+        child: SelectableText(widget.info.identifier.string,
           style: const TextStyle(fontSize: 12,
             color: Colors.teal,
           ),
@@ -176,7 +182,7 @@ class _ProfileState extends State<ProfilePage> implements lnc.Observer {
   Widget _addButton(BuildContext context) => SizedBox(
     width: 256,
     child: CupertinoButton(
-      color: Colors.orange,
+      color: CupertinoColors.systemOrange,
       child: const Text('Add Contact'),
       onPressed: () => _addContact(context, widget.info),
     ),
@@ -184,20 +190,31 @@ class _ProfileState extends State<ProfilePage> implements lnc.Observer {
 
   Widget _sendButton(BuildContext context) => SizedBox(
     width: 256,
-    child: CupertinoButton.filled(
+    child: CupertinoButton(
+      color: CupertinoColors.systemBlue,
       child: const Text('Send Message'),
       onPressed: () => _sendMessage(context, widget.info, widget.fromWhere),
+    ),
+  );
+
+  Widget _clearButton(BuildContext context) => SizedBox(
+    width: 256,
+    child: CupertinoButton(
+      color: CupertinoColors.systemYellow,
+      child: const Text('Clear History'),
+      onPressed: () => _clearHistory(context, widget.info),
     ),
   );
 
   Widget _deleteButton(BuildContext context) => SizedBox(
     width: 256,
     child: CupertinoButton(
-      color: Colors.red,
-      child: const Text('Delete'),
+      color: CupertinoColors.systemRed,
+      child: Text(widget.info.identifier.isUser ? 'Delete Contact' : 'Delete Group'),
       onPressed: () => _deleteContact(context, widget.info),
     ),
   );
+
 }
 
 void _sendMessage(BuildContext ctx, ContactInfo info, ID? fromWhere) {
@@ -234,6 +251,28 @@ void _doAdd(BuildContext ctx, ID contact, ID user) {
   });
 }
 
+void _clearHistory(BuildContext ctx, ContactInfo info) {
+  String msg;
+  if (info.identifier.isUser) {
+    msg = 'Are you sure want to clear chat history of this friend?';
+  } else {
+    msg = 'Are you sure want to clear chat history of this group?';
+  }
+  Alert.confirm(ctx, 'Confirm', msg,
+    okAction: () => _doClear(ctx, info.identifier),
+  );
+}
+void _doClear(BuildContext ctx, ID chat) {
+  Amanuensis clerk = Amanuensis();
+  clerk.clearConversation(chat).then((ok) {
+    if (ok) {
+      Navigator.pop(ctx);
+    } else {
+      Alert.show(ctx, 'Error', 'Failed to clear chat history');
+    }
+  });
+}
+
 void _deleteContact(BuildContext ctx, ContactInfo info) {
   GlobalVariable shared = GlobalVariable();
   shared.facebook.currentUser.then((user) {
@@ -241,13 +280,26 @@ void _deleteContact(BuildContext ctx, ContactInfo info) {
       Log.error('current user not found, failed to add contact: $info');
       Alert.show(ctx, 'Error', 'Current user not found');
     } else {
-      Alert.confirm(ctx, 'Confirm', 'Are you sure want to remove this friend?',
+      String msg;
+      if (info.identifier.isUser) {
+        msg = 'Are you sure to remove this friend?\n'
+            'This action will clear chat history too.';
+      } else {
+        msg = 'Are you sure to remove this group?\n'
+            'This action will clear chat history too.';
+      }
+      Alert.confirm(ctx, 'Confirm', msg,
         okAction: () => _doRemove(ctx, info.identifier, user.identifier),
       );
     }
   });
 }
 void _doRemove(BuildContext ctx, ID contact, ID user) {
+  Amanuensis clerk = Amanuensis();
+  clerk.removeConversation(contact).onError((error, stackTrace) {
+    Alert.show(ctx, 'Error', 'Failed to remove conversation');
+    return false;
+  });
   GlobalVariable shared = GlobalVariable();
   shared.database.removeContact(contact, user: user).then((ok) {
     if (ok) {
@@ -295,7 +347,7 @@ class _ProfileTableState extends State<_ProfileTableCell> implements lnc.Observe
     if (identifier == null) {
       Log.error('notification error: $notification');
     } else if (identifier == widget.info.identifier) {
-      _reload();
+      await _reload();
     }
   }
 

@@ -109,7 +109,7 @@ class SettingsPage extends StatelessWidget {
     trailing: const CupertinoListTileChevron(),
     onTap: () => Config().termsURL.then((url) => Browser.open(context,
       url: url,
-      title: 'Terms',
+      title: 'Privacy Policy',
     )),
   );
 
@@ -159,26 +159,25 @@ class _MyAccountState extends State<_MyAccountSection> implements lnc.Observer {
     if (identifier == null) {
       Log.error('notification error: $notification');
     } else if (identifier == user?.identifier) {
-      _reload();
+      await _reload();
     }
   }
 
-  void _reload() {
+  Future<void> _reload() async {
     GlobalVariable shared = GlobalVariable();
-    shared.facebook.currentUser.then((user) async {
-      if (user == null) {
-        Log.error('failed to get current user');
-        return;
-      }
-      ContactInfo? info = _info;
-      info ??= ContactInfo(user.identifier);
-      await info.reloadData();
-      if (mounted) {
-        setState(() {
-          _info = info;
-        });
-      }
-    });
+    User? user = await shared.facebook.currentUser;
+    if (user == null) {
+      Log.error('failed to get current user');
+      return;
+    }
+    ContactInfo? info = _info;
+    info ??= ContactInfo(user.identifier);
+    await info.reloadData();
+    if (mounted) {
+      setState(() {
+        _info = info;
+      });
+    }
   }
 
   @override

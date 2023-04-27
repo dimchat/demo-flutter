@@ -207,15 +207,13 @@ class _AudioContentState extends State<AudioContentView> {
 
   bool _playing = false;
 
-  void _reload() {
+  Future<void> _reload() async {
     FileTransfer ftp = FileTransfer();
-    ftp.getFilePath(widget.content).then((path) {
-      if (path == null) {
-        Log.error('failed to get audio path');
-        return;
-      }
-      _path = path;
-    });
+    _path = await ftp.getFilePath(widget.content);
+    if (_path == null) {
+      Log.error('failed to get audio path');
+      return;
+    }
   }
 
   void _togglePlay() {
@@ -264,11 +262,11 @@ class _AudioContentState extends State<AudioContentView> {
       child: Row(
         children: [
           _playing ? const Icon(CupertinoIcons.volume_up) : const Icon(CupertinoIcons.play),
-          Container(
-            width: 128,
-            // color: Colors.lightGreen,
-            alignment: Alignment.center,
-            child: Text('${_duration.toStringAsFixed(3)}"'),
+          Expanded(
+            flex: 1,
+            child: Text('${_duration.toStringAsFixed(3)}"',
+              textAlign: TextAlign.center,
+            ),
           ),
         ],
       ),

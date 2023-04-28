@@ -4,6 +4,8 @@ import 'package:dim_client/dim_client.dart';
 import 'package:flutter/cupertino.dart';
 
 import '../client/shared.dart';
+import '../widgets/alert.dart';
+import 'conversation.dart';
 
 class ContactInfo {
   ContactInfo(this.identifier) : _name = identifier.name;
@@ -51,6 +53,46 @@ class ContactInfo {
     _name = await shared.facebook.getName(identifier);
     Pair<String?, Uri?> pair = await shared.facebook.getAvatar(identifier);
     _path = pair.first;
+  }
+
+  void addToUser(User user, {required BuildContext context}) {
+    Alert.confirm(context, 'Confirm', 'Do you want to add this friend?',
+      okAction: () => _doAdd(context, identifier, user.identifier),
+    );
+  }
+  void add({required BuildContext context}) {
+    // check current user
+    GlobalVariable shared = GlobalVariable();
+    shared.facebook.currentUser.then((user) {
+      if (user == null) {
+        Log.error('current user not found, failed to add contact: $identifier');
+        Alert.show(context, 'Error', 'Current user not found');
+      } else {
+        addToUser(user, context: context);
+      }
+    });
+  }
+
+  void delete({required BuildContext context}) {
+    GlobalVariable shared = GlobalVariable();
+    shared.facebook.currentUser.then((user) {
+      if (user == null) {
+        Log.error('current user not found, failed to add contact: $identifier');
+        Alert.show(context, 'Error', 'Current user not found');
+      } else {
+        String msg;
+        if (identifier.isUser) {
+          msg = 'Are you sure to remove this friend?\n'
+              'This action will clear chat history too.';
+        } else {
+          msg = 'Are you sure to remove this group?\n'
+              'This action will clear chat history too.';
+        }
+        Alert.confirm(context, 'Confirm', msg,
+          okAction: () => _doRemove(context, identifier, user.identifier),
+        );
+      }
+    });
   }
 
   static Future<ContactInfo> fromID(ID identifier) async =>
@@ -119,7 +161,7 @@ class _ContactManager {
 
   final Map<ID, ContactInfo> _contacts = {};
 
-  Future<ContactInfo> getContact(ID identifier) async{
+  Future<ContactInfo> getContact(ID identifier) async {
     ContactInfo? info = _contacts[identifier];
     if (info == null) {
       info = ContactInfo(identifier);
@@ -129,4 +171,32 @@ class _ContactManager {
     return info;
   }
 
+}
+
+void _doAdd(BuildContext ctx, ID contact, ID user) {
+  GlobalVariable shared = GlobalVariable();
+  shared.database.addContact(contact, user: user)
+      .then((ok) {
+    if (ok) {
+      // Navigator.pop(context);
+    } else {
+      Alert.show(ctx, 'Error', 'Failed to add contact');
+    }
+  });
+}
+
+void _doRemove(BuildContext ctx, ID contact, ID user) {
+  Amanuensis clerk = Amanuensis();
+  clerk.removeConversation(contact).onError((error, stackTrace) {
+    Alert.show(ctx, 'Error', 'Failed to remove conversation');
+    return false;
+  });
+  GlobalVariable shared = GlobalVariable();
+  shared.database.removeContact(contact, user: user).then((ok) {
+    if (ok) {
+      Log.warning('contact removed: $contact, user: $user');
+    } else {
+      Alert.show(ctx, 'Error', 'Failed to remove contact');
+    }
+  });
 }

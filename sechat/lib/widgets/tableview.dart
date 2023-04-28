@@ -44,18 +44,19 @@ class TableView {
     required Widget title,
     Widget? subtitle,
     Widget? trailing,
-    FutureOr<void> Function()? onTap
-  }) {
-    return cell1(leading: leading, title: title, subtitle: subtitle, trailing: trailing, onTap: onTap);
-    // return cell2(leading: leading, title: title, trailing: trailing, onTap: onTap);
-  }
+    GestureTapCallback? onTap,
+    GestureLongPressCallback? onLongPress,
+  }) => cell2(leading: leading,
+      title: title, subtitle: subtitle,
+      trailing: trailing,
+      onTap: onTap, onLongPress: onLongPress);
 
   static Widget cell1({
     required Widget leading,
     required Widget title,
     Widget? subtitle,
     Widget? trailing,
-    FutureOr<void> Function()? onTap
+    FutureOr<void> Function()? onTap,
   }) => Container(
     color: Styles.sectionItemBackground,
     // margin: Styles.sectionItemMargin,
@@ -84,29 +85,75 @@ class TableView {
   static Widget cell2({
     required Widget leading,
     required Widget title,
+    Widget? subtitle,
     Widget? trailing,
-    FutureOr<void> Function()? onTap
-  }) => Container(
-    color: Styles.sectionItemBackground,
-    // margin: Styles.sectionItemMargin,
+    GestureTapCallback? onTap,
+    GestureLongPressCallback? onLongPress,
+  }) => GestureDetector(
+    onTap: onTap,
+    onLongPress: onLongPress,
     child: Column(
       children: [
-        CupertinoListTile(
-          padding: Styles.sectionItemPadding,
-          backgroundColor: Styles.sectionItemBackground,
-          leading: leading,
-          title: title,
-          trailing: trailing,
-          onTap: onTap,
+        Container(
+          padding: const EdgeInsets.only(top: 8),
+          color: Styles.sectionItemBackground,
+          child: Row(
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: [
+              Container(
+                width: 60,
+                alignment: Alignment.center,
+                child: leading,
+              ),
+              Expanded(child: _cellBody(title: title, subtitle: subtitle),),
+              Container(
+                padding: const EdgeInsets.all(8),
+                child: trailing,
+              ),
+            ],
+          ),
         ),
         Container(
-          margin: const EdgeInsetsDirectional.only(
-            start: 60,
+          padding: const EdgeInsets.only(top: 8),
+          color: Styles.sectionItemBackground,
+          child: Container(
+            margin: const EdgeInsetsDirectional.only(start: 60),
+            color: Styles.sectionItemDividerColor,
+            height: 1,
           ),
-          color: Styles.sectionItemDividerColor,
-          height: 1,
         ),
       ],
     ),
   );
 }
+
+Widget _cellBody({required Widget title, required Widget? subtitle}) => Column(
+  mainAxisAlignment: MainAxisAlignment.center,
+  crossAxisAlignment: CrossAxisAlignment.start,
+  children: [
+    Container(
+      padding: const EdgeInsets.only(bottom: 8),
+      child: DefaultTextStyle(
+        maxLines: 1,
+        softWrap: false,
+        style: const TextStyle(
+          fontSize: 16,
+          color: CupertinoColors.black,
+          overflow: TextOverflow.ellipsis,
+        ),
+        child: title,
+      ),
+    ),
+    if (subtitle != null)
+      DefaultTextStyle(
+        maxLines: 1,
+        softWrap: false,
+        style: const TextStyle(
+          fontSize: 10,
+          color: CupertinoColors.systemGrey,
+          overflow: TextOverflow.fade,
+        ),
+        child: subtitle,
+      ),
+  ],
+);

@@ -9,6 +9,7 @@ import '../client/constants.dart';
 import '../client/session.dart';
 import '../client/shared.dart';
 import '../models/contact.dart';
+import '../widgets/alert.dart';
 import 'profile.dart';
 import 'search.dart';
 import 'styles.dart';
@@ -164,7 +165,14 @@ class _ContactListAdapter with SectionAdapterMixin {
     //   return _fixedItem(context, index);
     // }
     ContactInfo info = _dataSource.getItem(section, index);
-    return ProfilePage.cell(info);
+    return ProfilePage.cell(info, onLongPress: () {
+      Log.warning('long press: $info');
+      Alert.actionSheet(context,
+        'Confirm', 'Are you sure to remove this contact?',
+        'Remove ${info.name}',
+            () => info.delete(context: context),
+      );
+    });
   }
 
   /*

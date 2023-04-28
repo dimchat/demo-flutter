@@ -11,32 +11,13 @@ typedef OnImagePicked = void Function(String path);
 typedef OnImageRead = void Function(String path, Uint8List data);
 
 void openImagePicker(BuildContext context,
-    {OnImagePicked? onPicked, required OnImageRead onRead}) {
-  showCupertinoModalPopup(context: context, builder: (context) {
-    return CupertinoActionSheet(
-      // title: const Text('Photo'),
-      // message: const Text('Take a photo from your camera or album'),
-      actions: [
-        CupertinoActionSheetAction(
-          onPressed: () => _openImagePicker(context, true, onPicked, onRead),
-          child: const Text('Camera'),
-        ),
-        CupertinoActionSheetAction(
-          onPressed: () => _openImagePicker(context, false, onPicked, onRead),
-          child: const Text('Album'),
-        ),
-        CupertinoActionSheetAction(
-          onPressed: () => Navigator.pop(context),
-          isDestructiveAction: true,
-          child: const Text('Cancel'),
-        ),
-      ],
+    {OnImagePicked? onPicked, required OnImageRead onRead}) =>
+    Alert.actionSheet(context, null, null,
+      'Camera', () => _openImagePicker(context, true, onPicked, onRead),
+      'Album', () => _openImagePicker(context, false, onPicked, onRead),
     );
-  });
-}
 
 void _openImagePicker(BuildContext context, bool camera, OnImagePicked? onPicked, OnImageRead onRead) {
-  Navigator.pop(context);
   ImagePicker picker = ImagePicker();
   ImageSource source = camera ? ImageSource.camera : ImageSource.gallery;
   picker.pickImage(source: source).then((file) {

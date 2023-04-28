@@ -42,6 +42,7 @@ class _ImagePreview extends StatefulWidget {
 class _ImagePreviewState extends State<_ImagePreview> {
 
   PageController? _controller;
+  Offset? _position;
 
   PageController get controller {
     PageController? ctrl = _controller;
@@ -79,23 +80,39 @@ class _ImagePreviewState extends State<_ImagePreview> {
   @override
   Widget build(BuildContext context) => Container(
     color: CupertinoColors.black,
-    child: PhotoViewGallery.builder(
-      scrollPhysics: const BouncingScrollPhysics(),
-      builder: (context, index) => PhotoViewGalleryPageOptions(
-        imageProvider: FileImage(File(info.images[index])),
-        minScale: 0.5,
-        onScaleEnd: (context, details, controllerValue) {
-          double? scale = controllerValue.scale;
-          if (scale != null && scale < 0.2) {
-            Navigator.pop(context);
-          }
-        },
-      ),
-      itemCount: info.images.length,
-      backgroundDecoration: const BoxDecoration(color: CupertinoColors.black),
-      pageController: controller,
-    ),
+    child: _gallery(),
   );
+
+  Widget _gallery() => PhotoViewGallery.builder(
+    scrollPhysics: const BouncingScrollPhysics(),
+    builder: (context, index) => PhotoViewGalleryPageOptions(
+      imageProvider: FileImage(File(info.images[index])),
+      minScale: 0.5,
+      onScaleEnd: (context, details, controllerValue) {
+        double? scale = controllerValue.scale;
+        if (scale != null && scale < 0.2) {
+          Navigator.pop(context);
+        }
+      },
+      onTapUp: (context, details, controllerValue) {
+        Offset pos = details.localPosition;
+        Offset? old = _position;
+        if (old == null) {
+          assert(false, 'should not happen');
+        } else if (pos.dx == old.dx && pos.dy == old.dy) {
+          // onTap();
+          Navigator.pop(context);
+        }
+      },
+      onTapDown: (context, details, controllerValue) {
+        _position = details.localPosition;
+      },
+    ),
+    itemCount: info.images.length,
+    backgroundDecoration: const BoxDecoration(color: CupertinoColors.black),
+    pageController: controller,
+  );
+
 }
 
 Future<List<String>> _allImages(List<InstantMessage> messages) async {

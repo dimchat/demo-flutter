@@ -9,6 +9,7 @@ import '../client/constants.dart';
 import '../client/session.dart';
 import '../client/shared.dart';
 import '../models/conversation.dart';
+import '../widgets/alert.dart';
 import '../widgets/tableview.dart';
 import 'chat_box.dart';
 import 'search.dart';
@@ -201,8 +202,25 @@ class _ChatTableState extends State<_ChatTableCell> implements lnc.Observer {
       onTap: () {
         Log.warning('tap: ${widget.info}');
         ChatBox.open(context, widget.info);
-      }
+      },
+      onLongPress: () {
+        Log.warning('long press: ${widget.info}');
+        Alert.actionSheet(context,
+          'Confirm', 'Are you sure to remove this conversation?',
+          'Remove ${widget.info.name}',
+              () => _removeConversation(context, widget.info.identifier),
+        );
+      },
   );
+
+  void _removeConversation(BuildContext context, ID chat) {
+    Log.warning('removing $chat');
+    Amanuensis clerk = Amanuensis();
+    clerk.removeConversation(chat).onError((error, stackTrace) {
+      Alert.show(context, 'Error', 'Failed to remove conversation');
+      return false;
+    });
+  }
 
   Widget _leading(Conversation info) => Stack(
     alignment: const AlignmentDirectional(1.5, -1.5),

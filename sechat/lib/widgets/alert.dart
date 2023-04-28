@@ -32,13 +32,13 @@ import 'package:flutter/cupertino.dart';
 
 class Alert {
 
-  static void show(BuildContext context, String title, String message,
+  static void show(BuildContext context, String? title, String? message,
       {VoidCallback? callback}) {
     showCupertinoModalPopup(
       context: context,
       builder: (BuildContext context) => CupertinoAlertDialog(
-        title: Text(title),
-        content: Text(message),
+        title: title == null || title.isEmpty ? null : Text(title),
+        content: message == null || message.isEmpty ? null : Text(message),
         actions: [
           CupertinoDialogAction(
             isDefaultAction: true,
@@ -55,7 +55,7 @@ class Alert {
     );
   }
 
-  static void confirm(BuildContext context, String title, String message,
+  static void confirm(BuildContext context, String? title, String? message,
       {String? okTitle, VoidCallback? okAction,
         String? cancelTitle, VoidCallback? cancelAction}) {
     okTitle ??= 'OK';
@@ -63,8 +63,8 @@ class Alert {
     showCupertinoDialog(
       context: context,
       builder: (context) => CupertinoAlertDialog(
-        title: Text(title),
-        content: Text(message),
+        title: title == null || title.isEmpty ? null : Text(title),
+        content: message == null || message.isEmpty ? null : Text(message),
         actions: [
           CupertinoDialogAction(
             onPressed: () {
@@ -89,4 +89,49 @@ class Alert {
       ),
     );
   }
+
+  static void actionSheet(BuildContext context, String? title, String? message,
+      String action1, VoidCallback callback1, [
+        String? action2, VoidCallback? callback2,
+        String? action3, VoidCallback? callback3,
+      ]) => showCupertinoModalPopup(context: context,
+    builder: (context) => CupertinoActionSheet(
+      title: title == null || title.isEmpty ? null : Text(title),
+      message: message == null || message.isEmpty ? null : Text(message),
+      actions: [
+        CupertinoActionSheetAction(
+          onPressed: () {
+            Navigator.pop(context);
+            callback1();
+          },
+          child: Text(action1),
+        ),
+        if (action2 != null)
+          CupertinoActionSheetAction(
+            onPressed: () {
+              Navigator.pop(context);
+              if (callback2 != null) {
+                callback2();
+              }
+            },
+            child: Text(action2),
+          ),
+        if (action3 != null)
+          CupertinoActionSheetAction(
+            onPressed: () {
+              Navigator.pop(context);
+              if (callback3 != null) {
+                callback3();
+              }
+            },
+            child: Text(action3),
+          ),
+        CupertinoActionSheetAction(
+          onPressed: () => Navigator.pop(context),
+          isDestructiveAction: true,
+          child: const Text('Cancel'),
+        ),
+      ],
+    ),
+  );
 }

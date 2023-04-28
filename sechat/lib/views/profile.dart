@@ -35,7 +35,8 @@ class ProfilePage extends StatefulWidget {
     }
   }
 
-  static Widget cell(ContactInfo info) => _ProfileTableCell(info);
+  static Widget cell(ContactInfo info, {GestureLongPressCallback? onLongPress}) =>
+      _ProfileTableCell(info, onLongPress: onLongPress);
 
   @override
   State<StatefulWidget> createState() => _ProfileState();
@@ -184,7 +185,7 @@ class _ProfileState extends State<ProfilePage> implements lnc.Observer {
     child: CupertinoButton(
       color: CupertinoColors.systemOrange,
       child: const Text('Add Contact'),
-      onPressed: () => _addContact(context, widget.info),
+      onPressed: () => widget.info.add(context: context),
     ),
   );
 
@@ -211,7 +212,7 @@ class _ProfileState extends State<ProfilePage> implements lnc.Observer {
     child: CupertinoButton(
       color: CupertinoColors.systemRed,
       child: Text(widget.info.identifier.isUser ? 'Delete Contact' : 'Delete Group'),
-      onPressed: () => _deleteContact(context, widget.info),
+      onPressed: () => widget.info.delete(context: context),
     ),
   );
 
@@ -224,31 +225,6 @@ void _sendMessage(BuildContext ctx, ContactInfo info, ID? fromWhere) {
   } else {
     ChatBox.open(ctx, info);
   }
-}
-
-void _addContact(BuildContext ctx, ContactInfo info) {
-  GlobalVariable shared = GlobalVariable();
-  shared.facebook.currentUser.then((user) {
-    if (user == null) {
-      Log.error('current user not found, failed to add contact: $info');
-      Alert.show(ctx, 'Error', 'Current user not found');
-    } else {
-      Alert.confirm(ctx, 'Confirm', 'Do you want to add this friend?',
-        okAction: () => _doAdd(ctx, info.identifier, user.identifier),
-      );
-    }
-  });
-}
-void _doAdd(BuildContext ctx, ID contact, ID user) {
-  GlobalVariable shared = GlobalVariable();
-  shared.database.addContact(contact, user: user)
-      .then((ok) {
-    if (ok) {
-      // Navigator.pop(context);
-    } else {
-      Alert.show(ctx, 'Error', 'Failed to add contact');
-    }
-  });
 }
 
 void _clearHistory(BuildContext ctx, ContactInfo info) {
@@ -273,51 +249,15 @@ void _doClear(BuildContext ctx, ID chat) {
   });
 }
 
-void _deleteContact(BuildContext ctx, ContactInfo info) {
-  GlobalVariable shared = GlobalVariable();
-  shared.facebook.currentUser.then((user) {
-    if (user == null) {
-      Log.error('current user not found, failed to add contact: $info');
-      Alert.show(ctx, 'Error', 'Current user not found');
-    } else {
-      String msg;
-      if (info.identifier.isUser) {
-        msg = 'Are you sure to remove this friend?\n'
-            'This action will clear chat history too.';
-      } else {
-        msg = 'Are you sure to remove this group?\n'
-            'This action will clear chat history too.';
-      }
-      Alert.confirm(ctx, 'Confirm', msg,
-        okAction: () => _doRemove(ctx, info.identifier, user.identifier),
-      );
-    }
-  });
-}
-void _doRemove(BuildContext ctx, ID contact, ID user) {
-  Amanuensis clerk = Amanuensis();
-  clerk.removeConversation(contact).onError((error, stackTrace) {
-    Alert.show(ctx, 'Error', 'Failed to remove conversation');
-    return false;
-  });
-  GlobalVariable shared = GlobalVariable();
-  shared.database.removeContact(contact, user: user).then((ok) {
-    if (ok) {
-      Navigator.pop(ctx);
-    } else {
-      Alert.show(ctx, 'Error', 'Failed to remove contact');
-    }
-  });
-}
-
 //
 //  Profile Table Cell
 //
 
 class _ProfileTableCell extends StatefulWidget {
-  const _ProfileTableCell(this.info);
+  const _ProfileTableCell(this.info, {this.onLongPress});
 
   final ContactInfo info;
+  final GestureLongPressCallback? onLongPress;
 
   @override
   State<StatefulWidget> createState() => _ProfileTableState();
@@ -368,12 +308,11 @@ class _ProfileTableState extends State<_ProfileTableCell> implements lnc.Observe
 
   @override
   Widget build(BuildContext context) => TableView.cell(
-      leading: widget.info.getImage(),
-      title: Text(widget.info.name),
-      subtitle: Text(widget.info.identifier.string),
-      onTap: () {
-        ProfilePage.open(context, widget.info.identifier);
-      }
+    leading: widget.info.getImage(),
+    title: Text(widget.info.name),
+    subtitle: Text(widget.info.identifier.string),
+    onTap: () => ProfilePage.open(context, widget.info.identifier),
+    onLongPress: widget.onLongPress,
   );
 
 }

@@ -189,7 +189,7 @@ class ConversationCache extends _ConversationTable {
     List<Conversation>? array = await getConversations();
     Conversation? old = _find(chat, array);
     if (old == null) {
-      assert(false, 'conversation not found: $chat');
+      Log.warning('conversation not found: $chat');
       return false;
     }
     // 2. remove record

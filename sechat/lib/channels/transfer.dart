@@ -203,7 +203,7 @@ class FileTransferChannel extends MethodChannel {
     // 1. check old task
     String? path = _downloads[url];
     if (path == null) {
-      Log.warning('new task, try to download: $url');
+      Log.info('new task, try to download: $url');
       path = _downWaiting;
       _downloads[url] = path;
     } else if (path == _downError) {
@@ -218,7 +218,7 @@ class FileTransferChannel extends MethodChannel {
         'url': url.toString(),
       });
       if (path != null) {
-        Log.warning('found cached file: $path -> $url');
+        Log.debug('found cached file: $path -> $url');
       }
       int now = Time.currentTimeMillis;
       int expired = now + uploadExpires;
@@ -237,23 +237,15 @@ class FileTransferChannel extends MethodChannel {
         path = _downError;
         _downloads[url] = path;
       }
+    } else {
+      Log.debug('memory cached file: $path -> $url');
     }
-    Log.info('download result: $url -> $path');
     // 3. return url when not error
-    String notification;
     if (path == _downError) {
       path = null;
-      notification = NotificationNames.kFileDownloadFailure;
     } else {
       assert(path != _downWaiting, 'download task error: $url -> $path');
-      notification = NotificationNames.kFileDownloadSuccess;
     }
-    // post notification async
-    var nc = NotificationCenter();
-    nc.postNotification(notification, this, {
-      'url': url,
-      'path': path,
-    });
     return path;
   }
 

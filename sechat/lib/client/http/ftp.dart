@@ -33,6 +33,7 @@ import 'dart:typed_data';
 import 'package:dim_client/dim_client.dart';
 
 import '../../channels/manager.dart';
+import '../constants.dart';
 import '../filesys/external.dart';
 import '../filesys/local.dart';
 import '../filesys/paths.dart';
@@ -135,15 +136,16 @@ class FileTransfer {
     String? tempPath = await _downloadEncryptedFile(url);
     if (tempPath == null) {
       Log.info('not download yet: $url');
+      // TODO: post notification?
       return null;
     }
     // decrypt with message password
     DecryptKey? password = content.password;
     if (password == null) {
-      Log.error('password not found: $content');
+      Log.error('password not found: ${content.dictionary}');
       return null;
     }
-    Uint8List? data = await  _decryptFileData(tempPath, password);
+    Uint8List? data = await _decryptFileData(tempPath, password);
     if (data == null) {
       Log.error('failed to decrypt file: $tempPath, password: $password');
       // delete to download again
@@ -152,10 +154,18 @@ class FileTransfer {
     }
     // save decrypted file data
     int len = await cacheFileData(data, cachePath);
-    if (len != data.length) {
+    if (len == data.length) {
+      Log.info('store decrypted file data: $filename -> $url => $cachePath');
+    } else {
       Log.error('failed to cache file: $cachePath');
       return null;
     }
+    // post notification async
+    var nc = NotificationCenter();
+    nc.postNotification(NotificationNames.kFileDownloadSuccess, this, {
+      'url': url,
+      'path': cachePath,
+    });
     // success
     return cachePath;
   }
@@ -166,7 +176,20 @@ class FileTransfer {
   /// @return local path if same file downloaded before
   Future<String?> downloadAvatar(Uri url) async {
     ChannelManager man = ChannelManager();
-    return await man.ftpChannel.downloadAvatar(url);
+    String? path = await man.ftpChannel.downloadAvatar(url);
+    String notification;
+    if (path == null) {
+      notification = NotificationNames.kFileDownloadFailure;
+    } else {
+      notification = NotificationNames.kFileDownloadSuccess;
+    }
+    // post notification async
+    var nc = NotificationCenter();
+    nc.postNotification(notification, this, {
+      'url': url,
+      'path': path,
+    });
+    return path;
   }
 
   ///  Download encrypted file data for user
@@ -190,7 +213,12 @@ class FileTransfer {
       return null;
     }
     Log.info('decrypting file: $path, size: ${data.length}');
-    return password.decrypt(data);
+    try {
+      return password.decrypt(data);
+    } catch (e) {
+      Log.error('failed to decrypt file data: $path, $password');
+      return null;
+    }
   }
 
   static Future<Uint8List?> _loadDownloadedFileData(String filename) async {

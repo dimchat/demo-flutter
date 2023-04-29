@@ -88,9 +88,11 @@ class _RecordState extends State<RecordButton> {
       },
       onLongPressUp: () async {
         Log.warning('tap up');
-        setState(() {
-          _recording = false;
-        });
+        if (mounted) {
+          setState(() {
+            _recording = false;
+          });
+        }
         int now = Time.currentTimeMillis;
         _AudioRecorder recorder = _AudioRecorder();
         String? path = await recorder.stopRecord();
@@ -189,11 +191,10 @@ class _AudioPlayer {
 
 /// AudioView
 class AudioContentView extends StatefulWidget {
-  const AudioContentView(this.content, {this.color, this.padding, super.key});
+  const AudioContentView(this.content, {this.color, super.key});
 
   final AudioContent content;
   final Color? color;
-  final EdgeInsetsGeometry? padding;
 
   @override
   State<StatefulWidget> createState() => _AudioContentState();
@@ -254,7 +255,7 @@ class _AudioContentState extends State<AudioContentView> {
   Widget build(BuildContext context) => Container(
     width: 200,
     color: widget.color,
-    padding: widget.padding,
+    padding: const EdgeInsets.fromLTRB(16, 12, 16, 12),
     child: GestureDetector(
       onTap: () {
         setState(() => _togglePlay());

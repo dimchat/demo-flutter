@@ -1,80 +1,100 @@
-import 'dart:io';
-import 'dart:typed_data';
-
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
 import 'package:dim_client/dim_client.dart';
 import 'package:dim_client/dim_client.dart' as lnc;
 
 import '../client/constants.dart';
-import '../client/http/ftp.dart';
+import '../client/http/image.dart';
 import '../client/shared.dart';
+import '../models/contact.dart';
+import 'audio.dart';
+import 'preview.dart';
 
-/// ImageView
-class ImageContentView extends StatefulWidget {
-  const ImageContentView(this.content, {this.color, this.padding, this.onTap, super.key});
+abstract class ContentViewUtils {
 
-  final ImageContent content;
-  final Color? color;
-  final EdgeInsetsGeometry? padding;
+  static User? currentUser;
 
-  final VoidCallback? onTap;
+  static Color getColor(ID sender) =>
+      sender == currentUser?.identifier ? Colors.lightGreen : Colors.white;
 
-  @override
-  State<StatefulWidget> createState() => _ImageContentState();
-
-}
-
-class _ImageContentState extends State<ImageContentView> {
-
-  String? _path;
-
-  void _reload() {
-    FileTransfer ftp = FileTransfer();
-    ftp.getFilePath(widget.content).then((path) {
-      if (path == null) {
-        Log.error('failed to get image path');
-        return;
+  /// return null if it's not a command
+  ///        empty string ('') for ignored command
+  static String? getCommandText(Content content, ID sender, ContactInfo chat) {
+    String? text;
+    if (content is Command) {
+      text = content.cmd;
+    } else {
+      text = content['text'];
+      if (text == null) {
+      } else if (text.startsWith('Document not accept')) {
+        // take it as a receipt command
+      } else if (text.startsWith('Document received')) {
+        // // hide it
+        // Log.warning('hide command from: $sender, $text');
+        // text = '';
+      } else {
+        // normal content with 'text'
+        text = null;
       }
-      if (mounted) {
-        setState(() {
-          _path = path;
-        });
-      }
-    });
+    }
+    if (text != null && sender != chat.identifier) {
+      // it's a command but not from my friend,
+      // maybe it's sent by myself, or a member in group chat,
+      // just ignore it to reduce noises.
+      Log.warning('hide command from: $sender, $text');
+      text = '';
+    }
+    return text;
   }
 
-  @override
-  void initState() {
-    super.initState();
-    _reload();
-  }
+  static Widget getCommandLabel(String text) => ClipRRect(
+    borderRadius: const BorderRadius.all(Radius.circular(4)),
+    child: Container(
+      padding: const EdgeInsets.fromLTRB(8, 4, 8, 4),
+      color: CupertinoColors.lightBackgroundGray,
+      child: Text(text,
+        style: const TextStyle(
+          fontSize: 10, color: CupertinoColors.systemGrey,
+        ),
+      ),
+    ),
+  );
 
-  @override
-  Widget build(BuildContext context) {
-    String? path = _path;
-    if (path != null) {
-      return GestureDetector(
-        onTap: widget.onTap,
-        child: Image.file(File(path)),
-      );
-    }
-    Uint8List? bytes = widget.content.thumbnail;
-    if (bytes != null) {
-      return Image.memory(bytes);
-    }
-    return Container(
-      color: widget.color,
-      padding: widget.padding,
-      child: const Text('Image error'),
-    );
-  }
+  static Widget getNameLabel(ID sender) => Container(
+    margin: const EdgeInsets.only(left: 2, right: 2),
+    constraints: const BoxConstraints(maxWidth: 256),
+    child: _NameView(sender,
+      style: const TextStyle(color: Colors.grey,
+        fontSize: 12,
+        overflow: TextOverflow.ellipsis,
+      ),
+    ),
+  );
+
+  static Widget getTextContentView(Content content, ID sender) => Container(
+    color: getColor(sender),
+    padding: const EdgeInsets.fromLTRB(12, 8, 12, 8),
+    child: SelectableText('${content["text"]}'),
+  );
+
+  static Widget getAudioContentView(AudioContent content, ID sender) =>
+      AudioContentView(content, color: getColor(sender));
+
+  // TODO:
+  static Widget getVideoContentView(VideoContent content, ID sender) =>
+      Text('Movie[${content.filename}]: ${content.url}');
+
+  static Widget getImageContentView(BuildContext ctx,
+      ImageContent content, ID sender, List<InstantMessage> messages) =>
+      ImageViewFactory().fromContent(content,
+          onTap: () => previewImageContent(ctx, content, messages));
 
 }
 
 /// NameView
-class NameView extends StatefulWidget {
-  const NameView(this.identifier, {required this.style, super.key});
+class _NameView extends StatefulWidget {
+  const _NameView(this.identifier, {required this.style});
 
   final ID identifier;
   final TextStyle? style;
@@ -84,7 +104,7 @@ class NameView extends StatefulWidget {
 
 }
 
-class _NameState extends State<NameView> implements lnc.Observer {
+class _NameState extends State<_NameView> implements lnc.Observer {
   _NameState() {
 
     var nc = lnc.NotificationCenter();

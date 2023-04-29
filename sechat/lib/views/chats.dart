@@ -141,12 +141,12 @@ class _ChatTableCell extends StatefulWidget {
   final Conversation info;
 
   @override
-  State<StatefulWidget> createState() => _ChatTableState();
+  State<StatefulWidget> createState() => _ChatTableCellState();
 
 }
 
-class _ChatTableState extends State<_ChatTableCell> implements lnc.Observer {
-  _ChatTableState() {
+class _ChatTableCellState extends State<_ChatTableCell> implements lnc.Observer {
+  _ChatTableCellState() {
 
     var nc = lnc.NotificationCenter();
     nc.addObserver(this, NotificationNames.kDocumentUpdated);

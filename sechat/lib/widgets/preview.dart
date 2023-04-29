@@ -14,7 +14,7 @@ void previewImageContent(BuildContext ctx, ImageContent content, List<InstantMes
     } else {
       showCupertinoDialog(
         context: ctx,
-        builder: (context) => _ImagePreview(messages, _PreviewInfo([path], 0)),
+        builder: (context) => _ImagePreview(messages, content, _PreviewInfo([path], 0)),
       );
     }
   }).onError((error, stackTrace) {
@@ -30,9 +30,10 @@ class _PreviewInfo {
 }
 
 class _ImagePreview extends StatefulWidget {
-  const _ImagePreview(this.messages, this.info);
+  const _ImagePreview(this.messages, this.content, this.info);
 
   final List<InstantMessage> messages;
+  final ImageContent content;
   final _PreviewInfo info;
 
   @override
@@ -57,9 +58,17 @@ class _ImagePreviewState extends State<_ImagePreview> {
 
   Future<void> _reload() async {
     String path = info.images[info.index];
-    List<String> images = await _allImages(widget.messages);
-    int index = images.indexOf(path);
+    var pair = await _fetchImages(widget.messages, widget.content);
+    List<String> images = pair.first;
+    int index = pair.second;
     if (index < 0) {
+      assert(false, 'preview index error: ${images.length}');
+      index = images.indexOf(path);
+      if (index < 0) {
+        index = images.length - 1;
+      }
+    } else if (index >= images.length) {
+      assert(false, 'preview index error: $index, ${images.length}');
       index = images.length - 1;
     }
     if (mounted) {
@@ -87,13 +96,13 @@ class _ImagePreviewState extends State<_ImagePreview> {
     scrollPhysics: const BouncingScrollPhysics(),
     builder: (context, index) => PhotoViewGalleryPageOptions(
       imageProvider: FileImage(File(info.images[index])),
-      minScale: 0.5,
-      onScaleEnd: (context, details, controllerValue) {
-        double? scale = controllerValue.scale;
-        if (scale != null && scale < 0.2) {
-          Navigator.pop(context);
-        }
-      },
+      // minScale: 0.5,
+      // onScaleEnd: (context, details, controllerValue) {
+      //   double? scale = controllerValue.scale;
+      //   if (scale != null && scale < 0.2) {
+      //     Navigator.pop(context);
+      //   }
+      // },
       onTapUp: (context, details, controllerValue) {
         Offset pos = details.localPosition;
         Offset? old = _position;
@@ -115,20 +124,25 @@ class _ImagePreviewState extends State<_ImagePreview> {
 
 }
 
-Future<List<String>> _allImages(List<InstantMessage> messages) async {
+Future<Pair<List<String>, int>> _fetchImages(List<InstantMessage> messages, ImageContent target) async {
   FileTransfer ftp = FileTransfer();
   int pos = messages.length;
   Content content;
   String? path;
   List<String> images = [];
+  int index = -1;
   while (--pos >= 0) {
     content = messages[pos].content;
     if (content is ImageContent) {
       path = await ftp.getFilePath(content);
       if (path != null) {
+        if (content == target) {
+          assert(index == -1, 'duplicated message?');
+          index = images.length;
+        }
         images.add(path);
       }
     }
   }
-  return images;
+  return Pair(images, index);
 }

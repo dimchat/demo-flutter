@@ -1,5 +1,3 @@
-import 'dart:typed_data';
-
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_section_list/flutter_section_list.dart';
@@ -8,16 +6,13 @@ import 'package:dim_client/dim_client.dart';
 import 'package:dim_client/dim_client.dart' as lnc;
 
 import '../client/constants.dart';
-import '../client/filesys/external.dart';
 import '../client/shared.dart';
 import '../models/contact.dart';
 import '../models/conversation.dart';
 import '../widgets/alert.dart';
 import '../widgets/facade.dart';
 import '../widgets/message.dart';
-import '../widgets/picker.dart';
-import '../widgets/audio.dart';
-import '../widgets/preview.dart';
+import 'chat_input.dart';
 import 'profile.dart';
 import 'styles.dart';
 
@@ -93,11 +88,9 @@ class _ChatBoxState extends State<ChatBox> implements lnc.Observer {
 
   late final _HistoryDataSource _dataSource;
 
-  User? _currentUser;
-
   Future<void> _reload() async {
     GlobalVariable shared = GlobalVariable();
-    _currentUser = await shared.facebook.currentUser;
+    ContentViewUtils.currentUser = await shared.facebook.currentUser;
     var pair = await shared.database.getInstantMessages(widget.info.identifier,
         limit: ChatBox.maxCountOfMessages);
     Log.warning('message updated: ${pair.first.length}');
@@ -138,14 +131,14 @@ class _ChatBoxState extends State<ChatBox> implements lnc.Observer {
         flex: 1,
         child: SectionListView.builder(
           reverse: true,
-          adapter: _HistoryAdapter(_currentUser, widget.info,
+          adapter: _HistoryAdapter(widget.info,
               dataSource: _dataSource,
           ),
         ),
       ),
       Container(
         color: CupertinoColors.systemBackground,
-        child: _InputTray(widget.info),
+        child: ChatInputTray(widget.info),
       ),
     ],
   );
@@ -153,10 +146,9 @@ class _ChatBoxState extends State<ChatBox> implements lnc.Observer {
 }
 
 class _HistoryAdapter with SectionAdapterMixin {
-  _HistoryAdapter(User? currentUser, ContactInfo conversation, {required _HistoryDataSource dataSource})
-      : _currentUser = currentUser, _conversation = conversation, _dataSource = dataSource;
+  _HistoryAdapter(ContactInfo conversation, {required _HistoryDataSource dataSource})
+      : _conversation = conversation, _dataSource = dataSource;
 
-  final User? _currentUser;
   final ContactInfo _conversation;
   final _HistoryDataSource _dataSource;
 
@@ -171,20 +163,28 @@ class _HistoryAdapter with SectionAdapterMixin {
     ID sender = iMsg.sender;
     Content content = iMsg.content;
     Widget? timeLabel = _getTimeLabel(iMsg, indexPath);
-    Widget? cmdLabel = _getCommandLabel(content, sender);
-    Widget? nameLabel;
-    bool isMe = sender == _currentUser?.identifier;
-    bool isGroupChat = _conversation.identifier.isGroup;
-    if (!isMe && (isGroupChat || sender != _conversation.identifier)) {
-      nameLabel = _getNameLabel(sender);
-    }
-    Widget bodyView = _showContent(context, content, sender,
-      color: isMe ? Colors.lightGreen : Colors.white,
-      padding: const EdgeInsets.fromLTRB(16, 12, 16, 12),
-    );
-    int mainFlex = 3;
-    if (content is FileContent) {
-      mainFlex = 1;
+    String? commandText = _getCommandText(content, sender, indexPath);
+    Widget? commandLabel;
+    Widget? contentView;
+    if (commandText == null) {
+      Widget? nameLabel = _getNameLabel(sender);
+      int mainFlex = 3;
+      // show content
+      if (content is FileContent) {
+        mainFlex = 1;
+      }
+      contentView = _getContentView(context, content, sender);
+      contentView = _getContentFrame(context, sender, mainFlex,
+        image: Facade.fromID(sender),
+        name: nameLabel,
+        body: contentView,
+      );
+    } else if (commandText.isEmpty) {
+      // hidden command
+      return Container();
+    } else {
+      // show command
+      commandLabel = _getCommandLabel(commandText);
     }
     return Container(
       margin: const EdgeInsets.only(left: 8, top: 4, right: 8, bottom: 4),
@@ -193,14 +193,10 @@ class _HistoryAdapter with SectionAdapterMixin {
         children: [
           if (timeLabel != null)
             timeLabel,
-          if (cmdLabel != null)
-            cmdLabel,
-          if (cmdLabel == null)
-            _getContentFrame(context, sender, isMe, mainFlex,
-              image: Facade.fromID(sender),
-              name: nameLabel,
-              body: bodyView,
-            ),
+          if (commandLabel != null)
+            commandLabel,
+          if (contentView != null)
+            contentView,
         ],
       ),
     );
@@ -209,6 +205,7 @@ class _HistoryAdapter with SectionAdapterMixin {
   Widget? _getTimeLabel(InstantMessage iMsg, IndexPath indexPath) {
     DateTime? time = iMsg.time;
     if (time == null) {
+      assert(false, 'message time not found: ${iMsg.dictionary}');
       return null;
     }
     int total = _dataSource.getItemCount();
@@ -217,6 +214,8 @@ class _HistoryAdapter with SectionAdapterMixin {
       if (prev != null) {
         int delta = time.millisecondsSinceEpoch - prev.millisecondsSinceEpoch;
         if (-120000 < delta && delta < 120000) {
+          // it is too close to the previous message,
+          // hide this time label to reduce noises.
           return null;
         }
       }
@@ -226,79 +225,73 @@ class _HistoryAdapter with SectionAdapterMixin {
     );
   }
 
-  Widget? _getCommandLabel(Content content, ID sender) {
-    // TODO: show command message
-    String? text;
-    if (content is Command) {
-      text = content.cmd;
-    } else {
-      text = content['text'];
-      if (text == null) {
-      } else if (text.startsWith('Document not accept')) {
-      } else if (text.startsWith('Document received')) {
-      } else {
-        text = null;
-      }
-    }
-    if (text == null) {
+  Widget? _getNameLabel(ID sender) {
+    if (sender == ContentViewUtils.currentUser?.identifier) {
+      // no need to show my name in chat box
+      return null;
+    } else if (sender == _conversation.identifier) {
+      // no need to show friend's name if your are in a personal chat box
       return null;
     }
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.center,
-      children: [
-        Expanded(flex: 1, child: Container()),
-        Expanded(flex: 2,
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.center,
-            children: [
-              ClipRRect(
-                borderRadius: const BorderRadius.all(Radius.circular(4)),
-                child: Container(
-                  padding: const EdgeInsets.fromLTRB(8, 4, 8, 4),
-                  color: CupertinoColors.lightBackgroundGray,
-                  child: Text(text,
-                    style: const TextStyle(
-                      fontSize: 10, color: CupertinoColors.systemGrey,
-                    ),
-                  ),
-                ),
-              ),
-            ],
-          ),
-        ),
-        Expanded(flex: 1, child: Container()),
-      ],
-    );
+    return ContentViewUtils.getNameLabel(sender);
   }
 
-  Widget _getNameLabel(ID sender) => Container(
-    margin: const EdgeInsets.only(left: 2),
-    constraints: const BoxConstraints(maxWidth: 240),
-    child: NameView(sender,
-      style: const TextStyle(color: Colors.grey,
-        fontSize: 12,
-        overflow: TextOverflow.ellipsis,
+  String? _getCommandText(Content content, ID sender, IndexPath? indexPath) {
+    String? text = ContentViewUtils.getCommandText(content, sender, _conversation);
+    if (text != null && text.isNotEmpty && indexPath != null) {
+      // if it's a command, check duplicate with next one
+      if (indexPath.item > 0) {
+        InstantMessage iMsg = _dataSource.getItem(indexPath.item - 1);
+        String? next = _getCommandText(iMsg.content, iMsg.sender, null);
+        if (next == text) {
+          // duplicated, just keep the last one
+          text = '';
+        }
+      }
+    }
+    return text;
+  }
+  Widget? _getCommandLabel(String text) => Row(
+    mainAxisAlignment: MainAxisAlignment.center,
+    children: [
+      Expanded(flex: 1, child: Container()),
+      Expanded(flex: 2,
+        child: ContentViewUtils.getCommandLabel(text),
       ),
-    ),
+      Expanded(flex: 1, child: Container()),
+    ],
   );
 
-  Widget _getContentFrame(BuildContext context, ID sender, bool isMe, int mainFlex,
+  Widget _getContentView(BuildContext ctx, Content content, ID sender) {
+    if (content is ImageContent) {
+      return ContentViewUtils.getImageContentView(ctx, content, sender, _dataSource.allMessages);
+    } else if (content is AudioContent) {
+      return ContentViewUtils.getAudioContentView(content, sender);
+    } else if (content is VideoContent) {
+      return ContentViewUtils.getVideoContentView(content, sender);
+    } else {
+      return ContentViewUtils.getTextContentView(content, sender);
+    }
+  }
+
+  Widget _getContentFrame(BuildContext context, ID sender, int mainFlex,
       {required Widget image, Widget? name, required Widget body}) {
     const radius = Radius.circular(12);
     const borderRadius = BorderRadius.all(radius);
+    bool isMine = sender == ContentViewUtils.currentUser?.identifier;
     return Row(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        if (isMe)
+        if (isMine)
           Expanded(flex: 1, child: Container()),
-        if (!isMe)
+        if (!isMine)
           IconButton(
               padding: const EdgeInsets.fromLTRB(8, 4, 8, 4),
               onPressed: () => _openProfile(context, sender, _conversation),
               icon: image
           ),
         Expanded(flex: mainFlex, child: Column(
-          crossAxisAlignment: isMe ? CrossAxisAlignment.end : CrossAxisAlignment.start,
+          crossAxisAlignment: isMine ? CrossAxisAlignment.end : CrossAxisAlignment.start,
           children: [
             if (name != null)
               name,
@@ -306,7 +299,7 @@ class _HistoryAdapter with SectionAdapterMixin {
               margin: const EdgeInsets.fromLTRB(2, 8, 2, 8),
               // constraints: const BoxConstraints(maxWidth: 240),
               child: ClipRRect(
-                borderRadius: isMe
+                borderRadius: isMine
                     ? borderRadius.subtract(
                     const BorderRadius.only(topRight: radius))
                     : borderRadius.subtract(
@@ -316,33 +309,15 @@ class _HistoryAdapter with SectionAdapterMixin {
             ),
           ],
         )),
-        if (isMe)
+        if (isMine)
           Container(
             padding: const EdgeInsets.fromLTRB(8, 4, 8, 4),
             child: image,
           ),
-        if (!isMe)
+        if (!isMine)
           Expanded(flex: 1, child: Container()),
       ],
     );
-  }
-
-  Widget _showContent(BuildContext ctx, Content content, ID sender,
-      {Color? color, EdgeInsetsGeometry? padding}) {
-    if (content is ImageContent) {
-      return ImageContentView(content, color: color, padding: padding,
-          onTap: () => previewImageContent(ctx, content, _dataSource.allMessages));
-    } else if (content is AudioContent) {
-      return AudioContentView(content, color: color, padding: padding);
-    } else if (content is VideoContent) {
-      return Text('Movie[${content.filename}]: ${content.url}');
-    } else {
-      return Container(
-        color: color,
-        padding: padding,
-        child: SelectableText('${content["text"]}'),
-      );
-    }
   }
 
 }
@@ -364,114 +339,6 @@ class _HistoryDataSource {
 }
 
 //--------
-
-class _InputTray extends StatefulWidget {
-  const _InputTray(this.info);
-
-  final ContactInfo info;
-
-  @override
-  State<StatefulWidget> createState() => _InputState();
-
-}
-
-class _InputState extends State<_InputTray> {
-
-  final TextEditingController _controller = TextEditingController();
-  final FocusNode _focusNode = FocusNode();
-
-  bool _isVoice = false;
-
-  @override
-  void dispose() {
-    _focusNode.dispose();
-    _controller.dispose();
-    super.dispose();
-  }
-
-  @override
-  Widget build(BuildContext context) => Row(
-    mainAxisSize: MainAxisSize.min,
-    children: [
-      if (!_isVoice)
-      CupertinoButton(
-        child: const Icon(CupertinoIcons.mic_circle),
-        onPressed: () => setState(() {
-          _isVoice = true;
-        }),
-      ),
-      if (_isVoice)
-      CupertinoButton(
-        child: const Icon(CupertinoIcons.keyboard),
-        onPressed: () => setState(() {
-          _isVoice = false;
-        }),
-      ),
-      if (!_isVoice)
-      Expanded(
-        flex: 1,
-        child: CupertinoTextField(
-          minLines: 1,
-          maxLines: 8,
-          controller: _controller,
-          placeholder: 'Input text message',
-          keyboardType: TextInputType.multiline,
-          textInputAction: TextInputAction.newline,
-          focusNode: _focusNode,
-          onTapOutside: (event) => _focusNode.unfocus(),
-          onSubmitted: (value) => _sendText(context, _controller, widget.info),
-          onChanged: (value) => setState(() {}),
-        ),
-      ),
-      if (_isVoice)
-      Expanded(
-        flex: 1,
-        child: RecordButton(widget.info.identifier,
-            onComplected: (path, duration) => _sendVoice(context, path, duration, widget.info),
-        ),
-      ),
-      if (_controller.text.isEmpty || _isVoice)
-      CupertinoButton(
-        child: const Icon(Icons.add_circle_outline),
-        onPressed: () => _sendImage(context, widget.info),
-      ),
-      if (_controller.text.isNotEmpty && !_isVoice)
-      CupertinoButton(
-        child: const Icon(Icons.send),
-        onPressed: () => _sendText(context, _controller, widget.info),
-      ),
-    ],
-  );
-
-}
-
-//--------
-
-void _sendText(BuildContext context, TextEditingController controller, ContactInfo chat) {
-  String text = controller.text;
-  if (text.isNotEmpty) {
-    GlobalVariable shared = GlobalVariable();
-    shared.emitter.sendText(text, chat.identifier);
-  }
-  controller.text = '';
-}
-
-void _sendImage(BuildContext context, ContactInfo chat) {
-  openImagePicker(context, onRead: (path, jpeg) async {
-    Uint8List thumbnail = await compressThumbnail(jpeg);
-    GlobalVariable shared = GlobalVariable();
-    shared.emitter.sendImage(jpeg, thumbnail, chat.identifier);
-  });
-}
-
-void _sendVoice(BuildContext context, String path, double duration, ContactInfo chat) {
-  ExternalStorage.loadBinary(path).then((data) {
-    GlobalVariable shared = GlobalVariable();
-    shared.emitter.sendVoice(data, duration, chat.identifier);
-  }).onError((error, stackTrace) {
-    Alert.show(context, 'Error', 'Failed to load voice file: $path');
-  });
-}
 
 void _openDetail(BuildContext context, ContactInfo info) {
   ID identifier = info.identifier;

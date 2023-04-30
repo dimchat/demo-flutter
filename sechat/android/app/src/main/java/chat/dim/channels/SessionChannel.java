@@ -32,10 +32,14 @@ public class SessionChannel extends MethodChannel {
         setMethodCallHandler(new SessionChannelHandler());
     }
 
+    static private int getStateIndex(SessionState state) {
+        return state == null ? 0 : state.index;
+    }
+
     public void onStateChanged(SessionState previous, SessionState current, long now) {
         Map<String, Object> params = new HashMap<>();
-        params.put("previous", previous == null ? -1 : previous.index);
-        params.put("current", current == null ? -1 : current.index);
+        params.put("previous", getStateIndex(previous));
+        params.put("current", getStateIndex(current));
         params.put("now", now);
         new Handler(Looper.getMainLooper()).post(() ->
                 invokeMethod(ChannelMethods.ON_STATE_CHANGED, params));
@@ -158,7 +162,7 @@ public class SessionChannel extends MethodChannel {
             SessionController controller = SessionController.getInstance();
             SessionState state = controller.getState();
             Log.info("session state: " + state);
-            return state == null ? -1 : state.index;
+            return getStateIndex(state);
         }
 
         private void connect(String host, Integer port) {

@@ -64,8 +64,9 @@ class SettingsPage extends StatelessWidget {
                   topMargin: 0,
                   additionalDividerMargin: 32,
                   children: [
-                    _term(context),
+                    _whitePaper(context),
                     _source(context),
+                    _term(context),
                     _about(context),
                   ],
                 ),
@@ -83,7 +84,7 @@ class SettingsPage extends StatelessWidget {
     padding: const EdgeInsets.all(16),
     leading: const Icon(CupertinoIcons.settings),
     title: const Text('Network'),
-    additionalInfo: const Text('stations'),
+    additionalInfo: const Text('Relay Stations'),
     trailing: const CupertinoListTileChevron(),
     onTap: () => showCupertinoDialog(
       context: context,
@@ -91,10 +92,23 @@ class SettingsPage extends StatelessWidget {
     ),
   );
 
+  Widget _whitePaper(BuildContext context) => CupertinoListTile(
+    padding: const EdgeInsets.all(16),
+    leading: const Icon(CupertinoIcons.doc),
+    title: const Text('White Paper'),
+    additionalInfo: const Text('zh-CN'),
+    trailing: const CupertinoListTileChevron(),
+    onTap: () => Config().termsURL.then((url) => Browser.open(context,
+      url: 'https://github.com/moky/DIMP/blob/master/zh-CN/TechnicalWhitePaper.md',
+      title: 'Technical White Paper (zh-CN)',
+    )),
+  );
+
   Widget _source(BuildContext context) => CupertinoListTile(
     padding: const EdgeInsets.all(16),
     leading: const Icon(Icons.code),
     title: const Text('Source'),
+    additionalInfo: const Text('github.com/dimchat'),
     trailing: const CupertinoListTileChevron(),
     onTap: () => Config().termsURL.then((url) => Browser.open(context,
       url: 'https://github.com/dimchat/demo-flutter',
@@ -104,8 +118,9 @@ class SettingsPage extends StatelessWidget {
 
   Widget _term(BuildContext context) => CupertinoListTile(
     padding: const EdgeInsets.all(16),
-    leading: const Icon(CupertinoIcons.doc_text),
+    leading: const Icon(CupertinoIcons.doc_checkmark),
     title: const Text('Terms'),
+    additionalInfo: const Text('Privacy Policy'),
     trailing: const CupertinoListTileChevron(),
     onTap: () => Config().termsURL.then((url) => Browser.open(context,
       url: url,
@@ -117,10 +132,11 @@ class SettingsPage extends StatelessWidget {
     padding: const EdgeInsets.all(16),
     leading: const Icon(CupertinoIcons.info),
     title: const Text('About'),
+    additionalInfo: const Text('DIM'),
     trailing: const CupertinoListTileChevron(),
     onTap: () => Config().aboutURL.then((url) => Browser.open(context,
       url: url,
-      title: 'About',
+      title: 'Decentralized Instant Messaging',
     )),
   );
 }

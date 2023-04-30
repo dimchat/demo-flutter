@@ -12,6 +12,7 @@ import '../models/conversation.dart';
 import '../widgets/alert.dart';
 import '../widgets/facade.dart';
 import '../widgets/message.dart';
+import '../widgets/title.dart';
 import 'chat_input.dart';
 import 'profile.dart';
 import 'styles.dart';
@@ -113,7 +114,7 @@ class _ChatBoxState extends State<ChatBox> implements lnc.Observer {
     appBar: CupertinoNavigationBar(
       backgroundColor: Styles.navigationBarBackground,
       border: Styles.navigationBarBorder,
-      middle: Text(widget.info.name),
+      middle: StatedTitleView(() => widget.info.name),
       trailing: IconButton(
         iconSize: Styles.navigationBarIconSize,
         color: Styles.navigationBarIconColor,
@@ -137,7 +138,7 @@ class _ChatBoxState extends State<ChatBox> implements lnc.Observer {
         ),
       ),
       Container(
-        color: CupertinoColors.systemBackground,
+        color: Styles.inputTrayBackground,
         child: ChatInputTray(widget.info),
       ),
     ],
@@ -178,6 +179,7 @@ class _HistoryAdapter with SectionAdapterMixin {
         image: Facade.fromID(sender),
         name: nameLabel,
         body: contentView,
+        constraints: content is ImageContent ? const BoxConstraints(maxHeight: 256) : null,
       );
     } else if (commandText.isEmpty) {
       // hidden command
@@ -187,8 +189,7 @@ class _HistoryAdapter with SectionAdapterMixin {
       commandLabel = _getCommandLabel(commandText);
     }
     return Container(
-      margin: const EdgeInsets.only(left: 8, top: 4, right: 8, bottom: 4),
-      // color: Colors.yellowAccent,
+      margin: Styles.messageItemMargin,
       child: Column(
         children: [
           if (timeLabel != null)
@@ -220,9 +221,7 @@ class _HistoryAdapter with SectionAdapterMixin {
         }
       }
     }
-    return Text(Time.getTimeString(time),
-      style: const TextStyle(color: Colors.grey, fontSize: 10),
-    );
+    return Text(Time.getTimeString(time), style: Styles.messageTimeTextStyle);
   }
 
   Widget? _getNameLabel(ID sender) {
@@ -275,7 +274,7 @@ class _HistoryAdapter with SectionAdapterMixin {
   }
 
   Widget _getContentFrame(BuildContext context, ID sender, int mainFlex,
-      {required Widget image, Widget? name, required Widget body}) {
+      {required Widget image, Widget? name, required Widget body, BoxConstraints? constraints}) {
     const radius = Radius.circular(12);
     const borderRadius = BorderRadius.all(radius);
     bool isMine = sender == ContentViewUtils.currentUser?.identifier;
@@ -286,7 +285,7 @@ class _HistoryAdapter with SectionAdapterMixin {
           Expanded(flex: 1, child: Container()),
         if (!isMine)
           IconButton(
-              padding: const EdgeInsets.fromLTRB(8, 4, 8, 4),
+              padding: Styles.messageSenderAvatarPadding,
               onPressed: () => _openProfile(context, sender, _conversation),
               icon: image
           ),
@@ -296,8 +295,8 @@ class _HistoryAdapter with SectionAdapterMixin {
             if (name != null)
               name,
             Container(
-              margin: const EdgeInsets.fromLTRB(2, 8, 2, 8),
-              // constraints: const BoxConstraints(maxWidth: 240),
+              margin: Styles.messageContentMargin,
+              constraints: constraints,
               child: ClipRRect(
                 borderRadius: isMine
                     ? borderRadius.subtract(
@@ -311,7 +310,7 @@ class _HistoryAdapter with SectionAdapterMixin {
         )),
         if (isMine)
           Container(
-            padding: const EdgeInsets.fromLTRB(8, 4, 8, 4),
+            padding: Styles.messageSenderAvatarPadding,
             child: image,
           ),
         if (!isMine)

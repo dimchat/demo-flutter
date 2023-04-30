@@ -1,4 +1,3 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
 import 'package:dim_client/dim_client.dart';
@@ -8,6 +7,7 @@ import '../client/constants.dart';
 import '../client/http/image.dart';
 import '../client/shared.dart';
 import '../models/contact.dart';
+import '../views/styles.dart';
 import 'audio.dart';
 import 'preview.dart';
 
@@ -15,8 +15,10 @@ abstract class ContentViewUtils {
 
   static User? currentUser;
 
-  static Color getColor(ID sender) =>
-      sender == currentUser?.identifier ? Colors.lightGreen : Colors.white;
+  static Color getBackgroundColor(ID sender) =>
+      sender == currentUser?.identifier
+          ? Styles.messageIsMineBackgroundColor
+          : Styles.messageNotMineBackgroundColor;
 
   /// return null if it's not a command
   ///        empty string ('') for ignored command
@@ -51,35 +53,26 @@ abstract class ContentViewUtils {
   static Widget getCommandLabel(String text) => ClipRRect(
     borderRadius: const BorderRadius.all(Radius.circular(4)),
     child: Container(
-      padding: const EdgeInsets.fromLTRB(8, 4, 8, 4),
-      color: CupertinoColors.lightBackgroundGray,
-      child: Text(text,
-        style: const TextStyle(
-          fontSize: 10, color: CupertinoColors.systemGrey,
-        ),
-      ),
+      padding: Styles.commandPadding,
+      color: Styles.commandBackgroundColor,
+      child: Text(text, style: Styles.commandTextStyle),
     ),
   );
 
   static Widget getNameLabel(ID sender) => Container(
-    margin: const EdgeInsets.only(left: 2, right: 2),
+    margin: Styles.messageSenderNameMargin,
     constraints: const BoxConstraints(maxWidth: 256),
-    child: _NameView(sender,
-      style: const TextStyle(color: Colors.grey,
-        fontSize: 12,
-        overflow: TextOverflow.ellipsis,
-      ),
-    ),
+    child: _NameView(sender, style: Styles.messageSenderNameTextStyle),
   );
 
   static Widget getTextContentView(Content content, ID sender) => Container(
-    color: getColor(sender),
-    padding: const EdgeInsets.fromLTRB(12, 8, 12, 8),
+    color: getBackgroundColor(sender),
+    padding: Styles.textMessagePadding,
     child: SelectableText('${content["text"]}'),
   );
 
   static Widget getAudioContentView(AudioContent content, ID sender) =>
-      AudioContentView(content, color: getColor(sender));
+      AudioContentView(content, color: getBackgroundColor(sender));
 
   // TODO:
   static Widget getVideoContentView(VideoContent content, ID sender) =>

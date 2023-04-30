@@ -10,7 +10,7 @@ import '../client/shared.dart';
 import '../models/station.dart';
 import '../network/velocity.dart';
 import '../widgets/alert.dart';
-import '../widgets/tableview.dart';
+import '../widgets/table.dart';
 import 'styles.dart';
 
 class NetworkSettingPage extends StatefulWidget {
@@ -289,7 +289,7 @@ class _StationCellState extends State<_StationCell> implements lnc.Observer {
   }
 
   @override
-  Widget build(BuildContext context) => TableView.cell(
+  Widget build(BuildContext context) => CupertinoTableCell(
     leading: _getChosen(widget.info),
     title: Text(_getName(widget.info)),
     subtitle: Text('${widget.info.host}:${widget.info.port}'),

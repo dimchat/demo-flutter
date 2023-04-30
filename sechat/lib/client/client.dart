@@ -75,7 +75,8 @@ class Client extends Terminal {
     SessionState? current = ctx.currentState;
     var nc = NotificationCenter();
     nc.postNotification(NotificationNames.kServerStateChanged, this, {
-      'state': current?.index,
+      'previous': previous,
+      'current': current,
     });
   }
 

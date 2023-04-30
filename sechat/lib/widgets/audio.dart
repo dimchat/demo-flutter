@@ -5,6 +5,7 @@ import 'package:flutter_sound/flutter_sound.dart';
 
 import '../client/filesys/paths.dart';
 import '../client/http/ftp.dart';
+import '../views/styles.dart';
 import 'permissions.dart';
 
 typedef OnVoiceRecordComplected = void Function(String path, double duration);
@@ -255,7 +256,7 @@ class _AudioContentState extends State<AudioContentView> {
   Widget build(BuildContext context) => Container(
     width: 200,
     color: widget.color,
-    padding: const EdgeInsets.fromLTRB(16, 12, 16, 12),
+    padding: Styles.audioMessagePadding,
     child: GestureDetector(
       onTap: () {
         setState(() => _togglePlay());

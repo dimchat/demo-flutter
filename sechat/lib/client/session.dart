@@ -4,31 +4,6 @@ import 'package:dim_client/dim_client.dart';
 
 import '../channels/manager.dart';
 
-String titleWithState(String title, int state) {
-  String sub;
-  switch (state) {
-    case SessionStateOrder.kDefault:
-      sub = '...';  // waiting to connect
-      break;
-    case SessionStateOrder.kConnecting:
-      sub = 'Connecting';
-      break;
-    case SessionStateOrder.kConnected:
-      sub = 'Connected';
-      break;
-    case SessionStateOrder.kHandshaking:
-      sub = 'Handshaking';
-      break;
-    case SessionStateOrder.kRunning:
-      sub = '';  // normal running
-      break;
-    default:
-      sub = 'Error';
-      break;
-  }
-  return sub.isEmpty ? title : '$title ($sub)';
-}
-
 
 class StateMachine extends SessionStateMachine {
   StateMachine(super.session);
@@ -58,7 +33,8 @@ class SharedSession extends ClientSession {
   @override
   SessionState get state {
     SessionState? current = fsm.currentState;
-    return current ?? SessionState(SessionStateOrder.kError);
+    Log.debug('current session state: $current');
+    return current ?? SessionState(SessionStateOrder.kDefault);
   }
 
   @override

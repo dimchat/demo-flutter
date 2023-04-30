@@ -5,52 +5,6 @@
 import 'package:flutter/cupertino.dart';
 
 abstract class Styles {
-  static const TextStyle productRowItemName = TextStyle(
-    color: Color.fromRGBO(0, 0, 0, 0.8),
-    fontSize: 18,
-    fontStyle: FontStyle.normal,
-    fontWeight: FontWeight.normal,
-  );
-
-  static const TextStyle productRowTotal = TextStyle(
-    color: Color.fromRGBO(0, 0, 0, 0.8),
-    fontSize: 18,
-    fontStyle: FontStyle.normal,
-    fontWeight: FontWeight.bold,
-  );
-
-  static const TextStyle productRowItemPrice = TextStyle(
-    color: Color(0xFF8E8E93),
-    fontSize: 13,
-    fontWeight: FontWeight.w300,
-  );
-
-  static const TextStyle searchText = TextStyle(
-    color: Color.fromRGBO(0, 0, 0, 1),
-    fontSize: 14,
-    fontStyle: FontStyle.normal,
-    fontWeight: FontWeight.normal,
-  );
-
-  static const TextStyle deliveryTimeLabel = TextStyle(
-    color: Color(0xFFC2C2C2),
-    fontWeight: FontWeight.w300,
-  );
-
-  static const TextStyle deliveryTime = TextStyle(
-    color: CupertinoColors.inactiveGray,
-  );
-
-  static const Color productRowDivider = Color(0xFFD9D9D9);
-
-  static const Color scaffoldBackground = Color(0xfff0f0f0);
-
-  static const Color searchBackground = Color(0xffe0e0e0);
-
-  static const Color searchCursorColor = Color.fromRGBO(0, 122, 255, 1);
-
-  static const Color searchIconColor = Color.fromRGBO(128, 128, 128, 1);
-
 
   //
   //  Theme
@@ -76,26 +30,63 @@ abstract class Styles {
   //  Section
   //
   static const Color sectionHeaderBackground = CupertinoColors.secondarySystemBackground;
-  static const EdgeInsets sectionHeaderPadding = EdgeInsets.only(
-      left: 16, top: 4, bottom: 4,
-  );
+  static const EdgeInsets sectionHeaderPadding = EdgeInsets.fromLTRB(16, 4, 16, 4);
   static const TextStyle sectionHeaderTextStyle = TextStyle(
-    color: CupertinoColors.systemGrey,
     fontSize: 12,
+    color: CupertinoColors.systemGrey,
   );
 
   static const Color sectionItemDividerColor = CupertinoColors.secondarySystemBackground;
 
   static const Color sectionItemBackground = CupertinoColors.systemBackground;
-  static const EdgeInsets sectionItemMargin = EdgeInsets.only(
-    bottom: 1,
+  static const EdgeInsets sectionItemPadding = EdgeInsets.fromLTRB(0, 8, 0, 8);
+
+  static const TextStyle sectionItemTitleTextStyle = TextStyle(
+    fontSize: 16,
+    color: CupertinoColors.black,
+    overflow: TextOverflow.ellipsis,
   );
-  static const EdgeInsets sectionItemPadding = EdgeInsets.only(
-    left: 20, top: 4, bottom: 4,
+  static const TextStyle sectionItemSubtitleTextStyle = TextStyle(
+    fontSize: 10,
+    color: CupertinoColors.systemGrey,
+    overflow: TextOverflow.fade,
+  );
+  static const TextStyle sectionItemAdditionalTextStyle = TextStyle(
+    fontSize: 12,
+    color: CupertinoColors.systemGrey,
   );
 
-  static const TextStyle sectionItemTrailingTextStyle = TextStyle(
-    color: CupertinoColors.systemGrey,
+  //
+  //  Chat Box
+  //
+  static const EdgeInsets messageItemMargin = EdgeInsets.fromLTRB(8, 4, 8, 4);
+  static const TextStyle messageTimeTextStyle = TextStyle(
     fontSize: 10,
+    color: CupertinoColors.systemGrey,
   );
+
+  static const EdgeInsets messageSenderAvatarPadding = EdgeInsets.fromLTRB(8, 4, 8, 4);
+
+  static const EdgeInsets messageSenderNameMargin = EdgeInsets.all(2);
+  static const TextStyle messageSenderNameTextStyle = TextStyle(
+    fontSize: 12,
+    color: CupertinoColors.systemGrey,
+    overflow: TextOverflow.ellipsis,
+  );
+
+  static const EdgeInsets messageContentMargin = EdgeInsets.fromLTRB(2, 8, 2, 8);
+  static const Color messageIsMineBackgroundColor = CupertinoColors.systemGreen;
+  static const Color messageNotMineBackgroundColor = CupertinoColors.white;
+
+  static const EdgeInsets textMessagePadding = EdgeInsets.fromLTRB(16, 12, 16, 12);
+  static const EdgeInsets audioMessagePadding = EdgeInsets.fromLTRB(16, 12, 16, 12);
+
+  static const EdgeInsets commandPadding = EdgeInsets.fromLTRB(8, 4, 8, 4);
+  static const Color commandBackgroundColor = CupertinoColors.lightBackgroundGray;
+  static const TextStyle commandTextStyle = TextStyle(
+    fontSize: 10,
+    color: CupertinoColors.systemGrey,
+  );
+  static const Color inputTrayBackground = CupertinoColors.systemBackground;
+
 }

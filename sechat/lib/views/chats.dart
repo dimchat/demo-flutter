@@ -6,11 +6,10 @@ import 'package:dim_client/dim_client.dart';
 import 'package:dim_client/dim_client.dart' as lnc;
 
 import '../client/constants.dart';
-import '../client/session.dart';
-import '../client/shared.dart';
 import '../models/conversation.dart';
 import '../widgets/alert.dart';
-import '../widgets/tableview.dart';
+import '../widgets/table.dart';
+import '../widgets/title.dart';
 import 'chat_box.dart';
 import 'search.dart';
 import 'styles.dart';
@@ -34,7 +33,6 @@ class _ChatListState extends State<ChatHistoryPage> implements lnc.Observer {
     _adapter = _ChatListAdapter(dataSource: _clerk);
 
     var nc = lnc.NotificationCenter();
-    nc.addObserver(this, NotificationNames.kServerStateChanged);
     nc.addObserver(this, NotificationNames.kConversationUpdated);
   }
 
@@ -42,79 +40,51 @@ class _ChatListState extends State<ChatHistoryPage> implements lnc.Observer {
   void dispose() {
     super.dispose();
     var nc = lnc.NotificationCenter();
-    nc.removeObserver(this, NotificationNames.kServerStateChanged);
     nc.removeObserver(this, NotificationNames.kConversationUpdated);
   }
 
   final Amanuensis _clerk;
 
   late final _ChatListAdapter _adapter;
-  late SectionListView _listView;
-
-  int _sessionState = 0;
 
   @override
   Future<void> onReceiveNotification(lnc.Notification notification) async {
     String name = notification.name;
-    Map? info = notification.userInfo;
-    if (name == NotificationNames.kServerStateChanged) {
-      int state = info!['state'];
-      if (mounted) {
-        setState(() {
-          _sessionState = state;
-        });
-      }
-    } else if (name == NotificationNames.kConversationUpdated) {
+    // Map? info = notification.userInfo;
+    if (name == NotificationNames.kConversationUpdated) {
       await _reload();
       Log.warning('conversation updated');
     }
   }
 
   Future<void> _reload() async {
-    GlobalVariable shared = GlobalVariable();
-    SessionState? state = shared.terminal.session?.state;
-    if (state != null) {
-      if (mounted) {
-        setState(() {
-          _sessionState = state.index;
-        });
-      }
+    await _clerk.loadConversations();
+    if (mounted) {
+      setState(() {
+        _adapter.notifyDataChange();
+      });
     }
-    await _clerk.loadConversations().then((value) {
-      if (mounted) {
-        setState(() {
-          _adapter.notifyDataChange();
-        });
-      }
-    });
   }
 
   @override
   void initState() {
     super.initState();
-    // 1. try connect to a neighbor station
-    GlobalVariable shared = GlobalVariable();
-    shared.terminal.reconnect();
-    // 2. load chat history
     _reload();
   }
 
   @override
-  Widget build(BuildContext context) {
-    _listView = SectionListView.builder(
+  Widget build(BuildContext context) => Scaffold(
+    backgroundColor: Styles.backgroundColor,
+    appBar: CupertinoNavigationBar(
+      backgroundColor: Styles.navigationBarBackground,
+      border: Styles.navigationBarBorder,
+      middle: StatedTitleView(() => 'Secure Chat'),
+      trailing: SearchPage.searchButton(context),
+    ),
+    body: SectionListView.builder(
       adapter: _adapter,
-    );
-    return Scaffold(
-      backgroundColor: Styles.backgroundColor,
-      appBar: CupertinoNavigationBar(
-        backgroundColor: Styles.navigationBarBackground,
-        border: Styles.navigationBarBorder,
-        middle: Text(titleWithState('Secure Chat', _sessionState)),
-        trailing: SearchPage.searchButton(context),
-      ),
-      body: _listView,
-    );
-  }
+    ),
+  );
 }
 
 class _ChatListAdapter with SectionAdapterMixin {
@@ -194,22 +164,23 @@ class _ChatTableCellState extends State<_ChatTableCell> implements lnc.Observer 
   }
 
   @override
-  Widget build(BuildContext context) => TableView.cell(
-      leading: _leading(widget.info),
-      title: Text(widget.info.name),
-      subtitle: _lastMessage(widget.info.lastMessage),
-      trailing: _timeLabel(widget.info.lastTime),
-      onTap: () {
-        Log.warning('tap: ${widget.info}');
-        ChatBox.open(context, widget.info);
+  Widget build(BuildContext context) => CupertinoTableCell(
+    leading: _leading(widget.info),
+    title: Text(widget.info.name),
+    subtitle: _lastMessage(widget.info.lastMessage),
+    additionalInfo: _timeLabel(widget.info.lastTime),
+    // trailing: const CupertinoListTileChevron(),
+    onTap: () {
+      Log.warning('tap: ${widget.info}');
+      ChatBox.open(context, widget.info);
       },
-      onLongPress: () {
-        Log.warning('long press: ${widget.info}');
-        Alert.actionSheet(context,
-          'Confirm', 'Are you sure to remove this conversation?',
-          'Remove ${widget.info.name}',
-              () => _removeConversation(context, widget.info.identifier),
-        );
+    onLongPress: () {
+      Log.warning('long press: ${widget.info}');
+      Alert.actionSheet(context,
+        'Confirm', 'Are you sure to remove this conversation?',
+        'Remove ${widget.info.name}',
+            () => _removeConversation(context, widget.info.identifier),
+      );
       },
   );
 
@@ -252,6 +223,6 @@ class _ChatTableCellState extends State<_ChatTableCell> implements lnc.Observer 
     if (time == null) {
       return null;
     }
-    return Text(Time.getTimeString(time), style: Styles.sectionItemTrailingTextStyle);
+    return Text(Time.getTimeString(time));
   }
 }

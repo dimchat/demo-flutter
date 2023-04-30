@@ -6,10 +6,10 @@ import 'package:dim_client/dim_client.dart';
 import 'package:dim_client/dim_client.dart' as lnc;
 
 import '../client/constants.dart';
-import '../client/session.dart';
 import '../client/shared.dart';
 import '../models/contact.dart';
 import '../widgets/alert.dart';
+import '../widgets/title.dart';
 import 'profile.dart';
 import 'search.dart';
 import 'styles.dart';
@@ -32,7 +32,6 @@ class _ContactListState extends State<ContactListPage> implements lnc.Observer {
     _adapter = _ContactListAdapter(dataSource: _dataSource);
 
     var nc = lnc.NotificationCenter();
-    nc.addObserver(this, NotificationNames.kServerStateChanged);
     nc.addObserver(this, NotificationNames.kContactsUpdated);
     nc.addObserver(this, NotificationNames.kDocumentUpdated);
   }
@@ -43,26 +42,16 @@ class _ContactListState extends State<ContactListPage> implements lnc.Observer {
     var nc = lnc.NotificationCenter();
     nc.removeObserver(this, NotificationNames.kDocumentUpdated);
     nc.removeObserver(this, NotificationNames.kContactsUpdated);
-    nc.removeObserver(this, NotificationNames.kServerStateChanged);
   }
 
   late final _ContactDataSource _dataSource;
   late final _ContactListAdapter _adapter;
 
-  int _sessionState = 0;
-
   @override
   Future<void> onReceiveNotification(lnc.Notification notification) async {
     String name = notification.name;
-    Map? info = notification.userInfo;
-    if (name == NotificationNames.kServerStateChanged) {
-      int state = info!['state'];
-      if (mounted) {
-        setState(() {
-          _sessionState = state;
-        });
-      }
-    } else if (name == NotificationNames.kContactsUpdated) {
+    // Map? info = notification.userInfo;
+    if (name == NotificationNames.kContactsUpdated) {
       await _reload();
     } else if (name == NotificationNames.kDocumentUpdated) {
       await _reload();
@@ -71,24 +60,15 @@ class _ContactListState extends State<ContactListPage> implements lnc.Observer {
 
   Future<void> _reload() async {
     GlobalVariable shared = GlobalVariable();
-    SessionState? state = shared.terminal.session?.state;
-    if (state != null) {
-      if (mounted) {
-        setState(() {
-          _sessionState = state.index;
-        });
-      }
-    }
     User? user = await shared.facebook.currentUser;
     if (user == null) {
       Log.error('current user not set');
       return;
     }
     List<ID> contacts = await shared.database.getContacts(user: user.identifier);
-    List<ContactInfo> array = await ContactInfo.fromList(contacts);
+    _dataSource.refresh(await ContactInfo.fromList(contacts));
     if (mounted) {
       setState(() {
-        _dataSource.refresh(array);
         _adapter.notifyDataChange();
       });
     }
@@ -106,7 +86,7 @@ class _ContactListState extends State<ContactListPage> implements lnc.Observer {
     appBar: CupertinoNavigationBar(
       backgroundColor: Styles.navigationBarBackground,
       border: Styles.navigationBarBorder,
-      middle: Text(titleWithState('Contacts', _sessionState)),
+      middle: StatedTitleView(() => 'Contacts'),
       trailing: SearchPage.searchButton(context),
     ),
     body: SectionListView.builder(

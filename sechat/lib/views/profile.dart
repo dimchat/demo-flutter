@@ -9,7 +9,7 @@ import '../client/shared.dart';
 import '../models/contact.dart';
 import '../models/conversation.dart';
 import '../widgets/alert.dart';
-import '../widgets/tableview.dart';
+import '../widgets/table.dart';
 import 'chat_box.dart';
 
 class ProfilePage extends StatefulWidget {
@@ -307,7 +307,7 @@ class _ProfileTableState extends State<_ProfileTableCell> implements lnc.Observe
   }
 
   @override
-  Widget build(BuildContext context) => TableView.cell(
+  Widget build(BuildContext context) => CupertinoTableCell(
     leading: widget.info.getImage(),
     title: Text(widget.info.name),
     subtitle: Text(widget.info.identifier.string),

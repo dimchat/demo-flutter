@@ -8,10 +8,10 @@ import 'package:dim_client/dim_client.dart' as lnc;
 import '../client/constants.dart';
 import '../client/messenger.dart';
 import '../client/protocol/search.dart';
-import '../client/session.dart';
 import '../client/shared.dart';
 import '../models/contact.dart';
 import '../widgets/alert.dart';
+import '../widgets/title.dart';
 import 'profile.dart';
 import 'styles.dart';
 
@@ -41,13 +41,11 @@ class _SearchState extends State<SearchPage> implements lnc.Observer {
     _adapter = _SearchResultAdapter(this, dataSource: _dataSource);
 
     var nc = lnc.NotificationCenter();
-    nc.addObserver(this, NotificationNames.kServerStateChanged);
     nc.addObserver(this, NotificationNames.kSearchUpdated);
   }
 
   late final _SearchDataSource _dataSource;
   late final _SearchResultAdapter _adapter;
-  int _sessionState = 0;
 
   int _searchTag = 0;
 
@@ -56,35 +54,18 @@ class _SearchState extends State<SearchPage> implements lnc.Observer {
     super.dispose();
     var nc = lnc.NotificationCenter();
     nc.removeObserver(this, NotificationNames.kSearchUpdated);
-    nc.removeObserver(this, NotificationNames.kServerStateChanged);
   }
 
   @override
   Future<void> onReceiveNotification(lnc.Notification notification) async {
     String name = notification.name;
     Map? info = notification.userInfo;
-    if (name == NotificationNames.kServerStateChanged) {
-      int state = info!['state'];
-      if (mounted) {
-        setState(() {
-          _sessionState = state;
-        });
-      }
-    } else if (name == NotificationNames.kSearchUpdated) {
+    if (name == NotificationNames.kSearchUpdated) {
       _reload(info?['cmd']);
     }
   }
 
   Future<void> _reload(SearchCommand? command) async {
-    GlobalVariable shared = GlobalVariable();
-    SessionState? state = shared.terminal.session?.state;
-    if (state != null) {
-      if (mounted) {
-        setState(() {
-          _sessionState = state.index;
-        });
-      }
-    }
     if (command == null) {
       return;
     }
@@ -100,10 +81,9 @@ class _SearchState extends State<SearchPage> implements lnc.Observer {
       Log.error('search tag not match, ignore this response: $tag <> $_searchTag');
       return;
     }
-    List<ContactInfo> array = await ContactInfo.fromList(ID.convert(users));
+    _dataSource.refresh(await ContactInfo.fromList(ID.convert(users)));
     if (mounted) {
       setState(() {
-        _dataSource.refresh(array);
         _adapter.notifyDataChange();
       });
     }
@@ -118,7 +98,7 @@ class _SearchState extends State<SearchPage> implements lnc.Observer {
   @override
   Widget build(BuildContext context) => CupertinoPageScaffold(
     navigationBar: CupertinoNavigationBar(
-      middle: Text(titleWithState('Search User', _sessionState)),
+      middle: StatedTitleView(() => 'Search User'),
     ),
     child: SectionListView.builder(
       adapter: _adapter,

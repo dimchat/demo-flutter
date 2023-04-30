@@ -45,8 +45,10 @@ public enum SessionController implements SessionState.Delegate, Docker.Delegate 
             if (oPort == port && host.equals(oHost)) {
                 Log.info("checking connection state: " + station);
                 SessionState state = cs.getState();
-                if (state.equals(SessionState.Order.RUNNING)) {
-                    Log.warning("the station is already connected: " + state);
+                if (state.equals(SessionState.Order.ERROR)) {
+                    Log.warning("current station is not connected: " + state);
+                } else {
+                    Log.warning("current station state: " + state);
                     return;
                 }
             }

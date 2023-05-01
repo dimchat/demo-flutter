@@ -66,7 +66,11 @@ class _ContactListState extends State<ContactListPage> implements lnc.Observer {
       return;
     }
     List<ID> contacts = await shared.database.getContacts(user: user.identifier);
-    _dataSource.refresh(await ContactInfo.fromList(contacts));
+    List<ContactInfo> array = ContactInfo.fromList(contacts);
+    for (ContactInfo item in array) {
+      await item.reloadData();
+    }
+    _dataSource.refresh(array);
     if (mounted) {
       setState(() {
         _adapter.notifyDataChange();

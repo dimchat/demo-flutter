@@ -36,11 +36,8 @@ class ChatBox extends StatefulWidget {
       if (info is Conversation) {
         info.unread = 0;
       }
-      var nc = NotificationCenter();
-      nc.postNotification(NotificationNames.kConversationUpdated, null, {
-        'action': 'read',
-        'ID': info.identifier,
-      });
+      Amanuensis clerk = Amanuensis();
+      clerk.clearUnread(info.identifier);
     });
   }
 

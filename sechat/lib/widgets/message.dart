@@ -7,6 +7,7 @@ import '../client/constants.dart';
 import '../client/http/image.dart';
 import '../client/shared.dart';
 import '../models/contact.dart';
+import '../models/message.dart';
 import '../views/styles.dart';
 import 'audio.dart';
 import 'preview.dart';
@@ -24,39 +25,38 @@ abstract class ContentViewUtils {
   ///        empty string ('') for ignored command
   static String? getCommandText(Content content, ID sender, ContactInfo chat) {
     String? text;
-    if (content is Command) {
-      text = content.cmd;
-    } else {
-      text = content['text'];
-      if (text == null) {
-      } else if (text.startsWith('Document not accept')) {
-        // take it as a receipt command
-      } else if (text.startsWith('Document received')) {
+    DefaultMessageBuilder mb = DefaultMessageBuilder();
+    if (mb.isCommand(content)) {
+      // check sender
+      if (sender != chat.identifier) {
+        // it's a command but not from my friend,
+        // maybe it's sent by myself, or a member in group chat,
+        // just ignore it to reduce noises.
+        Log.warning('hide command from: $sender, $text');
+        return '';
+      }
+      // check text
+      text = mb.getText(content, sender);
+      if (text.startsWith('Document received: ')) {
         // // hide it
         // Log.warning('hide command from: $sender, $text');
         // text = '';
-      } else {
-        // normal content with 'text'
-        text = null;
       }
-    }
-    if (text != null && sender != chat.identifier) {
-      // it's a command but not from my friend,
-      // maybe it's sent by myself, or a member in group chat,
-      // just ignore it to reduce noises.
-      Log.warning('hide command from: $sender, $text');
-      text = '';
     }
     return text;
   }
 
-  static Widget getCommandLabel(String text) => ClipRRect(
-    borderRadius: const BorderRadius.all(Radius.circular(4)),
-    child: Container(
-      padding: Styles.commandPadding,
-      color: Styles.commandBackgroundColor,
-      child: Text(text, style: Styles.commandTextStyle),
-    ),
+  static Widget getCommandLabel(String text) => Column(
+    children: [
+      ClipRRect(
+        borderRadius: const BorderRadius.all(Radius.circular(4)),
+        child: Container(
+          padding: Styles.commandPadding,
+          color: Styles.commandBackgroundColor,
+          child: Text(text, style: Styles.commandTextStyle),
+        ),
+      )
+    ],
   );
 
   static Widget getNameLabel(ID sender) => Container(

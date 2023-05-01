@@ -1,14 +1,36 @@
 import 'dart:io';
 
-import 'package:dim_client/dim_client.dart';
 import 'package:flutter/cupertino.dart';
 
+import 'package:dim_client/dim_client.dart';
+import 'package:dim_client/dim_client.dart' as lnc;
+
+import '../client/constants.dart';
 import '../client/shared.dart';
 import '../widgets/alert.dart';
 import 'conversation.dart';
 
-class ContactInfo {
-  ContactInfo(this.identifier) : _name = identifier.name;
+class ContactInfo implements lnc.Observer {
+  ContactInfo(this.identifier) : _name = identifier.name {
+    var nc = lnc.NotificationCenter();
+    nc.addObserver(this, NotificationNames.kDocumentUpdated);
+  }
+
+  @override
+  Future<void> onReceiveNotification(lnc.Notification notification) async {
+    String name = notification.name;
+    Map? userInfo = notification.userInfo;
+    if (name == NotificationNames.kDocumentUpdated) {
+      ID? did = userInfo?['ID'];
+      assert(did != null, 'notification error: $notification');
+      if (did == identifier) {
+        Log.info('document updated: $did');
+        await reloadData();
+      }
+    } else {
+      Log.error('notification error: $notification');
+    }
+  }
 
   final ID identifier;
   String? _name;
@@ -19,7 +41,14 @@ class ContactInfo {
   bool get isUser  => identifier.isUser;
   bool get isGroup => identifier.isGroup;
 
-  String get name => _name ?? '';
+  String get name {
+    String? nickname = _name;
+    if (nickname == null) {
+      nickname = _name = '';
+      reloadData();
+    }
+    return nickname;
+  }
 
   Widget getImage({double? width, double? height}) {
     String? path = _path;
@@ -95,14 +124,14 @@ class ContactInfo {
     });
   }
 
-  static Future<ContactInfo> fromID(ID identifier) async =>
-      await _ContactManager().getContact(identifier);
+  static ContactInfo fromID(ID identifier) =>
+      _ContactManager().getContact(identifier);
 
-  static Future<List<ContactInfo>> fromList(List<ID> contacts) async {
+  static List<ContactInfo> fromList(List<ID> contacts) {
     List<ContactInfo> array = [];
     _ContactManager man = _ContactManager();
     for (ID item in contacts) {
-      array.add(await man.getContact(item));
+      array.add(man.getContact(item));
     }
     return array;
   }
@@ -161,11 +190,11 @@ class _ContactManager {
 
   final Map<ID, ContactInfo> _contacts = {};
 
-  Future<ContactInfo> getContact(ID identifier) async {
+  ContactInfo getContact(ID identifier) {
     ContactInfo? info = _contacts[identifier];
     if (info == null) {
       info = ContactInfo(identifier);
-      await info.reloadData();
+      // info.reloadData();
       _contacts[identifier] = info;
     }
     return info;

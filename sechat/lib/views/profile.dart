@@ -19,7 +19,8 @@ class ProfilePage extends StatefulWidget {
   final ID? fromWhere;
 
   static void open(BuildContext context, ID identifier, {ID? fromWhere}) {
-    ContactInfo.fromID(identifier).then((info) {
+    ContactInfo info = ContactInfo.fromID(identifier);
+    info.reloadData().then((value) {
       showCupertinoDialog(
         context: context,
         builder: (context) => ProfilePage(info, fromWhere),

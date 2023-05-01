@@ -7,6 +7,7 @@ import '../client/messenger.dart';
 import '../client/protocol/search.dart';
 import '../client/shared.dart';
 import 'contact.dart';
+import 'message.dart';
 
 
 class Conversation extends ContactInfo {
@@ -256,10 +257,39 @@ class Amanuensis implements lnc.Observer {
     }
   }
 
+  Future<bool> clearUnread(ID cid) async {
+    Conversation? chatBox = _conversationMap[cid];
+    if (chatBox == null) {
+      return false;
+    }
+    chatBox.unread = 0;
+    GlobalVariable shared = GlobalVariable();
+    if (await shared.database.updateConversation(chatBox)) {
+      Log.debug('unread count cleared: $chatBox');
+    } else {
+      Log.error('failed to update conversation: $chatBox');
+      return false;
+    }
+    var nc = NotificationCenter();
+    nc.postNotification(NotificationNames.kConversationUpdated, null, {
+      'action': 'read',
+      'ID': cid,
+    });
+    return true;
+  }
+
   Future<void> _update(ID cid, InstantMessage iMsg) async {
     Content content = iMsg.content;
-    // TODO:
-    String? last = content.getString('text');
+    DefaultMessageBuilder mb = DefaultMessageBuilder();
+    if (mb.isCommand(content)) {
+      Log.debug('ignore command for conversation updating');
+      return;
+    }
+    String last = mb.getText(content, iMsg.sender);
+    if (last.isEmpty) {
+      Log.warning('content text empty: ${content.dictionary}');
+      return;
+    }
     DateTime? time = iMsg.time;
     Log.warning('update last message: $last for conversation: $cid');
 
@@ -280,10 +310,8 @@ class Amanuensis implements lnc.Observer {
     } else {
       // conversation exists
       chatBox.unread += 1;
-      if (last != null) {
-        chatBox.lastMessage = last;
-        chatBox.lastTime = time;
-      }
+      chatBox.lastMessage = last;
+      chatBox.lastTime = time;
       if (await shared.database.updateConversation(chatBox)) {} else {
         Log.error('failed to update conversation: $chatBox');
         return;

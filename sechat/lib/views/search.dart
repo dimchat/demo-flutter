@@ -81,7 +81,11 @@ class _SearchState extends State<SearchPage> implements lnc.Observer {
       Log.error('search tag not match, ignore this response: $tag <> $_searchTag');
       return;
     }
-    _dataSource.refresh(await ContactInfo.fromList(ID.convert(users)));
+    List<ContactInfo> array = ContactInfo.fromList(ID.convert(users));
+    for (ContactInfo item in array) {
+      await item.reloadData();
+    }
+    _dataSource.refresh(array);
     if (mounted) {
       setState(() {
         _adapter.notifyDataChange();

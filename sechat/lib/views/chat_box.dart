@@ -13,7 +13,8 @@ import '../widgets/alert.dart';
 import '../widgets/facade.dart';
 import '../widgets/message.dart';
 import '../widgets/title.dart';
-import 'chat_input.dart';
+import 'chat_flag.dart';
+import 'chat_tray.dart';
 import 'profile.dart';
 import 'styles.dart';
 
@@ -174,12 +175,28 @@ class _HistoryAdapter with SectionAdapterMixin {
       if (content is FileContent) {
         mainFlex = 1;
       }
-      contentView = _getContentView(context, content, sender);
-      contentView = _getContentFrame(context, sender, mainFlex,
+      bool isMine = sender == ContentViewUtils.currentUser?.identifier;
+      const radius = Radius.circular(12);
+      const borderRadius = BorderRadius.all(radius);
+      // create content view
+      contentView = Container(
+        margin: Styles.messageContentMargin,
+        constraints: content is ImageContent ? const BoxConstraints(maxHeight: 256) : null,
+        child: ClipRRect(
+          borderRadius: isMine
+              ? borderRadius.subtract(
+              const BorderRadius.only(topRight: radius))
+              : borderRadius.subtract(
+              const BorderRadius.only(topLeft: radius)),
+          child: _getContentView(context, content, sender),
+        ),
+      );
+      // create content frame
+      contentView = _getContentFrame(context, sender, mainFlex, isMine,
         image: Facade.fromID(sender),
         name: nameLabel,
         body: contentView,
-        constraints: content is ImageContent ? const BoxConstraints(maxHeight: 256) : null,
+        flag: isMine ? ChatSendFlag(iMsg) : null,
       );
     } else if (commandText.isEmpty) {
       // hidden command
@@ -273,51 +290,38 @@ class _HistoryAdapter with SectionAdapterMixin {
     }
   }
 
-  Widget _getContentFrame(BuildContext context, ID sender, int mainFlex,
-      {required Widget image, Widget? name, required Widget body, BoxConstraints? constraints}) {
-    const radius = Radius.circular(12);
-    const borderRadius = BorderRadius.all(radius);
-    bool isMine = sender == ContentViewUtils.currentUser?.identifier;
-    return Row(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        if (isMine)
-          Expanded(flex: 1, child: Container()),
-        if (!isMine)
-          IconButton(
-              padding: Styles.messageSenderAvatarPadding,
-              onPressed: () => _openProfile(context, sender, _conversation),
-              icon: image
-          ),
-        Expanded(flex: mainFlex, child: Column(
-          crossAxisAlignment: isMine ? CrossAxisAlignment.end : CrossAxisAlignment.start,
-          children: [
-            if (name != null)
-              name,
-            Container(
-              margin: Styles.messageContentMargin,
-              constraints: constraints,
-              child: ClipRRect(
-                borderRadius: isMine
-                    ? borderRadius.subtract(
-                    const BorderRadius.only(topRight: radius))
-                    : borderRadius.subtract(
-                    const BorderRadius.only(topLeft: radius)),
-                child: body,
-              ),
-            ),
-          ],
-        )),
-        if (isMine)
-          Container(
+  Widget _getContentFrame(BuildContext context, ID sender, int mainFlex, bool isMine,
+      {required Widget image, Widget? name, required Widget body,
+        required Widget? flag}) => Row(
+    crossAxisAlignment: CrossAxisAlignment.start,
+    children: [
+      if (isMine)
+        Expanded(flex: 1, child: Container()),
+      if (!isMine)
+        IconButton(
             padding: Styles.messageSenderAvatarPadding,
-            child: image,
-          ),
-        if (!isMine)
-          Expanded(flex: 1, child: Container()),
-      ],
-    );
-  }
+            onPressed: () => _openProfile(context, sender, _conversation),
+            icon: image
+        ),
+      Expanded(flex: mainFlex, child: Column(
+        crossAxisAlignment: isMine ? CrossAxisAlignment.end : CrossAxisAlignment.start,
+        children: [
+          if (name != null)
+            name,
+          body,
+          if (flag != null)
+            flag,
+        ],
+      )),
+      if (isMine)
+        Container(
+          padding: Styles.messageSenderAvatarPadding,
+          child: image,
+        ),
+      if (!isMine)
+        Expanded(flex: 1, child: Container()),
+    ],
+  );
 
 }
 

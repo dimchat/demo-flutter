@@ -55,6 +55,11 @@ class _TitleState extends State<StatedTitleView> implements lnc.Observer {
         _sessionState = state;
       });
     }
+    if (state == SessionStateOrder.kDefault) {
+      // current user must be set before enter this page,
+      // so just do connecting here.
+      _reconnect(false);
+    }
   }
 
   @override
@@ -77,8 +82,7 @@ String _titleWithState(String title) {
   String? sub;
   switch (_sessionState) {
     case SessionStateOrder.kDefault:
-      sub = '...';  // waiting to connect
-      _reconnect(false);
+      sub = 'Waiting';  // waiting to connect
       break;
     case SessionStateOrder.kConnecting:
       sub = 'Connecting';

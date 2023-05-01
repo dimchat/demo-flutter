@@ -66,15 +66,23 @@ class TraceTable extends DataTableHandler<String> implements TraceDBI {
   @override
   Future<List<String>> getTraces(ID sender, int sn, String? signature) async {
     SQLConditions cond;
-    cond = SQLConditions(left: 'sender', comparison: '=', right: sender.string);
-    cond.addCondition(SQLConditions.kAnd, left: 'sn', comparison: '=', right: sn);
     if (signature != null) {
       if (signature.length > 8) {
         signature = signature.substring(signature.length - 8);
       }
-      cond.addCondition(SQLConditions.kAnd,
-          left: 'signature', comparison: '=', right: signature);
+      cond = SQLConditions(left: 'signature', comparison: '=', right: signature);
+      if (sn > 0) {
+        cond.addCondition(SQLConditions.kOr, left: 'sn', comparison: '=', right: sn);
+      }
+    } else if (sn > 0) {
+      cond = SQLConditions(left: 'sn', comparison: '=', right: sn);
+    } else {
+      Log.error('failed to get trace without sn or signature: $sender');
+      return [];
     }
+    cond.addCondition(SQLConditions.kAnd,
+        left: 'sender', comparison: '=', right: sender.string);
+    // SELECT * FROM t_trace WHERE (signature='...' OR sn='123') AND sender='abc'
     return await select(_table, columns: _selectColumns, conditions: cond);
   }
 

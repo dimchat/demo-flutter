@@ -393,8 +393,20 @@ class Amanuensis implements lnc.Observer {
     String? signature = content.originalSignature;
     // save trace
     GlobalVariable shared = GlobalVariable();
-    return shared.database.addTrace(trace, cid,
-        sender: sender, sn: sn, signature: signature);
+    if (await shared.database.addTrace(trace, cid,
+        sender: sender, sn: sn, signature: signature)) {} else {
+      Log.error('failed to add message trace: ${iMsg.sender} ($sender -> $cid)');
+      return false;
+    }
+    var nc = NotificationCenter();
+    nc.postNotification(NotificationNames.kMessageTraced, this, {
+      'cid': cid,
+      'sender': sender,
+      'sn': sn,
+      'signature': signature,
+      'mta': mta,
+    });
+    return true;
   }
 
 }

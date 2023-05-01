@@ -2,6 +2,7 @@ package chat.dim.sechat;
 
 import java.io.IOError;
 import java.net.SocketAddress;
+import java.util.ArrayList;
 import java.util.List;
 
 import chat.dim.CommonFacebook;
@@ -10,6 +11,7 @@ import chat.dim.channels.SessionChannel;
 import chat.dim.dbi.SessionDBI;
 import chat.dim.mkm.Station;
 import chat.dim.network.ClientSession;
+import chat.dim.network.CommonGate;
 import chat.dim.network.SessionState;
 import chat.dim.network.StateMachine;
 import chat.dim.port.Arrival;
@@ -46,7 +48,7 @@ public enum SessionController implements SessionState.Delegate, Docker.Delegate 
                 Log.info("checking connection state: " + station);
                 SessionState state = cs.getState();
                 if (state.equals(SessionState.Order.ERROR)) {
-                    Log.warning("current station is not connected: " + state);
+                    Log.error("current station is not connected: " + state);
                 } else {
                     Log.warning("current station state: " + state);
                     return;
@@ -99,6 +101,29 @@ public enum SessionController implements SessionState.Delegate, Docker.Delegate 
     public void exitState(SessionState previous, StateMachine ctx, long now) {
         SessionState current = ctx.getCurrentState();
         Log.info("state changed: " + previous + " -> " + current);
+        // check docker for current session
+        if (current == null) {
+            Log.warning("current state empty, stopped?");
+        } else if (current.equals(SessionState.Order.CONNECTING)) {
+            ClientSession cs = session;
+            if (cs == null) {
+                Log.error("client session gone");
+            } else {
+                CommonGate gate = cs.getGate();
+                if (gate == null) {
+                    Log.error("failed to open gate: " + cs.getStation());
+                } else {
+                    SocketAddress remote = cs.getRemoteAddress();
+                    Docker docker = gate.getDocker(remote, null, new ArrayList<>());
+                    if (docker == null) {
+                        Log.error("failed to create docker: " + remote);
+                    } else {
+                        Log.info("created docker: " + docker);
+                    }
+                }
+            }
+        }
+        // callback for flutter
         ChannelManager manager = ChannelManager.getInstance();
         SessionChannel channel = manager.sessionChannel;
         channel.onStateChanged(previous, current, now);

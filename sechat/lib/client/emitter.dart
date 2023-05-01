@@ -77,9 +77,7 @@ class Emitter implements Observer {
     iMsg['error'] = {
       'message': 'failed to upload file',
     };
-    return await _saveInstantMessage(iMsg).onError((error, stackTrace) {
-      Log.error('failed to save message: $error');
-    });
+    return await _saveInstantMessage(iMsg);
   }
 
   static Future<void> _sendInstantMessage(InstantMessage iMsg) async {
@@ -93,7 +91,10 @@ class Emitter implements Observer {
 
   static Future<void> _saveInstantMessage(InstantMessage iMsg) async {
     Amanuensis clerk = Amanuensis();
-    await clerk.saveInstantMessage(iMsg);
+    await clerk.saveInstantMessage(iMsg).onError((error, stackTrace) {
+      Log.error('failed to save message: $error');
+      return false;
+    });
   }
 
   ///  Send file content message with password

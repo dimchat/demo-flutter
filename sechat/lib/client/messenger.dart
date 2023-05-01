@@ -39,4 +39,14 @@ class SharedMessenger extends ClientMessenger {
     return content;
   }
 
+  @override
+  Future<ReliableMessage?> sendInstantMessage(InstantMessage iMsg, {int priority = 0}) async {
+    ReliableMessage? rMsg = await super.sendInstantMessage(iMsg, priority: priority);
+    if (rMsg != null) {
+      // keep signature for checking traces
+      iMsg['signature'] = rMsg.getString('signature');
+    }
+    return rMsg;
+  }
+
 }

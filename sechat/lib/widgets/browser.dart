@@ -39,11 +39,10 @@ class Browser extends StatefulWidget {
   final String title;
 
   static void open(BuildContext context,
-      {required String url, required String title}) {
-    Navigator.push(context, CupertinoPageRoute(
-      builder: (context) => Browser(url: url, title: title),
-    ));
-  }
+      {required String url, required String title}) => showCupertinoDialog(
+    context: context,
+    builder: (context) => Browser(url: url, title: title),
+  );
 
   @override
   State<Browser> createState() => _BrowserState();

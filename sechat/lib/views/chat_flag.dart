@@ -6,6 +6,7 @@ import 'package:dim_client/dim_client.dart' as lnc;
 import '../client/constants.dart';
 import '../client/messenger.dart';
 import '../client/shared.dart';
+import 'styles.dart';
 
 class ChatSendFlag extends StatefulWidget {
   const ChatSendFlag(this.iMsg, {super.key});
@@ -36,9 +37,9 @@ class _SendState extends State<ChatSendFlag> implements lnc.Observer {
 
   @override
   void dispose() {
-    super.dispose();
     var nc = lnc.NotificationCenter();
     nc.removeObserver(this, NotificationNames.kMessageTraced);
+    super.dispose();
   }
 
   @override
@@ -199,19 +200,19 @@ class _SendState extends State<ChatSendFlag> implements lnc.Observer {
   IconData? get flag {
     switch (status) {
       case _MsgStatus.kWaiting: {
-        return CupertinoIcons.ellipsis;
+        return Styles.msgWaitingIcon;
       }
       case _MsgStatus.kSent: {
-        return CupertinoIcons.checkmark;
+        return Styles.msgSentIcon;
       }
       case _MsgStatus.kReceived: {
-        return CupertinoIcons.check_mark_circled;
+        return Styles.msgReceivedIcon;
       }
       case _MsgStatus.kExpired: {
-        return CupertinoIcons.refresh;
+        return Styles.msgExpired;
       }
       default: {
-        return CupertinoIcons.ellipsis;
+        return Styles.msgDefaultIcon;
       }
     }
   }

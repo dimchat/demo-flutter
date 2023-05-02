@@ -6,6 +6,15 @@ import 'package:photo_view/photo_view_gallery.dart';
 
 import '../client/http/ftp.dart';
 
+/// preview avatar image
+void previewImage(BuildContext ctx, String path) {
+  showCupertinoDialog(
+    context: ctx,
+    builder: (context) => _ImagePreview(const [], null, _PreviewInfo([path], 0)),
+  );
+}
+
+/// preview image in chat box
 void previewImageContent(BuildContext ctx, ImageContent content, List<InstantMessage> messages) {
   FileTransfer ftp = FileTransfer();
   ftp.getFilePath(content).then((path) {
@@ -33,7 +42,7 @@ class _ImagePreview extends StatefulWidget {
   const _ImagePreview(this.messages, this.content, this.info);
 
   final List<InstantMessage> messages;
-  final ImageContent content;
+  final ImageContent? content;
   final _PreviewInfo info;
 
   @override
@@ -57,8 +66,13 @@ class _ImagePreviewState extends State<_ImagePreview> {
   _PreviewInfo get info => widget.info;
 
   Future<void> _reload() async {
+    ImageContent? content = widget.content;
+    if (content == null) {
+      // avatar image
+      return;
+    }
     String path = info.images[info.index];
-    var pair = await _fetchImages(widget.messages, widget.content);
+    var pair = await _fetchImages(widget.messages, content);
     List<String> images = pair.first;
     int index = pair.second;
     if (index < 0) {

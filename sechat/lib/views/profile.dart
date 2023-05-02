@@ -9,6 +9,7 @@ import '../client/shared.dart';
 import '../models/contact.dart';
 import '../models/conversation.dart';
 import '../widgets/alert.dart';
+import '../widgets/preview.dart';
 import '../widgets/table.dart';
 import 'chat_box.dart';
 
@@ -55,10 +56,10 @@ class _ProfileState extends State<ProfilePage> implements lnc.Observer {
 
   @override
   void dispose() {
-    super.dispose();
     var nc = lnc.NotificationCenter();
     nc.removeObserver(this, NotificationNames.kDocumentUpdated);
     nc.removeObserver(this, NotificationNames.kContactsUpdated);
+    super.dispose();
   }
 
   @override
@@ -137,7 +138,7 @@ class _ProfileState extends State<ProfilePage> implements lnc.Observer {
   Widget _body(BuildContext context) => Column(
     children: [
       const SizedBox(height: 32,),
-      _avatarImage(),
+      _avatarImage(context),
       const SizedBox(height: 8,),
       SizedBox(width: 300,
         child: _idLabel(),
@@ -160,7 +161,18 @@ class _ProfileState extends State<ProfilePage> implements lnc.Observer {
     ],
   );
 
-  Widget _avatarImage() => widget.info.getImage(width: 256, height: 256);
+  Widget _avatarImage(BuildContext context) =>
+      widget.info.getImage(width: 256, height: 256, onTap: () {
+        GlobalVariable shared = GlobalVariable();
+        shared.facebook.getAvatar(widget.info.identifier).then((pair) {
+          String? path = pair.first;
+          if (path == null) {
+            Log.error('avatar image not foundL ${widget.info.identifier}');
+          } else {
+            previewImage(context, path);
+          }
+        });
+      });
 
   Widget _idLabel() => Row(
     mainAxisAlignment: MainAxisAlignment.center,
@@ -274,9 +286,9 @@ class _ProfileTableState extends State<_ProfileTableCell> implements lnc.Observe
 
   @override
   void dispose() {
-    super.dispose();
     var nc = lnc.NotificationCenter();
     nc.removeObserver(this, NotificationNames.kDocumentUpdated);
+    super.dispose();
   }
 
   @override

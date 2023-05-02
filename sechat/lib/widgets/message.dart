@@ -4,7 +4,7 @@ import 'package:dim_client/dim_client.dart';
 import 'package:dim_client/dim_client.dart' as lnc;
 
 import '../client/constants.dart';
-import '../client/http/image.dart';
+import '../client/http/image_view.dart';
 import '../client/shared.dart';
 import '../models/contact.dart';
 import '../models/message.dart';
@@ -108,9 +108,9 @@ class _NameState extends State<_NameView> implements lnc.Observer {
 
   @override
   void dispose() {
-    super.dispose();
     var nc = lnc.NotificationCenter();
     nc.removeObserver(this, NotificationNames.kDocumentUpdated);
+    super.dispose();
   }
 
   @override

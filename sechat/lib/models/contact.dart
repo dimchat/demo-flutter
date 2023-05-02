@@ -1,11 +1,10 @@
-import 'dart:io';
-
 import 'package:flutter/cupertino.dart';
 
 import 'package:dim_client/dim_client.dart';
 import 'package:dim_client/dim_client.dart' as lnc;
 
 import '../client/constants.dart';
+import '../client/http/image_view.dart';
 import '../client/shared.dart';
 import '../widgets/alert.dart';
 import 'conversation.dart';
@@ -34,7 +33,6 @@ class ContactInfo implements lnc.Observer {
 
   final ID identifier;
   String? _name;
-  String? _path;  // image path
 
   int get type => identifier.type;
 
@@ -50,23 +48,8 @@ class ContactInfo implements lnc.Observer {
     return nickname;
   }
 
-  Widget getImage({double? width, double? height}) {
-    String? path = _path;
-    if (path != null) {
-      width ??= 32;
-      height ??= 32;
-      Image img = Image.file(File(path), width: width, height: height, fit: BoxFit.cover);
-      Radius radius = Radius.elliptical(width / 8, height / 8);
-      return ClipRRect(
-        borderRadius: BorderRadius.all(radius),
-        child: img,
-      );
-    } else if (identifier.isUser) {
-      return Icon(CupertinoIcons.profile_circled, size: width,);
-    } else {
-      return Icon(CupertinoIcons.group, size: width,);
-    }
-  }
+  Widget getImage({double? width, double? height, GestureTapCallback? onTap}) =>
+      ImageViewFactory().fromID(identifier, width: width, height: height, onTap: onTap);
 
   @override
   String toString() {
@@ -80,8 +63,6 @@ class ContactInfo implements lnc.Observer {
   Future<void> reloadData() async {
     GlobalVariable shared = GlobalVariable();
     _name = await shared.facebook.getName(identifier);
-    Pair<String?, Uri?> pair = await shared.facebook.getAvatar(identifier);
-    _path = pair.first;
   }
 
   void addToUser(User user, {required BuildContext context}) {

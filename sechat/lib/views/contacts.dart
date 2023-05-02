@@ -18,7 +18,7 @@ class ContactListPage extends StatefulWidget {
   const ContactListPage({super.key});
 
   static BottomNavigationBarItem barItem() => const BottomNavigationBarItem(
-    icon: Icon(CupertinoIcons.group),
+    icon: Icon(Styles.contactsTabIcon),
     label: 'Contacts',
   );
 
@@ -38,10 +38,10 @@ class _ContactListState extends State<ContactListPage> implements lnc.Observer {
 
   @override
   void dispose() {
-    super.dispose();
     var nc = lnc.NotificationCenter();
     nc.removeObserver(this, NotificationNames.kDocumentUpdated);
     nc.removeObserver(this, NotificationNames.kContactsUpdated);
+    super.dispose();
   }
 
   late final _ContactDataSource _dataSource;
@@ -166,7 +166,7 @@ class _ContactListAdapter with SectionAdapterMixin {
           leading: Container(
             color: Colors.orange,
             padding: const EdgeInsets.all(2),
-            child: const Icon(CupertinoIcons.person_add,
+            child: const Icon(Styles.newFriendIcon,
               color: Colors.white,
             ),
           ),
@@ -181,7 +181,7 @@ class _ContactListAdapter with SectionAdapterMixin {
           leading: Container(
             color: Colors.green,
             padding: const EdgeInsets.all(2),
-            child: const Icon(CupertinoIcons.person_2,
+            child: const Icon(Styles.groupChatsIcon,
               color: Colors.white,
             ),
           ),

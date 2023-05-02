@@ -60,7 +60,7 @@ class _NetworkState extends State<NetworkSettingPage> {
       border: Styles.navigationBarBorder,
       middle: const Text('Relay Stations'),
       trailing: IconButton(
-          icon: const Icon(CupertinoIcons.refresh, size: 16),
+          icon: const Icon(Styles.refreshStationsIcon, size: 16),
           onPressed: _refreshing ? null : () => _confirmRefresh(context)),
     ),
     body: SectionListView.builder(
@@ -77,6 +77,7 @@ class _NetworkState extends State<NetworkSettingPage> {
     // // TEST:
     // GlobalVariable shared = GlobalVariable();
     // final ID gsp = ProviderDBI.kGSP;
+    // shared.database.addStation('192.168.31.152', 9394, provider: gsp);
     // // shared.database.addStation('203.195.224.155', 9394, provider: gsp);
     // // shared.database.addStation('47.254.237.224', 9394, provider: gsp);
     // // shared.database.removeStation('203.195.224.155', 9394, provider: gsp);
@@ -225,9 +226,9 @@ class _StationCellState extends State<_StationCell> implements lnc.Observer {
 
   @override
   void dispose() {
-    super.dispose();
     var nc = lnc.NotificationCenter();
     nc.removeObserver(this, NotificationNames.kStationSpeedUpdated);
+    super.dispose();
   }
 
   @override
@@ -322,11 +323,11 @@ class _StationCellState extends State<_StationCell> implements lnc.Observer {
   }
   Icon _getChosen(StationInfo info) {
     if (_isCurrentStation(info)) {
-      return Icon(CupertinoIcons.cloud_upload_fill, color: _getColor(info));
+      return Icon(Styles.currentStationIcon, color: _getColor(info));
     } else if (info.chosen == 0) {
-      return Icon(CupertinoIcons.cloud, color: _getColor(info));
+      return Icon(Styles.stationIcon, color: _getColor(info));
     } else {
-      return Icon(CupertinoIcons.cloud_fill, color: _getColor(info));
+      return Icon(Styles.chosenStationIcon, color: _getColor(info));
     }
   }
   String _getResult(StationInfo info) {

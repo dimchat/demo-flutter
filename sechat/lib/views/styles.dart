@@ -3,6 +3,7 @@
 // found in the LICENSE file.
 
 import 'package:flutter/cupertino.dart';
+import 'package:flutter/material.dart';
 
 abstract class Styles {
 
@@ -88,5 +89,62 @@ abstract class Styles {
     color: CupertinoColors.systemGrey,
   );
   static const Color inputTrayBackground = CupertinoColors.systemBackground;
+
+  //
+  //  Icons
+  //  ~~~~~
+  //  https://api.flutter.dev/flutter/cupertino/CupertinoIcons-class.html#constants
+  //  https://api.flutter.dev/flutter/material/Icons-class.html
+  //
+
+  static const IconData stationIcon = CupertinoIcons.cloud;
+  static const IconData     ispIcon = CupertinoIcons.cloud_moon;
+  static const IconData     botIcon = Icons.support_agent;
+  static const IconData     icpIcon = Icons.room_service_outlined;
+  static const IconData    userIcon = CupertinoIcons.person;
+  static const IconData   groupIcon = CupertinoIcons.group;
+
+  // Tabs
+  static const IconData    chatsTabIcon = CupertinoIcons.chat_bubble_2;
+  static const IconData contactsTabIcon = CupertinoIcons.group;
+  static const IconData settingsTabIcon = CupertinoIcons.gear;
+
+  // Chat Box
+  static const IconData   chatDetailIcon = Icons.more_horiz;
+  static const IconData      chatMicIcon = CupertinoIcons.mic;
+  static const IconData chatKeyboardIcon = CupertinoIcons.keyboard;
+  static const IconData chatFunctionIcon = Icons.add_circle_outline;
+  static const IconData     chatSendIcon = Icons.send;
+  // Audio
+  static const IconData    playAudioIcon = CupertinoIcons.play;
+  static const IconData playingAudioIcon = CupertinoIcons.volume_up;
+  // Msg Status
+  static const IconData   msgDefaultIcon = CupertinoIcons.ellipsis;
+  static const IconData   msgWaitingIcon = CupertinoIcons.ellipsis;
+  static const IconData      msgSentIcon = Icons.done;
+  static const IconData  msgReceivedIcon = Icons.done_all;
+  static const IconData       msgExpired = CupertinoIcons.refresh;
+
+  // Contacts
+  static const IconData searchIcon = CupertinoIcons.search;
+
+  // Search
+  static const IconData newFriendsIcon = CupertinoIcons.person_add;
+  static const IconData groupChatsIcon = CupertinoIcons.person_2;
+
+  // Settings
+  static const IconData    setNetworkIcon = CupertinoIcons.settings;
+  static const IconData setWhitePaperIcon = CupertinoIcons.doc;
+  static const IconData setOpenSourceIcon = Icons.code;
+  static const IconData      setTermsIcon = CupertinoIcons.doc_checkmark;
+  static const IconData      setAboutIcon = CupertinoIcons.info;
+
+  // Relay Stations
+  static const IconData refreshStationsIcon = Icons.forward_5;
+  static const IconData  currentStationIcon = CupertinoIcons.cloud_upload_fill;
+  static const IconData   chosenStationIcon = CupertinoIcons.cloud_fill;
+
+  // Register
+  static const IconData agreeIcon = CupertinoIcons.check_mark;
 
 }

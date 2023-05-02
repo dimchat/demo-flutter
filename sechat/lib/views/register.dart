@@ -1,6 +1,7 @@
-import 'package:dim_client/dim_client.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+
+import 'package:dim_client/dim_client.dart';
 
 import '../client/shared.dart';
 import '../main.dart';
@@ -8,6 +9,7 @@ import '../models/config.dart';
 import '../widgets/alert.dart';
 import '../widgets/browser.dart';
 import '../widgets/permissions.dart';
+import 'styles.dart';
 
 class RegisterPage extends StatelessWidget {
   const RegisterPage({super.key});
@@ -178,7 +180,7 @@ class _RegisterFormState extends State<_RegisterForm> {
                 ),
                 borderRadius: const BorderRadius.all(Radius.circular(5)),
               ),
-              child: Icon(CupertinoIcons.check_mark,
+              child: Icon(Styles.agreeIcon,
                 size: 16,
                 color: agreed
                     ? CupertinoColors.white

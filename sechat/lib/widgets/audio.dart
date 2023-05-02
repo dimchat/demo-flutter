@@ -1,7 +1,7 @@
-import 'package:dim_client/dim_client.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_sound/flutter_sound.dart';
+
+import 'package:dim_client/dim_client.dart';
 
 import '../client/filesys/paths.dart';
 import '../client/http/ftp.dart';
@@ -263,7 +263,7 @@ class _AudioContentState extends State<AudioContentView> {
       },
       child: Row(
         children: [
-          _playing ? const Icon(CupertinoIcons.volume_up) : const Icon(CupertinoIcons.play),
+          _playing ? const Icon(Styles.playingAudioIcon) : const Icon(Styles.playAudioIcon),
           Expanded(
             flex: 1,
             child: Text('${_duration.toStringAsFixed(3)}"',

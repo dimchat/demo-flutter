@@ -21,7 +21,7 @@ class SearchPage extends StatefulWidget {
   static Widget searchButton(BuildContext context) => IconButton(
     iconSize: Styles.navigationBarIconSize,
     color: Styles.navigationBarIconColor,
-    icon: const Icon(CupertinoIcons.search),
+    icon: const Icon(Styles.searchIcon),
     onPressed: () => open(context),
   );
 
@@ -51,9 +51,9 @@ class _SearchState extends State<SearchPage> implements lnc.Observer {
 
   @override
   void dispose() {
-    super.dispose();
     var nc = lnc.NotificationCenter();
     nc.removeObserver(this, NotificationNames.kSearchUpdated);
+    super.dispose();
   }
 
   @override

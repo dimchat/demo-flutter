@@ -1,5 +1,4 @@
 import 'package:flutter/cupertino.dart';
-import 'package:flutter/material.dart';
 
 import 'package:dim_client/dim_client.dart';
 import 'package:dim_client/dim_client.dart' as lnc;
@@ -18,7 +17,7 @@ class SettingsPage extends StatelessWidget {
 
   static BottomNavigationBarItem barItem() {
     return const BottomNavigationBarItem(
-      icon: Icon(CupertinoIcons.gear),
+      icon: Icon(Styles.settingsTabIcon),
       label: 'Settings',
     );
   }
@@ -82,7 +81,7 @@ class SettingsPage extends StatelessWidget {
 
   Widget _network(BuildContext context) => CupertinoListTile(
     padding: const EdgeInsets.all(16),
-    leading: const Icon(CupertinoIcons.settings),
+    leading: const Icon(Styles.setNetworkIcon),
     title: const Text('Network'),
     additionalInfo: const Text('Relay Stations'),
     trailing: const CupertinoListTileChevron(),
@@ -94,7 +93,7 @@ class SettingsPage extends StatelessWidget {
 
   Widget _whitePaper(BuildContext context) => CupertinoListTile(
     padding: const EdgeInsets.all(16),
-    leading: const Icon(CupertinoIcons.doc),
+    leading: const Icon(Styles.setWhitePaperIcon),
     title: const Text('White Paper'),
     additionalInfo: const Text('zh-CN'),
     trailing: const CupertinoListTileChevron(),
@@ -106,7 +105,7 @@ class SettingsPage extends StatelessWidget {
 
   Widget _source(BuildContext context) => CupertinoListTile(
     padding: const EdgeInsets.all(16),
-    leading: const Icon(Icons.code),
+    leading: const Icon(Styles.setOpenSourceIcon),
     title: const Text('Source'),
     additionalInfo: const Text('github.com/dimchat'),
     trailing: const CupertinoListTileChevron(),
@@ -118,7 +117,7 @@ class SettingsPage extends StatelessWidget {
 
   Widget _term(BuildContext context) => CupertinoListTile(
     padding: const EdgeInsets.all(16),
-    leading: const Icon(CupertinoIcons.doc_checkmark),
+    leading: const Icon(Styles.setTermsIcon),
     title: const Text('Terms'),
     additionalInfo: const Text('Privacy Policy'),
     trailing: const CupertinoListTileChevron(),
@@ -130,7 +129,7 @@ class SettingsPage extends StatelessWidget {
 
   Widget _about(BuildContext context) => CupertinoListTile(
     padding: const EdgeInsets.all(16),
-    leading: const Icon(CupertinoIcons.info),
+    leading: const Icon(Styles.setAboutIcon),
     title: const Text('About'),
     additionalInfo: const Text('DIM'),
     trailing: const CupertinoListTileChevron(),
@@ -159,9 +158,9 @@ class _MyAccountState extends State<_MyAccountSection> implements lnc.Observer {
 
   @override
   void dispose() {
-    super.dispose();
     var nc = lnc.NotificationCenter();
     nc.removeObserver(this, NotificationNames.kDocumentUpdated);
+    super.dispose();
   }
 
   @override

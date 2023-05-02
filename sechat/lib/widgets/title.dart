@@ -26,9 +26,9 @@ class _TitleState extends State<StatedTitleView> implements lnc.Observer {
 
   @override
   void dispose() {
-    super.dispose();
     var nc = lnc.NotificationCenter();
     nc.removeObserver(this, NotificationNames.kServerStateChanged);
+    super.dispose();
   }
 
   @override
@@ -116,9 +116,9 @@ void _reconnect(bool test) async {
         VelocityMeter.ping(srv);
       }
     }
-    await Future.delayed(const Duration(seconds: 5));
+    await Future.delayed(const Duration(seconds: 3));
   } else {
-    await Future.delayed(const Duration(seconds: 2));
+    await Future.delayed(const Duration(seconds: 1));
   }
   await shared.terminal.reconnect();
 }

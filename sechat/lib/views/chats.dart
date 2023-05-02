@@ -8,6 +8,7 @@ import 'package:dim_client/dim_client.dart' as lnc;
 import '../client/constants.dart';
 import '../models/conversation.dart';
 import '../widgets/alert.dart';
+import '../widgets/badge.dart';
 import '../widgets/table.dart';
 import '../widgets/title.dart';
 import 'chat_box.dart';
@@ -19,7 +20,7 @@ class ChatHistoryPage extends StatefulWidget {
 
   static BottomNavigationBarItem barItem() {
     return const BottomNavigationBarItem(
-      icon: Icon(CupertinoIcons.chat_bubble_2),
+      icon: Icon(Styles.chatsTabIcon),
       label: 'Chats',
     );
   }
@@ -38,9 +39,9 @@ class _ChatListState extends State<ChatHistoryPage> implements lnc.Observer {
 
   @override
   void dispose() {
-    super.dispose();
     var nc = lnc.NotificationCenter();
     nc.removeObserver(this, NotificationNames.kConversationUpdated);
+    super.dispose();
   }
 
   final Amanuensis _clerk;
@@ -124,9 +125,9 @@ class _ChatTableCellState extends State<_ChatTableCell> implements lnc.Observer 
 
   @override
   void dispose() {
-    super.dispose();
     var nc = lnc.NotificationCenter();
     nc.removeObserver(this, NotificationNames.kDocumentUpdated);
+    super.dispose();
   }
 
   @override
@@ -193,24 +194,7 @@ class _ChatTableCellState extends State<_ChatTableCell> implements lnc.Observer 
     });
   }
 
-  Widget _leading(Conversation info) => Stack(
-    alignment: const AlignmentDirectional(1.5, -1.5),
-    children: [
-      info.getImage(),
-      if (info.unread > 0)
-        _badge(info.unread),
-    ],
-  );
-  Widget _badge(int unread) => ClipOval(
-    child: Container(
-      alignment: Alignment.center,
-      width: 12, height: 12,
-      color: Colors.red,
-      child: Text(unread < 100 ? unread.toString() : '...',
-        style: const TextStyle(color: Colors.white, fontSize: 8),
-      ),
-    ),
-  );
+  Widget _leading(Conversation info) => BadgeView(info.getImage(), info.unread);
 
   Widget? _lastMessage(String? last) {
     if (last == null) {

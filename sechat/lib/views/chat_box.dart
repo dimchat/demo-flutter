@@ -6,11 +6,11 @@ import 'package:dim_client/dim_client.dart';
 import 'package:dim_client/dim_client.dart' as lnc;
 
 import '../client/constants.dart';
+import '../client/http/image_view.dart';
 import '../client/shared.dart';
 import '../models/contact.dart';
 import '../models/conversation.dart';
 import '../widgets/alert.dart';
-import '../widgets/facade.dart';
 import '../widgets/message.dart';
 import '../widgets/title.dart';
 import 'chat_flag.dart';
@@ -56,10 +56,10 @@ class _ChatBoxState extends State<ChatBox> implements lnc.Observer {
 
   @override
   void dispose() {
-    super.dispose();
     var nc = lnc.NotificationCenter();
     nc.removeObserver(this, NotificationNames.kDocumentUpdated);
     nc.removeObserver(this, NotificationNames.kMessageUpdated);
+    super.dispose();
   }
 
   @override
@@ -116,7 +116,7 @@ class _ChatBoxState extends State<ChatBox> implements lnc.Observer {
       trailing: IconButton(
         iconSize: Styles.navigationBarIconSize,
         color: Styles.navigationBarIconColor,
-        icon: const Icon(Icons.more_horiz),
+        icon: const Icon(Styles.chatDetailIcon),
         onPressed: () => _openDetail(context, widget.info),
       ),
     ),
@@ -190,7 +190,7 @@ class _HistoryAdapter with SectionAdapterMixin {
       );
       // create content frame
       contentView = _getContentFrame(context, sender, mainFlex, isMine,
-        image: Facade.fromID(sender),
+        image: ImageViewFactory().fromID(sender),
         name: nameLabel,
         body: contentView,
         flag: isMine ? ChatSendFlag(iMsg) : null,

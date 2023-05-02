@@ -1,7 +1,6 @@
 import 'dart:typed_data';
 
 import 'package:flutter/cupertino.dart';
-import 'package:flutter/material.dart';
 
 import '../client/filesys/external.dart';
 import '../client/shared.dart';
@@ -9,6 +8,7 @@ import '../models/contact.dart';
 import '../widgets/alert.dart';
 import '../widgets/audio.dart';
 import '../widgets/picker.dart';
+import 'styles.dart';
 
 class ChatInputTray extends StatefulWidget {
   const ChatInputTray(this.info, {super.key});
@@ -40,14 +40,14 @@ class _InputState extends State<ChatInputTray> {
     children: [
       if (!_isVoice)
         CupertinoButton(
-          child: const Icon(CupertinoIcons.mic_circle),
+          child: const Icon(Styles.chatMicIcon),
           onPressed: () => setState(() {
             _isVoice = true;
           }),
         ),
       if (_isVoice)
         CupertinoButton(
-          child: const Icon(CupertinoIcons.keyboard),
+          child: const Icon(Styles.chatKeyboardIcon),
           onPressed: () => setState(() {
             _isVoice = false;
           }),
@@ -77,12 +77,12 @@ class _InputState extends State<ChatInputTray> {
         ),
       if (_controller.text.isEmpty || _isVoice)
         CupertinoButton(
-          child: const Icon(Icons.add_circle_outline),
+          child: const Icon(Styles.chatFunctionIcon),
           onPressed: () => _sendImage(context, widget.info),
         ),
       if (_controller.text.isNotEmpty && !_isVoice)
         CupertinoButton(
-          child: const Icon(Icons.send),
+          child: const Icon(Styles.chatSendIcon),
           onPressed: () => _sendText(context, _controller, widget.info),
         ),
     ],

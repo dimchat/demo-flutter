@@ -1,11 +1,16 @@
 package chat.dim.sechat;
 
+import android.content.Context;
+import android.content.pm.ApplicationInfo;
+import android.os.Bundle;
 import android.os.Environment;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 
 import java.io.File;
 
+import io.flutter.Log;
 import io.flutter.embedding.android.FlutterActivity;
 import io.flutter.embedding.engine.FlutterEngine;
 
@@ -13,6 +18,7 @@ import chat.dim.CryptoPlugins;
 import chat.dim.Register;
 import chat.dim.channels.ChannelManager;
 import chat.dim.filesys.LocalCache;
+import chat.dim.http.UpdateManager;
 
 public class MainActivity extends FlutterActivity {
 
@@ -28,6 +34,30 @@ public class MainActivity extends FlutterActivity {
         ChannelManager manager = ChannelManager.getInstance();
         manager.initChannels(flutterEngine.getDartExecutor().getBinaryMessenger());
 
+    }
+
+    @Override
+    protected void onCreate(@Nullable Bundle savedInstanceState) {
+        if (isApkInDebug(MainActivity.this)) {
+            Log.w("INIT", "Application in DEBUG mode");
+        } else {
+            chat.dim.utils.Log.LEVEL = chat.dim.utils.Log.RELEASE;
+            Log.w("INIT", "Application in RELEASE mode");
+        }
+        super.onCreate(savedInstanceState);
+
+        UpdateManager manager = new UpdateManager(MainActivity.this);
+        manager.checkUpdateInfo();
+    }
+
+    public static boolean isApkInDebug(Context context) {
+        try {
+            ApplicationInfo info = context.getApplicationInfo();
+            return (info.flags & ApplicationInfo.FLAG_DEBUGGABLE) != 0;
+        } catch (Exception e) {
+            Log.e("INIT", "failed to get debuggable");
+            return false;
+        }
     }
 
     static {

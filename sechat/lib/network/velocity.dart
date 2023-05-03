@@ -219,7 +219,7 @@ Future<Uint8List?> _getPack() async {
     if (rMsg == null) {
       return null;
     }
-    String json = JSONMap.encode(rMsg.dictionary);
+    String json = JSONMap.encode(rMsg.toMap());
     Uint8List data = UTF8.encode(json);
     // MTP packing
     ChannelManager manager = ChannelManager();

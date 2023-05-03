@@ -142,7 +142,7 @@ class FileTransfer {
     // decrypt with message password
     DecryptKey? password = content.password;
     if (password == null) {
-      Log.error('password not found: ${content.dictionary}');
+      Log.error('password not found: $content');
       return null;
     }
     Uint8List? data = await _decryptFileData(tempPath, password);
@@ -269,7 +269,7 @@ class FileTransfer {
   Future<String> _getEntityDirectory(Address address) async {
     LocalStorage cache = LocalStorage();
     String dir = Paths.append(await cache.cachesDirectory, 'mkm');
-    String string = address.string;
+    String string = address.toString();
     String aa = string.substring(0, 2);
     String bb = string.substring(2, 4);
     return Paths.append(dir, aa, bb, string);

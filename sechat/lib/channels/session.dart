@@ -82,7 +82,7 @@ class SessionChannel extends MethodChannel {
   /// login with user ID
   Future<bool> login(ID user) async {
     return await _invoke(ChannelMethods.login, {
-      'user': user.string,
+      'user': user.toString(),
     });
   }
 
@@ -101,7 +101,7 @@ class SessionChannel extends MethodChannel {
   /// send message with data pack & priority
   Future<void> sendMessagePackage(ReliableMessage rMsg, Uint8List data, int priority) async {
     return await _invoke(ChannelMethods.sendMessagePackage, {
-      'msg': rMsg.dictionary,
+      'msg': rMsg.toMap(),
       'data': data,
       'priority': priority,
     });

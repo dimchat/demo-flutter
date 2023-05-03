@@ -37,7 +37,7 @@ class _DocumentTable extends DataTableHandler<Document> implements DocumentDBI {
   @override
   Future<Document?> getDocument(ID entity, String? type) async {
     SQLConditions cond;
-    cond = SQLConditions(left: 'did', comparison: '=', right: entity.string);
+    cond = SQLConditions(left: 'did', comparison: '=', right: entity.toString());
     List<Document> array = await select(_table, columns: _selectColumns,
         conditions: cond, orderBy: 'id DESC', limit: 1);
     // first record only
@@ -50,7 +50,7 @@ class _DocumentTable extends DataTableHandler<Document> implements DocumentDBI {
     String? data = doc.getString('data');
     String? signature = doc.getString('signature');
     SQLConditions cond;
-    cond = SQLConditions(left: 'did', comparison: '=', right: identifier.string);
+    cond = SQLConditions(left: 'did', comparison: '=', right: identifier.toString());
     Map<String, dynamic> values = {
       'type': type,
       'data': data,
@@ -65,7 +65,7 @@ class _DocumentTable extends DataTableHandler<Document> implements DocumentDBI {
     String? type = doc.type;
     String? data = doc.getString('data');
     String? signature = doc.getString('signature');
-    List values = [identifier.string, type, data, signature];
+    List values = [identifier.toString(), type, data, signature];
     return await insert(_table, columns: _insertColumns, values: values) > 0;
   }
 

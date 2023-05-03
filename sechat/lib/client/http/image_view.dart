@@ -317,7 +317,7 @@ Widget _imageNotFound(ImageContent content) {
   // check thumbnail
   Uint8List? thumbnail = content.thumbnail;
   if (thumbnail == null) {
-    Log.error('image content error: ${content.dictionary}');
+    Log.error('image content error: $content');
     return Container(
       padding: const EdgeInsets.fromLTRB(16, 12, 16, 12),
       child: const Text('Image not found'),

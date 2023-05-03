@@ -184,7 +184,7 @@ class _ProfileState extends State<ProfilePage> implements lnc.Observer {
         ),
       ),
       Expanded(
-        child: SelectableText(widget.info.identifier.string,
+        child: SelectableText(widget.info.identifier.toString(),
           style: const TextStyle(fontSize: 12,
             color: Colors.teal,
           ),
@@ -323,7 +323,7 @@ class _ProfileTableState extends State<_ProfileTableCell> implements lnc.Observe
   Widget build(BuildContext context) => CupertinoTableCell(
     leading: widget.info.getImage(),
     title: Text(widget.info.name),
-    subtitle: Text(widget.info.identifier.string),
+    subtitle: Text(widget.info.identifier.toString()),
     onTap: () => ProfilePage.open(context, widget.info.identifier),
     onLongPress: widget.onLongPress,
   );

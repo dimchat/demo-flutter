@@ -38,7 +38,7 @@ class _UserTable extends DataTableHandler<ID> implements UserDBI {
       if (newUsers.contains(item)) {
         continue;
       }
-      cond = SQLConditions(left: 'uid', comparison: '=', right: item.string);
+      cond = SQLConditions(left: 'uid', comparison: '=', right: item.toString());
       if (await delete(_table, conditions: cond) < 0) {
         Log.error('failed to remove local user: $item');
         return -1;
@@ -65,7 +65,7 @@ class _UserTable extends DataTableHandler<ID> implements UserDBI {
     if (pos < 0) {
       // current user changed, and it's not in the new list
       // insert it with 'chosen = 1'
-      List values = [current.string, 1];
+      List values = [current.toString(), 1];
       if (await insert(_table, columns: _insertColumns, values: values) < 0) {
         Log.error('failed to add current user: $current');
         return -1;
@@ -76,7 +76,8 @@ class _UserTable extends DataTableHandler<ID> implements UserDBI {
       // (of cause it would not be the first one),
       // update it: 'chosen = 1'
       Map<String, dynamic> values = {'chosen': 1};
-      SQLConditions cond = SQLConditions(left: 'uid', comparison: '=', right: current.string);
+      SQLConditions cond;
+      cond = SQLConditions(left: 'uid', comparison: '=', right: current.toString());
       if (await update(_table, values: values, conditions: cond) < 0) {
         Log.error('failed to update current user: $current');
         return -1;
@@ -91,7 +92,7 @@ class _UserTable extends DataTableHandler<ID> implements UserDBI {
         continue;
       }
       // add other user with chosen flag = 0
-      List values = [item.string, 0];
+      List values = [item.toString(), 0];
       if (await insert(_table, columns: _insertColumns, values: values) < 0) {
         Log.error('failed to add local user: $item');
         return -1;

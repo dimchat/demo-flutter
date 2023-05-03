@@ -30,7 +30,7 @@ class _MetaTable extends DataTableHandler<Meta> implements MetaDBI {
   @override
   Future<Meta?> getMeta(ID entity) async {
     SQLConditions cond;
-    cond = SQLConditions(left: 'did', comparison: '=', right: entity.string);
+    cond = SQLConditions(left: 'did', comparison: '=', right: entity.toString());
     List<Meta> array = await select(_table, columns: _selectColumns,
         conditions: cond, limit: 1);
     // first record only
@@ -40,7 +40,7 @@ class _MetaTable extends DataTableHandler<Meta> implements MetaDBI {
   @override
   Future<bool> saveMeta(Meta meta, ID entity) async {
     int type = meta.type;
-    String json = JSON.encode(meta.key.dictionary);
+    String json = JSON.encode(meta.key.toMap());
     String seed;
     String fingerprint;
     if (MetaType.hasSeed(type)) {
@@ -50,7 +50,7 @@ class _MetaTable extends DataTableHandler<Meta> implements MetaDBI {
       seed = '';
       fingerprint = '';
     }
-    List values = [entity.string, type, json, seed, fingerprint];
+    List values = [entity.toString(), type, json, seed, fingerprint];
     return await insert(_table, columns: _insertColumns, values: values) > 0;
   }
 

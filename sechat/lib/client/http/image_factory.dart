@@ -36,7 +36,6 @@ import 'package:flutter/cupertino.dart';
 import 'package:dim_client/dim_client.dart';
 
 import 'ftp.dart';
-import 'weak.dart';
 
 class ImageFactory {
   factory ImageFactory() => _instance;
@@ -50,7 +49,7 @@ class ImageFactory {
   final Map<String, ImageProvider> _providers = WeakValueMap();
 
   /// Get avatar
-  ImageProvider? fromID(ID identifier) => _providers[identifier.string];
+  ImageProvider? fromID(ID identifier) => _providers[identifier.toString()];
 
   /// Download avatar from visa document
   Future<ImageProvider?> downloadDocument(Document visa) async {
@@ -63,7 +62,7 @@ class ImageFactory {
     }
     if (url == null) {
       Log.warning('avatar url not found: $identifier, $visa');
-      return _providers[identifier.string];
+      return _providers[identifier.toString()];
     }
     ImageProvider? image;
     // check cache
@@ -83,14 +82,14 @@ class ImageFactory {
     String? path = await FileTransfer().downloadAvatar(uri);
     if (path == null) {
       Log.error('failed to download avatar: $identifier -> $url');
-      return _providers[identifier.string];
+      return _providers[identifier.toString()];
     } else {
       image = _providers[path];
       image ??= FileImage(File(path));
       // cache it
       _providers[path] = image;
       _providers[url] = image;
-      _providers[identifier.string] = image;
+      _providers[identifier.toString()] = image;
       return image;
     }
   }
@@ -109,10 +108,10 @@ class ImageFactory {
       image = _providers[url];
       if (image != null) {
         // cache it
-        _providers[identifier.string] = image;
+        _providers[identifier.toString()] = image;
       }
     }
-    return image ?? _providers[identifier.string];
+    return image ?? _providers[identifier.toString()];
   }
 
   /// Download image from message content

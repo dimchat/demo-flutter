@@ -220,7 +220,7 @@ class _HistoryAdapter with SectionAdapterMixin {
   Widget? _getTimeLabel(InstantMessage iMsg, IndexPath indexPath) {
     DateTime? time = iMsg.time;
     if (time == null) {
-      assert(false, 'message time not found: ${iMsg.dictionary}');
+      assert(false, 'message time not found: $iMsg');
       return null;
     }
     int total = _dataSource.getItemCount();

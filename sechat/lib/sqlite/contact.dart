@@ -23,7 +23,7 @@ class _ContactTable extends DataTableHandler<ID> implements ContactDBI {
     // 0. check new contacts
     if (newContacts.isEmpty) {
       assert(oldContacts.isNotEmpty, 'new contacts empty??');
-      cond = SQLConditions(left: 'uid', comparison: '=', right: user.string);
+      cond = SQLConditions(left: 'uid', comparison: '=', right: user.toString());
       if (await delete(_table, conditions: cond) < 0) {
         Log.error('failed to clear contacts for user: $user');
         return -1;
@@ -38,9 +38,9 @@ class _ContactTable extends DataTableHandler<ID> implements ContactDBI {
       if (newContacts.contains(item)) {
         continue;
       }
-      cond = SQLConditions(left: 'uid', comparison: '=', right: user.string);
+      cond = SQLConditions(left: 'uid', comparison: '=', right: user.toString());
       cond.addCondition(SQLConditions.kAnd,
-          left: 'contact', comparison: '=', right: item.string);
+          left: 'contact', comparison: '=', right: item.toString());
       if (await delete(_table, conditions: cond) < 0) {
         Log.error('failed to remove contact: $item, user: $user');
         return -1;
@@ -53,7 +53,7 @@ class _ContactTable extends DataTableHandler<ID> implements ContactDBI {
       if (oldContacts.contains(item)) {
         continue;
       }
-      List values = [user.string, item.string, ''];
+      List values = [user.toString(), item.toString(), ''];
       if (await insert(_table, columns: _insertColumns, values: values) < 0) {
         Log.error('failed to add contact: $item, user: $user');
         return -1;
@@ -72,7 +72,7 @@ class _ContactTable extends DataTableHandler<ID> implements ContactDBI {
   @override
   Future<List<ID>> getContacts({required ID user}) async {
     SQLConditions cond;
-    cond = SQLConditions(left: 'uid', comparison: '=', right: user.string);
+    cond = SQLConditions(left: 'uid', comparison: '=', right: user.toString());
     return await select(_table, columns: _selectColumns, conditions: cond);
   }
 

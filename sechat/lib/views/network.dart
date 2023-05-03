@@ -314,7 +314,7 @@ class _StationCellState extends State<_StationCell> implements lnc.Observer {
 
   String _getName(StationInfo info) {
     String? name = info.name;
-    name ??= info.identifier?.string;
+    name ??= info.identifier?.toString();
     if (name != null && name.isNotEmpty) {
       return name;
     } else {

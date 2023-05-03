@@ -156,7 +156,7 @@ class FileTransferChannel extends MethodChannel {
       url = await _invoke(method, {
         'data': data,
         'filename': filename,
-        'sender': sender.string,
+        'sender': sender.toString(),
       });
       if (url != null) {
         Log.error('same file uploaded: $filename -> $url');

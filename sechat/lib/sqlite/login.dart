@@ -68,7 +68,7 @@ class _LoginCommandTable extends DataTableHandler<Pair<LoginCommand, ReliableMes
   @override
   Future<Pair<LoginCommand?, ReliableMessage?>> getLoginCommandMessage(ID identifier) async {
     SQLConditions cond;
-    cond = SQLConditions(left: 'uid', comparison: '=', right: identifier.string);
+    cond = SQLConditions(left: 'uid', comparison: '=', right: identifier.toString());
     List<Pair<LoginCommand, ReliableMessage>> array = await select(_table, columns: _selectColumns,
         conditions: cond, limit: 1);
     // first record only
@@ -77,15 +77,15 @@ class _LoginCommandTable extends DataTableHandler<Pair<LoginCommand, ReliableMes
 
   Future<bool> deleteLoginCommandMessage(ID identifier) async {
     SQLConditions cond;
-    cond = SQLConditions(left: 'uid', comparison: '=', right: identifier.string);
+    cond = SQLConditions(left: 'uid', comparison: '=', right: identifier.toString());
     return await delete(_table, conditions: cond) > 0;
   }
 
   @override
   Future<bool> saveLoginCommandMessage(ID identifier, LoginCommand content, ReliableMessage rMsg) async {
-    String cmd = JSON.encode(content.dictionary);
-    String msg = JSON.encode(rMsg.dictionary);
-    List values = [identifier.string, cmd, msg];
+    String cmd = JSON.encode(content.toMap());
+    String msg = JSON.encode(rMsg.toMap());
+    List values = [identifier.toString(), cmd, msg];
     return await insert(_table, columns: _insertColumns, values: values) > 0;
   }
 

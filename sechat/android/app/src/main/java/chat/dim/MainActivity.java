@@ -1,4 +1,4 @@
-package chat.dim.sechat;
+package chat.dim;
 
 import android.content.Context;
 import android.content.pm.ApplicationInfo;
@@ -14,8 +14,6 @@ import io.flutter.Log;
 import io.flutter.embedding.android.FlutterActivity;
 import io.flutter.embedding.engine.FlutterEngine;
 
-import chat.dim.CryptoPlugins;
-import chat.dim.Register;
 import chat.dim.channels.ChannelManager;
 import chat.dim.filesys.LocalCache;
 import chat.dim.http.UpdateManager;

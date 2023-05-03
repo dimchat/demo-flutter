@@ -78,14 +78,14 @@ class _ProviderTable extends DataTableHandler<_ProviderInfo> implements Provider
 
   @override
   Future<bool> addProvider(ID identifier, {int chosen = 0}) async {
-    List values = [identifier.string, chosen];
+    List values = [identifier.toString(), chosen];
     return await insert(_table, columns: _insertColumns, values: values) > 0;
   }
 
   @override
   Future<bool> updateProvider(ID identifier, {int chosen = 0}) async {
     SQLConditions cond;
-    cond = SQLConditions(left: 'pid', comparison: '=', right: identifier.string);
+    cond = SQLConditions(left: 'pid', comparison: '=', right: identifier.toString());
     Map<String, dynamic> values = {
       'chosen': chosen,
     };
@@ -95,7 +95,7 @@ class _ProviderTable extends DataTableHandler<_ProviderInfo> implements Provider
   @override
   Future<bool> removeProvider(ID identifier) async {
     SQLConditions cond;
-    cond = SQLConditions(left: 'pid', comparison: '=', right: identifier.string);
+    cond = SQLConditions(left: 'pid', comparison: '=', right: identifier.toString());
     return await delete(_table, conditions: cond) > 0;
   }
 

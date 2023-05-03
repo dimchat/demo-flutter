@@ -134,7 +134,7 @@ class InstantMessageTable extends DataTableHandler<InstantMessage> implements In
   Future<Pair<List<InstantMessage>, int>> getInstantMessages(ID chat,
       {int start = 0, int? limit}) async {
     SQLConditions cond;
-    cond = SQLConditions(left: 'cid', comparison: '=', right: chat.string);
+    cond = SQLConditions(left: 'cid', comparison: '=', right: chat.toString());
     List<InstantMessage> messages = await select(_table, columns: _selectColumns,
         conditions: cond, orderBy: 'time DESC');
     int remaining = 0;
@@ -146,7 +146,7 @@ class InstantMessageTable extends DataTableHandler<InstantMessage> implements In
 
   @override
   Future<bool> saveInstantMessage(ID chat, InstantMessage iMsg) async {
-    String sender = iMsg.sender.string;
+    String sender = iMsg.sender.toString();
     // String receiver = iMsg.receiver.string;
     int? time = iMsg.time?.millisecondsSinceEpoch;
     if (time == null) {
@@ -159,11 +159,11 @@ class InstantMessageTable extends DataTableHandler<InstantMessage> implements In
     if (sig != null) {
       sig = sig.substring(sig.length - 8);
     }
-    String msg = JSON.encode(iMsg.dictionary);
+    String msg = JSON.encode(iMsg.toMap());
 
     // check old record
     SQLConditions cond;
-    cond = SQLConditions(left: 'cid', comparison: '=', right: chat.string);
+    cond = SQLConditions(left: 'cid', comparison: '=', right: chat.toString());
     cond.addCondition(SQLConditions.kAnd, left: 'sender', comparison: '=', right: sender);
     cond.addCondition(SQLConditions.kAnd, left: 'sn', comparison: '=', right: content.sn);
     List<InstantMessage> messages = await select(_table, columns: _selectColumns,
@@ -188,7 +188,7 @@ class InstantMessageTable extends DataTableHandler<InstantMessage> implements In
       }
       act = 'update';
     } else {
-      List values = [chat.string, sender,/* receiver,*/ time, iMsg.type,
+      List values = [chat.toString(), sender,/* receiver,*/ time, iMsg.type,
         content.sn, sig, /*JSON.encode(content.dictionary),*/ msg];
       if (await insert(_table, columns: _insertColumns, values: values) <= 0) {
         Log.error('failed to save message: $sender -> $chat');
@@ -208,10 +208,10 @@ class InstantMessageTable extends DataTableHandler<InstantMessage> implements In
 
   @override
   Future<bool> removeInstantMessage(ID chat, InstantMessage iMsg) async {
-    String sender = iMsg.sender.string;
+    String sender = iMsg.sender.toString();
     Content content = iMsg.content;
     SQLConditions cond;
-    cond = SQLConditions(left: 'cid', comparison: '=', right: chat.string);
+    cond = SQLConditions(left: 'cid', comparison: '=', right: chat.toString());
     cond.addCondition(SQLConditions.kAnd, left: 'sender', comparison: '=', right: sender);
     cond.addCondition(SQLConditions.kAnd, left: 'sn', comparison: '=', right: content.sn);
     if (await delete(_table, conditions: cond) < 0) {
@@ -231,7 +231,7 @@ class InstantMessageTable extends DataTableHandler<InstantMessage> implements In
   @override
   Future<bool> removeInstantMessages(ID chat) async {
     SQLConditions cond;
-    cond = SQLConditions(left: 'cid', comparison: '=', right: chat.string);
+    cond = SQLConditions(left: 'cid', comparison: '=', right: chat.toString());
     if (await delete(_table, conditions: cond) < 0) {
       Log.error('failed to remove messages: $chat');
       return false;

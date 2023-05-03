@@ -280,7 +280,7 @@ class _SendState extends State<ChatSendFlag> implements lnc.Observer {
   );
 
   Future<void> _resendMessage() async {
-    Log.warning('re-send message: ${widget.iMsg.dictionary}');
+    Log.warning('re-send message: ${widget.iMsg}');
     GlobalVariable shared = GlobalVariable();
     SharedMessenger? messenger = shared.messenger;
     if (messenger == null) {
@@ -300,7 +300,7 @@ class _SendState extends State<ChatSendFlag> implements lnc.Observer {
     }
     ReliableMessage? rMsg = await messenger.sendInstantMessage(iMsg);
     if (rMsg == null) {
-      Log.error('failed to send instant message: ${iMsg.dictionary}');
+      Log.error('failed to send instant message: $iMsg');
     } else {
       String? signature = rMsg.getString('signature');
       Log.debug('keep signature: $signature');

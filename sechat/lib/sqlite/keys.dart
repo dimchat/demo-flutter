@@ -59,7 +59,7 @@ class _PrivateKeyTable extends DataTableHandler<PrivateKey> implements PrivateKe
   @override
   Future<List<DecryptKey>> getPrivateKeysForDecryption(ID user) async {
     SQLConditions cond;
-    cond = SQLConditions(left: 'uid', comparison: '=', right: user.string);
+    cond = SQLConditions(left: 'uid', comparison: '=', right: user.toString());
     cond.addCondition(SQLConditions.kAnd, left: 'decrypt', comparison: '<>', right: 0);
     // WHERE uid='$user' AND decrypt=1 ORDER BY type DESC LIMIT 3
     List<PrivateKey> array = await select(_table, columns: _selectColumns,
@@ -76,7 +76,7 @@ class _PrivateKeyTable extends DataTableHandler<PrivateKey> implements PrivateKe
   @override
   Future<PrivateKey?> getPrivateKeyForVisaSignature(ID user) async {
     SQLConditions cond;
-    cond = SQLConditions(left: 'uid', comparison: '=', right: user.string);
+    cond = SQLConditions(left: 'uid', comparison: '=', right: user.toString());
     cond.addCondition(SQLConditions.kAnd, left: 'type', comparison: '=', right: PrivateKeyDBI.kMeta);
     cond.addCondition(SQLConditions.kAnd, left: 'sign', comparison: '<>', right: 0);
     // WHERE uid='$user' AND type='M' AND decrypt=1 ORDER BY id DESC  LIMIT 1
@@ -90,8 +90,8 @@ class _PrivateKeyTable extends DataTableHandler<PrivateKey> implements PrivateKe
   Future<bool> savePrivateKey(PrivateKey key, String type, ID user,
       {int sign = 1, required int decrypt}) async {
     // 1. save to database
-    String json = JSON.encode(key.dictionary);
-    List values = [user.string, json, type, sign, decrypt];
+    String json = JSON.encode(key.toMap());
+    List values = [user.toString(), json, type, sign, decrypt];
     return await insert(_table, columns: _insertColumns, values: values) > 0;
   }
 

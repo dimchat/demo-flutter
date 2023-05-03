@@ -23,21 +23,21 @@ class _StationTable extends DataTableHandler<_StationInfo> implements StationDBI
   @override
   Future<List<_StationInfo>> getStations({required ID provider}) async {
     SQLConditions cond;
-    cond = SQLConditions(left: 'pid', comparison: '=', right: provider.string);
+    cond = SQLConditions(left: 'pid', comparison: '=', right: provider.toString());
     return await select(_table, columns: _selectColumns,
         conditions: cond, orderBy: 'chosen DESC');
   }
 
   @override
   Future<bool> addStation(String host, int port, {required ID provider, int chosen = 0}) async {
-    List values = [provider.string, host, port, chosen];
+    List values = [provider.toString(), host, port, chosen];
     return await insert(_table, columns: _insertColumns, values: values) > 0;
   }
 
   @override
   Future<bool> updateStation(String host, int port, {required ID provider, int chosen = 0}) async {
     SQLConditions cond;
-    cond = SQLConditions(left: 'pid', comparison: '=', right: provider.string);
+    cond = SQLConditions(left: 'pid', comparison: '=', right: provider.toString());
     cond.addCondition(SQLConditions.kAnd, left: 'host', comparison: '=', right: host);
     cond.addCondition(SQLConditions.kAnd, left: 'port', comparison: '=', right: port);
     Map<String, dynamic> values = {
@@ -49,7 +49,7 @@ class _StationTable extends DataTableHandler<_StationInfo> implements StationDBI
   @override
   Future<bool> removeStation(String host, int port, {required ID provider}) async {
     SQLConditions cond;
-    cond = SQLConditions(left: 'pid', comparison: '=', right: provider.string);
+    cond = SQLConditions(left: 'pid', comparison: '=', right: provider.toString());
     cond.addCondition(SQLConditions.kAnd, left: 'host', comparison: '=', right: host);
     cond.addCondition(SQLConditions.kAnd, left: 'port', comparison: '=', right: port);
     return await delete(_table, conditions: cond) > 0;
@@ -58,7 +58,7 @@ class _StationTable extends DataTableHandler<_StationInfo> implements StationDBI
   @override
   Future<bool> removeStations({required ID provider}) async {
     SQLConditions cond;
-    cond = SQLConditions(left: 'pid', comparison: '=', right: provider.string);
+    cond = SQLConditions(left: 'pid', comparison: '=', right: provider.toString());
     return await delete(_table, conditions: cond) > 0;
   }
 

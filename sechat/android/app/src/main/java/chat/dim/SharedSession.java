@@ -1,4 +1,4 @@
-package chat.dim.sechat;
+package chat.dim;
 
 import java.io.IOError;
 

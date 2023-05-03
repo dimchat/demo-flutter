@@ -89,7 +89,7 @@ class SearchCommand extends BaseCommand {
     if (sid == null) {
       remove('station');
     } else {
-      this['station'] = sid.string;
+      this['station'] = sid.toString();
     }
   }
 

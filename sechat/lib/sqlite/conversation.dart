@@ -61,7 +61,7 @@ class _ConversationTable extends DataTableHandler<Conversation> implements Conve
     if (chat.lastTime != null) {
       seconds = chat.lastTime!.millisecondsSinceEpoch / 1000.0;
     }
-    List values = [chat.identifier.string, chat.unread, chat.lastMessage, seconds];
+    List values = [chat.identifier.toString(), chat.unread, chat.lastMessage, seconds];
     return await insert(_table, columns: _insertColumns, values: values) > 0;
   }
 
@@ -79,14 +79,14 @@ class _ConversationTable extends DataTableHandler<Conversation> implements Conve
       'time': time,
     };
     SQLConditions cond;
-    cond = SQLConditions(left: 'cid', comparison: '=', right: chat.identifier.string);
+    cond = SQLConditions(left: 'cid', comparison: '=', right: chat.identifier.toString());
     return await update(_table, values: values, conditions: cond) == 1;
   }
 
   @override
   Future<bool> removeConversation(ID chat) async {
     SQLConditions cond;
-    cond = SQLConditions(left: 'cid', comparison: '=', right: chat.string);
+    cond = SQLConditions(left: 'cid', comparison: '=', right: chat.toString());
     return await delete(_table, conditions: cond) == 1;
   }
 

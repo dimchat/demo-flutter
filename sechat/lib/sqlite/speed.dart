@@ -49,7 +49,7 @@ class SpeedTable extends DataTableHandler<_SpeedInfo> implements SpeedDBI {
   Future<bool> addSpeed(String host, int port,
       {required ID identifier, required DateTime time, required double duration}) async {
     int seconds = time.millisecondsSinceEpoch ~/ 1000;
-    List values = [host, port, identifier.string, seconds, duration];
+    List values = [host, port, identifier.toString(), seconds, duration];
     return await insert(_table, columns: _insertColumns, values: values) > 0;
   }
 

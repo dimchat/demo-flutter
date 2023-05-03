@@ -287,7 +287,7 @@ class Amanuensis implements lnc.Observer {
     }
     String last = mb.getText(content, iMsg.sender);
     if (last.isEmpty) {
-      Log.warning('content text empty: ${content.dictionary}');
+      Log.warning('content text empty: $content');
       return;
     }
     DateTime? time = iMsg.time;
@@ -412,7 +412,7 @@ class Amanuensis implements lnc.Observer {
       Log.error('original envelope not found: $content');
       return false;
     }
-    Map mta = {'ID': iMsg.sender.string, 'time': content['time']};
+    Map mta = {'ID': iMsg.sender.toString(), 'time': content['time']};
     // trace info
     String trace = JSON.encode(mta);
     ID cid = await _cid(env);

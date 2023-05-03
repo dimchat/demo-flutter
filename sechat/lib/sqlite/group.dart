@@ -23,7 +23,7 @@ class _MemberTable extends DataTableHandler<ID> {
     // 0. check new members
     if (newMembers.isEmpty) {
       assert(oldMembers.isNotEmpty, 'new members empty??');
-      cond = SQLConditions(left: 'gid', comparison: '=', right: group.string);
+      cond = SQLConditions(left: 'gid', comparison: '=', right: group.toString());
       if (await delete(_table, conditions: cond) < 0) {
         Log.error('failed to clear members for group: $group');
         return -1;
@@ -38,9 +38,9 @@ class _MemberTable extends DataTableHandler<ID> {
       if (newMembers.contains(item)) {
         continue;
       }
-      cond = SQLConditions(left: 'gid', comparison: '=', right: group.string);
+      cond = SQLConditions(left: 'gid', comparison: '=', right: group.toString());
       cond.addCondition(SQLConditions.kAnd,
-          left: 'member', comparison: '=', right: item.string);
+          left: 'member', comparison: '=', right: item.toString());
       if (await delete(_table, conditions: cond) < 0) {
         Log.error('failed to remove member: $item, group: $group');
         return -1;
@@ -53,7 +53,7 @@ class _MemberTable extends DataTableHandler<ID> {
       if (oldMembers.contains(item)) {
         continue;
       }
-      List values = [group.string, item.string];
+      List values = [group.toString(), item.toString()];
       if (await insert(_table, columns: _insertColumns, values: values) < 0) {
         Log.error('failed to add member: $item, group: $group');
         return -1;
@@ -71,7 +71,7 @@ class _MemberTable extends DataTableHandler<ID> {
 
   Future<List<ID>> getMembers(ID group) async {
     SQLConditions cond;
-    cond = SQLConditions(left: 'gid', comparison: '=', right: group.string);
+    cond = SQLConditions(left: 'gid', comparison: '=', right: group.toString());
     return await select(_table, columns: _selectColumns, conditions: cond);
   }
 

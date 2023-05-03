@@ -59,7 +59,7 @@ class TraceTable extends DataTableHandler<String> implements TraceDBI {
     } else if (signature.length > 8) {
       signature = signature.substring(signature.length - 8);
     }
-    List values = [cid.string, sender.string, sn, signature, trace];
+    List values = [cid.toString(), sender.toString(), sn, signature, trace];
     return await insert(_table, columns: _insertColumns, values: values) > 0;
   }
 
@@ -81,7 +81,7 @@ class TraceTable extends DataTableHandler<String> implements TraceDBI {
       return [];
     }
     cond.addCondition(SQLConditions.kAnd,
-        left: 'sender', comparison: '=', right: sender.string);
+        left: 'sender', comparison: '=', right: sender.toString());
     // SELECT * FROM t_trace WHERE (signature='...' OR sn='123') AND sender='abc'
     return await select(_table, columns: _selectColumns, conditions: cond);
   }
@@ -89,7 +89,7 @@ class TraceTable extends DataTableHandler<String> implements TraceDBI {
   @override
   Future<bool> removeTraces(ID sender, int sn, String? signature) async {
     SQLConditions cond;
-    cond = SQLConditions(left: 'sender', comparison: '=', right: sender.string);
+    cond = SQLConditions(left: 'sender', comparison: '=', right: sender.toString());
     cond.addCondition(SQLConditions.kAnd, left: 'sn', comparison: '=', right: sn);
     if (signature != null) {
       if (signature.length > 8) {
@@ -104,7 +104,7 @@ class TraceTable extends DataTableHandler<String> implements TraceDBI {
   @override
   Future<bool> removeAllTraces(ID cid) async {
     SQLConditions cond;
-    cond = SQLConditions(left: 'cid', comparison: '=', right: cid.string);
+    cond = SQLConditions(left: 'cid', comparison: '=', right: cid.toString());
     return await delete(_table, conditions: cond) > 0;
   }
 

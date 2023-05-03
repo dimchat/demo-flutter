@@ -21,7 +21,7 @@ import chat.dim.network.SessionState;
 import chat.dim.mtp.MTPHelper;
 import chat.dim.mtp.Package;
 import chat.dim.pack.SeekerResult;
-import chat.dim.sechat.SessionController;
+import chat.dim.SessionController;
 import chat.dim.type.Data;
 import chat.dim.utils.Log;
 

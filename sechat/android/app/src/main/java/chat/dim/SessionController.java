@@ -1,11 +1,10 @@
-package chat.dim.sechat;
+package chat.dim;
 
 import java.io.IOError;
 import java.net.SocketAddress;
 import java.util.ArrayList;
 import java.util.List;
 
-import chat.dim.CommonFacebook;
 import chat.dim.channels.ChannelManager;
 import chat.dim.channels.SessionChannel;
 import chat.dim.dbi.SessionDBI;

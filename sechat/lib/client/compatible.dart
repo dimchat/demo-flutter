@@ -41,7 +41,7 @@ abstract class Compatible {
       content['cmd'] = cmd;
     } else if (!content.containsKey('command')) {
       content['command'] = cmd;
-      content = Command.parse(content.dictionary)!;
+      content = Command.parse(content.toMap())!;
     }
     return content;
   }

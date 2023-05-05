@@ -136,13 +136,12 @@ class _ProfileState extends State<ProfilePage> implements lnc.Observer {
   );
 
   Widget _body(BuildContext context) => Column(
+    crossAxisAlignment: CrossAxisAlignment.center,
     children: [
       const SizedBox(height: 32,),
       _avatarImage(context),
       const SizedBox(height: 8,),
-      SizedBox(width: 300,
-        child: _idLabel(),
-      ),
+      _idLabel(),
       const SizedBox(height: 32,),
       if (!_isFriend)
         _addButton(context),
@@ -175,6 +174,7 @@ class _ProfileState extends State<ProfilePage> implements lnc.Observer {
       });
 
   Widget _idLabel() => Row(
+    mainAxisSize: MainAxisSize.min,
     mainAxisAlignment: MainAxisAlignment.center,
     children: [
       const Text('ID: ',
@@ -183,7 +183,8 @@ class _ProfileState extends State<ProfilePage> implements lnc.Observer {
           fontWeight: FontWeight.bold,
         ),
       ),
-      Expanded(
+      Container(
+        constraints: const BoxConstraints(maxWidth: 320),
         child: SelectableText(widget.info.identifier.toString(),
           style: const TextStyle(fontSize: 12,
             color: Colors.teal,

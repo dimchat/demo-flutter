@@ -68,25 +68,46 @@ class StationInfo {
 
   /// sort stations with response time (chosen first)
   static List<StationInfo> sortStations(List<StationInfo> stations) {
+    // sort with response time
     stations.sort((a, b) {
-      // chosen first
-      if (a.chosen > b.chosen) {
-        return -1;
-      } else if (a.chosen < b.chosen) {
-        return 1;
-      }
-      // sort with response time
       double? art = a.responseTime;
       double? brt = b.responseTime;
-      if (art == null) {
-        return brt == null ? 0 : 1;
-      } else if (brt == null) {
+      assert(art != 0 && brt != 0, 'response time error: $a, $b');
+      // filter error stations
+      if (art != null && art < 0) {
+        // station a cannot connect, check station b
+        return brt != null && brt < 0 ? 0 : 1;
+      } else if (brt != null && brt < 0) {
+        // station a can connect, station b cannot connect,
+        // so station a first.
+        return -1;
+      }
+      // all not error, chosen first
+      if (a.chosen > b.chosen) {
+        // station a is chosen, station a first
+        return -1;
+      } else if (a.chosen < b.chosen) {
+        // station b is chosen, station b first
+        return 1;
+      }
+      // same level, fast first
+      if (art == null || art == 0) {
+        // station has no test record, check station b
+        return brt == null || brt == 0 ? 0 : 1;
+      } else if (brt == null || brt == 0) {
+        // station a has record, station b has no record,
+        // so station a first
+        return -1;
+      } else if (art < brt) {
+        // station a is faster than station b,
+        // so station a first
         return -1;
       } else if (art > brt) {
+        // station a is slower than station b,
+        // so station b first
         return 1;
-      } else if (art < brt) {
-        return -1;
       } else {
+        // same
         return 0;
       }
     });

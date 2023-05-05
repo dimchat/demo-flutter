@@ -37,6 +37,7 @@ import 'package:lnc/lnc.dart' as lnc;
 import '../channels/manager.dart';
 import '../channels/session.dart';
 import '../client/constants.dart';
+import '../client/facebook.dart';
 import '../client/messenger.dart';
 import '../client/shared.dart';
 import '../models/station.dart';
@@ -266,21 +267,31 @@ Future<ReliableMessage?> _packMsg() async {
 
 Future<InstantMessage?> _getMsg() async {
   GlobalVariable shared = GlobalVariable();
+  SharedFacebook facebook = shared.facebook;
   // get current user
-  User? user = await shared.facebook.currentUser;
+  User? user = await facebook.currentUser;
   if (user == null) {
     assert(false, 'current user not found');
     return null;
   }
   ID uid = user.identifier;
   ID sid = Station.kAny;
+  // check current user's meta & visa document
+  Meta? meta = await facebook.getMeta(uid);
+  Document? visa = await facebook.getDocument(uid, '*');
+  if (meta == null) {
+    assert(false, 'meta should not empty here');
+    return null;
+  } else if (visa == null) {
+    assert(false, 'visa should not empty here');
+  }
   // create message envelope and handshake command
   Envelope env = Envelope.create(sender: uid, receiver: sid);
   Content content = HandshakeCommand.start();
   content.group = Station.kEvery;
   // create instant message with meta & visa
   InstantMessage iMsg = InstantMessage.create(env, content);
-  iMsg.setMap('meta', await user.meta);
-  iMsg.setMap('visa', await user.visa);
+  iMsg.setMap('meta', meta);
+  iMsg.setMap('visa', visa);
   return iMsg;
 }

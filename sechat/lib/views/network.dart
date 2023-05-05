@@ -253,7 +253,7 @@ class _StationCellState extends State<_StationCell> implements lnc.Observer {
         if (mounted) {
           setState(() {
             widget.info.testTime = DateTime.now();
-            widget.info.responseTime = null;
+            widget.info.responseTime = 0;
           });
         }
       } else if (state == 'connected') {
@@ -338,9 +338,9 @@ class _StationCellState extends State<_StationCell> implements lnc.Observer {
   }
   String _getResult(StationInfo info) {
     double? responseTime = info.responseTime;
-    if (info.testTime == null) {
+    if (responseTime == null) {
       return 'unknown';
-    } else if (responseTime == null) {
+    } else if (responseTime == 0) {
       return 'testing';
     } else if (responseTime < 0) {
       return 'error';
@@ -349,13 +349,13 @@ class _StationCellState extends State<_StationCell> implements lnc.Observer {
   }
   Color _getColor(StationInfo info) {
     double? responseTime = info.responseTime;
-    if (info.testTime == null) {
+    if (responseTime == null) {
       return CupertinoColors.systemGrey;
-    } else if (responseTime == null) {
+    } else if (responseTime == 0) {
       return CupertinoColors.systemBlue;
-    } else if (responseTime <= 0.0) {
+    } else if (responseTime < 0) {
       return CupertinoColors.systemRed;
-    } else if (responseTime > 15.0) {
+    } else if (responseTime > 15) {
       return CupertinoColors.systemYellow;
     }
     return CupertinoColors.systemGreen;

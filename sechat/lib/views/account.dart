@@ -171,7 +171,13 @@ class _AccountState extends State<AccountPage> {
     child: CupertinoButton(
       color: Colors.orange,
       child: const Text('Save'),
-      onPressed: () => _saveInfo(context),
+      onPressed: () => _saveInfo(context).then((ok) {
+        if (ok) {
+          Alert.show(context, 'Success', 'Your visa document is updated!');
+        } else {
+          Alert.show(context, 'Error', 'Failed to update visa document.');
+        }
+      }),
     ),
   );
 
@@ -213,7 +219,7 @@ class _AccountState extends State<AccountPage> {
     });
   });
 
-  void _saveInfo(BuildContext context) async {
+  Future<bool> _saveInfo(BuildContext context) async {
     // 1. get old visa document
     User user = widget.user;
     Visa? visa = await user.visa
@@ -230,6 +236,7 @@ class _AccountState extends State<AccountPage> {
       assert(key is EncryptKey, 'failed to create visa key');
       visa.key = key as EncryptKey;
     } else {
+      // create new one for modifying
       Document? doc = Document.parse(visa?.copyMap(false));
       assert(doc is Visa, 'failed to create visa document');
       visa = doc as Visa;
@@ -244,7 +251,7 @@ class _AccountState extends State<AccountPage> {
         });
     if (sKey == null) {
       assert(false, 'should not happen');
-      return;
+      return false;
     }
     // 3. set name & avatar url in visa document and sign it
     visa.name = _nickname;
@@ -260,6 +267,7 @@ class _AccountState extends State<AccountPage> {
     assert(ok, 'failed to save visa: $user, $visa');
     // TODO: broadcast this document to all friends
     shared.messenger?.broadcastDocument();
+    return ok;
   }
 
   /*

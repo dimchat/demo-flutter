@@ -1,3 +1,5 @@
+import 'package:lnc/lnc.dart' as lnc;
+
 import '../client/constants.dart';
 import 'helper/sqlite.dart';
 import 'service.dart';
@@ -123,7 +125,7 @@ class StationCache extends _StationTable {
       return false;
     }
     // 3. post notification
-    var nc = NotificationCenter();
+    var nc = lnc.NotificationCenter();
     nc.postNotification(NotificationNames.kStationsUpdated, this, {
       'action': 'add',
       'host': host,
@@ -151,7 +153,7 @@ class StationCache extends _StationTable {
       return false;
     }
     // 3. post notification
-    var nc = NotificationCenter();
+    var nc = lnc.NotificationCenter();
     nc.postNotification(NotificationNames.kStationsUpdated, this, {
       'action': 'update',
       'host': host,
@@ -179,7 +181,7 @@ class StationCache extends _StationTable {
       return false;
     }
     // 3. post notification
-    var nc = NotificationCenter();
+    var nc = lnc.NotificationCenter();
     nc.postNotification(NotificationNames.kStationsUpdated, this, {
       'action': 'remove',
       'host': host,
@@ -199,7 +201,7 @@ class StationCache extends _StationTable {
       return false;
     }
     // 3. post notification
-    var nc = NotificationCenter();
+    var nc = lnc.NotificationCenter();
     nc.postNotification(NotificationNames.kStationsUpdated, this, {
       'action': 'removeAll',
       'provider': provider,

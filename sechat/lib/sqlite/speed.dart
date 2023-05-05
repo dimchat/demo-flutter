@@ -11,7 +11,7 @@ abstract class SpeedDBI {
   Future<bool> addSpeed(String host, int port,
       {required ID identifier, required DateTime time, required double duration});
 
-  Future<bool> removeExpired(DateTime? expired);
+  Future<bool> removeExpiredSpeed(DateTime? expired);
 
 }
 
@@ -54,7 +54,7 @@ class SpeedTable extends DataTableHandler<_SpeedInfo> implements SpeedDBI {
   }
 
   @override
-  Future<bool> removeExpired(DateTime? expired) async {
+  Future<bool> removeExpiredSpeed(DateTime? expired) async {
     int time;
     if (expired == null) {
       time = Time.currentTimeMillis ~/ 1000 - 72 * 3600;

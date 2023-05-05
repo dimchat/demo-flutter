@@ -1,6 +1,7 @@
 import 'dart:typed_data';
 
 import 'package:dim_client/dim_client.dart';
+import 'package:lnc/lnc.dart' as lnc;
 
 import '../channels/manager.dart';
 import '../channels/transfer.dart';
@@ -9,9 +10,9 @@ import 'constants.dart';
 import 'http/ftp.dart';
 import 'shared.dart';
 
-class Emitter implements Observer {
+class Emitter implements lnc.Observer {
   Emitter() {
-    var nc = NotificationCenter();
+    var nc = lnc.NotificationCenter();
     nc.addObserver(this, NotificationNames.kFileUploadSuccess);
     nc.addObserver(this, NotificationNames.kFileUploadFailure);
   }
@@ -36,7 +37,7 @@ class Emitter implements Observer {
   }
 
   @override
-  Future<void> onReceiveNotification(Notification notification) async {
+  Future<void> onReceiveNotification(lnc.Notification notification) async {
     String name = notification.name;
     Map info = notification.userInfo!;
     if (name == NotificationNames.kFileUploadSuccess) {

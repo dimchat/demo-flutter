@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_section_list/flutter_section_list.dart';
 
 import 'package:dim_client/dim_client.dart';
-import 'package:dim_client/dim_client.dart' as lnc;
+import 'package:lnc/lnc.dart' as lnc;
 
 import '../client/constants.dart';
 import '../client/shared.dart';
@@ -83,10 +83,15 @@ class _NetworkState extends State<NetworkSettingPage> {
     // // shared.database.removeStation('203.195.224.155', 9394, provider: gsp);
     // shared.database.removeStations(provider: gsp);
   }
-  void _refreshStations() {
+  Future<void> _refreshStations() async {
+    // disable the refresh button to avoid refresh frequently
     setState(() {
       _refreshing = true;
     });
+    // clear expired records
+    GlobalVariable shared = GlobalVariable();
+    await shared.database.removeExpiredSpeed(null);
+    // test all stations
     int sections = _dataSource.getSectionCount();
     int items;
     StationInfo info;
@@ -97,6 +102,7 @@ class _NetworkState extends State<NetworkSettingPage> {
         VelocityMeter.ping(info);
       }
     }
+    // enable the refresh button after 5 seconds
     Future.delayed(const Duration(seconds: 5)).then((value) {
       if (mounted) {
         setState(() {

@@ -1,3 +1,5 @@
+import 'package:lnc/lnc.dart' as lnc;
+
 import '../client/constants.dart';
 import 'helper/sqlite.dart';
 
@@ -193,7 +195,7 @@ class PrivateKeyCache extends _PrivateKeyTable {
     }
 
     // 3. post notification
-    var nc = NotificationCenter();
+    var nc = lnc.NotificationCenter();
     nc.postNotification(NotificationNames.kPrivateKeySaved, this, {
       'user': user,
       'key': key,

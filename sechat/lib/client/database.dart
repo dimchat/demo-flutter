@@ -1,4 +1,5 @@
 import 'package:dim_client/dim_client.dart';
+import 'package:lnc/lnc.dart' as lnc;
 
 import '../models/conversation.dart';
 import '../sqlite/contact.dart';
@@ -40,8 +41,8 @@ class SharedDatabase implements AccountDBI, SessionDBI, MessageDBI,
   TraceDBI traceTable = TraceTable();
   ConversationDBI conversationTable = ConversationCache();
 
-  final NotificationCenter _center = NotificationCenter();
-  NotificationCenter get center => _center;
+  final lnc.NotificationCenter _center = lnc.NotificationCenter();
+  lnc.NotificationCenter get center => _center;
 
   //
   //  PrivateKey Table
@@ -243,8 +244,8 @@ class SharedDatabase implements AccountDBI, SessionDBI, MessageDBI,
           identifier: identifier, time: time, duration: duration);
 
   @override
-  Future<bool> removeExpired(DateTime? expired) async =>
-      await speedTable.removeExpired(expired);
+  Future<bool> removeExpiredSpeed(DateTime? expired) async =>
+      await speedTable.removeExpiredSpeed(expired);
 
   //
   //  MsgKey Table

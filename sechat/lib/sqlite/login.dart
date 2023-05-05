@@ -1,3 +1,5 @@
+import 'package:lnc/lnc.dart' as lnc;
+
 import '../client/constants.dart';
 import '../client/filesys/paths.dart';
 import '../client/filesys/local.dart';
@@ -152,7 +154,7 @@ class LoginCommandCache extends _LoginCommandTable {
       return false;
     }
     // 4. post notification
-    var nc = NotificationCenter();
+    var nc = lnc.NotificationCenter();
     nc.postNotification(NotificationNames.kLoginCommandUpdated, this, {
       'ID': identifier,
       'cmd': content,

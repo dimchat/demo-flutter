@@ -1,5 +1,5 @@
 import 'package:dim_client/dim_client.dart';
-import 'package:dim_client/dim_client.dart' as lnc;
+import 'package:lnc/lnc.dart' as lnc;
 
 import '../client/constants.dart';
 import '../client/facebook.dart';
@@ -270,7 +270,7 @@ class Amanuensis implements lnc.Observer {
       Log.error('failed to update conversation: $chatBox');
       return false;
     }
-    var nc = NotificationCenter();
+    var nc = lnc.NotificationCenter();
     nc.postNotification(NotificationNames.kConversationUpdated, null, {
       'action': 'read',
       'ID': cid,
@@ -317,7 +317,7 @@ class Amanuensis implements lnc.Observer {
         return;
       }
     }
-    var nc = NotificationCenter();
+    var nc = lnc.NotificationCenter();
     nc.postNotification(NotificationNames.kConversationUpdated, this, {
       'action': 'update',
       'ID': cid,
@@ -426,7 +426,7 @@ class Amanuensis implements lnc.Observer {
       Log.error('failed to add message trace: ${iMsg.sender} ($sender -> $cid)');
       return false;
     }
-    var nc = NotificationCenter();
+    var nc = lnc.NotificationCenter();
     nc.postNotification(NotificationNames.kMessageTraced, this, {
       'cid': cid,
       'sender': sender,

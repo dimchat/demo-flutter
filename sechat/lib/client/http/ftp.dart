@@ -31,6 +31,7 @@
 import 'dart:typed_data';
 
 import 'package:dim_client/dim_client.dart';
+import 'package:lnc/lnc.dart' as lnc;
 
 import '../../channels/manager.dart';
 import '../constants.dart';
@@ -161,7 +162,7 @@ class FileTransfer {
       return null;
     }
     // post notification async
-    var nc = NotificationCenter();
+    var nc = lnc.NotificationCenter();
     nc.postNotification(NotificationNames.kFileDownloadSuccess, this, {
       'url': url,
       'path': cachePath,
@@ -184,7 +185,7 @@ class FileTransfer {
       notification = NotificationNames.kFileDownloadSuccess;
     }
     // post notification async
-    var nc = NotificationCenter();
+    var nc = lnc.NotificationCenter();
     nc.postNotification(notification, this, {
       'url': url,
       'path': path,

@@ -1,6 +1,7 @@
 import 'package:flutter/services.dart';
 
 import 'package:dim_client/dim_client.dart';
+import 'package:lnc/lnc.dart' as lnc;
 
 import '../client/constants.dart';
 import '../client/filesys/paths.dart';
@@ -190,7 +191,7 @@ class FileTransferChannel extends MethodChannel {
       notification = NotificationNames.kFileUploadSuccess;
     }
     // post notification async
-    var nc = NotificationCenter();
+    var nc = lnc.NotificationCenter();
     nc.postNotification(notification, this, {
       'filename': filename,
       'url': url,

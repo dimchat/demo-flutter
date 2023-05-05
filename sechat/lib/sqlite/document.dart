@@ -1,3 +1,5 @@
+import 'package:lnc/lnc.dart' as lnc;
+
 import '../client/constants.dart';
 import 'helper/sqlite.dart';
 import 'entity.dart';
@@ -136,7 +138,7 @@ class DocumentCache extends _DocumentTable {
       return false;
     }
     // 3. post notification
-    var nc = NotificationCenter();
+    var nc = lnc.NotificationCenter();
     nc.postNotification(NotificationNames.kDocumentUpdated, this, {
       'ID': identifier,
       'document': doc,

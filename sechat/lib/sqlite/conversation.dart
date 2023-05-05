@@ -1,3 +1,5 @@
+import 'package:lnc/lnc.dart' as lnc;
+
 import '../client/constants.dart';
 import '../models/conversation.dart';
 import 'helper/sqlite.dart';
@@ -144,7 +146,7 @@ class ConversationCache extends _ConversationTable {
       return false;
     }
     // 3. post notification
-    var nc = NotificationCenter();
+    var nc = lnc.NotificationCenter();
     nc.postNotification(NotificationNames.kConversationUpdated, this, {
       'action': 'add',
       'ID': chat.identifier,
@@ -175,7 +177,7 @@ class ConversationCache extends _ConversationTable {
       return false;
     }
     // 3. post notification
-    var nc = NotificationCenter();
+    var nc = lnc.NotificationCenter();
     nc.postNotification(NotificationNames.kConversationUpdated, this, {
       'action': 'update',
       'ID': chat.identifier,
@@ -201,7 +203,7 @@ class ConversationCache extends _ConversationTable {
       return false;
     }
     // 3. post notification
-    var nc = NotificationCenter();
+    var nc = lnc.NotificationCenter();
     nc.postNotification(NotificationNames.kConversationUpdated, this, {
       'action': 'remove',
       'ID': chat,

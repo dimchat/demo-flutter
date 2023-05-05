@@ -1,4 +1,5 @@
 import 'package:dim_client/dim_client.dart';
+import 'package:lnc/lnc.dart' as lnc;
 
 import '../constants.dart';
 import '../messenger.dart';
@@ -13,29 +14,31 @@ class SearchCommandProcessor extends BaseCommandProcessor {
     assert(content is SearchCommand, 'search command error: $content');
     SearchCommand command = content as SearchCommand;
 
-    _checkUsers(command);
+    List<ID>? users = _checkUsers(command);
+    Log.info('search result: ${users?.length} record(s) found');
 
-    var nc = NotificationCenter();
+    var nc = lnc.NotificationCenter();
     nc.postNotification(NotificationNames.kSearchUpdated, this, {
       'cmd': command,
+      'users': users,
     });
 
     return [];
   }
 
-  void _checkUsers(SearchCommand command) {
+  List<ID>? _checkUsers(SearchCommand command) {
 
     List? users = command['users'];
     if (users == null) {
       Log.error('users not found in search response');
-      return;
+      return null;
     }
 
     GlobalVariable shared = GlobalVariable();
     SharedMessenger? messenger = shared.messenger;
     if (messenger == null) {
       assert(false, 'should not happen');
-      return;
+      return null;
     }
 
     List<ID> array = ID.convert(users);
@@ -54,7 +57,7 @@ class SearchCommandProcessor extends BaseCommandProcessor {
         }
       });
     }
-
+    return array;
   }
 
 }

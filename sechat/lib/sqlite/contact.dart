@@ -1,3 +1,5 @@
+import 'package:lnc/lnc.dart' as lnc;
+
 import '../client/constants.dart';
 import 'helper/sqlite.dart';
 import 'entity.dart';
@@ -131,7 +133,7 @@ class ContactCache extends _ContactTable {
       // clear to reload
       _caches.remove(user);
       // post notification
-      var nc = NotificationCenter();
+      var nc = lnc.NotificationCenter();
       nc.postNotification(NotificationNames.kContactsUpdated, this, {
         'action': 'update',
         'user': user,
@@ -154,7 +156,7 @@ class ContactCache extends _ContactTable {
       // clear to reload
       _caches.remove(user);
       // post notification
-      var nc = NotificationCenter();
+      var nc = lnc.NotificationCenter();
       nc.postNotification(NotificationNames.kContactsUpdated, this, {
         'action': 'add',
         'user': user,
@@ -179,7 +181,7 @@ class ContactCache extends _ContactTable {
       // clear to reload
       _caches.remove(user);
       // post notification
-      var nc = NotificationCenter();
+      var nc = lnc.NotificationCenter();
       nc.postNotification(NotificationNames.kContactsUpdated, this, {
         'action': 'remove',
         'user': user,

@@ -33,7 +33,7 @@ import 'dart:typed_data';
 import 'package:flutter/cupertino.dart';
 
 import 'package:dim_client/dim_client.dart';
-import 'package:dim_client/dim_client.dart' as lnc;
+import 'package:lnc/lnc.dart' as lnc;
 
 import '../../views/styles.dart';
 import '../constants.dart';
@@ -138,7 +138,7 @@ class _FacadeView extends StatefulWidget {
     }
     ImageFactory factory = ImageFactory();
     await factory.downloadDocument(doc);
-    await NotificationCenter().postNotification(kFacadeRefresh, this, {
+    await lnc.NotificationCenter().postNotification(kFacadeRefresh, this, {
       'ID': info.identifier,
     });
   }
@@ -260,7 +260,7 @@ class _AutoImageView extends StatefulWidget {
   Future<void> refresh() async {
     ImageFactory factory = ImageFactory();
     await factory.downloadContent(content);
-    await NotificationCenter().postNotification(kImageContentRefresh, this, {
+    await lnc.NotificationCenter().postNotification(kImageContentRefresh, this, {
       'content': content,
     });
   }

@@ -32,6 +32,7 @@ import 'dart:io';
 import 'dart:typed_data';
 
 import 'package:dim_client/dim_client.dart';
+import 'package:lnc/lnc.dart' as lnc;
 
 import '../channels/manager.dart';
 import '../channels/session.dart';
@@ -59,7 +60,7 @@ class VelocityMeter {
   }
 
   static Future<VelocityMeter> ping(StationInfo info) async {
-    NotificationCenter nc = NotificationCenter();
+    var nc = lnc.NotificationCenter();
     VelocityMeter meter = VelocityMeter(info);
     nc.postNotification(NotificationNames.kStationSpeedUpdated, meter, {
       'state': 'start',
@@ -92,6 +93,15 @@ class VelocityMeter {
       });
       socket.destroy();
     }
+    String host = meter.host;
+    int port = meter.port;
+    ID sid = meter.identifier ?? Station.kAny;
+    DateTime now = DateTime.now();
+    double rt = meter.responseTime ?? -1;
+    Log.info('station test result: $sid ($host:$port) - $rt');
+    // save the record
+    GlobalVariable shared = GlobalVariable();
+    await shared.database.addSpeed(host, port, identifier: sid, time: now, duration: rt);
     return meter;
   }
 
@@ -182,10 +192,6 @@ class VelocityMeter {
     info.identifier = sender;
     info.responseTime = duration;
     Log.warning('station ($host:$port) $sender responded within $duration seconds');
-
-    GlobalVariable shared = GlobalVariable();
-    await shared.database.addSpeed(host, port,
-        identifier: sender, time: DateTime.now(), duration: duration);
     return true;
   }
 

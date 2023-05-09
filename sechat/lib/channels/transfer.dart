@@ -5,7 +5,6 @@ import 'package:lnc/lnc.dart' as lnc;
 
 import '../client/constants.dart';
 import '../client/filesys/paths.dart';
-import '../client/filesys/local.dart';
 import '../models/config.dart';
 import 'manager.dart';
 
@@ -26,23 +25,21 @@ class FileTransferChannel extends MethodChannel {
   static int uploadExpires = 10 * 60 * 1000;
 
   /// root directory for local storage
-  String? _root;
+  bool _apiUpdated = false;
 
   Future<void> _prepare() async {
-    if (_root == null) {
-      LocalStorage dos = LocalStorage();
-      String root = await dos.cachesDirectory;
-      await setRootDirectory(root);
-      _root = root;
-      // config for upload
-      Config config = Config();
-      List api = await config.uploadAPI;
-      String secret = await config.uploadKey;
-      Log.warning('setUploadConfig: $secret, $api');
-      assert(api.isNotEmpty, 'upload API not found');
-      // TODO: pick up the fastest API for upload
-      await setUploadConfig(api: api[0], secret: secret);
+    if (_apiUpdated) {
+      return;
     }
+    // config for upload
+    Config config = Config();
+    List api = await config.uploadAPI;
+    String secret = await config.uploadKey;
+    Log.warning('setUploadConfig: $secret, $api');
+    assert(api.isNotEmpty, 'upload API not found');
+    // TODO: pick up the fastest API for upload
+    await setUploadConfig(api: api[0], secret: secret);
+    _apiUpdated = true;
   }
 
   /// MethCallHandler
@@ -92,13 +89,6 @@ class FileTransferChannel extends MethodChannel {
     _invoke(ChannelMethods.setUploadAPI, {
       'api': api,
       'secret': secret,
-    });
-  }
-
-  /// set root directory for local storage
-  Future<void> setRootDirectory(String root) async {
-    _invoke(ChannelMethods.setRootDirectory, {
-      'root': root,
     });
   }
 

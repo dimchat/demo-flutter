@@ -3,12 +3,9 @@ package chat.dim;
 import android.content.Context;
 import android.content.pm.ApplicationInfo;
 import android.os.Bundle;
-import android.os.Environment;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-
-import java.io.File;
 
 import io.flutter.Log;
 import io.flutter.embedding.android.FlutterActivity;
@@ -23,6 +20,11 @@ public class MainActivity extends FlutterActivity {
     @Override
     public void configureFlutterEngine(@NonNull FlutterEngine flutterEngine) {
         super.configureFlutterEngine(flutterEngine);
+
+        String path = MainActivity.this.getExternalCacheDir().getAbsolutePath();
+        System.out.println("cache root: " + path);
+        LocalCache cache = LocalCache.getInstance();
+        cache.setRoot(path);
 
         CryptoPlugins.registerCryptoPlugins();
 
@@ -60,10 +62,8 @@ public class MainActivity extends FlutterActivity {
 
     static {
 
-        String path = Environment.getExternalStorageDirectory().getAbsolutePath();
-        path += File.separator + "chat.dim.sechat";
-        LocalCache cache = LocalCache.getInstance();
-        cache.setRoot(path);
+        chat.dim.utils.Log.LEVEL = chat.dim.utils.Log.DEBUG;
+        Log.w("INIT", "set Log.LEVEL = DEBUG");
 
     }
 }

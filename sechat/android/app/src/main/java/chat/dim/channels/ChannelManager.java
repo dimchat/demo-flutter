@@ -38,7 +38,6 @@ final class ChannelMethods {
     //  FTP Channel
     //
     static final String SET_UPLOAD_API = "setUploadAPI";
-    static final String SET_ROOT_DIRECTORY = "setRootDirectory";
 
     static final String UPLOAD_AVATAR = "uploadAvatar";
     static final String UPLOAD_FILE = "uploadEncryptFile";

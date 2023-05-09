@@ -17,9 +17,9 @@ class SessionChannel extends MethodChannel {
     String method = call.method;
     Map arguments = call.arguments;
     if (method == ChannelMethods.onStateChanged) {
-      int previous = arguments['previous'];
-      int current = arguments['current'];
-      int now = arguments['now'];
+      int previous = Converter.getInt(arguments['previous']) ?? 0;
+      int current = Converter.getInt(arguments['current']) ?? 0;
+      int now = Converter.getInt(arguments['now']) ?? 0;
       _onStateChanged(previous, current, now);
     } else if (method == ChannelMethods.onReceived) {
       Uint8List payload = arguments['payload'];

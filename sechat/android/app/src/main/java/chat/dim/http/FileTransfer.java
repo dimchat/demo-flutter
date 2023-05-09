@@ -75,12 +75,6 @@ public enum FileTransfer {
     //public static final long CACHES_EXPIRES = 365 * 24 * 3600 * 1000L;
     public static final long TEMPORARY_EXPIRES = 7 * 24 * 3600 * 1000L;
 
-    public void setRootDirectory(String root) {
-        LocalCache cache = LocalCache.getInstance();
-        Log.warning("change root directory: " + root);
-        cache.setRoot(root);
-    }
-
     private FileTransferChannel getChannel() {
         ChannelManager manager = ChannelManager.getInstance();
         return manager.fileChannel;

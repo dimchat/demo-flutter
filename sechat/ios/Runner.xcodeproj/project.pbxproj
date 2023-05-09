@@ -15,6 +15,15 @@
 		97C146FC1CF9000F007C117D /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 97C146FA1CF9000F007C117D /* Main.storyboard */; };
 		97C146FE1CF9000F007C117D /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 97C146FD1CF9000F007C117D /* Assets.xcassets */; };
 		97C147011CF9000F007C117D /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 97C146FF1CF9000F007C117D /* LaunchScreen.storyboard */; };
+		E93DAE782A0A8FD800B516A9 /* MarsGate.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = E9C70B9D2A07D8DD00717E42 /* MarsGate.framework */; };
+		E93DAE792A0A8FD800B516A9 /* MarsGate.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = E9C70B9D2A07D8DD00717E42 /* MarsGate.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		E93DAE7C2A0A90EB00B516A9 /* Constants.m in Sources */ = {isa = PBXBuildFile; fileRef = E93DAE7B2A0A90EB00B516A9 /* Constants.m */; };
+		E93DAE7F2A0A925E00B516A9 /* MarsHub.m in Sources */ = {isa = PBXBuildFile; fileRef = E93DAE7E2A0A925E00B516A9 /* MarsHub.m */; };
+		E9C70B862A07ABD000717E42 /* ChannelManager.m in Sources */ = {isa = PBXBuildFile; fileRef = E9C70B852A07ABD000717E42 /* ChannelManager.m */; };
+		E9C70B892A07ABF500717E42 /* SessionChannel.m in Sources */ = {isa = PBXBuildFile; fileRef = E9C70B882A07ABF500717E42 /* SessionChannel.m */; };
+		E9C70B8C2A07AC0700717E42 /* FileTransferChannel.m in Sources */ = {isa = PBXBuildFile; fileRef = E9C70B8B2A07AC0700717E42 /* FileTransferChannel.m */; };
+		E9C70B902A07AC3F00717E42 /* FileTransfer.m in Sources */ = {isa = PBXBuildFile; fileRef = E9C70B8F2A07AC3F00717E42 /* FileTransfer.m */; };
+		E9C70B932A07AC7500717E42 /* SharedSession.m in Sources */ = {isa = PBXBuildFile; fileRef = E9C70B922A07AC7500717E42 /* SharedSession.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -25,6 +34,20 @@
 			remoteGlobalIDString = 97C146ED1CF9000F007C117D;
 			remoteInfo = Runner;
 		};
+		E9C70B9C2A07D8DD00717E42 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = E9C70B962A07D8DD00717E42 /* MarsGate.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = E9FAF5E8221EAC5F00DB6567;
+			remoteInfo = MarsGate;
+		};
+		E9C70B9E2A07D8DD00717E42 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = E9C70B962A07D8DD00717E42 /* MarsGate.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = E9FAF5F1221EAC5F00DB6567;
+			remoteInfo = MarsGateTests;
+		};
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -34,6 +57,7 @@
 			dstPath = "";
 			dstSubfolderSpec = 10;
 			files = (
+				E93DAE792A0A8FD800B516A9 /* MarsGate.framework in Embed Frameworks */,
 			);
 			name = "Embed Frameworks";
 			runOnlyForDeploymentPostprocessing = 0;
@@ -57,6 +81,21 @@
 		97C146FD1CF9000F007C117D /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		97C147001CF9000F007C117D /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		97C147021CF9000F007C117D /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		E93DAE7A2A0A90EB00B516A9 /* Constants.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Constants.h; sourceTree = "<group>"; };
+		E93DAE7B2A0A90EB00B516A9 /* Constants.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = Constants.m; sourceTree = "<group>"; };
+		E93DAE7D2A0A925E00B516A9 /* MarsHub.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MarsHub.h; sourceTree = "<group>"; };
+		E93DAE7E2A0A925E00B516A9 /* MarsHub.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = MarsHub.m; sourceTree = "<group>"; };
+		E9C70B842A07ABD000717E42 /* ChannelManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ChannelManager.h; sourceTree = "<group>"; };
+		E9C70B852A07ABD000717E42 /* ChannelManager.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ChannelManager.m; sourceTree = "<group>"; };
+		E9C70B872A07ABF500717E42 /* SessionChannel.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SessionChannel.h; sourceTree = "<group>"; };
+		E9C70B882A07ABF500717E42 /* SessionChannel.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = SessionChannel.m; sourceTree = "<group>"; };
+		E9C70B8A2A07AC0700717E42 /* FileTransferChannel.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = FileTransferChannel.h; sourceTree = "<group>"; };
+		E9C70B8B2A07AC0700717E42 /* FileTransferChannel.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = FileTransferChannel.m; sourceTree = "<group>"; };
+		E9C70B8E2A07AC3F00717E42 /* FileTransfer.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = FileTransfer.h; sourceTree = "<group>"; };
+		E9C70B8F2A07AC3F00717E42 /* FileTransfer.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = FileTransfer.m; sourceTree = "<group>"; };
+		E9C70B912A07AC7500717E42 /* SharedSession.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SharedSession.h; sourceTree = "<group>"; };
+		E9C70B922A07AC7500717E42 /* SharedSession.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = SharedSession.m; sourceTree = "<group>"; };
+		E9C70B962A07D8DD00717E42 /* MarsGate.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = MarsGate.xcodeproj; path = ../../../../moky/StarGate/MarsGate/MarsGate.xcodeproj; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -71,6 +110,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				E93DAE782A0A8FD800B516A9 /* MarsGate.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -99,10 +139,13 @@
 		97C146E51CF9000F007C117D = {
 			isa = PBXGroup;
 			children = (
+				E9C70B962A07D8DD00717E42 /* MarsGate.xcodeproj */,
+				E9C70B7F2A07AB4600717E42 /* Classes */,
 				9740EEB11CF90186004384FC /* Flutter */,
 				97C146F01CF9000F007C117D /* Runner */,
 				331C80F2294D02FB00263BE5 /* RunnerTests */,
 				97C146EF1CF9000F007C117D /* Products */,
+				E93DAE772A0A8FD800B516A9 /* Frameworks */,
 			);
 			sourceTree = "<group>";
 		};
@@ -137,6 +180,59 @@
 				97C146F21CF9000F007C117D /* main.m */,
 			);
 			name = "Supporting Files";
+			sourceTree = "<group>";
+		};
+		E93DAE772A0A8FD800B516A9 /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
+		E9C70B7F2A07AB4600717E42 /* Classes */ = {
+			isa = PBXGroup;
+			children = (
+				E9C70B832A07ABD000717E42 /* channels */,
+				E9C70B8D2A07AC2F00717E42 /* http */,
+				E93DAE7A2A0A90EB00B516A9 /* Constants.h */,
+				E93DAE7B2A0A90EB00B516A9 /* Constants.m */,
+				E9C70B912A07AC7500717E42 /* SharedSession.h */,
+				E9C70B922A07AC7500717E42 /* SharedSession.m */,
+				E93DAE7D2A0A925E00B516A9 /* MarsHub.h */,
+				E93DAE7E2A0A925E00B516A9 /* MarsHub.m */,
+			);
+			path = Classes;
+			sourceTree = "<group>";
+		};
+		E9C70B832A07ABD000717E42 /* channels */ = {
+			isa = PBXGroup;
+			children = (
+				E9C70B842A07ABD000717E42 /* ChannelManager.h */,
+				E9C70B852A07ABD000717E42 /* ChannelManager.m */,
+				E9C70B872A07ABF500717E42 /* SessionChannel.h */,
+				E9C70B882A07ABF500717E42 /* SessionChannel.m */,
+				E9C70B8A2A07AC0700717E42 /* FileTransferChannel.h */,
+				E9C70B8B2A07AC0700717E42 /* FileTransferChannel.m */,
+			);
+			path = channels;
+			sourceTree = "<group>";
+		};
+		E9C70B8D2A07AC2F00717E42 /* http */ = {
+			isa = PBXGroup;
+			children = (
+				E9C70B8E2A07AC3F00717E42 /* FileTransfer.h */,
+				E9C70B8F2A07AC3F00717E42 /* FileTransfer.m */,
+			);
+			path = http;
+			sourceTree = "<group>";
+		};
+		E9C70B972A07D8DD00717E42 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				E9C70B9D2A07D8DD00717E42 /* MarsGate.framework */,
+				E9C70B9F2A07D8DD00717E42 /* MarsGateTests.xctest */,
+			);
+			name = Products;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -209,6 +305,12 @@
 			mainGroup = 97C146E51CF9000F007C117D;
 			productRefGroup = 97C146EF1CF9000F007C117D /* Products */;
 			projectDirPath = "";
+			projectReferences = (
+				{
+					ProductGroup = E9C70B972A07D8DD00717E42 /* Products */;
+					ProjectRef = E9C70B962A07D8DD00717E42 /* MarsGate.xcodeproj */;
+				},
+			);
 			projectRoot = "";
 			targets = (
 				97C146ED1CF9000F007C117D /* Runner */,
@@ -216,6 +318,23 @@
 			);
 		};
 /* End PBXProject section */
+
+/* Begin PBXReferenceProxy section */
+		E9C70B9D2A07D8DD00717E42 /* MarsGate.framework */ = {
+			isa = PBXReferenceProxy;
+			fileType = wrapper.framework;
+			path = MarsGate.framework;
+			remoteRef = E9C70B9C2A07D8DD00717E42 /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		E9C70B9F2A07D8DD00717E42 /* MarsGateTests.xctest */ = {
+			isa = PBXReferenceProxy;
+			fileType = wrapper.cfbundle;
+			path = MarsGateTests.xctest;
+			remoteRef = E9C70B9E2A07D8DD00717E42 /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+/* End PBXReferenceProxy section */
 
 /* Begin PBXResourcesBuildPhase section */
 		331C80EF294D02FB00263BE5 /* Resources */ = {
@@ -285,9 +404,16 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				E9C70B892A07ABF500717E42 /* SessionChannel.m in Sources */,
 				978B8F6F1D3862AE00F588F7 /* AppDelegate.m in Sources */,
+				E93DAE7F2A0A925E00B516A9 /* MarsHub.m in Sources */,
+				E9C70B8C2A07AC0700717E42 /* FileTransferChannel.m in Sources */,
+				E9C70B902A07AC3F00717E42 /* FileTransfer.m in Sources */,
 				97C146F31CF9000F007C117D /* main.m in Sources */,
+				E9C70B932A07AC7500717E42 /* SharedSession.m in Sources */,
 				1498D2341E8E89220040F4C2 /* GeneratedPluginRegistrant.m in Sources */,
+				E9C70B862A07ABD000717E42 /* ChannelManager.m in Sources */,
+				E93DAE7C2A0A90EB00B516A9 /* Constants.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -362,7 +488,7 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 11.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 12.0;
 				MTL_ENABLE_DEBUG_INFO = NO;
 				SDKROOT = iphoneos;
 				SUPPORTED_PLATFORMS = iphoneos;
@@ -475,7 +601,7 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 11.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 12.0;
 				MTL_ENABLE_DEBUG_INFO = YES;
 				ONLY_ACTIVE_ARCH = YES;
 				SDKROOT = iphoneos;
@@ -524,7 +650,7 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 11.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 12.0;
 				MTL_ENABLE_DEBUG_INFO = NO;
 				SDKROOT = iphoneos;
 				SUPPORTED_PLATFORMS = iphoneos;

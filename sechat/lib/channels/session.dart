@@ -1,5 +1,7 @@
-import 'package:dim_client/dim_client.dart';
 import 'package:flutter/services.dart';
+
+import 'package:dim_client/dim_client.dart';
+import 'package:lnc/lnc.dart';
 
 import '../client/client.dart';
 import '../client/messenger.dart';
@@ -41,7 +43,8 @@ class SessionChannel extends MethodChannel {
   }
 
   void _onReceived(Uint8List data, String remote) {
-    Log.warning("received data: ${data.length} bytes from $remote");
+    SocketAddress? remoteAddress = SocketAddress.parse(remote);
+    Log.warning("received data: ${data.length} bytes from $remote ($remoteAddress)");
     GlobalVariable shared = GlobalVariable();
     SharedMessenger? messenger = shared.messenger;
     if (messenger == null) {
@@ -49,13 +52,14 @@ class SessionChannel extends MethodChannel {
       return;
     }
     messenger.processPackage(data).then((responses) {
-      remote = remote.replaceAll('/', '');
-      List array = remote.split(':');
-      SocketAddress address = SocketAddress(array[0], int.parse(array[1]));
+      if (remoteAddress == null) {
+        Log.error('remote socket error: $remote');
+        return;
+      }
       Arrival ship = _ArrivalShip();
       for (Uint8List res in responses) {
-        Log.debug('sending response: ${res.length} bytes to $address');
-        messenger.session.sendResponse(res, ship, remote: address);
+        Log.debug('sending response: ${res.length} bytes to $remoteAddress');
+        messenger.session.sendResponse(res, ship, remote: remoteAddress);
       }
     });
   }

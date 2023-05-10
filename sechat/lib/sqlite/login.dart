@@ -1,4 +1,4 @@
-import 'package:lnc/lnc.dart' as lnc;
+import 'package:lnc/lnc.dart';
 
 import '../client/constants.dart';
 import '../client/filesys/paths.dart';
@@ -102,7 +102,7 @@ class LoginCommandCache extends _LoginCommandTable {
 
   @override
   Future<Pair<LoginCommand?, ReliableMessage?>> getLoginCommandMessage(ID identifier) async {
-    int now = Time.currentTimeMillis;
+    double now = Time.currentTimeSeconds;
     // 1. check memory cache
     CachePair<Pair<LoginCommand?, ReliableMessage?>>? pair;
     pair = _cache.fetch(identifier, now: now);
@@ -111,19 +111,19 @@ class LoginCommandCache extends _LoginCommandTable {
     if (value == null) {
       if (holder == null) {
         // not load yet, wait to load
-        _cache.update(identifier, value: null, life: 128 * 1000, now: now);
+        _cache.updateValue(identifier, null, 128, now: now);
       } else {
         if (holder.isAlive(now: now)) {
           // value not exists
           return const Pair(null, null);
         }
         // cache expired, wait to reload
-        holder.renewal(duration: 128 * 1000, now: now);
+        holder.renewal(128, now: now);
       }
       // 2. load from database
       value = await super.getLoginCommandMessage(identifier);
       // update cache
-      _cache.update(identifier, value: value, life: 3600 * 1000, now: now);
+      _cache.updateValue(identifier, value, 3600, now: now);
     }
     // OK, return cache now
     return value;
@@ -154,7 +154,7 @@ class LoginCommandCache extends _LoginCommandTable {
       return false;
     }
     // 4. post notification
-    var nc = lnc.NotificationCenter();
+    var nc = NotificationCenter();
     nc.postNotification(NotificationNames.kLoginCommandUpdated, this, {
       'ID': identifier,
       'cmd': content,

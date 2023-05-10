@@ -1,9 +1,9 @@
 import 'dart:io';
 
-import 'package:dim_client/dim_client.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:permission_handler/permission_handler.dart' as lib;
+import 'package:lnc/lnc.dart';
 
 import 'alert.dart';
 

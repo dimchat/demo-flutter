@@ -2,6 +2,7 @@ import 'package:flutter/cupertino.dart';
 
 import 'package:dim_client/dim_client.dart';
 import 'package:lnc/lnc.dart' as lnc;
+import 'package:lnc/lnc.dart' show Log;
 
 import '../client/constants.dart';
 import '../client/messenger.dart';
@@ -124,7 +125,7 @@ class _SendState extends State<ChatSendFlag> implements lnc.Observer {
       // kDefault, kWaiting
       DateTime? time = widget.iMsg.time;
       if (time != null) {
-        int expired = Time.currentTimeMillis - 300 * 1000;
+        int expired = Time.currentTimeMilliseconds - 300 * 1000;
         if (time.millisecondsSinceEpoch < expired) {
           current = _MsgStatus.kExpired;
           _flags[sn] = current;

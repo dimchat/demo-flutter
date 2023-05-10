@@ -91,7 +91,7 @@ static NSMutableDictionary *uploadInfo(DIMUploadRequest *request) {
         @"path": req.path,
         @"error": [error description],
     };
-    [self invokeMethod:FtpChannelOnDownloadSuccess arguments:params];
+    [self invokeMethod:FtpChannelOnDownloadFailure arguments:params];
 }
 
 - (void)downloadTask:(__kindof DIMDownloadRequest *)req onError:(NSError *)error {
@@ -101,7 +101,7 @@ static NSMutableDictionary *uploadInfo(DIMUploadRequest *request) {
         @"path": req.path,
         @"error": [error description],
     };
-    [self invokeMethod:FtpChannelOnDownloadSuccess arguments:params];
+    [self invokeMethod:FtpChannelOnDownloadFailure arguments:params];
 }
 
 

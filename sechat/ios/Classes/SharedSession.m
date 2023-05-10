@@ -56,8 +56,8 @@ OKSingletonImplementations(SessionController, sharedInstance)
         NSString *oHost = station.host;
         UInt16 oPort = station.port;
         if (oPort == port && [host isEqualToString:oHost]) {
-            NSLog(@"checking connection state: %@", station);
             DIMSessionState *state = [cs state];
+            NSLog(@"checking connection state: %@, %@", station, state);
             if (state.index == DIMSessionStateOrderError) {
                 NSLog(@"current station is not connected");
             } else {
@@ -86,6 +86,7 @@ OKSingletonImplementations(SessionController, sharedInstance)
 
 - (void)setSessionKey:(NSString *)session {
     DIMClientSession *cs = [self session];
+    NSLog(@"set session key: %@, %@", session, cs);
     [cs setKey:session];
 }
 

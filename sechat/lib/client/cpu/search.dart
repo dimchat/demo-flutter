@@ -1,9 +1,8 @@
 import 'package:dim_client/dim_client.dart';
-import 'package:lnc/lnc.dart' as lnc;
+import 'package:lnc/lnc.dart';
 
 import '../constants.dart';
 import '../messenger.dart';
-import '../protocol/search.dart';
 import '../shared.dart';
 
 class SearchCommandProcessor extends BaseCommandProcessor {
@@ -17,7 +16,7 @@ class SearchCommandProcessor extends BaseCommandProcessor {
     List<ID>? users = _checkUsers(command);
     Log.info('search result: ${users?.length} record(s) found');
 
-    var nc = lnc.NotificationCenter();
+    var nc = NotificationCenter();
     nc.postNotification(NotificationNames.kSearchUpdated, this, {
       'cmd': command,
       'users': users,

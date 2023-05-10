@@ -4,6 +4,7 @@ import 'package:flutter_section_list/flutter_section_list.dart';
 
 import 'package:dim_client/dim_client.dart';
 import 'package:lnc/lnc.dart' as lnc;
+import 'package:lnc/lnc.dart' show Log;
 
 import '../client/constants.dart';
 import '../client/http/image_view.dart';
@@ -12,6 +13,7 @@ import '../models/contact.dart';
 import '../models/conversation.dart';
 import '../widgets/alert.dart';
 import '../widgets/message.dart';
+import '../widgets/time.dart';
 import '../widgets/title.dart';
 import 'chat_flag.dart';
 import 'chat_tray.dart';
@@ -235,7 +237,7 @@ class _HistoryAdapter with SectionAdapterMixin {
         }
       }
     }
-    return Text(Time.getTimeString(time), style: Styles.messageTimeTextStyle);
+    return Text(TimeUtils.getTimeString(time), style: Styles.messageTimeTextStyle);
   }
 
   Widget? _getNameLabel(ID sender) {

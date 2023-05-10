@@ -1,27 +1,27 @@
-import 'package:object_key/object_key.dart' as ok;
+import 'package:dim_client/dim_client.dart';
 
-abstract class Time extends ok.Time {
+abstract class TimeUtils extends Time {
 
   ///  Now()
   ///
   /// @return current time
-  static DateTime get currentTime => ok.Time.currentTime;
+  static DateTime get currentTime => Time.currentTime;
 
   ///  Now() as timestamp
   ///
   /// @return current timestamp in seconds from Jan 1, 1970 UTC
-  static double get currentTimestamp => ok.Time.currentTimestamp;
+  static double get currentTimestamp => Time.currentTimestamp;
 
   ///  Convert timestamp to date
   ///
   /// @param timestamp - seconds from Jan 1, 1970 UTC
-  static DateTime? getTime(Object? timestamp) => ok.Time.getTime(timestamp);
+  static DateTime? getTime(Object? timestamp) => Time.getTime(timestamp);
 
   ///  Convert date to timestamp
   ///
   /// @param time - DateTime object or seconds as double
   /// @return seconds from Jan 1, 1970 UTC
-  static double? getTimestamp(Object? time) => ok.Time.getTimestamp(time);
+  static double? getTimestamp(Object? time) => Time.getTimestamp(time);
 
   /// readable time string
   static String getTimeString(DateTime time) {

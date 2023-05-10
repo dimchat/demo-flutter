@@ -1,5 +1,5 @@
 import 'package:dim_client/dim_client.dart';
-import 'package:lnc/lnc.dart' as lnc;
+import 'package:lnc/lnc.dart';
 
 import '../models/conversation.dart';
 import '../sqlite/contact.dart';
@@ -41,8 +41,8 @@ class SharedDatabase implements AccountDBI, SessionDBI, MessageDBI,
   TraceDBI traceTable = TraceTable();
   ConversationDBI conversationTable = ConversationCache();
 
-  final lnc.NotificationCenter _center = lnc.NotificationCenter();
-  lnc.NotificationCenter get center => _center;
+  final NotificationCenter _center = NotificationCenter();
+  NotificationCenter get center => _center;
 
   //
   //  PrivateKey Table

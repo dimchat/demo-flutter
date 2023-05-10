@@ -1,4 +1,4 @@
-import 'package:lnc/lnc.dart' as lnc;
+import 'package:lnc/lnc.dart';
 
 import '../client/constants.dart';
 import 'helper/sqlite.dart';
@@ -79,7 +79,7 @@ class DocumentCache extends _DocumentTable {
 
   @override
   Future<Document?> getDocument(ID entity, String? type) async {
-    int now = Time.currentTimeMillis;
+    double now = Time.currentTimeSeconds;
     // 1. check memory cache
     CachePair<Document>? pair = _cache.fetch(entity, now: now);
     CacheHolder<Document>? holder = pair?.holder;
@@ -87,19 +87,19 @@ class DocumentCache extends _DocumentTable {
     if (value == null) {
       if (holder == null) {
         // not load yet, wait to load
-        _cache.update(entity, value: null, life: 128 * 1000, now: now);
+        _cache.updateValue(entity, null, 128, now: now);
       } else {
         if (holder.isAlive(now: now)) {
           // value not exists
           return null;
         }
         // cache expired, wait to reload
-        holder.renewal(duration: 128 * 1000, now: now);
+        holder.renewal(128, now: now);
       }
       // 2. load from database
       value = await super.getDocument(entity, type);
       // update cache
-      _cache.update(entity, value: value, life: 3600 * 1000, now: now);
+      _cache.updateValue(entity, value, 3600, now: now);
     }
     // OK, return cache now
     return value;
@@ -132,13 +132,13 @@ class DocumentCache extends _DocumentTable {
     }
     if (ok) {
       // update cache
-      _cache.update(identifier, value: doc, life: 3600 * 1000);
+      _cache.updateValue(identifier, doc, 3600, now: Time.currentTimeSeconds);
     } else {
       Log.error('failed to save document: $identifier');
       return false;
     }
     // 3. post notification
-    var nc = lnc.NotificationCenter();
+    var nc = NotificationCenter();
     nc.postNotification(NotificationNames.kDocumentUpdated, this, {
       'ID': identifier,
       'document': doc,

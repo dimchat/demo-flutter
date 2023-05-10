@@ -1,7 +1,10 @@
-import 'package:dim_client/dim_client.dart';
+import 'dart:io';
+
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
+
+import 'package:lnc/lnc.dart' show Log;
 
 import 'client/shared.dart';
 import 'views/chats.dart';
@@ -16,6 +19,15 @@ void main() {
 
   // Set log level
   Log.level = Log.kDebug;
+  if (Platform.isIOS) {
+    Log.colorful = false;
+    Log.showTime = false;
+    Log.showCaller = true;
+  } else {
+    Log.colorful = true;
+    Log.showTime = true;
+    Log.showCaller = true;
+  }
 
   bool released = Log.level == Log.kRelease;
   if (released) {

@@ -1,7 +1,7 @@
 import 'package:flutter/services.dart';
 
 import 'package:dim_client/dim_client.dart';
-import 'package:lnc/lnc.dart' as lnc;
+import 'package:lnc/lnc.dart';
 
 import '../client/constants.dart';
 import '../client/filesys/paths.dart';
@@ -22,7 +22,7 @@ class FileTransferChannel extends MethodChannel {
   static const String _downError = '/tmp/down/error';
 
   /// upload task will be expired after 10 minutes
-  static int uploadExpires = 10 * 60 * 1000;
+  static double uploadExpires = 600.0;
 
   /// root directory for local storage
   bool _apiUpdated = false;
@@ -152,13 +152,13 @@ class FileTransferChannel extends MethodChannel {
       if (url != null) {
         Log.error('same file uploaded: $filename -> $url');
       }
-      int now = Time.currentTimeMillis;
-      int expired = now + uploadExpires;
+      double now = Time.currentTimeSeconds;
+      double expired = now + uploadExpires;
       while (url == null || url == _upWaiting) {
         // wait a while to check the result
         await Future.delayed(const Duration(milliseconds: 512));
         url = _uploads[filename];
-        now = Time.currentTimeMillis;
+        now = Time.currentTimeSeconds;
         if (now > expired) {
           Log.error('upload expired: $filename');
           break;
@@ -181,7 +181,7 @@ class FileTransferChannel extends MethodChannel {
       notification = NotificationNames.kFileUploadSuccess;
     }
     // post notification async
-    var nc = lnc.NotificationCenter();
+    var nc = NotificationCenter();
     nc.postNotification(notification, this, {
       'filename': filename,
       'url': url,
@@ -211,13 +211,13 @@ class FileTransferChannel extends MethodChannel {
       if (path != null) {
         Log.debug('found cached file: $path -> $url');
       }
-      int now = Time.currentTimeMillis;
-      int expired = now + uploadExpires;
+      double now = Time.currentTimeSeconds;
+      double expired = now + uploadExpires;
       while (path == null || path == _downWaiting) {
         // wait a while to check the result
         await Future.delayed(const Duration(milliseconds: 512));
         path = _downloads[url];
-        now = Time.currentTimeMillis;
+        now = Time.currentTimeSeconds;
         if (now > expired) {
           Log.error('download expired: $url');
           break;

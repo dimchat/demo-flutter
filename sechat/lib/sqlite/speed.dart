@@ -55,11 +55,11 @@ class SpeedTable extends DataTableHandler<_SpeedInfo> implements SpeedDBI {
 
   @override
   Future<bool> removeExpiredSpeed(DateTime? expired) async {
-    int time;
+    double time;
     if (expired == null) {
-      time = Time.currentTimeMillis ~/ 1000 - 72 * 3600;
+      time = Time.currentTimeSeconds - 72 * 3600;
     } else {
-      time = expired.millisecondsSinceEpoch ~/ 1000;
+      time = expired.millisecondsSinceEpoch / 1000;
     }
     SQLConditions cond;
     cond = SQLConditions(left: 'time', comparison: '<', right: time);

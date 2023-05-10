@@ -1,4 +1,4 @@
-import 'package:lnc/lnc.dart' as lnc;
+import 'package:lnc/lnc.dart';
 
 import '../client/constants.dart';
 import '../client/filesys/paths.dart';
@@ -199,7 +199,7 @@ class InstantMessageTable extends DataTableHandler<InstantMessage> implements In
       act = 'add';
     }
     // post notification
-    var nc = lnc.NotificationCenter();
+    var nc = NotificationCenter();
     nc.postNotification(NotificationNames.kMessageUpdated, this, {
       'action': act,
       'ID': chat,
@@ -221,7 +221,7 @@ class InstantMessageTable extends DataTableHandler<InstantMessage> implements In
       return false;
     }
     // post notification
-    var nc = lnc.NotificationCenter();
+    var nc = NotificationCenter();
     nc.postNotification(NotificationNames.kMessageUpdated, this, {
       'action': 'remove',
       'ID': chat,
@@ -239,7 +239,7 @@ class InstantMessageTable extends DataTableHandler<InstantMessage> implements In
       return false;
     }
     // post notification
-    var nc = lnc.NotificationCenter();
+    var nc = NotificationCenter();
     nc.postNotification(NotificationNames.kMessageUpdated, this, {
       'action': 'clear',
       'ID': chat,

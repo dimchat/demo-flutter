@@ -93,7 +93,7 @@ class Resource implements Readable {
     File file = File(path);
     if (await file.exists()) {} else {
       // file not found
-      throw Exception('failed to read file not exists: $path');
+      throw Exception('file not exists: $path');
     }
     Uint8List bytes = await file.readAsBytes();
     _content = bytes;

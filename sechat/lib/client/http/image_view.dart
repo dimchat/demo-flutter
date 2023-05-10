@@ -34,6 +34,7 @@ import 'package:flutter/cupertino.dart';
 
 import 'package:dim_client/dim_client.dart';
 import 'package:lnc/lnc.dart' as lnc;
+import 'package:lnc/lnc.dart' show Log;
 
 import '../../views/styles.dart';
 import '../constants.dart';

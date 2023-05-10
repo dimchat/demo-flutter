@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_sound/flutter_sound.dart';
 
 import 'package:dim_client/dim_client.dart';
+import 'package:lnc/lnc.dart';
 
 import '../client/filesys/paths.dart';
 import '../client/http/ftp.dart';
@@ -26,7 +27,7 @@ class _RecordState extends State<RecordButton> {
 
   bool _recording = false;
 
-  int _startTime = 0;
+  double _startTime = 0;
 
   Offset _position = Offset.zero;
 
@@ -78,7 +79,7 @@ class _RecordState extends State<RecordButton> {
           Log.debug('start record');
           _AudioRecorder recorder = _AudioRecorder();
           recorder.startRecord();
-          _startTime = Time.currentTimeMillis;
+          _startTime = Time.currentTimeSeconds;
         });
       },
       onLongPressMoveUpdate: (details) {
@@ -94,11 +95,11 @@ class _RecordState extends State<RecordButton> {
             _recording = false;
           });
         }
-        int now = Time.currentTimeMillis;
+        double now = Time.currentTimeSeconds;
         _AudioRecorder recorder = _AudioRecorder();
         String? path = await recorder.stopRecord();
         if (path != null && _position.dy > 0.0) {
-          double duration = (now - _startTime) / 1000.0;
+          double duration = now - _startTime;
           Log.debug('stop record and send out: $_position, $duration, $path');
           widget.onComplected(path, duration);
         } else {

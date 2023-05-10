@@ -1,4 +1,4 @@
-import 'package:lnc/lnc.dart' as lnc;
+import 'package:lnc/lnc.dart';
 
 import '../client/constants.dart';
 import 'helper/sqlite.dart';
@@ -111,7 +111,7 @@ class _MemberCache extends _MemberTable {
 
   @override
   Future<List<ID>> getMembers(ID group) async {
-    int now = Time.currentTimeMillis;
+    double now = Time.currentTimeSeconds;
     // 1. check memory cache
     CachePair<List<ID>>? pair = _cache.fetch(group, now: now);
     CacheHolder<List<ID>>? holder = pair?.holder;
@@ -119,19 +119,19 @@ class _MemberCache extends _MemberTable {
     if (value == null) {
       if (holder == null) {
         // not load yet, wait to load
-        _cache.update(group, value: null, life: 128 * 1000, now: now);
+        _cache.updateValue(group, null, 128, now: now);
       } else {
         if (holder.isAlive(now: now)) {
           // value not exists
           return [];
         }
         // cache expired, wait to reload
-        holder.renewal(duration: 128 * 1000, now: now);
+        holder.renewal(128, now: now);
       }
       // 2. load from database
       value = await super.getMembers(group);
       // update cache
-      _cache.update(group, value: value, life: 3600 * 1000, now: now);
+      _cache.updateValue(group, value, 3600, now: now);
     }
     // OK, return cache now
     return value;
@@ -145,7 +145,7 @@ class _MemberCache extends _MemberTable {
       // clear to reload
       _cache.erase(group);
       // post notification
-      var nc = lnc.NotificationCenter();
+      var nc = NotificationCenter();
       nc.postNotification(NotificationNames.kMembersUpdated, this, {
         'action': 'update',
         'group': group,
@@ -168,7 +168,7 @@ class _MemberCache extends _MemberTable {
       // clear to reload
       _cache.erase(group);
       // post notification
-      var nc = lnc.NotificationCenter();
+      var nc = NotificationCenter();
       nc.postNotification(NotificationNames.kContactsUpdated, this, {
         'action': 'add',
         'group': group,
@@ -193,7 +193,7 @@ class _MemberCache extends _MemberTable {
       // clear to reload
       _cache.erase(group);
       // post notification
-      var nc = lnc.NotificationCenter();
+      var nc = NotificationCenter();
       nc.postNotification(NotificationNames.kContactsUpdated, this, {
         'action': 'remove',
         'group': group,

@@ -1,5 +1,7 @@
-import 'package:dim_client/dim_client.dart';
 import 'package:flutter/services.dart';
+
+import 'package:dim_client/dim_client.dart';
+import 'package:lnc/lnc.dart';
 
 import '../channels/manager.dart';
 import '../client/filesys/external.dart';
@@ -24,11 +26,11 @@ class Config {
       String path = await _path();
       conf = await _load(path);
       conf ??= await _init(path);
-      try {
-        _refresh(Uri.parse(entrance), path);
-      } catch (e) {
-        Log.error('failed to update config: $entrance, $e');
-      }
+      // update for next reading
+      _refresh(Uri.parse(entrance), path).onError((error, stackTrace) {
+        Log.error('failed to update config: $entrance, $error, $stackTrace');
+        return null;
+      });
     }
     return conf!;
   }
@@ -90,7 +92,17 @@ Future<Map?> _refresh(Uri url, String path) async {
     Log.debug('download config: $url -> $tmp');
   }
   // 2. check config
-  Map conf = await ExternalStorage.loadJson(tmp);
+  Map? conf;
+  try {
+    conf = await ExternalStorage.loadJson(tmp);
+    if (conf == null) {
+      Log.warning('config not exists: $tmp');
+      return null;
+    }
+  } catch (e) {
+    Log.error('failed to load config: $e');
+    return null;
+  }
   ID? gsp = ID.parse(conf['ID']);
   List? stations = conf['stations'];
   List? uploads = conf['uploads'];

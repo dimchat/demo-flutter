@@ -4,12 +4,14 @@ import 'package:flutter_section_list/flutter_section_list.dart';
 
 import 'package:dim_client/dim_client.dart';
 import 'package:lnc/lnc.dart' as lnc;
+import 'package:lnc/lnc.dart' show Log;
 
 import '../client/constants.dart';
 import '../models/conversation.dart';
 import '../widgets/alert.dart';
 import '../widgets/badge.dart';
 import '../widgets/table.dart';
+import '../widgets/time.dart';
 import '../widgets/title.dart';
 import 'chat_box.dart';
 import 'search.dart';
@@ -207,6 +209,6 @@ class _ChatTableCellState extends State<_ChatTableCell> implements lnc.Observer 
     if (time == null) {
       return null;
     }
-    return Text(Time.getTimeString(time));
+    return Text(TimeUtils.getTimeString(time));
   }
 }

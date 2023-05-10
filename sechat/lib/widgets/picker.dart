@@ -1,9 +1,9 @@
 import 'dart:typed_data';
 
-import 'package:dim_client/dim_client.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter_image_compress/flutter_image_compress.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:lnc/lnc.dart';
 
 import 'alert.dart';
 

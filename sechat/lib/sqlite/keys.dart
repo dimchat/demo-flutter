@@ -1,4 +1,4 @@
-import 'package:lnc/lnc.dart' as lnc;
+import 'package:lnc/lnc.dart';
 
 import '../client/constants.dart';
 import 'helper/sqlite.dart';
@@ -110,7 +110,7 @@ class PrivateKeyCache extends _PrivateKeyTable {
 
   @override
   Future<List<DecryptKey>> getPrivateKeysForDecryption(ID user) async {
-    int now = Time.currentTimeMillis;
+    double now = Time.currentTimeSeconds;
     // 1. check memory cache
     CachePair<List<DecryptKey>>? pair = _decryptKeysCache.fetch(user, now: now);
     CacheHolder<List<DecryptKey>>? holder = pair?.holder;
@@ -118,19 +118,19 @@ class PrivateKeyCache extends _PrivateKeyTable {
     if (value == null) {
       if (holder == null) {
         // not load yet, wait to load
-        _decryptKeysCache.update(user, value: null, life: 128 * 1000, now: now);
+        _decryptKeysCache.updateValue(user, null, 128, now: now);
       } else {
         if (holder.isAlive(now: now)) {
           // value not exists
           return [];
         }
         // cache expired, wait to reload
-        holder.renewal(duration: 128 * 1000, now: now);
+        holder.renewal(128, now: now);
       }
       // 2. load from database
       value = await super.getPrivateKeysForDecryption(user);
       // update cache
-      _decryptKeysCache.update(user, value: value, life: 36000 * 1000, now: now);
+      _decryptKeysCache.updateValue(user, value, 36000, now: now);
     }
     // OK, return cache now
     return value;
@@ -138,7 +138,7 @@ class PrivateKeyCache extends _PrivateKeyTable {
 
   @override
   Future<PrivateKey?> getPrivateKeyForVisaSignature(ID user) async {
-    int now = Time.currentTimeMillis;
+    double now = Time.currentTimeSeconds;
     // 1. check memory cache
     CachePair<PrivateKey>? pair = _privateKeyCaches.fetch(user, now: now);
     CacheHolder<PrivateKey>? holder = pair?.holder;
@@ -146,19 +146,19 @@ class PrivateKeyCache extends _PrivateKeyTable {
     if (value == null) {
       if (holder == null) {
         // not load yet, wait to load
-        _privateKeyCaches.update(user, value: null, life: 128 * 1000, now: now);
+        _privateKeyCaches.updateValue(user, null, 128, now: now);
       } else {
         if (holder.isAlive(now: now)) {
           // value not exists
           return null;
         }
         // cache expired, wait to reload
-        holder.renewal(duration: 128 * 1000, now: now);
+        holder.renewal(128, now: now);
       }
       // 2. load from database
       value = await super.getPrivateKeyForVisaSignature(user);
       // update cache
-      _privateKeyCaches.update(user, value: value, life: 36000 * 1000, now: now);
+      _privateKeyCaches.updateValue(user, value, 36000, now: now);
     }
     // OK, return cache now
     return value;
@@ -167,11 +167,12 @@ class PrivateKeyCache extends _PrivateKeyTable {
   @override
   Future<bool> savePrivateKey(PrivateKey key, String type, ID user,
       {int sign = 1, required int decrypt}) async {
+    double now = Time.currentTimeSeconds;
 
     // 1. update memory cache
     if (type == PrivateKeyDBI.kMeta) {
       // update 'id_key'
-      _privateKeyCaches.update(user, value: key, life: 36000 * 1000);
+      _privateKeyCaches.updateValue(user, key, 36000, now: now);
     } else {
       // add to old keys
       List<DecryptKey> decryptKeys = await getPrivateKeysForDecryption(user);
@@ -183,7 +184,7 @@ class PrivateKeyCache extends _PrivateKeyTable {
       }
       // update 'msg_keys'
       decryptKeys = PrivateKeyDBI.convertDecryptKeys(keys);
-      _decryptKeysCache.update(user, value: decryptKeys, life: 36000 * 1000);
+      _decryptKeysCache.updateValue(user, decryptKeys, 36000, now: now);
     }
 
     // 2. save to database
@@ -195,7 +196,7 @@ class PrivateKeyCache extends _PrivateKeyTable {
     }
 
     // 3. post notification
-    var nc = lnc.NotificationCenter();
+    var nc = NotificationCenter();
     nc.postNotification(NotificationNames.kPrivateKeySaved, this, {
       'user': user,
       'key': key,

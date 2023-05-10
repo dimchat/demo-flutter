@@ -1,5 +1,5 @@
 import 'package:dim_client/dim_client.dart';
-import 'package:lnc/lnc.dart' as lnc;
+import 'package:lnc/lnc.dart';
 
 import '../channels/manager.dart';
 import '../channels/session.dart';
@@ -74,7 +74,7 @@ class Client extends Terminal {
   Future<void> exitState(SessionState previous, SessionStateMachine ctx, int now) async {
     await super.exitState(previous, ctx, now);
     SessionState? current = ctx.currentState;
-    var nc = lnc.NotificationCenter();
+    var nc = NotificationCenter();
     nc.postNotification(NotificationNames.kServerStateChanged, this, {
       'previous': previous,
       'current': current,

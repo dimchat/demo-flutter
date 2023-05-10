@@ -1,3 +1,5 @@
+import 'package:lnc/lnc.dart';
+
 import 'helper/sqlite.dart';
 import 'message.dart';
 

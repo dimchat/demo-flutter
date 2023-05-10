@@ -1,4 +1,4 @@
-import 'package:lnc/lnc.dart' as lnc;
+import 'package:lnc/lnc.dart';
 
 import '../client/constants.dart';
 import 'helper/sqlite.dart';
@@ -144,7 +144,7 @@ class ProviderCache extends _ProviderTable {
       return false;
     }
     // 3. post notification
-    var nc = lnc.NotificationCenter();
+    var nc = NotificationCenter();
     nc.postNotification(NotificationNames.kServiceProviderUpdated, this, {
       'action': 'add',
       'ID': identifier,
@@ -170,7 +170,7 @@ class ProviderCache extends _ProviderTable {
       return false;
     }
     // 3. post notification
-    var nc = lnc.NotificationCenter();
+    var nc = NotificationCenter();
     nc.postNotification(NotificationNames.kServiceProviderUpdated, this, {
       'action': 'update',
       'ID': identifier,
@@ -196,7 +196,7 @@ class ProviderCache extends _ProviderTable {
       return false;
     }
     // 3. post notification
-    var nc = lnc.NotificationCenter();
+    var nc = NotificationCenter();
     nc.postNotification(NotificationNames.kServiceProviderUpdated, this, {
       'action': 'remove',
       'ID': identifier,

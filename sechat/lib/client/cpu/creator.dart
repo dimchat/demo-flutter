@@ -1,6 +1,5 @@
 import 'package:dim_client/dim_client.dart';
 
-import '../protocol/search.dart';
 import 'any.dart';
 import 'search.dart';
 

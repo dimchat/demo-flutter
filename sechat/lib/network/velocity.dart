@@ -32,7 +32,7 @@ import 'dart:io';
 import 'dart:typed_data';
 
 import 'package:dim_client/dim_client.dart';
-import 'package:lnc/lnc.dart' as lnc;
+import 'package:lnc/lnc.dart';
 
 import '../channels/manager.dart';
 import '../channels/session.dart';
@@ -52,7 +52,7 @@ class VelocityMeter {
   ID? get identifier => info.identifier;
   double? get responseTime => info.responseTime;
 
-  int _startTime = 0;
+  double _startTime = 0;
 
   @override
   String toString() {
@@ -61,7 +61,7 @@ class VelocityMeter {
   }
 
   static Future<VelocityMeter> ping(StationInfo info) async {
-    var nc = lnc.NotificationCenter();
+    var nc = NotificationCenter();
     VelocityMeter meter = VelocityMeter(info);
     nc.postNotification(NotificationNames.kStationSpeedUpdated, meter, {
       'state': 'start',
@@ -78,15 +78,15 @@ class VelocityMeter {
         'state': 'connected',
         'meter': meter,
       });
-      int now = Time.currentTimeMillis;
-      int expired = now + 30 * 1000;
+      double now = Time.currentTimeSeconds;
+      double expired = now + 30;
       while (now < expired) {
         if (await meter._run()) {
           // task finished
           break;
         }
         await Future.delayed(const Duration(milliseconds: 128));
-        now = Time.currentTimeMillis;
+        now = Time.currentTimeSeconds;
       }
       nc.postNotification(NotificationNames.kStationSpeedUpdated, meter, {
         'state': 'finished',
@@ -113,7 +113,7 @@ class VelocityMeter {
       return null;
     }
     Log.debug('connecting to $host:$port ...');
-    _startTime = Time.currentTimeMillis;
+    _startTime = Time.currentTimeSeconds;
     Socket socket;
     try {
       socket = await Socket.connect(host, port, timeout: timeout);
@@ -188,7 +188,7 @@ class VelocityMeter {
       Log.error('sender not a station: $sender');
       return false;
     }
-    double? duration = (Time.currentTimeMillis - _startTime) / 1000.0;
+    double? duration = Time.currentTimeSeconds - _startTime;
     // OK
     info.identifier = sender;
     info.responseTime = duration;

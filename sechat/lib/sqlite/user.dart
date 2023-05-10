@@ -1,4 +1,4 @@
-import 'package:lnc/lnc.dart' as lnc;
+import 'package:lnc/lnc.dart';
 
 import '../client/constants.dart';
 import 'helper/sqlite.dart';
@@ -194,7 +194,7 @@ class UserCache extends _UserTable {
       // clear to reload
       _caches = null;
       // post notification
-      var nc = lnc.NotificationCenter();
+      var nc = NotificationCenter();
       nc.postNotification(NotificationNames.kLocalUsersUpdated, this, {
         'action': 'update',
         'users': users,
@@ -216,7 +216,7 @@ class UserCache extends _UserTable {
       // clear to reload
       _caches = null;
       // post notification
-      var nc = lnc.NotificationCenter();
+      var nc = NotificationCenter();
       nc.postNotification(NotificationNames.kLocalUsersUpdated, this, {
         'action': 'add',
         'user': user,
@@ -240,7 +240,7 @@ class UserCache extends _UserTable {
       // clear to reload
       _caches = null;
       // post notification
-      var nc = lnc.NotificationCenter();
+      var nc = NotificationCenter();
       nc.postNotification(NotificationNames.kLocalUsersUpdated, this, {
         'action': 'remove',
         'user': user,
@@ -268,7 +268,7 @@ class UserCache extends _UserTable {
       // clear to reload
       _caches = null;
       // post notification
-      var nc = lnc.NotificationCenter();
+      var nc = NotificationCenter();
       nc.postNotification(NotificationNames.kLocalUsersUpdated, this, {
         'action': 'set',
         'user': user,

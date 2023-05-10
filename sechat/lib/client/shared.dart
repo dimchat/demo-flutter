@@ -5,7 +5,6 @@ import 'database.dart';
 import 'emitter.dart';
 import 'facebook.dart';
 import 'messenger.dart';
-import 'protocol/search.dart';
 
 class GlobalVariable {
   factory GlobalVariable() => _instance;

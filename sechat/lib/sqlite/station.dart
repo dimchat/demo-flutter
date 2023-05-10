@@ -1,4 +1,4 @@
-import 'package:lnc/lnc.dart' as lnc;
+import 'package:lnc/lnc.dart';
 
 import '../client/constants.dart';
 import 'helper/sqlite.dart';
@@ -82,7 +82,7 @@ class StationCache extends _StationTable {
 
   @override
   Future<List<Triplet<Pair<String, int>, ID, int>>> getStations({required ID provider}) async {
-    int now = Time.currentTimeMillis;
+    double now = Time.currentTimeSeconds;
     // 1. check memory cache
     CachePair<List<_StationInfo>>? pair = _cache.fetch(provider, now: now);
     CacheHolder<List<_StationInfo>>? holder = pair?.holder;
@@ -90,19 +90,19 @@ class StationCache extends _StationTable {
     if (value == null) {
       if (holder == null) {
         // not load yet, wait to load
-        _cache.update(provider, value: null, life: 128 * 1000, now: now);
+        _cache.updateValue(provider, null, 128, now: now);
       } else {
         if (holder.isAlive(now: now)) {
           // value not exists
           return [];
         }
         // cache expired, wait to reload
-        holder.renewal(duration: 128 * 1000, now: now);
+        holder.renewal(128, now: now);
       }
       // 2. load from database
       value = await super.getStations(provider: provider);
       // update cache
-      _cache.update(provider, value: value, life: 3600 * 1000, now: now);
+      _cache.updateValue(provider, value, 3600, now: now);
     }
     // OK, return cache now
     return value;
@@ -125,7 +125,7 @@ class StationCache extends _StationTable {
       return false;
     }
     // 3. post notification
-    var nc = lnc.NotificationCenter();
+    var nc = NotificationCenter();
     nc.postNotification(NotificationNames.kStationsUpdated, this, {
       'action': 'add',
       'host': host,
@@ -153,7 +153,7 @@ class StationCache extends _StationTable {
       return false;
     }
     // 3. post notification
-    var nc = lnc.NotificationCenter();
+    var nc = NotificationCenter();
     nc.postNotification(NotificationNames.kStationsUpdated, this, {
       'action': 'update',
       'host': host,
@@ -181,7 +181,7 @@ class StationCache extends _StationTable {
       return false;
     }
     // 3. post notification
-    var nc = lnc.NotificationCenter();
+    var nc = NotificationCenter();
     nc.postNotification(NotificationNames.kStationsUpdated, this, {
       'action': 'remove',
       'host': host,
@@ -201,7 +201,7 @@ class StationCache extends _StationTable {
       return false;
     }
     // 3. post notification
-    var nc = lnc.NotificationCenter();
+    var nc = NotificationCenter();
     nc.postNotification(NotificationNames.kStationsUpdated, this, {
       'action': 'removeAll',
       'provider': provider,

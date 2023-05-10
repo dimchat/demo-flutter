@@ -4,6 +4,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
 import 'package:dim_client/dim_client.dart';
+import 'package:lnc/lnc.dart';
 
 import '../client/facebook.dart';
 import '../client/filesys/paths.dart';
@@ -265,8 +266,10 @@ class _AccountState extends State<AccountPage> {
           return false;
         });
     assert(ok, 'failed to save visa: $user, $visa');
-    // TODO: broadcast this document to all friends
-    shared.messenger?.broadcastDocument();
+    if (ok) {
+      // broadcast this document to all friends
+      await shared.messenger?.broadcastDocument(updated: true);
+    }
     return ok;
   }
 

@@ -6,7 +6,7 @@ import 'package:photo_view/photo_view_gallery.dart';
 import 'package:dim_client/dim_client.dart';
 import 'package:lnc/lnc.dart';
 
-import '../client/http/ftp.dart';
+import '../network/ftp.dart';
 
 /// preview avatar image
 void previewImage(BuildContext ctx, String path) {

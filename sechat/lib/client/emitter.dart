@@ -6,8 +6,8 @@ import 'package:lnc/lnc.dart';
 import '../channels/manager.dart';
 import '../channels/transfer.dart';
 import '../models/conversation.dart';
+import '../network/ftp.dart';
 import 'constants.dart';
-import 'http/ftp.dart';
 import 'shared.dart';
 
 class Emitter implements Observer {

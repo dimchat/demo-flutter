@@ -5,7 +5,7 @@ import 'package:dim_client/dim_client.dart';
 import 'package:lnc/lnc.dart';
 
 import '../client/filesys/paths.dart';
-import '../client/http/ftp.dart';
+import '../network/ftp.dart';
 import '../views/styles.dart';
 import 'permissions.dart';
 

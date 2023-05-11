@@ -5,10 +5,10 @@ import 'package:lnc/lnc.dart' as lnc;
 import 'package:lnc/lnc.dart' show Log;
 
 import '../client/constants.dart';
-import '../client/http/image_view.dart';
 import '../client/shared.dart';
 import '../models/contact.dart';
 import '../models/message.dart';
+import '../network/image_view.dart';
 import '../views/styles.dart';
 import 'audio.dart';
 import 'preview.dart';

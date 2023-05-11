@@ -1,6 +1,7 @@
 import 'dart:typed_data';
 
 import 'package:flutter/cupertino.dart';
+import 'package:lnc/lnc.dart';
 
 import '../client/filesys/external.dart';
 import '../client/shared.dart';
@@ -101,13 +102,15 @@ void _sendText(BuildContext context, TextEditingController controller, ContactIn
   controller.text = '';
 }
 
-void _sendImage(BuildContext context, ContactInfo chat) {
-  openImagePicker(context, onRead: (path, jpeg) async {
-    Uint8List thumbnail = await compressThumbnail(jpeg);
-    GlobalVariable shared = GlobalVariable();
-    shared.emitter.sendImage(jpeg, thumbnail, chat.identifier);
-  });
-}
+void _sendImage(BuildContext context, ContactInfo chat) =>
+    openImagePicker(context, onPicked: (path) {
+      Log.info('picked image: $path');
+    }, onRead: (path, jpeg) => adjustImage(jpeg, (Uint8List data) async {
+      // send adjusted image data with thumbnail
+      Uint8List thumbnail = await compressThumbnail(data);
+      GlobalVariable shared = GlobalVariable();
+      shared.emitter.sendImage(data, thumbnail, chat.identifier);
+    }, width: 2048, height: 2048));
 
 void _sendVoice(BuildContext context, String path, double duration, ContactInfo chat) {
   ExternalStorage.loadBinary(path).then((data) {

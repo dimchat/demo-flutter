@@ -1,4 +1,5 @@
 import 'dart:io';
+import 'dart:typed_data';
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -8,8 +9,8 @@ import 'package:lnc/lnc.dart';
 
 import '../client/facebook.dart';
 import '../client/filesys/paths.dart';
-import '../client/http/ftp.dart';
 import '../client/shared.dart';
+import '../network/ftp.dart';
 import '../widgets/alert.dart';
 import '../widgets/picker.dart';
 import 'styles.dart';
@@ -200,7 +201,8 @@ class _AccountState extends State<AccountPage> {
         // _avatarUrl = _upWaiting;
       });
     }
-  }, onRead: (path, data) {
+    Log.info('picked avatar: $path');
+  }, onRead: (path, jpeg) => adjustImage(jpeg, (Uint8List data) {
     String? ext = Paths.extension(path);
     if (ext == null || ext.toLowerCase() != 'png') {
       ext = 'jpeg';
@@ -218,7 +220,7 @@ class _AccountState extends State<AccountPage> {
     }).onError((error, stackTrace) {
       Alert.show(context, 'Upload Failed', '$error');
     });
-  });
+  }));
 
   Future<bool> _saveInfo(BuildContext context) async {
     // 1. get old visa document

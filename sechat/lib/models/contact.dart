@@ -5,8 +5,8 @@ import 'package:lnc/lnc.dart' as lnc;
 import 'package:lnc/lnc.dart' show Log;
 
 import '../client/constants.dart';
-import '../client/http/image_view.dart';
 import '../client/shared.dart';
+import '../network/image_view.dart';
 import '../widgets/alert.dart';
 import 'conversation.dart';
 

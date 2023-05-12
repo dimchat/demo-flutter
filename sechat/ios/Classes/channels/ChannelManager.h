@@ -12,8 +12,21 @@ NS_ASSUME_NONNULL_BEGIN
 //
 //  Channnel Names
 //
+#define ChannelNameAudio                @"chat.dim/audio"
 #define ChannelNameSession              @"chat.dim/session"
 #define ChannelNameFileTransfer         @"chat.dim/ftp"
+
+
+//
+//  Audio Channel Methods
+//
+#define AudioChannelStartRecord         @"startRecord"
+#define AudioChannelStopRecord          @"stopRecord"
+#define AudioChannelStartPlay           @"startPlay"
+#define AudioChannelStopPlay            @"stopPlay"
+
+#define AudioChannelOnRecordFinished    @"onRecordFinished"
+#define AudioChannelOnPlayFinished      @"onPlayFinished"
 
 //
 //  Session Channel Methods
@@ -46,12 +59,14 @@ NS_ASSUME_NONNULL_BEGIN
 #define FtpChannelOnDownloadFailure     @"onDownloadFailed"
 
 
+@class AudioChannel;
 @class SessionChannel;
 @class FileTransferChannel;
 
 
 @interface ChannelManager : NSObject
 
+@property(nonatomic, readonly) AudioChannel *audioChannel;
 @property(nonatomic, readonly) SessionChannel *sessionChannel;
 @property(nonatomic, readonly) FileTransferChannel *ftpChannel;
 

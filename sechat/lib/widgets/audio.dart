@@ -1,21 +1,23 @@
+import 'dart:typed_data';
+
 import 'package:flutter/material.dart';
-import 'package:flutter_sound/flutter_sound.dart';
 
 import 'package:dim_client/dim_client.dart';
-import 'package:lnc/lnc.dart';
+import 'package:lnc/lnc.dart' as lnc;
+import 'package:lnc/lnc.dart' show Log;
 
-import '../client/filesys/paths.dart';
+import '../channels/manager.dart';
+import '../client/constants.dart';
 import '../network/ftp.dart';
 import '../views/styles.dart';
 import 'permissions.dart';
 
-typedef OnVoiceRecordComplected = void Function(String path, double duration);
+typedef OnVoiceRecordComplected = void Function(Uint8List mp4, double duration);
 
 /// RecordButton
 class RecordButton extends StatefulWidget {
-  const RecordButton(this.identifier, {required this.onComplected, super.key});
+  const RecordButton({required this.onComplected, super.key});
 
-  final ID identifier;
   final OnVoiceRecordComplected onComplected;
 
   @override
@@ -23,11 +25,36 @@ class RecordButton extends StatefulWidget {
 
 }
 
-class _RecordState extends State<RecordButton> {
+class _RecordState extends State<RecordButton> implements lnc.Observer {
+  _RecordState() {
+    var nc = lnc.NotificationCenter();
+    nc.addObserver(this, NotificationNames.kRecordFinished);
+  }
+
+  @override
+  void dispose() {
+    var nc = lnc.NotificationCenter();
+    nc.removeObserver(this, NotificationNames.kRecordFinished);
+    super.dispose();
+  }
+
+  @override
+  Future<void> onReceiveNotification(lnc.Notification notification) async {
+    String name = notification.name;
+    Map? info = notification.userInfo;
+    if (name == NotificationNames.kRecordFinished) {
+      Uint8List data = info?['data'];
+      double duration = info?['duration'];
+      if (_position.dy > 0.0) {
+        Log.debug('stop record, send: $_position, ${duration}s, ${data.length} bytes');
+        widget.onComplected(data, duration);
+      } else {
+        Log.debug('stop record, cancel: $_position, ${duration}s, ${data.length} bytes');
+      }
+    }
+  }
 
   bool _recording = false;
-
-  double _startTime = 0;
 
   Offset _position = Offset.zero;
 
@@ -77,9 +104,8 @@ class _RecordState extends State<RecordButton> {
         Log.debug('check permissions');
         requestSecondaryPermissions(context, onGranted: (context) {
           Log.debug('start record');
-          _AudioRecorder recorder = _AudioRecorder();
-          recorder.startRecord();
-          _startTime = Time.currentTimeSeconds;
+          ChannelManager man = ChannelManager();
+          man.audioChannel.startRecord();
         });
       },
       onLongPressMoveUpdate: (details) {
@@ -95,99 +121,12 @@ class _RecordState extends State<RecordButton> {
             _recording = false;
           });
         }
-        double now = Time.currentTimeSeconds;
-        _AudioRecorder recorder = _AudioRecorder();
-        String? path = await recorder.stopRecord();
-        if (path != null && _position.dy > 0.0) {
-          double duration = now - _startTime;
-          Log.debug('stop record and send out: $_position, $duration, $path');
-          widget.onComplected(path, duration);
-        } else {
-          Log.debug('stop record: $_position, $path');
-        }
+        ChannelManager man = ChannelManager();
+        man.audioChannel.stopRecord();
+        Log.debug('stop record, touch point: $_position');
       },
     ),
   );
-
-}
-
-class _AudioRecorder {
-  factory _AudioRecorder() => _instance;
-  static final _AudioRecorder _instance = _AudioRecorder._internal();
-  _AudioRecorder._internal();
-
-  final FlutterSoundRecorder _recorder = FlutterSoundRecorder();
-
-  final String _filename = 'voice.mp4';
-
-  Future<void> startRecord() async {
-    // remove old file
-    await Paths.delete(_filename);
-
-    // check and stop the current recorder first
-    await stopRecord();
-
-    Log.warning('opening recorder');
-    await _recorder.openRecorder();
-    Log.warning('start recording: $_filename');
-    await _recorder.startRecorder(toFile: _filename, codec: Codec.aacMP4);
-  }
-
-  Future<String?> stopRecord() async {
-    String? path;
-    if (_recorder.isRecording || _recorder.isPaused) {
-      path = await _recorder.stopRecorder();
-      Log.warning('stopped recording: $path');
-    }
-    await _recorder.closeRecorder();
-    Log.warning('closed recorder');
-    return path;
-  }
-
-}
-
-class _AudioPlayer {
-  factory _AudioPlayer() => _instance;
-  static final _AudioPlayer _instance = _AudioPlayer._internal();
-  _AudioPlayer._internal();
-
-  final FlutterSoundPlayer _player = FlutterSoundPlayer();
-
-  Future<void> startPlay(String path, TWhenFinished whenFinished) async {
-    if (await Paths.exists(path)) {
-      Log.debug('playing audio: $path');
-    } else {
-      Log.error('file not exists: $path');
-      return;
-    }
-    // check and stop the current player first
-    await stopPlay();
-
-    if (_player.isOpen()) {
-      // _player.setSubscriptionDuration(const Duration(milliseconds: 10));
-      await _player.setVolume(1.0);
-    } else {
-      Log.debug('opening player: $path');
-      await _player.openPlayer();
-    }
-    Log.warning('start playing: $path');
-    await _player.startPlayer(fromURI: path, codec: Codec.aacMP4, whenFinished: () {
-      stopPlay();
-      whenFinished();
-    });
-  }
-
-  Future<void> stopPlay() async {
-    Log.warning('stop playing');
-    if (_player.isPlaying || _player.isPaused) {
-      Log.debug('stopping player');
-      await _player.stopPlayer();
-    }
-    if (_player.isOpen()) {
-      Log.debug('closing player');
-      await _player.closePlayer();
-    }
-  }
 
 }
 
@@ -203,7 +142,30 @@ class AudioContentView extends StatefulWidget {
 
 }
 
-class _AudioContentState extends State<AudioContentView> {
+class _AudioContentState extends State<AudioContentView> implements lnc.Observer {
+  _AudioContentState() {
+    var nc = lnc.NotificationCenter();
+    nc.addObserver(this, NotificationNames.kPlayFinished);
+  }
+
+  @override
+  void dispose() {
+    var nc = lnc.NotificationCenter();
+    nc.removeObserver(this, NotificationNames.kPlayFinished);
+    super.dispose();
+  }
+
+  @override
+  Future<void> onReceiveNotification(lnc.Notification notification) async {
+    String name = notification.name;
+    if (name == NotificationNames.kPlayFinished) {
+      if (mounted) {
+        setState(() {
+          _playing = false;
+        });
+      }
+    }
+  }
 
   late final double _duration;
   String? _path;
@@ -220,11 +182,11 @@ class _AudioContentState extends State<AudioContentView> {
   }
 
   void _togglePlay() {
-    _AudioPlayer player = _AudioPlayer();
+    ChannelManager man = ChannelManager();
     String? path = _path;
     bool playing = _playing;
     if (playing) {
-      player.stopPlay();
+      man.audioChannel.stopPlay(_path);
       if (mounted) {
         setState(() {
           _playing = false;
@@ -236,13 +198,7 @@ class _AudioContentState extends State<AudioContentView> {
           _playing = true;
         });
       }
-      player.startPlay(path, () {
-        if (mounted) {
-          setState(() {
-            _playing = false;
-          });
-        }
-      });
+      man.audioChannel.startPlay(path);
     }
   }
 

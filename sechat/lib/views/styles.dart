@@ -90,6 +90,8 @@ abstract class Styles {
   );
   static const Color inputTrayBackground = CupertinoColors.systemBackground;
 
+  static const Color avatarDefaultColor = CupertinoColors.inactiveGray;
+
   //
   //  Icons
   //  ~~~~~

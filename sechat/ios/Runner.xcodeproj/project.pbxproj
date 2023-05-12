@@ -24,6 +24,9 @@
 		E9C70B8C2A07AC0700717E42 /* FileTransferChannel.m in Sources */ = {isa = PBXBuildFile; fileRef = E9C70B8B2A07AC0700717E42 /* FileTransferChannel.m */; };
 		E9C70B902A07AC3F00717E42 /* FileTransfer.m in Sources */ = {isa = PBXBuildFile; fileRef = E9C70B8F2A07AC3F00717E42 /* FileTransfer.m */; };
 		E9C70B932A07AC7500717E42 /* SharedSession.m in Sources */ = {isa = PBXBuildFile; fileRef = E9C70B922A07AC7500717E42 /* SharedSession.m */; };
+		E9EC0BB82A0E1DB600E4A7F2 /* EMAudioPlayerHelper.m in Sources */ = {isa = PBXBuildFile; fileRef = E9EC0BB72A0E1DB600E4A7F2 /* EMAudioPlayerHelper.m */; };
+		E9EC0BBB2A0E1DD600E4A7F2 /* EMAudioRecordHelper.m in Sources */ = {isa = PBXBuildFile; fileRef = E9EC0BBA2A0E1DD600E4A7F2 /* EMAudioRecordHelper.m */; };
+		E9EC0BBE2A0E1DF400E4A7F2 /* AudioChannel.m in Sources */ = {isa = PBXBuildFile; fileRef = E9EC0BBD2A0E1DF400E4A7F2 /* AudioChannel.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -96,6 +99,12 @@
 		E9C70B912A07AC7500717E42 /* SharedSession.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SharedSession.h; sourceTree = "<group>"; };
 		E9C70B922A07AC7500717E42 /* SharedSession.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = SharedSession.m; sourceTree = "<group>"; };
 		E9C70B962A07D8DD00717E42 /* MarsGate.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = MarsGate.xcodeproj; path = ../../../../moky/StarGate/MarsGate/MarsGate.xcodeproj; sourceTree = "<group>"; };
+		E9EC0BB62A0E1DB600E4A7F2 /* EMAudioPlayerHelper.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = EMAudioPlayerHelper.h; sourceTree = "<group>"; };
+		E9EC0BB72A0E1DB600E4A7F2 /* EMAudioPlayerHelper.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = EMAudioPlayerHelper.m; sourceTree = "<group>"; };
+		E9EC0BB92A0E1DD600E4A7F2 /* EMAudioRecordHelper.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = EMAudioRecordHelper.h; sourceTree = "<group>"; };
+		E9EC0BBA2A0E1DD600E4A7F2 /* EMAudioRecordHelper.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = EMAudioRecordHelper.m; sourceTree = "<group>"; };
+		E9EC0BBC2A0E1DF400E4A7F2 /* AudioChannel.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AudioChannel.h; sourceTree = "<group>"; };
+		E9EC0BBD2A0E1DF400E4A7F2 /* AudioChannel.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = AudioChannel.m; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -192,8 +201,9 @@
 		E9C70B7F2A07AB4600717E42 /* Classes */ = {
 			isa = PBXGroup;
 			children = (
-				E9C70B832A07ABD000717E42 /* channels */,
+				E9EC0BB32A0E1DAA00E4A7F2 /* media */,
 				E9C70B8D2A07AC2F00717E42 /* http */,
+				E9C70B832A07ABD000717E42 /* channels */,
 				E93DAE7A2A0A90EB00B516A9 /* Constants.h */,
 				E93DAE7B2A0A90EB00B516A9 /* Constants.m */,
 				E9C70B912A07AC7500717E42 /* SharedSession.h */,
@@ -213,6 +223,8 @@
 				E9C70B882A07ABF500717E42 /* SessionChannel.m */,
 				E9C70B8A2A07AC0700717E42 /* FileTransferChannel.h */,
 				E9C70B8B2A07AC0700717E42 /* FileTransferChannel.m */,
+				E9EC0BBC2A0E1DF400E4A7F2 /* AudioChannel.h */,
+				E9EC0BBD2A0E1DF400E4A7F2 /* AudioChannel.m */,
 			);
 			path = channels;
 			sourceTree = "<group>";
@@ -233,6 +245,17 @@
 				E9C70B9F2A07D8DD00717E42 /* MarsGateTests.xctest */,
 			);
 			name = Products;
+			sourceTree = "<group>";
+		};
+		E9EC0BB32A0E1DAA00E4A7F2 /* media */ = {
+			isa = PBXGroup;
+			children = (
+				E9EC0BB62A0E1DB600E4A7F2 /* EMAudioPlayerHelper.h */,
+				E9EC0BB72A0E1DB600E4A7F2 /* EMAudioPlayerHelper.m */,
+				E9EC0BB92A0E1DD600E4A7F2 /* EMAudioRecordHelper.h */,
+				E9EC0BBA2A0E1DD600E4A7F2 /* EMAudioRecordHelper.m */,
+			);
+			path = media;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -405,8 +428,11 @@
 			buildActionMask = 2147483647;
 			files = (
 				E9C70B892A07ABF500717E42 /* SessionChannel.m in Sources */,
+				E9EC0BB82A0E1DB600E4A7F2 /* EMAudioPlayerHelper.m in Sources */,
 				978B8F6F1D3862AE00F588F7 /* AppDelegate.m in Sources */,
+				E9EC0BBB2A0E1DD600E4A7F2 /* EMAudioRecordHelper.m in Sources */,
 				E93DAE7F2A0A925E00B516A9 /* MarsHub.m in Sources */,
+				E9EC0BBE2A0E1DF400E4A7F2 /* AudioChannel.m in Sources */,
 				E9C70B8C2A07AC0700717E42 /* FileTransferChannel.m in Sources */,
 				E9C70B902A07AC3F00717E42 /* FileTransfer.m in Sources */,
 				97C146F31CF9000F007C117D /* main.m in Sources */,

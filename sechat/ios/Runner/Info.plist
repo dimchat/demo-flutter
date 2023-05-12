@@ -7,7 +7,7 @@
 	<key>CFBundleDevelopmentRegion</key>
 	<string>$(DEVELOPMENT_LANGUAGE)</string>
 	<key>CFBundleDisplayName</key>
-	<string>SecureChat</string>
+	<string>Secure Chat</string>
 	<key>CFBundleExecutable</key>
 	<string>$(EXECUTABLE_NAME)</string>
 	<key>CFBundleIdentifier</key>
@@ -27,11 +27,13 @@
 	<key>LSRequiresIPhoneOS</key>
 	<true/>
 	<key>NSCameraUsageDescription</key>
-	<string>Please allow the APP to use the camera.</string>
+	<string>Allow to use the camera.</string>
+	<key>NSMicrophoneUsageDescription</key>
+	<string>Allow to user the microphone.</string>
 	<key>NSPhotoLibraryAddUsageDescription</key>
-	<string>Please allow the APP to save photos to the album.</string>
+	<string>Allow to save photos to the album.</string>
 	<key>NSPhotoLibraryUsageDescription</key>
-	<string>Please allow the APP to access photo album.</string>
+	<string>Allow to access photo album.</string>
 	<key>UIApplicationSupportsIndirectInputEvents</key>
 	<true/>
 	<key>UILaunchStoryboardName</key>

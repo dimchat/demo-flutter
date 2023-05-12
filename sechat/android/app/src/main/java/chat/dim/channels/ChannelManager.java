@@ -12,12 +12,25 @@ import io.flutter.plugin.common.StandardMethodCodec;
 
 final class ChannelNames {
 
+    static final String AUDIO = "chat.dim/audio";
+
     static final String SESSION = "chat.dim/session";
 
     static final String FILE_TRANSFER = "chat.dim/ftp";
 }
 
 final class ChannelMethods {
+
+    //
+    //  Audio Channel
+    //
+    static final String START_RECORD = "startRecord";
+    static final String STOP_RECORD = "stopRecord";
+    static final String START_PLAY = "startPlay";
+    static final String STOP_PLAY = "stopPlay";
+
+    static final String ON_RECORD_FINISHED = "onRecordFinished";
+    static final String ON_PLAY_FINISHED = "onPlayFinished";
 
     //
     //  Session channel
@@ -65,6 +78,7 @@ public enum ChannelManager {
     //
     //  Channels
     //
+    public AudioChannel audioChannel = null;
     public SessionChannel sessionChannel = null;
     public FileTransferChannel fileChannel = null;
 
@@ -81,6 +95,9 @@ public enum ChannelManager {
 
     public void initChannels(BinaryMessenger messenger) {
         StandardMethodCodec codec = new StandardMethodCodec(new MessageCodec());
+        if (audioChannel == null) {
+            audioChannel = new AudioChannel(messenger, ChannelNames.AUDIO, codec);
+        }
         if (sessionChannel == null) {
             sessionChannel = new SessionChannel(messenger, ChannelNames.SESSION, codec);
         }

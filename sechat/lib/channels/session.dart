@@ -77,52 +77,46 @@ class SessionChannel extends MethodChannel {
   }
 
   /// connect to remote address(host, port)
-  Future<void> connect(String host, int port) async {
-    _invoke(ChannelMethods.connect, {
-      'host': host, 'port': port,
-    });
-  }
+  Future<void> connect(String host, int port) async =>
+      await _invoke(ChannelMethods.connect, {
+        'host': host, 'port': port,
+      });
 
   /// login with user ID
-  Future<bool> login(ID user) async {
-    return await _invoke(ChannelMethods.login, {
-      'user': user.toString(),
-    });
-  }
+  Future<bool> login(ID user) async =>
+      await _invoke(ChannelMethods.login, {
+        'user': user.toString(),
+      });
 
   /// set session key for login accepted
-  Future<void> setSessionKey(String? session) async {
-    return await _invoke(ChannelMethods.setSessionKey, {
-      'session': session,
-    });
-  }
+  Future<void> setSessionKey(String? session) async =>
+      await _invoke(ChannelMethods.setSessionKey, {
+        'session': session,
+      });
 
   /// get session state
-  Future<int> getState() async {
-    return await _invoke(ChannelMethods.getState, null);
-  }
+  Future<int> getState() async =>
+      await _invoke(ChannelMethods.getState, null);
 
   /// send message with data pack & priority
-  Future<void> sendMessagePackage(ReliableMessage rMsg, Uint8List data, int priority) async {
-    return await _invoke(ChannelMethods.sendMessagePackage, {
-      'msg': rMsg.toMap(),
-      'data': data,
-      'priority': priority,
-    });
-  }
+  Future<void> sendMessagePackage(ReliableMessage rMsg, Uint8List data, int priority) async =>
+      await _invoke(ChannelMethods.sendMessagePackage, {
+        'msg': rMsg.toMap(),
+        'data': data,
+        'priority': priority,
+      });
 
   /// pack message payload to network package
-  Future<Uint8List> packData(Uint8List payload) async {
-    return await _invoke(ChannelMethods.packData, {
-      'payload': payload,
-    });
-  }
+  Future<Uint8List> packData(Uint8List payload) async =>
+      await _invoke(ChannelMethods.packData, {
+        'payload': payload,
+      });
+
   /// unpack payload from network package
-  Future<Map> unpackData(Uint8List data) async {
-    return await _invoke(ChannelMethods.unpackData, {
-      'data': data,
-    });
-  }
+  Future<Map> unpackData(Uint8List data) async =>
+      await _invoke(ChannelMethods.unpackData, {
+        'data': data,
+      });
 
 }
 

@@ -38,4 +38,7 @@ abstract class NotificationNames {
   static const String kFileUploadSuccess = 'FileUploadSuccess';
   static const String kFileUploadFailure = 'FileUploadFailure';
 
+  static const String kRecordFinished = 'RecordFinished';
+  static const String kPlayFinished = 'PlayFinished';
+
 }

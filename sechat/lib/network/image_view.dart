@@ -242,9 +242,9 @@ class _FacadeState extends State<_FacadeView> implements lnc.Observer {
       return Icon(Styles.icpIcon, size: size);
     }
     if (identifier.isUser) {
-      return Icon(Styles.userIcon, size: size);
+      return Icon(Styles.userIcon, size: size, color: Styles.avatarDefaultColor);
     } else {
-      return Icon(Styles.groupIcon, size: size);
+      return Icon(Styles.groupIcon, size: size, color: Styles.avatarDefaultColor);
     }
   }
 

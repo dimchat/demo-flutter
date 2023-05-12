@@ -7,6 +7,7 @@
 
 #import <DIMClient/DIMClient.h>
 
+#import "AudioChannel.h"
 #import "SessionChannel.h"
 #import "FileTransferChannel.h"
 
@@ -14,6 +15,7 @@
 
 @interface ChannelManager ()
 
+@property(nonatomic, strong) AudioChannel *audioChannel;
 @property(nonatomic, strong) SessionChannel *sessionChannel;
 @property(nonatomic, strong) FileTransferChannel *ftpChannel;
 
@@ -37,6 +39,9 @@ OKSingletonImplementations(ChannelManager, sharedInstance)
     FlutterStandardMethodCodec *codec;
     codec = [FlutterStandardMethodCodec codecWithReaderWriter:rw];
     
+    self.audioChannel = [AudioChannel channelWithName:ChannelNameAudio
+                                      binaryMessenger:messenger
+                                                codec:codec];
     self.sessionChannel = [SessionChannel channelWithName:ChannelNameSession
                                           binaryMessenger:messenger
                                                     codec:codec];

@@ -33,6 +33,9 @@ public class MainActivity extends FlutterActivity {
         System.out.println("initialize flutter channels");
         ChannelManager manager = ChannelManager.getInstance();
         manager.initChannels(flutterEngine.getDartExecutor().getBinaryMessenger());
+        // init audio recorder/player
+        manager.audioChannel.initAudioPlayer(MainActivity.this);
+        manager.audioChannel.initAudioRecorder(MainActivity.this);
 
     }
 

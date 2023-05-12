@@ -3,10 +3,8 @@ import 'dart:typed_data';
 import 'package:flutter/cupertino.dart';
 import 'package:lnc/lnc.dart';
 
-import '../client/filesys/external.dart';
 import '../client/shared.dart';
 import '../models/contact.dart';
-import '../widgets/alert.dart';
 import '../widgets/audio.dart';
 import '../widgets/picker.dart';
 import 'styles.dart';
@@ -72,8 +70,8 @@ class _InputState extends State<ChatInputTray> {
       if (_isVoice)
         Expanded(
           flex: 1,
-          child: RecordButton(widget.info.identifier,
-            onComplected: (path, duration) => _sendVoice(context, path, duration, widget.info),
+          child: RecordButton(
+            onComplected: (data, duration) => _sendVoice(data, duration, widget.info),
           ),
         ),
       if (_controller.text.isEmpty || _isVoice)
@@ -112,11 +110,5 @@ void _sendImage(BuildContext context, ContactInfo chat) =>
       shared.emitter.sendImage(data, thumbnail, chat.identifier);
     }, width: 2048, height: 2048));
 
-void _sendVoice(BuildContext context, String path, double duration, ContactInfo chat) {
-  ExternalStorage.loadBinary(path).then((data) {
-    GlobalVariable shared = GlobalVariable();
-    shared.emitter.sendVoice(data, duration, chat.identifier);
-  }).onError((error, stackTrace) {
-    Alert.show(context, 'Error', 'Failed to load voice file: $path');
-  });
-}
+void _sendVoice(Uint8List data, double duration, ContactInfo chat) =>
+    GlobalVariable().emitter.sendVoice(data, duration, chat.identifier);

@@ -85,12 +85,11 @@ class FileTransferChannel extends MethodChannel {
   }
 
   /// set upload API & secret key
-  Future<void> setUploadConfig({required String api, required String secret}) async {
-    _invoke(ChannelMethods.setUploadAPI, {
-      'api': api,
-      'secret': secret,
-    });
-  }
+  Future<void> setUploadConfig({required String api, required String secret}) async =>
+      await _invoke(ChannelMethods.setUploadAPI, {
+        'api': api,
+        'secret': secret,
+      });
 
   ///  Upload avatar image data for user
   ///
@@ -98,9 +97,8 @@ class FileTransferChannel extends MethodChannel {
   /// @param filename - image filename ('${hex(md5(data))}.jpg')
   /// @param sender   - user ID
   /// @return remote URL if same file uploaded before
-  Future<Uri?> uploadAvatar(Uint8List data, String filename, ID sender) async {
-    return await _doUpload(ChannelMethods.uploadAvatar, data, filename, sender);
-  }
+  Future<Uri?> uploadAvatar(Uint8List data, String filename, ID sender) async =>
+      await _doUpload(ChannelMethods.uploadAvatar, data, filename, sender);
 
   ///  Upload encrypted file data for user
   ///
@@ -108,25 +106,22 @@ class FileTransferChannel extends MethodChannel {
   /// @param filename - data file name ('${hex(md5(data))}.mp4')
   /// @param sender   - user ID
   /// @return remote URL if same file uploaded before
-  Future<Uri?> uploadEncryptData(Uint8List data, String filename, ID sender) async {
-    return await _doUpload(ChannelMethods.uploadFile, data, filename, sender);
-  }
+  Future<Uri?> uploadEncryptData(Uint8List data, String filename, ID sender) async =>
+      await _doUpload(ChannelMethods.uploadFile, data, filename, sender);
 
   ///  Download avatar image file
   ///
   /// @param url      - avatar URL
   /// @return local path if same file downloaded before
-  Future<String?> downloadAvatar(Uri url) async {
-    return await _doDownload(ChannelMethods.downloadAvatar, url);
-  }
+  Future<String?> downloadAvatar(Uri url) async =>
+      await _doDownload(ChannelMethods.downloadAvatar, url);
 
   ///  Download encrypted file data for user
   ///
   /// @param url      - relay URL
   /// @return temporary path if same file downloaded before
-  Future<String?> downloadFile(Uri url) async {
-    return await _doDownload(ChannelMethods.downloadFile, url);
-  }
+  Future<String?> downloadFile(Uri url) async =>
+      await _doDownload(ChannelMethods.downloadFile, url);
 
   Future<Uri?> _doUpload(String method, Uint8List data, String filename, ID sender) async {
     await _prepare();

@@ -7,14 +7,19 @@ import 'package:image_picker/image_picker.dart';
 import 'package:lnc/lnc.dart';
 
 import 'alert.dart';
+import 'permissions.dart';
 
 typedef OnImagePicked = void Function(String path);
 typedef OnImageRead = void Function(String path, Uint8List data);
 
 void openImagePicker(BuildContext context, {OnImagePicked? onPicked, required OnImageRead onRead}) =>
     Alert.actionSheet(context, null, null,
-      'Camera', () => _openImagePicker(context, true, onPicked, onRead),
-      'Album', () => _openImagePicker(context, false, onPicked, onRead),
+      'Camera', () => requestCameraPermissions(context,
+        onGranted: (context) => _openImagePicker(context, true, onPicked, onRead),
+      ),
+      'Album', () => requestPhotosPermissions(context,
+        onGranted: (context) => _openImagePicker(context, false, onPicked, onRead),
+      ),
     );
 
 void _openImagePicker(BuildContext context, bool camera, OnImagePicked? onPicked, OnImageRead onRead) =>

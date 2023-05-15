@@ -21,7 +21,7 @@ void main() {
   Log.level = Log.kDebug;
   if (Platform.isIOS) {
     Log.colorful = false;
-    Log.showTime = false;
+    Log.showTime = true;
     Log.showCaller = true;
   } else {
     Log.colorful = true;
@@ -39,7 +39,7 @@ void main() {
   }
 
   // Check permission to launch the app: Storage
-  checkPrimaryPermissions().then((value) {
+  checkStoragePermissions().then((value) {
     if (!value) {
       // not granted for photos/storage, first run?
       Log.warning('not granted for photos/storage, first run?');

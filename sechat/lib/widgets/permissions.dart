@@ -1,113 +1,106 @@
-import 'dart:io';
-
 import 'package:flutter/cupertino.dart';
 import 'package:permission_handler/permission_handler.dart';
-import 'package:permission_handler/permission_handler.dart' as lib;
-import 'package:lnc/lnc.dart';
 
 import 'alert.dart';
 
-const List<Permission> _allPermissions = [
-  /// Android: Camera
-  /// iOS: Photos (Camera Roll and Camera)
-  Permission.camera,
 
-  /// Android: Microphone
-  /// iOS: Microphone
-  Permission.microphone,
+Future<bool> checkStoragePermissions() async =>
+    _PermissionHandler.check(_PermissionHandler.storagePermissions);
 
-  /// When running on Android T and above: Read image files from external storage
-  /// When running on Android < T: Nothing
-  /// iOS: Photos
-  /// iOS 14+ read & write access level
-  Permission.photos,
+void requestStoragePermissions(BuildContext context,
+    {required void Function(BuildContext context) onGranted}) =>
+    _PermissionHandler.request(
+      _PermissionHandler.storagePermissions,
+      onDenied: (permission) => Alert.show(context, 'Permission denied',
+        'You should grant the permission to access external storage.',
+        callback: () => openAppSettings(),
+      ),
+    ).then((granted) {
+      if (granted) {
+        onGranted(context);
+      }
+    });
 
-  /// Android: Nothing
-  /// iOS: Photos
-  /// iOS 14+ read & write access level
-  Permission.photosAddOnly,
+void requestPhotosPermissions(BuildContext context,
+    {required void Function(BuildContext context) onGranted}) =>
+    _PermissionHandler.request(
+      _PermissionHandler.photosPermissions,
+      onDenied: (permission) => Alert.show(context, 'Permission denied',
+        'You should grant the permission to access photo album.',
+        callback: () => openAppSettings(),
+      ),
+    ).then((granted) {
+      if (granted) {
+        onGranted(context);
+      }
+    });
 
-  /// Android: Microphone
-  /// iOS: Speech
-  Permission.speech,
+void requestCameraPermissions(BuildContext context,
+    {required void Function(BuildContext context) onGranted}) =>
+    _PermissionHandler.request(
+      _PermissionHandler.cameraPermissions,
+      onDenied: (permission) => Alert.show(context, 'Permission denied',
+        'You should grant the permission to access camera.',
+        callback: () => openAppSettings(),
+      ),
+    ).then((granted) {
+      if (granted) {
+        onGranted(context);
+      }
+    });
 
-  /// Android: External Storage
-  /// iOS: Access to folders like `Documents` or `Downloads`. Implicitly
-  /// granted.
-  Permission.storage,
+void requestMicrophonePermissions(BuildContext context,
+    {required void Function(BuildContext context) onGranted}) =>
+    _PermissionHandler.request(
+      _PermissionHandler.microphonePermissions,
+      onDenied: (permission) => Alert.show(context, 'Permission denied',
+        'You should grant the permission to access microphone.',
+        callback: () => openAppSettings(),
+      ),
+    ).then((granted) {
+      if (granted) {
+        onGranted(context);
+      }
+    });
 
-  /// Android: Notification
-  /// iOS: Notification
-  Permission.notification,
-
-  // /// Android: Allows an app to request installing packages.
-  // /// iOS: Nothing
-  // Permission.requestInstallPackages,
-  //
-  // /// When running on Android T and above: Read video files from external storage
-  // /// When running on Android < T: Nothing
-  // /// iOS: Nothing
-  // Permission.videos,
-  //
-  // /// When running on Android T and above: Read audio files from external storage
-  // /// When running on Android < T: Nothing
-  // /// iOS: Nothing
-  // Permission.audio,
-];
 
 class _PermissionHandler {
 
-  static List<Permission> get primaryPermissions {
-    if (Platform.isIOS) {
-      // iOS
-      return [
-        Permission.photos,
-        Permission.photosAddOnly,
-        // Permission.storage,
-      ];
-    } else if (Platform.isAndroid) {
-      // Android
-      return [
-        // Permission.photos,
-        // Permission.photosAddOnly,
-        Permission.storage,
-      ];
-    } else {
-      return [
-        Permission.photos,
-        Permission.photosAddOnly,
-        Permission.storage,
-      ];
-    }
-  }
+  static List<Permission> get storagePermissions => [
+    /// Android: External Storage
+    /// iOS: Access to folders like `Documents` or `Downloads`. Implicitly
+    /// granted.
+    // Permission.storage,
+  ];
 
-  static List<Permission> get secondaryPermissions {
-    if (Platform.isIOS) {
-      // iOS
-      return [
-        Permission.camera,
-        Permission.microphone,
-        Permission.photos,
-        Permission.photosAddOnly,
-        Permission.speech,
-        // Permission.storage,
-        Permission.notification,
-      ];
-    } else if (Platform.isAndroid) {
-      // Android
-      return [
-        Permission.camera,
-        Permission.microphone,
-        // Permission.photos,
-        // Permission.photosAddOnly,
-        Permission.speech,
-        Permission.storage,
-        Permission.notification,
-      ];
-    } else {
-      return _allPermissions;
-    }
-  }
+  static List<Permission> get photosPermissions => [
+    /// When running on Android T and above: Read image files from external storage
+    /// When running on Android < T: Nothing
+    /// iOS: Photos
+    /// iOS 14+ read & write access level
+    Permission.photos,
+
+    /// Android: Nothing
+    /// iOS: Photos
+    /// iOS 14+ read & write access level
+    // Permission.photosAddOnly,
+
+    Permission.storage,
+  ];
+
+  static List<Permission> get cameraPermissions => [
+    /// Android: Camera
+    /// iOS: Photos (Camera Roll and Camera)
+    Permission.camera,
+
+    // Permission.storage,
+  ];
+
+  static List<Permission> get microphonePermissions => [
+    /// Android: Microphone
+    /// iOS: Microphone
+    Permission.microphone,
+  ];
 
   static Future<bool> check(List<Permission> permissions) async {
     PermissionStatus status;
@@ -120,56 +113,82 @@ class _PermissionHandler {
     return true;
   }
 
-  static Future<bool> request(List<Permission> permissions) async {
+  static Future<bool> request(List<Permission> permissions,
+      {required void Function(Permission permission) onDenied}) async {
     PermissionStatus status;
     for (Permission item in permissions) {
-      status = await item.request();
+      status = await item.status;
+      if (status == PermissionStatus.granted) {
+        // granted before
+        continue;
+      } else if (await item.shouldShowRequestRationale) {
+        // not granted yet, request this permission
+        status = await item.request();
+        if (status == PermissionStatus.granted) {
+          // OK
+          continue;
+        }
+      }
       if (status != PermissionStatus.granted) {
+        onDenied(item);
         return false;
       }
     }
     return true;
   }
 
-  static void openAppSettings() async => lib.openAppSettings();
 }
 
-Future<bool> checkPrimaryPermissions() async {
-  return await _PermissionHandler.check(_PermissionHandler.primaryPermissions);
-}
 
-void requestPrimaryPermissions(BuildContext context,
-    {required void Function(BuildContext context) onGranted}) {
-  _PermissionHandler.request(_PermissionHandler.primaryPermissions).then((value) {
-    if (!value) {
-      // base permissions not granted
-      Alert.show(context, 'Permission denied',
-        'You should grant the permission to continue using this app.',
-        callback: () => _PermissionHandler.openAppSettings(),
-      );
-    } else {
-      Log.info('permission granted');
-      onGranted(context);
-    }
-  }).onError((error, stackTrace) {
-    Log.error('request permission error: $error');
-  });
-}
+/* iOS Podfile:
 
-void requestSecondaryPermissions(BuildContext context,
-    {required void Function(BuildContext context) onGranted}) {
-  _PermissionHandler.request(_PermissionHandler.secondaryPermissions).then((value) {
-    if (!value) {
-      // advanced permissions not granted
-      Alert.show(context, 'Permission denied',
-        'You should grant the permission to continue using this function.',
-        callback: () => _PermissionHandler.openAppSettings(),
-      );
-    } else {
-      Log.info('permission granted');
-      onGranted(context);
-    }
-  }).onError((error, stackTrace) {
-    Log.error('request permission error: $error');
-  });
-}
+    target.build_configurations.each do |config|
+      config.build_settings['GCC_PREPROCESSOR_DEFINITIONS'] ||= [
+        '$(inherited)',
+
+        ## dart: PermissionGroup.calendar
+        # 'PERMISSION_EVENTS=1',
+
+        ## dart: PermissionGroup.reminders
+        # 'PERMISSION_REMINDERS=1',
+
+        ## dart: PermissionGroup.contacts
+        # 'PERMISSION_CONTACTS=1',
+
+        ## dart: PermissionGroup.camera
+        'PERMISSION_CAMERA=1',
+
+        ## dart: PermissionGroup.microphone
+        'PERMISSION_MICROPHONE=1',
+
+        ## dart: PermissionGroup.speech
+        # 'PERMISSION_SPEECH_RECOGNIZER=1',
+
+        ## dart: PermissionGroup.photos
+        'PERMISSION_PHOTOS=1',
+        'PERMISSION_PHOTOS_ADD_ONLY=1',
+
+        ## dart: [PermissionGroup.location, PermissionGroup.locationAlways, PermissionGroup.locationWhenInUse]
+        # 'PERMISSION_LOCATION=1',
+
+        ## dart: PermissionGroup.notification
+        # 'PERMISSION_NOTIFICATIONS=1',
+
+        ## dart: PermissionGroup.mediaLibrary
+        # 'PERMISSION_MEDIA_LIBRARY=1',
+
+        ## dart: PermissionGroup.sensors
+        # 'PERMISSION_SENSORS=1',
+
+        ## dart: PermissionGroup.bluetooth
+        # 'PERMISSION_BLUETOOTH=1',
+
+        ## dart: PermissionGroup.appTrackingTransparency
+        # 'PERMISSION_APP_TRACKING_TRANSPARENCY=1',
+
+        ## dart: PermissionGroup.criticalAlerts
+        # 'PERMISSION_CRITICAL_ALERTS=1'
+      ]
+    end
+
+*/

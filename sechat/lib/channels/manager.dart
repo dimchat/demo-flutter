@@ -54,6 +54,9 @@ class ChannelMethods {
   static const String onDownloadSuccess  = "onDownloadSuccess";
   static const String onDownloadFailure  = "onDownloadFailed";
 
+  static const String getCachesDirectory    = "getCachesDirectory";
+  static const String getTemporaryDirectory = "getTemporaryDirectory";
+
 }
 
 class ChannelManager {

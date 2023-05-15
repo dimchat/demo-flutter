@@ -229,7 +229,7 @@ void _submit(BuildContext context, {required String name, required String avatar
 
 void _checkCurrentUser(BuildContext context, void Function() onNotFound) {
   Log.debug('checking permissions');
-  requestPrimaryPermissions(context, onGranted: (context) {
+  requestStoragePermissions(context, onGranted: (context) {
     GlobalVariable().facebook.currentUser.then((user) {
       if (user == null) {
         onNotFound();

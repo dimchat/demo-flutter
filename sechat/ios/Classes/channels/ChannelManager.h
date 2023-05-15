@@ -58,6 +58,9 @@ NS_ASSUME_NONNULL_BEGIN
 #define FtpChannelOnDownloadSuccess     @"onDownloadSuccess"
 #define FtpChannelOnDownloadFailure     @"onDownloadFailed"
 
+#define FtpChannelGetCachesDirectory    @"getCachesDirectory"
+#define FtpChannelGetTemporaryDirectory @"getTemporaryDirectory"
+
 
 @class AudioChannel;
 @class SessionChannel;

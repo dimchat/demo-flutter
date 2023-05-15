@@ -12,18 +12,19 @@ import java.net.URL;
 import java.util.HashMap;
 import java.util.Map;
 
-import chat.dim.http.FileTransfer;
-import chat.dim.protocol.ID;
 import io.flutter.plugin.common.BinaryMessenger;
 import io.flutter.plugin.common.MethodCall;
 import io.flutter.plugin.common.MethodChannel;
 import io.flutter.plugin.common.MethodCodec;
 
+import chat.dim.filesys.LocalCache;
+import chat.dim.http.FileTransfer;
 import chat.dim.http.DownloadDelegate;
 import chat.dim.http.DownloadRequest;
 import chat.dim.http.UploadDelegate;
 import chat.dim.http.UploadRequest;
 import chat.dim.http.UploadTask;
+import chat.dim.protocol.ID;
 import chat.dim.utils.Log;
 
 public class FileTransferChannel extends MethodChannel implements UploadDelegate, DownloadDelegate {
@@ -153,6 +154,18 @@ public class FileTransferChannel extends MethodChannel implements UploadDelegate
                     ftp.api = call.argument("api");
                     ftp.secret = call.argument("secret");
                     result.success(null);
+                    break;
+                }
+                case ChannelMethods.GET_CACHES_DIRECTORY: {
+                    LocalCache localCache = LocalCache.getInstance();
+                    String dir = localCache.getCachesDirectory();
+                    result.success(dir);
+                    break;
+                }
+                case ChannelMethods.GET_TEMPORARY_DIRECTORY: {
+                    LocalCache localCache = LocalCache.getInstance();
+                    String dir = localCache.getTemporaryDirectory();
+                    result.success(dir);
                     break;
                 }
                 default:

@@ -25,7 +25,26 @@ class FileTransferChannel extends MethodChannel {
   static double uploadExpires = 600.0;
 
   /// root directory for local storage
+  String? _cachesDirectory;
+  String? _temporaryDirectory;
   bool _apiUpdated = false;
+
+  Future<String> get cachesDirectory async {
+    String? dir = _cachesDirectory;
+    if (dir == null) {
+      dir = await _invoke(ChannelMethods.getCachesDirectory, null);
+      _cachesDirectory = dir;
+    }
+    return dir!;
+  }
+  Future<String> get temporaryDirectory async {
+    String? dir = _temporaryDirectory;
+    if (dir == null) {
+      dir = await _invoke(ChannelMethods.getTemporaryDirectory, null);
+      _temporaryDirectory = dir;
+    }
+    return dir!;
+  }
 
   Future<void> _prepare() async {
     if (_apiUpdated) {

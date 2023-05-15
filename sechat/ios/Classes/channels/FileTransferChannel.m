@@ -145,6 +145,14 @@ static inline void onMethodCall(FlutterMethodCall* call, FlutterResult success) 
             ftp.secret = secret;
         }
         success(nil);
+    } else if ([method isEqualToString:FtpChannelGetCachesDirectory]) {
+        // getCachesDirectory
+        NSString *dir = [DIMStorage cachesDirectory];
+        success(dir);
+    } else if ([method isEqualToString:FtpChannelGetTemporaryDirectory]) {
+        // getCachesDirectory
+        NSString *dir = [DIMStorage temporaryDirectory];
+        success(dir);
     } else {
         NSLog(@"not implemented: %@", method);
         assert(false);

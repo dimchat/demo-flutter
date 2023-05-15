@@ -61,6 +61,10 @@ final class ChannelMethods {
     static final String ON_UPLOAD_FAILURE = "onUploadFailed";
     static final String ON_DOWNLOAD_SUCCESS = "onDownloadSuccess";
     static final String ON_DOWNLOAD_FAILURE = "onDownloadFailed";
+
+    static final String GET_CACHES_DIRECTORY = "getCachesDirectory";
+    static final String GET_TEMPORARY_DIRECTORY = "getTemporaryDirectory";
+
 }
 
 public enum ChannelManager {

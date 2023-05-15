@@ -35,7 +35,9 @@ import android.os.IBinder;
 
 import java.io.IOException;
 
+import chat.dim.channels.ChannelManager;
 import chat.dim.ui.Alert;
+import chat.dim.utils.Log;
 
 public class MediaService extends Service {
 
@@ -134,12 +136,28 @@ public class MediaService extends Service {
    //  Playback
    //
 
+   private void onCompleted(MediaPlayer mp) {
+      String path = playingUri == null ? null : playingUri.getPath();
+      if (path != null) {
+         playingUri = null;
+         ChannelManager man = ChannelManager.getInstance();
+         man.audioChannel.onPlayFinished(path);
+      }
+   }
+   Uri playingUri;
+
    private void startPlaying(Uri inputUri) {
       stopAll();
+      onCompleted(null);
+      assert inputUri != null : "inputUri empty";
+      Log.info("start playing: " + inputUri);
+      playingUri = inputUri;
 
       player = new MediaPlayer();
       player.setAudioStreamType(AudioManager.STREAM_MUSIC);
-      player.setOnPreparedListener(MediaPlayer::start);
+      player.setLooping(false);
+      player.setOnPreparedListener(mp -> player.start());
+      player.setOnCompletionListener(this::onCompleted);
       try {
          player.setDataSource(getApplicationContext(), inputUri);
       } catch (IOException e) {

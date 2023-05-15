@@ -14,7 +14,7 @@
     <uses-permission android:name="android.permission.REQUEST_INSTALL_PACKAGES"/>
 
     <application
-        android:label="SecureChat"
+        android:label="Secure Chat"
         android:name="${applicationName}"
         android:networkSecurityConfig="@xml/network_security_config"
         android:usesCleartextTraffic="true"
@@ -40,6 +40,9 @@
                 <category android:name="android.intent.category.LAUNCHER"/>
             </intent-filter>
         </activity>
+
+        <service android:name="chat.dim.ui.media.MediaService" />
+
         <provider
             android:name="androidx.core.content.FileProvider"
             android:authorities="chat.dim.sechat.provider"

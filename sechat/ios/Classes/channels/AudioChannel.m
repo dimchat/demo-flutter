@@ -93,9 +93,12 @@ static inline void stopRecord(void) {
 }
 
 static inline void startPlay(NSString *path) {
+    ChannelManager *man = [ChannelManager sharedInstance];
     EMAudioPlayerHelper *player = [EMAudioPlayerHelper sharedHelper];
     if ([player isPlaying]) {
+        NSString *old = [player playingPath];
         [player stopPlayer];
+        [man.audioChannel onPlayFinished:old];
     }
     if ([DIMStorage fileExistsAtPath:path]) {
         NSLog(@"Start play: %@", path);
@@ -103,11 +106,9 @@ static inline void startPlay(NSString *path) {
         NSLog(@"Audio file not exists: %@", path);
         return;
     }
-    ChannelManager *man = [ChannelManager sharedInstance];
     [player startPlayerWithPath:path
                           model:man.audioChannel
                      completion:^(NSError *error) {
-        ChannelManager *man = [ChannelManager sharedInstance];
         [man.audioChannel onPlayFinished:path];
         if (error == nil) {
             NSLog(@"Audio finished: %@", path);

@@ -59,7 +59,7 @@ public class AudioChannel extends MethodChannel {
 
     public void onPlayFinished(String mp4Path) {
         Map<String, Object> params = new HashMap<>();
-        params.put("mp4Path", mp4Path);
+        params.put("path", mp4Path);
         new Handler(Looper.getMainLooper()).post(() ->
                 invokeMethod(ChannelMethods.ON_PLAY_FINISHED, params));
     }
@@ -84,7 +84,8 @@ public class AudioChannel extends MethodChannel {
                     break;
                 }
                 case ChannelMethods.STOP_PLAY: {
-                    stopPlay();
+                    String path = call.argument("path");
+                    stopPlay(path);
                     break;
                 }
             }
@@ -109,12 +110,14 @@ public class AudioChannel extends MethodChannel {
         }
 
         private void startPlay(String path) {
+            Log.info("playing " + path);
             Uri url = Uri.fromFile(new File(path));
             ChannelManager man = ChannelManager.getInstance();
             man.audioChannel.audioPlayer.startPlay(url);
         }
 
-        private void stopPlay() {
+        private void stopPlay(String path) {
+            Log.info("stop playing " + path);
             ChannelManager man = ChannelManager.getInstance();
             man.audioChannel.audioPlayer.stopPlay();
         }

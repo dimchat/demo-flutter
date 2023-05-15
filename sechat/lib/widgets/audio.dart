@@ -158,7 +158,12 @@ class _AudioContentState extends State<AudioContentView> implements lnc.Observer
   @override
   Future<void> onReceiveNotification(lnc.Notification notification) async {
     String name = notification.name;
+    Map? userInfo = notification.userInfo;
     if (name == NotificationNames.kPlayFinished) {
+      String? path = userInfo?['path'];
+      if (path != await _path) {
+        return;
+      }
       if (mounted) {
         setState(() {
           _playing = false;
@@ -167,26 +172,22 @@ class _AudioContentState extends State<AudioContentView> implements lnc.Observer
     }
   }
 
-  late final double _duration;
-  String? _path;
-
   bool _playing = false;
 
-  Future<void> _reload() async {
+  Future<String?> get _path async {
     FileTransfer ftp = FileTransfer();
-    _path = await ftp.getFilePath(widget.content);
-    if (_path == null) {
-      Log.error('failed to get audio path');
-      return;
-    }
+    return await ftp.getFilePath(widget.content);
   }
 
-  void _togglePlay() {
+  String? get _duration {
+    return widget.content.getDouble('duration')?.toStringAsFixed(3);
+  }
+
+  Future<void> _togglePlay() async {
     ChannelManager man = ChannelManager();
-    String? path = _path;
-    bool playing = _playing;
-    if (playing) {
-      man.audioChannel.stopPlay(_path);
+    String? path = await _path;
+    if (_playing) {
+      await man.audioChannel.stopPlay(path);
       if (mounted) {
         setState(() {
           _playing = false;
@@ -198,15 +199,8 @@ class _AudioContentState extends State<AudioContentView> implements lnc.Observer
           _playing = true;
         });
       }
-      man.audioChannel.startPlay(path);
+      await man.audioChannel.startPlay(path);
     }
-  }
-
-  @override
-  void initState() {
-    super.initState();
-    _duration = widget.content.getDouble('duration') ?? 0;
-    _reload();
   }
 
   @override
@@ -215,15 +209,13 @@ class _AudioContentState extends State<AudioContentView> implements lnc.Observer
     color: widget.color,
     padding: Styles.audioMessagePadding,
     child: GestureDetector(
-      onTap: () {
-        setState(() => _togglePlay());
-      },
+      onTap: _togglePlay,
       child: Row(
         children: [
           _playing ? const Icon(Styles.playingAudioIcon) : const Icon(Styles.playAudioIcon),
           Expanded(
             flex: 1,
-            child: Text('${_duration.toStringAsFixed(3)}"',
+            child: Text('${_duration ?? 0} s',
               textAlign: TextAlign.center,
             ),
           ),

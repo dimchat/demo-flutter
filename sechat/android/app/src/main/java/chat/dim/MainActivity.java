@@ -3,9 +3,12 @@ package chat.dim;
 import android.content.Context;
 import android.content.pm.ApplicationInfo;
 import android.os.Bundle;
+import android.os.Environment;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+
+import java.io.File;
 
 import io.flutter.Log;
 import io.flutter.embedding.android.FlutterActivity;
@@ -21,10 +24,23 @@ public class MainActivity extends FlutterActivity {
     public void configureFlutterEngine(@NonNull FlutterEngine flutterEngine) {
         super.configureFlutterEngine(flutterEngine);
 
-        String path = MainActivity.this.getExternalCacheDir().getAbsolutePath();
-        System.out.println("cache root: " + path);
+        String cacheDir = null;
+        if (Environment.MEDIA_MOUNTED.equals(Environment.getExternalStorageState())) {
+            // sdcard found, get external cache
+            File dir = MainActivity.this.getExternalCacheDir();
+            if (dir != null) {
+                cacheDir = dir.getAbsolutePath();
+            }
+        }
+        String tmpDir = MainActivity.this.getCacheDir().getAbsolutePath();
+        if (cacheDir == null) {
+            // external cache not found, use internal cache instead
+            cacheDir = tmpDir;
+        }
+        System.out.println("cache dirs: [" + cacheDir + ", " + tmpDir + "]");
         LocalCache cache = LocalCache.getInstance();
-        cache.setRoot(path);
+        cache.setCachesDirectory(cacheDir);
+        cache.setTemporaryDirectory(tmpDir);
 
         CryptoPlugins.registerCryptoPlugins();
 

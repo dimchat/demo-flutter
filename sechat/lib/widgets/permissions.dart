@@ -1,4 +1,5 @@
 import 'package:flutter/cupertino.dart';
+import 'package:lnc/lnc.dart';
 import 'package:permission_handler/permission_handler.dart';
 
 import 'alert.dart';
@@ -66,6 +67,38 @@ void requestMicrophonePermissions(BuildContext context,
 
 class _PermissionHandler {
 
+  static Future<bool> check(List<Permission> permissions) async {
+    PermissionStatus status;
+    for (Permission item in permissions) {
+      status = await item.status;
+      if (status == PermissionStatus.granted) {
+        // OK
+        continue;
+      }
+      Log.warning('permission status: $status, $item');
+      // status != PermissionStatus.granted
+      return false;
+    }
+    return true;
+  }
+
+  static Future<bool> request(List<Permission> permissions,
+      {required void Function(Permission permission) onDenied}) async {
+    PermissionStatus status;
+    for (Permission item in permissions) {
+      status = await item.request();
+      if (status == PermissionStatus.granted) {
+        // OK
+        continue;
+      }
+      Log.warning('permission status: $status, $item');
+      // status != PermissionStatus.granted
+      onDenied(item);
+      return false;
+    }
+    return true;
+  }
+
   static List<Permission> get storagePermissions => [
     /// Android: External Storage
     /// iOS: Access to folders like `Documents` or `Downloads`. Implicitly
@@ -101,41 +134,6 @@ class _PermissionHandler {
     /// iOS: Microphone
     Permission.microphone,
   ];
-
-  static Future<bool> check(List<Permission> permissions) async {
-    PermissionStatus status;
-    for (Permission item in permissions) {
-      status = await item.status;
-      if (status != PermissionStatus.granted) {
-        return false;
-      }
-    }
-    return true;
-  }
-
-  static Future<bool> request(List<Permission> permissions,
-      {required void Function(Permission permission) onDenied}) async {
-    PermissionStatus status;
-    for (Permission item in permissions) {
-      status = await item.status;
-      if (status == PermissionStatus.granted) {
-        // granted before
-        continue;
-      } else if (await item.shouldShowRequestRationale) {
-        // not granted yet, request this permission
-        status = await item.request();
-        if (status == PermissionStatus.granted) {
-          // OK
-          continue;
-        }
-      }
-      if (status != PermissionStatus.granted) {
-        onDenied(item);
-        return false;
-      }
-    }
-    return true;
-  }
 
 }
 

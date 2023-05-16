@@ -179,7 +179,7 @@ class _Statement extends Statement {
       throw Exception('Redundant execution: $sql');
     }
     _sql = sql;
-    DBLogger.output('$executeInsert: $sql');
+    DBLogger.output('executeInsert: $sql');
     return await database.rawInsert(sql);
   }
 

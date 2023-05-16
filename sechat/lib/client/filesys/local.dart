@@ -84,7 +84,7 @@ class LocalStorage {
   ///  Protected caches directory
   ///  (meta/visa/document, image/audio/video, ...)
   ///
-  /// Android: "/sdcard/Android/data/chat.dim.sechat/cache/caches"
+  /// Android: "/sdcard/Android/data/chat.dim.sechat/cache"
   ///     iOS: "/Application/{...}/Library/Caches"
   Future<String> get cachesDirectory async {
     ChannelManager man = ChannelManager();
@@ -94,7 +94,7 @@ class LocalStorage {
   ///  Protected temporary directory
   ///  (uploading, downloaded)
   ///
-  /// Android: "/sdcard/Android/chat.dim.sechat/cache/tmp"
+  /// Android: "/data/data/chat.dim.sechat/cache"
   ///     iOS: "/Application/{...}/tmp"
   Future<String> get temporaryDirectory async {
     ChannelManager man = ChannelManager();

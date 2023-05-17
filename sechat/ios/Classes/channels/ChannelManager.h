@@ -15,6 +15,7 @@ NS_ASSUME_NONNULL_BEGIN
 #define ChannelNameAudio                @"chat.dim/audio"
 #define ChannelNameSession              @"chat.dim/session"
 #define ChannelNameFileTransfer         @"chat.dim/ftp"
+#define ChannelNameDatabase             @"chat.dim/db"
 
 
 //
@@ -62,9 +63,19 @@ NS_ASSUME_NONNULL_BEGIN
 #define FtpChannelGetTemporaryDirectory @"getTemporaryDirectory"
 
 
+//
+//  Database Channel Methods
+//
+#define DbChannelSavePrivateKey             @"savePrivateKey"
+#define DbChannelPrivateKeyForSignature     @"privateKeyForSignature"
+#define DbChannelPrivateKeyForVisaSignature @"privateKeyForVisaSignature"
+#define DbChannelPrivateKeysForDecryption   @"privateKeysForDecryption"
+
+
 @class AudioChannel;
 @class SessionChannel;
 @class FileTransferChannel;
+@class DatabaseChannel;
 
 
 @interface ChannelManager : NSObject
@@ -72,6 +83,7 @@ NS_ASSUME_NONNULL_BEGIN
 @property(nonatomic, readonly) AudioChannel *audioChannel;
 @property(nonatomic, readonly) SessionChannel *sessionChannel;
 @property(nonatomic, readonly) FileTransferChannel *ftpChannel;
+@property(nonatomic, readonly) DatabaseChannel *dbChannel;
 
 + (instancetype)sharedInstance;
 

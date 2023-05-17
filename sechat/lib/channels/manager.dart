@@ -1,4 +1,5 @@
 import 'audio.dart';
+import 'keychain.dart';
 import 'session.dart';
 import 'transfer.dart';
 
@@ -9,6 +10,9 @@ class ChannelNames {
   static const String session = "chat.dim/session";
 
   static const String fileTransfer = "chat.dim/ftp";
+
+  static const String database = "chat.dim/db";
+
 }
 
 class ChannelMethods {
@@ -57,6 +61,14 @@ class ChannelMethods {
   static const String getCachesDirectory    = "getCachesDirectory";
   static const String getTemporaryDirectory = "getTemporaryDirectory";
 
+  //
+  //  Database Channel Methods
+  //
+  static const String savePrivateKey             = "savePrivateKey";
+  static const String privateKeyForSignature     = "privateKeyForSignature";
+  static const String privateKeyForVisaSignature = "privateKeyForVisaSignature";
+  static const String privateKeysForDecryption   = "privateKeysForDecryption";
+
 }
 
 class ChannelManager {
@@ -70,5 +82,6 @@ class ChannelManager {
   final AudioChannel audioChannel = AudioChannel(ChannelNames.audio);
   final SessionChannel sessionChannel = SessionChannel(ChannelNames.session);
   final FileTransferChannel ftpChannel = FileTransferChannel(ChannelNames.fileTransfer);
+  final KeychainChannel dbChannel = KeychainChannel(ChannelNames.database);
 
 }

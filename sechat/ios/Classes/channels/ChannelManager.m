@@ -10,6 +10,7 @@
 #import "AudioChannel.h"
 #import "SessionChannel.h"
 #import "FileTransferChannel.h"
+#import "DatabaseChannel.h"
 
 #import "ChannelManager.h"
 
@@ -18,6 +19,7 @@
 @property(nonatomic, strong) AudioChannel *audioChannel;
 @property(nonatomic, strong) SessionChannel *sessionChannel;
 @property(nonatomic, strong) FileTransferChannel *ftpChannel;
+@property(nonatomic, strong) DatabaseChannel *dbChannel;
 
 @end
 
@@ -27,8 +29,10 @@ OKSingletonImplementations(ChannelManager, sharedInstance)
 
 - (instancetype)init {
     if (self = [super init]) {
+        self.audioChannel = nil;
         self.sessionChannel = nil;
         self.ftpChannel = nil;
+        self.dbChannel = nil;
     }
     return self;
 }
@@ -48,6 +52,9 @@ OKSingletonImplementations(ChannelManager, sharedInstance)
     self.ftpChannel = [FileTransferChannel channelWithName:ChannelNameFileTransfer
                                            binaryMessenger:messenger
                                                      codec:codec];
+    self.dbChannel = [DatabaseChannel channelWithName:ChannelNameDatabase
+                                      binaryMessenger:messenger
+                                                codec:codec];
 }
 
 @end

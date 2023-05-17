@@ -1,5 +1,8 @@
+import 'dart:io';
+
 import 'package:lnc/lnc.dart';
 
+import '../channels/manager.dart';
 import '../client/constants.dart';
 import 'helper/sqlite.dart';
 
@@ -60,6 +63,10 @@ class _PrivateKeyTable extends DataTableHandler<PrivateKey> implements PrivateKe
 
   @override
   Future<List<DecryptKey>> getPrivateKeysForDecryption(ID user) async {
+    if (Platform.isIOS || Platform.isMacOS) {
+      ChannelManager man = ChannelManager();
+      return await man.dbChannel.getPrivateKeysForDecryption(user);
+    }
     SQLConditions cond;
     cond = SQLConditions(left: 'uid', comparison: '=', right: user.toString());
     cond.addCondition(SQLConditions.kAnd, left: 'decrypt', comparison: '<>', right: 0);
@@ -71,12 +78,20 @@ class _PrivateKeyTable extends DataTableHandler<PrivateKey> implements PrivateKe
 
   @override
   Future<PrivateKey?> getPrivateKeyForSignature(ID user) async {
+    if (Platform.isIOS || Platform.isMacOS) {
+      ChannelManager man = ChannelManager();
+      return await man.dbChannel.getPrivateKeyForSignature(user);
+    }
     // TODO: support multi private keys
     return await getPrivateKeyForVisaSignature(user);
   }
 
   @override
   Future<PrivateKey?> getPrivateKeyForVisaSignature(ID user) async {
+    if (Platform.isIOS || Platform.isMacOS) {
+      ChannelManager man = ChannelManager();
+      return await man.dbChannel.getPrivateKeyForVisaSignature(user);
+    }
     SQLConditions cond;
     cond = SQLConditions(left: 'uid', comparison: '=', right: user.toString());
     cond.addCondition(SQLConditions.kAnd, left: 'type', comparison: '=', right: PrivateKeyDBI.kMeta);
@@ -91,6 +106,11 @@ class _PrivateKeyTable extends DataTableHandler<PrivateKey> implements PrivateKe
   @override
   Future<bool> savePrivateKey(PrivateKey key, String type, ID user,
       {int sign = 1, required int decrypt}) async {
+    if (Platform.isIOS || Platform.isMacOS) {
+      ChannelManager man = ChannelManager();
+      return await man.dbChannel.savePrivateKey(key, type, user,
+          sign: sign, decrypt: decrypt);
+    }
     // 1. save to database
     String json = JSON.encode(key.toMap());
     List values = [user.toString(), json, type, sign, decrypt];

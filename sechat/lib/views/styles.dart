@@ -57,6 +57,8 @@ abstract class Styles {
     color: CupertinoColors.systemGrey,
   );
 
+  static const EdgeInsets settingsSectionItemPadding = EdgeInsets.all(16);
+
   //
   //  Chat Box
   //
@@ -135,6 +137,7 @@ abstract class Styles {
   static const IconData groupChatsIcon = CupertinoIcons.person_2;
 
   // Settings
+  static const IconData exportAccountIcon = Icons.account_balance_wallet_outlined;
   static const IconData    setNetworkIcon = CupertinoIcons.settings;
   static const IconData setWhitePaperIcon = CupertinoIcons.doc;
   static const IconData setOpenSourceIcon = Icons.code;

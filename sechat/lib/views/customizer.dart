@@ -10,6 +10,7 @@ import '../models/config.dart';
 import '../models/contact.dart';
 import '../widgets/browser.dart';
 import 'account.dart';
+import 'account_export.dart';
 import 'network.dart';
 import 'styles.dart';
 
@@ -51,6 +52,7 @@ class SettingsPage extends StatelessWidget {
                   additionalDividerMargin: 32,
                   children: [
                     _myAccount(context),
+                    _exportAccount(context),
                   ],
                 ),
                 CupertinoListSection(
@@ -80,8 +82,20 @@ class SettingsPage extends StatelessWidget {
 
   Widget _myAccount(BuildContext context) => _MyAccountSection();
 
+  Widget _exportAccount(BuildContext context) => CupertinoListTile(
+    padding: Styles.settingsSectionItemPadding,
+    leading: const Icon(Styles.exportAccountIcon),
+    title: const Text('Export'),
+    additionalInfo: const Text('Mnemonic'),
+    trailing: const CupertinoListTileChevron(),
+    onTap: () => showCupertinoDialog(
+      context: context,
+      builder: (context) => const ExportPage(),
+    ),
+  );
+
   Widget _network(BuildContext context) => CupertinoListTile(
-    padding: const EdgeInsets.all(16),
+    padding: Styles.settingsSectionItemPadding,
     leading: const Icon(Styles.setNetworkIcon),
     title: const Text('Network'),
     additionalInfo: const Text('Relay Stations'),
@@ -93,7 +107,7 @@ class SettingsPage extends StatelessWidget {
   );
 
   Widget _whitePaper(BuildContext context) => CupertinoListTile(
-    padding: const EdgeInsets.all(16),
+    padding: Styles.settingsSectionItemPadding,
     leading: const Icon(Styles.setWhitePaperIcon),
     title: const Text('White Paper'),
     additionalInfo: const Text('zh-CN'),
@@ -105,7 +119,7 @@ class SettingsPage extends StatelessWidget {
   );
 
   Widget _source(BuildContext context) => CupertinoListTile(
-    padding: const EdgeInsets.all(16),
+    padding: Styles.settingsSectionItemPadding,
     leading: const Icon(Styles.setOpenSourceIcon),
     title: const Text('Source'),
     additionalInfo: const Text('github.com/dimchat'),
@@ -117,7 +131,7 @@ class SettingsPage extends StatelessWidget {
   );
 
   Widget _term(BuildContext context) => CupertinoListTile(
-    padding: const EdgeInsets.all(16),
+    padding: Styles.settingsSectionItemPadding,
     leading: const Icon(Styles.setTermsIcon),
     title: const Text('Terms'),
     additionalInfo: const Text('Privacy Policy'),
@@ -129,7 +143,7 @@ class SettingsPage extends StatelessWidget {
   );
 
   Widget _about(BuildContext context) => CupertinoListTile(
-    padding: const EdgeInsets.all(16),
+    padding: Styles.settingsSectionItemPadding,
     leading: const Icon(Styles.setAboutIcon),
     title: const Text('About'),
     additionalInfo: const Text('DIM'),

@@ -1,12 +1,12 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
-import 'package:dim_client/dim_client.dart';
 import 'package:lnc/lnc.dart';
 
 import '../client/shared.dart';
 import '../main.dart';
 import '../models/config.dart';
+import '../web3/account.dart';
 import '../widgets/alert.dart';
 import '../widgets/browser.dart';
 import '../widgets/permissions.dart';
@@ -213,8 +213,12 @@ void _submit(BuildContext context, {required String name, required String avatar
       Alert.show(context, 'Privacy Policy', 'Please read and agree the privacy policy.');
     } else {
       GlobalVariable shared = GlobalVariable();
-      Register register = Register(shared.database);
+      Account register = Account(shared.database);
       register.createUser(name: name, avatar: avatar).then((identifier) {
+        if (identifier == null) {
+          Alert.show(context, 'Error', 'Failed to generate ID.');
+          return;
+        }
         shared.database.addUser(identifier).then((value) {
           changeToMainPage(context);
         }).onError((error, stackTrace) {

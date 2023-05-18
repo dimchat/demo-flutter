@@ -105,7 +105,7 @@ class _RegisterState extends State<RegisterPage> {
                 if (!widget._info.importing)
                 SizedBox(
                   width: 320,
-                  height: 240,
+                  height: 256,
                   child: _welcome(),
                 ),
                 const SizedBox(
@@ -223,7 +223,7 @@ class _RegisterState extends State<RegisterPage> {
         Container(
           color: CupertinoColors.extraLightBackgroundGray,
           margin: const EdgeInsets.all(1),
-          padding: const EdgeInsets.all(8),
+          padding: const EdgeInsets.fromLTRB(6, 8, 6, 8),
           alignment: Alignment.center,
           child: CupertinoTextField(
             decoration: const BoxDecoration(

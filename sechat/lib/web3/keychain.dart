@@ -54,9 +54,21 @@ class Keychain {
 
   Future<String?> get mnemonic async {
     PrivateKey? puppet = await database.getPrivateKeyForVisaSignature(master);
-    String? entropy = puppet?.getString('data');
+    String? pem = puppet?.getString('data');
+    Log.debug('master key data: $pem, $master');
+    if (pem == null) {
+      return null;
+    }
+    // unwrap key data
+    List<String> rows = pem.split(RegExp(r'\r\n?|\n'));
+    String entropy = rows
+        .skipWhile((row) => row.startsWith('-----BEGIN'))
+        .takeWhile((row) => !row.startsWith('-----END'))
+        .map((row) => row.trim())
+        .join('');
     Log.debug('get entropy: $entropy, $master');
-    return entropy == null ? null : entropyToMnemonic(entropy);
+    assert(entropy.length == 32, 'entropy length error: [$entropy]');
+    return entropyToMnemonic(entropy);
   }
 
   Future<bool> saveMnemonic(String words) async {

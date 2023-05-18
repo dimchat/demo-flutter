@@ -202,7 +202,7 @@ class _AccountState extends State<AccountPage> {
       });
     }
     Log.info('picked avatar: $path');
-  }, onRead: (path, jpeg) => adjustImage(jpeg, (Uint8List data) {
+  }, onRead: (path, jpeg) => adjustImage(jpeg, 1024, (Uint8List data) {
     String? ext = Paths.extension(path);
     if (ext == null || ext.toLowerCase() != 'png') {
       ext = 'jpeg';

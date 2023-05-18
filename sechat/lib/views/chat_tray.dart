@@ -103,12 +103,12 @@ void _sendText(BuildContext context, TextEditingController controller, ContactIn
 void _sendImage(BuildContext context, ContactInfo chat) =>
     openImagePicker(context, onPicked: (path) {
       Log.info('picked image: $path');
-    }, onRead: (path, jpeg) => adjustImage(jpeg, (Uint8List data) async {
+    }, onRead: (path, jpeg) => adjustImage(jpeg, 2048, (Uint8List data) async {
       // send adjusted image data with thumbnail
       Uint8List thumbnail = await compressThumbnail(data);
       GlobalVariable shared = GlobalVariable();
       shared.emitter.sendImage(data, thumbnail, chat.identifier);
-    }, width: 2048, height: 2048));
+    }));
 
 void _sendVoice(Uint8List data, double duration, ContactInfo chat) =>
     GlobalVariable().emitter.sendVoice(data, duration, chat.identifier);

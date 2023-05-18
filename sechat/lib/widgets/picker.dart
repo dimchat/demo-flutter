@@ -53,50 +53,30 @@ Future<Uint8List> compressThumbnail(Uint8List jpeg) async =>
     );
 
 
-/// callback with small image data after resized down
-void adjustImage(Uint8List jpeg, void Function(Uint8List small) onSank, {int width = 1024, int height = 1024}) =>
+///  Check whether needs resize down a large image
+///
+/// @param jpeg   - image data
+/// @param onSank - callback with small image data after resized down
+/// @param size   - target size (width & height)
+void adjustImage(Uint8List jpeg, int size, void Function(Uint8List small) onSank) =>
     _resolveImage(jpeg, (ui.Image image) async {
-      _Size imgSize = _Size(image.width, image.height);
-      _Size target = _Size(width, height);
+      _Size imageSize = _Size(image.width, image.height);
+      _Size targetSize = _Size(size, size);
       // check image size
-      if (_needsResize(size: imgSize, target: target)) {
+      if (_needsResize(imageSize: imageSize, targetSize: targetSize, dataLength: jpeg.length)) {
         // zoom out
-        _Size size = _resizeDown(size: imgSize, target: target);
+        _Size size = _resizeDown(imageSize: imageSize, targetSize: targetSize);
         Uint8List small = await FlutterImageCompress.compressWithList(jpeg,
           minWidth: size.width,
           minHeight: size.height,
         );
-        Log.info('resized: $imgSize => $size; ${jpeg.length} => ${small.length} bytes');
+        Log.info('resized: $imageSize => $size; ${jpeg.length} => ${small.length} bytes');
         jpeg = small;
       } else {
-        Log.info('no need to resize: $imgSize => $target');
+        Log.info('no need to resize: $imageSize => $targetSize');
       }
       onSank(jpeg);
     });
-
-/// check whether image is too big to be resized
-bool _needsResize({required _Size size, required _Size target}) {
-  assert(target.width > 0 && target.height > 0, 'max size error: $target');
-  if (size.width <= 0 || size.height <= 0) {
-    assert(false, 'size error: $size');
-    return false;
-  }
-  int sx = target.width;
-  int sy = target.height;
-  int mx = target.width + (target.width  >> 1);   // 1.5
-  int my = target.height + (target.height >> 1);  // 1.5
-  int lx = target.width << 1;   // 2.0
-  int ly = target.height << 1;  // 2.0
-  if (size.width <= sx && size.height <= sy) {
-    // smaller than target size
-    return false;
-  } else if (size.width > lx || size.height > ly) {
-    // too big than target size
-    return true;
-  }
-  return (size.width >= sx && size.height > my)
-      || (size.height >= sy && size.width > mx);
-}
 
 /// fetch size info from image data
 void _resolveImage(Uint8List jpeg, void Function(ui.Image image) onResolved) =>
@@ -104,18 +84,50 @@ void _resolveImage(Uint8List jpeg, void Function(ui.Image image) onResolved) =>
         ImageStreamListener((info, _) => onResolved(info.image))
     );
 
+/// check whether image is too big to be resized
+bool _needsResize({required _Size imageSize, required _Size targetSize, required int dataLength}) {
+  assert(targetSize.width > 0 && targetSize.height > 0, 'max size error: $targetSize');
+  if (imageSize.width <= 0 || imageSize.height <= 0) {
+    assert(false, 'size error: $imageSize');
+    return false;
+  }
+  final int sx = targetSize.width;   // small:  1024, 2048, ...
+  final int sy = targetSize.height;  //         1024, 2048, ...
+  final int mx = sx + (sx >> 1);     // medium: 1536, 3072, ...
+  final int my = sy + (sy >> 1);     //         1536, 3072, ...
+  final int lx = sx << 1;            // large:  2048, 4096, ...
+  final int ly = sy << 1;            //         2048, 4096, ...
+  final int medium = sx * sy;        // m-len:  1 MB, 4 MB, ...
+  final int large = medium << 1;     // l-len:  2 MB, 8 MB, ...
+  if (imageSize.width <= sx && imageSize.height <= sy) {
+    // smaller than target size
+    return false;
+  } else if (imageSize.width > lx || imageSize.height > ly) {
+    // too big than target size
+    return true;
+  } else if (imageSize.width > mx) {
+    // width is large enough, check height & data length
+    return imageSize.height > sy || dataLength > medium;
+  } else if (imageSize.height > my) {
+    // height is large enough, check width & data length
+    return imageSize.width > sx || dataLength > medium;
+  }
+  // image data is too large?
+  return dataLength > large;
+}
+
 /// resize (width, height) to no larger than (maxWidth, maxHeight)
-_Size _resizeDown({required _Size size, required _Size target}) {
-  if (size.width > target.width || size.height > target.height) {
-    double dx = target.width / size.width;
-    double dy = target.height / size.height;
+_Size _resizeDown({required _Size imageSize, required _Size targetSize}) {
+  if (imageSize.width > targetSize.width || imageSize.height > targetSize.height) {
+    double dx = targetSize.width / imageSize.width;
+    double dy = targetSize.height / imageSize.height;
     if (dx < dy) {
-      size = _Size.from(size.width * dx, size.height * dx);
+      imageSize = _Size.from(imageSize.width * dx, imageSize.height * dx);
     } else {
-      size = _Size.from(size.width * dy, size.height * dy);
+      imageSize = _Size.from(imageSize.width * dy, imageSize.height * dy);
     }
   }
-  return size;
+  return imageSize;
 }
 
 class _Size {

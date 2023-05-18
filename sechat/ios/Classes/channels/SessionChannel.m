@@ -151,6 +151,11 @@ static inline void onMethodCall(FlutterMethodCall* call, FlutterResult success) 
         NSDictionary *info;
         MarsSeekPackageResult *result = unpackData([data data]);
         MarsPackage *pack = result.first;
+        NSData *payload = [pack body];
+        if ([payload length] == 0) {
+            assert(false);
+            payload = [[NSData alloc] init];
+        }
         NSInteger offset = [result.second integerValue];
         if (offset < 0) {
             // data error, drop the whole buffer
@@ -160,7 +165,7 @@ static inline void onMethodCall(FlutterMethodCall* call, FlutterResult success) 
         } else {
             info = @{
                 @"position": @(offset + pack.length),
-                @"payload": pack.body,
+                @"payload": payload,
             };
         }
         success(info);

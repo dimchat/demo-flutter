@@ -38,6 +38,7 @@ import '../client/constants.dart';
 import '../client/filesys/external.dart';
 import '../client/filesys/local.dart';
 import '../client/filesys/paths.dart';
+import '../widgets/browser.dart';
 
 class FileTransfer {
   factory FileTransfer() => _instance;
@@ -126,11 +127,9 @@ class FileTransfer {
       Log.error('file URL not found: $content');
       return null;
     }
-    Uri url;
-    try {
-      url = Uri.parse(urlString);
-    } on FormatException catch (e) {
-      Log.error('URL error: $e, $urlString');
+    Uri? url = Browser.parseUri(urlString);
+    if (url == null) {
+      Log.error('URL error: $urlString');
       return null;
     }
     // try download file from remote URL

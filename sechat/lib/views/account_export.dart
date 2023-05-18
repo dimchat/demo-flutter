@@ -62,7 +62,7 @@ class _ExportState extends State<ExportPage> {
     children: [
       const SizedBox(height: 32,),
       SizedBox(
-        width: 300,
+        width: 320,
         child: _mosaics(),
       ),
       const SizedBox(height: 16,),
@@ -108,7 +108,7 @@ class _ExportState extends State<ExportPage> {
         children: [
           Container(
             color: CupertinoColors.extraLightBackgroundGray,
-            margin: const EdgeInsets.all(2),
+            margin: const EdgeInsets.all(1),
             padding: const EdgeInsets.fromLTRB(8, 16, 8, 16),
             alignment: Alignment.center,
             child: Text(visible ? word : '***',

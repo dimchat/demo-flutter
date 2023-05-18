@@ -37,12 +37,14 @@ import 'package:dim_client/dim_client.dart';
 import 'package:lnc/lnc.dart';
 
 
+// https://iancoleman.io/bip39/#english
+
 class Keychain {
   Keychain(this.database);
 
   final PrivateKeyDBI database;
 
-  ID get root => ID.kFounder;
+  ID get master => ID.parse('may@anywhere')!;
 
   ///
   ///   Mnemonic
@@ -51,20 +53,29 @@ class Keychain {
   String generate({int strength = 128}) => generateMnemonic(strength: strength);
 
   Future<String?> get mnemonic async {
-    PrivateKey? puppet = await database.getPrivateKeyForVisaSignature(root);
+    PrivateKey? puppet = await database.getPrivateKeyForVisaSignature(master);
     String? entropy = puppet?.getString('data');
-    Log.debug('get entropy: $entropy, $root');
+    Log.debug('get entropy: $entropy, $master');
     return entropy == null ? null : entropyToMnemonic(entropy);
   }
 
   Future<bool> saveMnemonic(String words) async {
-    String entropy = mnemonicToEntropy(words);
+    String entropy;
+    try {
+      entropy = mnemonicToEntropy(words);
+    } on ArgumentError {
+      // mnemonic error
+      return false;
+    } on StateError {
+      // entropy error
+      return false;
+    }
     PrivateKey puppet = PrivateKey.parse({
       'algorithm': AsymmetricKey.kECC,
       'data': entropy,
     })!;
     Log.debug('save mnemonic: $words => $entropy');
-    return await database.savePrivateKey(puppet, PrivateKeyDBI.kMeta, root,
+    return await database.savePrivateKey(puppet, PrivateKeyDBI.kMeta, master,
         sign: 1, decrypt: 0);
   }
 
@@ -82,8 +93,7 @@ class Keychain {
       return null;
     }
     Uint8List seed = mnemonicToSeed(words);
-    BIP32 master = BIP32.fromSeed(seed);
-    BIP32 wallet = master.derivePath(path);
+    BIP32 wallet = BIP32.fromSeed(seed).derivePath(path);
     assert(wallet.privateKey != null, 'failed to derive private key: $words');
     Log.debug('get wallet: $path, $words');
     return wallet;
@@ -105,6 +115,31 @@ class Keychain {
       'algorithm': AsymmetricKey.kECC,
       'data': Hex.encode(privateKey),
     });
+  }
+
+  ///
+  ///   Wallet Address
+  ///
+
+  Future<String?> get btcAddress async {
+    PrivateKey? privateKey = await btcKey;
+    PublicKey? publicKey = privateKey?.publicKey;
+    if (publicKey == null) {
+      return null;
+    }
+    Uint8List data = publicKey.data;
+    const int network = 0x00;  // kBTCMain
+    return BTCAddress.generate(data, network).toString();
+  }
+
+  Future<String?> get ethAddress async {
+    PrivateKey? privateKey = await ethKey;
+    PublicKey? publicKey = privateKey?.publicKey;
+    if (publicKey == null) {
+      return null;
+    }
+    Uint8List data = publicKey.data;
+    return ETHAddress.generate(data).toString();
   }
 
 }

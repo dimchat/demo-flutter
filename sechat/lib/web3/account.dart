@@ -41,7 +41,7 @@ class Account {
 
   final AccountDBI database;
 
-  int type = MetaType.kETH;
+  static int type = MetaType.kETH;
 
   ///  Create user account
   ///

@@ -7,6 +7,7 @@ import '../channels/manager.dart';
 import '../client/filesys/external.dart';
 import '../client/filesys/local.dart';
 import '../client/filesys/paths.dart';
+import '../widgets/browser.dart';
 
 class Config {
   factory Config() => _instance;
@@ -27,10 +28,15 @@ class Config {
       conf = await _load(path);
       conf ??= await _init(path);
       // update for next reading
-      _refresh(Uri.parse(entrance), path).onError((error, stackTrace) {
-        Log.error('failed to update config: $entrance, $error, $stackTrace');
-        return null;
-      });
+      Uri? url = Browser.parseUri(entrance);
+      if (url == null) {
+        Log.error('entrance url error: $entrance');
+      } else {
+        _refresh(url, path).onError((error, stackTrace) {
+          Log.error('failed to update config: $entrance, $error, $stackTrace');
+          return null;
+        });
+      }
     }
     return conf!;
   }

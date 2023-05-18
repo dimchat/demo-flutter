@@ -43,14 +43,14 @@ void main() {
     if (!value) {
       // not granted for photos/storage, first run?
       Log.warning('not granted for photos/storage, first run?');
-      runApp(const _Application(RegisterPage()));
+      runApp(_Application(RegisterPage()));
     } else {
       // check current user
       Log.debug('check current user');
       GlobalVariable().facebook.currentUser.then((user) {
         Log.info('current user: $user');
         if (user == null) {
-          runApp(const _Application(RegisterPage()));
+          runApp(_Application(RegisterPage()));
         } else {
           runApp(const _Application(_MainPage()));
         }

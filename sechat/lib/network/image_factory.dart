@@ -36,6 +36,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:dim_client/dim_client.dart';
 import 'package:lnc/lnc.dart';
 
+import '../widgets/browser.dart';
 import 'ftp.dart';
 
 class ImageFactory {
@@ -61,7 +62,7 @@ class ImageFactory {
     } else {
       url = visa.getProperty('avatar');
     }
-    if (url == null) {
+    if (url == null || !url.contains('://')) {
       Log.warning('avatar url not found: $identifier, $visa');
       return _providers[identifier.toString()];
     }
@@ -71,11 +72,9 @@ class ImageFactory {
     if (image != null) {
       return image;
     }
-    Uri? uri;
-    try {
-      uri = Uri.parse(url);
-    } on FormatException catch (e) {
-      Log.error('avatar url error: $url, $e');
+    Uri? uri = Browser.parseUri(url);
+    if (uri == null) {
+      Log.error('avatar url error: $url');
       return null;
     }
     // get local file path, if not exists

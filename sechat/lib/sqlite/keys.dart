@@ -72,7 +72,7 @@ class _PrivateKeyTable extends DataTableHandler<PrivateKey> implements PrivateKe
     cond.addCondition(SQLConditions.kAnd, left: 'decrypt', comparison: '<>', right: 0);
     // WHERE uid='$user' AND decrypt=1 ORDER BY type DESC LIMIT 3
     List<PrivateKey> array = await select(_table, columns: _selectColumns,
-        conditions: cond, orderBy: 'type DESC', limit: 3);
+        conditions: cond, orderBy: 'type DESC, id DESC', limit: 3);
     return PrivateKeyDBI.convertDecryptKeys(array);
   }
 

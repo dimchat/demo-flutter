@@ -2,6 +2,7 @@ import 'package:dim_client/dim_client.dart';
 import 'package:lnc/lnc.dart';
 
 import '../channels/manager.dart';
+import '../widgets/browser.dart';
 
 class SharedFacebook extends ClientFacebook {
   SharedFacebook(super.adb);
@@ -17,15 +18,10 @@ class SharedFacebook extends ClientFacebook {
       }
     }
     String? path;
-    Uri? url;
-    if (urlString != null && urlString.contains('://')) {
-      try {
-        url = Uri.parse(urlString);
-        ChannelManager man = ChannelManager();
-        path = await man.ftpChannel.downloadAvatar(url);
-      } catch (e) {
-        Log.error('failed to get avatar path: $urlString, error: $e');
-      }
+    Uri? url = Browser.parseUri(urlString);
+    if (url == null) {} else {
+      ChannelManager man = ChannelManager();
+      path = await man.ftpChannel.downloadAvatar(url);
     }
     return Pair(path, url);
   }

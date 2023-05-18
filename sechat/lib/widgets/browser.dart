@@ -32,17 +32,39 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_inappwebview/flutter_inappwebview.dart';
 
-class Browser extends StatefulWidget {
-  const Browser({super.key, required this.url, required this.title});
+import 'package:lnc/lnc.dart' show Log;
 
-  final String url;
+import 'alert.dart';
+
+class Browser extends StatefulWidget {
+  const Browser({super.key, required this.uri, required this.title});
+
+  final Uri uri;
   final String title;
 
-  static void open(BuildContext context,
-      {required String url, required String title}) => showCupertinoDialog(
-    context: context,
-    builder: (context) => Browser(url: url, title: title),
-  );
+  static void open(BuildContext context, {required String url, required String title}) {
+    Uri? uri = parseUri(url);
+    if (uri == null) {
+      Alert.show(context, 'Error', 'Failed to open URL: $url');
+    } else {
+      showCupertinoDialog(context: context,
+        builder: (context) => Browser(uri: uri, title: title),
+      );
+    }
+  }
+
+  static Uri? parseUri(String? urlString) {
+    if (urlString == null || !urlString.contains('://')) {
+      Log.error('URL error: $urlString');
+      return null;
+    }
+    try {
+      return Uri.parse(urlString);
+    } on FormatException catch (e) {
+      Log.error('URL error: $e, $urlString');
+      return null;
+    }
+  }
 
   @override
   State<Browser> createState() => _BrowserState();
@@ -78,7 +100,7 @@ class _BrowserState extends State<Browser> {
       children: [
         InAppWebView(
           initialUrlRequest: URLRequest(
-            url: Uri.parse(widget.url),
+            url: widget.uri,
           ),
           initialOptions: options,
           onProgressChanged: (controller, progress) => setState(() {
@@ -89,7 +111,7 @@ class _BrowserState extends State<Browser> {
         Container(
           color: Colors.black54,
           padding: const EdgeInsets.fromLTRB(4, 2, 4, 2),
-          child: Text('$_progress% | ${widget.url}',
+          child: Text('$_progress% | ${widget.uri}',
             style: const TextStyle(
               fontSize: 10,
               color: Colors.white,

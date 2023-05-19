@@ -1,18 +1,18 @@
 //
-//  DatabaseChannel.m
+//  DIMDatabaseChannel.m
 //  Runner
 //
 //  Created by Albert Moky on 2023/5/16.
 //
 
-#import "PrivateKeyStore.h"
-#import "ChannelManager.h"
+#import "DIMPrivateKeyStore.h"
+#import "DIMChannelManager.h"
 
-#import "DatabaseChannel.h"
+#import "DIMDatabaseChannel.h"
 
 static void onMethodCall(FlutterMethodCall* call, FlutterResult result);
 
-@implementation DatabaseChannel
+@implementation DIMDatabaseChannel
 
 + (instancetype)channelWithName:(NSString*)name
                 binaryMessenger:(NSObject<FlutterBinaryMessenger>*)messenger
@@ -29,27 +29,27 @@ static void onMethodCall(FlutterMethodCall* call, FlutterResult result);
 @end
 
 static inline void onMethodCall(FlutterMethodCall* call, FlutterResult success) {
-    PrivateKeyStore *db = [PrivateKeyStore sharedInstance];
+    DIMPrivateKeyStore *db = [DIMPrivateKeyStore sharedInstance];
     id<MKMID> user = MKMIDParse([call.arguments objectForKey:@"user"]);
     assert(user);
     
     NSString *method = [call method];
-    if ([method isEqualToString:DbChannelSavePrivateKey]) {
+    if ([method isEqualToString:kChannelMethod_SavePrivateKey]) {
         // savePrivateKey
         NSString *type = [call.arguments objectForKey:@"type"];
         id<MKMPrivateKey> key = MKMPrivateKeyParse([call.arguments objectForKey:@"key"]);
         assert(key);
         BOOL ok = [db savePrivateKey:key withType:type forUser:user];
         success(ok ? @1 : @0);
-    } else if ([method isEqualToString:DbChannelPrivateKeyForSignature]) {
+    } else if ([method isEqualToString:kChannelMethod_PrivateKeyForSignature]) {
         // privateKeyForSignature
         id<MKMPrivateKey> key = [db privateKeyForSignature:user];
         success([key dictionary]);
-    } else if ([method isEqualToString:DbChannelPrivateKeyForVisaSignature]) {
+    } else if ([method isEqualToString:kChannelMethod_PrivateKeyForVisaSignature]) {
         // privateKeyForVisaSignature
         id<MKMPrivateKey> key = [db privateKeyForVisaSignature:user];
         success([key dictionary]);
-    } else if ([method isEqualToString:DbChannelPrivateKeysForDecryption]) {
+    } else if ([method isEqualToString:kChannelMethod_PrivateKeysForDecryption]) {
         // privateKeysForDecryption
         id keys = [db privateKeysForDecryption:user];
         success(DIMRevertPrivateKeys(keys));

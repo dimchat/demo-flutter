@@ -1,11 +1,11 @@
 //
-//  PrivateKeyStore.m
+//  DIMPrivateKeyStore.m
 //  Runner
 //
 //  Created by Albert Moky on 2023/5/16.
 //
 
-#import "PrivateKeyStore.h"
+#import "DIMPrivateKeyStore.h"
 
 static inline NSString *private_label(NSString *type, id<MKMID> ID) {
     NSString *address = [ID.address string];
@@ -25,9 +25,9 @@ static inline id<MKMPrivateKey> private_load(NSString *type, id<MKMID> ID) {
     return MKMPrivateKeyLoad(label);
 }
 
-@implementation PrivateKeyStore
+@implementation DIMPrivateKeyStore
 
-OKSingletonImplementations(PrivateKeyStore, sharedInstance)
+OKSingletonImplementations(DIMPrivateKeyStore, sharedInstance)
 
 - (instancetype)init {
     if (self = [super init]) {

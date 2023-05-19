@@ -7,7 +7,7 @@
 
 #import <MarsGate/MarsGate.h>
 
-#import "Constants.h"
+#import "DIMConstants.h"
 
 #import "MarsHub.h"
 

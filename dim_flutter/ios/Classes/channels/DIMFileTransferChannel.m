@@ -1,5 +1,5 @@
 //
-//  FileTransferChannel.m
+//  DIMFileTransferChannel.m
 //  Sechat
 //
 //  Created by Albert Moky on 2023/5/7.
@@ -7,10 +7,10 @@
 
 #import <DIMClient/DIMClient.h>
 
-#import "FileTransfer.h"
-#import "ChannelManager.h"
+#import "DIMFileTransfer.h"
+#import "DIMChannelManager.h"
 
-#import "FileTransferChannel.h"
+#import "DIMFileTransferChannel.h"
 
 static void onMethodCall(FlutterMethodCall* call, FlutterResult result);
 
@@ -34,7 +34,7 @@ static NSMutableDictionary *uploadInfo(DIMUploadRequest *request) {
     return [info mutableCopy];
 }
 
-@implementation FileTransferChannel
+@implementation DIMFileTransferChannel
 
 + (instancetype)channelWithName:(NSString*)name
                 binaryMessenger:(NSObject<FlutterBinaryMessenger>*)messenger
@@ -56,21 +56,21 @@ static NSMutableDictionary *uploadInfo(DIMUploadRequest *request) {
     [params setObject:@{
         @"url": [url absoluteString],
     } forKey:@"response"];
-    [self invokeMethod:FtpChannelOnUploadSuccess arguments:params];
+    [self invokeMethod:kChannelMethod_OnUploadSuccess arguments:params];
 }
 
 - (void)uploadTask:(__kindof DIMUploadRequest *)req onFailed:(NSException *)error {
     NSLog(@"onUploadFailed: %@, error: %@", req, error);
     NSMutableDictionary *params = uploadInfo(req);
     [params setObject:[error description] forKey:@"error"];
-    [self invokeMethod:FtpChannelOnUploadFailure arguments:params];
+    [self invokeMethod:kChannelMethod_OnUploadFailure arguments:params];
 }
 
 - (void)uploadTask:(__kindof DIMUploadRequest *)req onError:(NSError *)error {
     NSLog(@"onUploadError: %@, error: %@", req, error);
     NSMutableDictionary *params = uploadInfo(req);
     [params setObject:[error description] forKey:@"error"];
-    [self invokeMethod:FtpChannelOnUploadFailure arguments:params];
+    [self invokeMethod:kChannelMethod_OnUploadFailure arguments:params];
 }
 
 #pragma mark DIMDownloadDelegate
@@ -81,7 +81,7 @@ static NSMutableDictionary *uploadInfo(DIMUploadRequest *request) {
         @"url": [req.url absoluteString],
         @"path": path,
     };
-    [self invokeMethod:FtpChannelOnDownloadSuccess arguments:params];
+    [self invokeMethod:kChannelMethod_OnDownloadSuccess arguments:params];
 }
 
 - (void)downloadTask:(__kindof DIMDownloadRequest *)req onFailed:(NSException *)error {
@@ -91,7 +91,7 @@ static NSMutableDictionary *uploadInfo(DIMUploadRequest *request) {
         @"path": req.path,
         @"error": [error description],
     };
-    [self invokeMethod:FtpChannelOnDownloadFailure arguments:params];
+    [self invokeMethod:kChannelMethod_OnDownloadFailure arguments:params];
 }
 
 - (void)downloadTask:(__kindof DIMDownloadRequest *)req onError:(NSError *)error {
@@ -101,40 +101,40 @@ static NSMutableDictionary *uploadInfo(DIMUploadRequest *request) {
         @"path": req.path,
         @"error": [error description],
     };
-    [self invokeMethod:FtpChannelOnDownloadFailure arguments:params];
+    [self invokeMethod:kChannelMethod_OnDownloadFailure arguments:params];
 }
 
 
 @end
 
 static inline void onMethodCall(FlutterMethodCall* call, FlutterResult success) {
-    FileTransfer *ftp = [FileTransfer sharedInstance];
+    DIMFileTransfer *ftp = [DIMFileTransfer sharedInstance];
     NSString *method = [call method];
-    if ([method isEqualToString:FtpChannelDownloadFile]) {
+    if ([method isEqualToString:kChannelMethod_DownloadFile]) {
         // downloadEncryptedFile
         NSURL *url = [NSURL URLWithString:[call.arguments objectForKey:@"url"]];
         NSString *path = [ftp downloadEncryptedData:url];
         success(path);
-    } else if ([method isEqualToString:FtpChannelDownloadAvatar]) {
+    } else if ([method isEqualToString:kChannelMethod_DownloadAvatar]) {
         // downloadAvatar
         NSURL *url = [NSURL URLWithString:[call.arguments objectForKey:@"url"]];
         NSString *path = [ftp downloadAvatar:url];
         success(path);
-    } else if ([method isEqualToString:FtpChannelUploadFile]) {
+    } else if ([method isEqualToString:kChannelMethod_UploadFile]) {
         // uploadEncryptFile
         FlutterStandardTypedData *data = [call.arguments objectForKey:@"data"];
         NSString *filename = [call.arguments objectForKey:@"filename"];
         id<MKMID> sender = MKMIDParse([call.arguments objectForKey:@"sender"]);
         NSURL *url = [ftp uploadEncryptedData:[data data] filename:filename sender:sender];
         success([url absoluteString]);
-    } else if ([method isEqualToString:FtpChannelUploadAvatar]) {
+    } else if ([method isEqualToString:kChannelMethod_UploadAvatar]) {
         // uploadAvatar
         FlutterStandardTypedData *data = [call.arguments objectForKey:@"data"];
         NSString *filename = [call.arguments objectForKey:@"filename"];
         id<MKMID> sender = MKMIDParse([call.arguments objectForKey:@"sender"]);
         NSURL *url = [ftp uploadAvatar:[data data] filename:filename sender:sender];
         success([url absoluteString]);
-    } else if ([method isEqualToString:FtpChannelSetUploadAPI]) {
+    } else if ([method isEqualToString:kChannelMethod_SetUploadAPI]) {
         // setUploadAPI
         NSString *api = [call.arguments objectForKey:@"api"];
         NSString *secret = [call.arguments objectForKey:@"secret"];
@@ -145,11 +145,11 @@ static inline void onMethodCall(FlutterMethodCall* call, FlutterResult success) 
             ftp.secret = secret;
         }
         success(nil);
-    } else if ([method isEqualToString:FtpChannelGetCachesDirectory]) {
+    } else if ([method isEqualToString:kChannelMethod_GetCachesDirectory]) {
         // getCachesDirectory
         NSString *dir = [DIMStorage cachesDirectory];
         success(dir);
-    } else if ([method isEqualToString:FtpChannelGetTemporaryDirectory]) {
+    } else if ([method isEqualToString:kChannelMethod_GetTemporaryDirectory]) {
         // getCachesDirectory
         NSString *dir = [DIMStorage temporaryDirectory];
         success(dir);

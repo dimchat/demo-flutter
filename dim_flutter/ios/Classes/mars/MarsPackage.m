@@ -1,181 +1,11 @@
 //
-//  SessionChannel.m
-//  Sechat
+//  MarsPackage.m
+//  Runner
 //
-//  Created by Albert Moky on 2023/5/7.
+//  Created by Albert Moky on 2023/5/19.
 //
 
-#import "ChannelManager.h"
-#import "SharedSession.h"
-
-#import "SessionChannel.h"
-
-static void onMethodCall(FlutterMethodCall* call, FlutterResult result);
-
-@implementation SessionChannel
-
-+ (instancetype)channelWithName:(NSString*)name
-                binaryMessenger:(NSObject<FlutterBinaryMessenger>*)messenger
-                          codec:(NSObject<FlutterMethodCodec>*)codec {
-    id channel = [[self alloc] initWithName:name
-                            binaryMessenger:messenger
-                                      codec:codec];
-    [channel setMethodCallHandler:^(FlutterMethodCall *call, FlutterResult result) {
-        onMethodCall(call, result);
-    }];
-    return channel;
-}
-
-- (void)onStateChangedFrom:(nullable DIMSessionState *)previous
-                        to:(nullable DIMSessionState *)current
-                      when:(NSTimeInterval)now {
-    NSDictionary *params = @{
-        @"previous": @([previous index]),
-        @"current": @([current index]),
-        @"now": @(now),
-    };
-    NSLog(@"channel: %@, method: %@", self, SessionChannelOnStateChanged);
-    [self invokeMethod:SessionChannelOnStateChanged arguments:params];
-}
-
-- (void)onReceivedData:(NSData *)pack from:(id<NIOSocketAddress>)remote {
-    NSDictionary *params = @{
-        @"payload": pack,
-        @"remote": [remote description],
-    };
-    [self invokeMethod:SessionChannelOnReceived arguments:params];
-}
-
-@end
-
-static inline NSData *packData(NSData *payload) {
-    NSLog(@"packing payload: %lu bytes", payload.length);
-    int cmd = 3;  // SEND_MSG
-    int seq = 9527;
-    MarsPackage *pack = [MarsPackage create:cmd seq:seq body:payload];
-    return [pack data];
-}
-
-static inline MarsSeekPackageResult *unpackData(NSData *data) {
-    NSLog(@"unpacking data: %lu bytes", data.length);
-    MarsSeekPackageResult *result = [MarsSeeker seekPackage:data];
-    MarsPackage *pack = result.first;
-    NSInteger offset = [result.second integerValue];
-    if (pack.length == 0) {
-        NSLog(@"got nothing, offset: %ld", offset);
-    } else {
-        NSLog(@"got package length: %lu, payload: %lu, offset: %ld",
-              pack.length, pack.body.length, offset);
-    }
-    return result;
-}
-
-static inline void queueMessagePackage(NSDictionary *msg, NSData *data, int prior) {
-    id<DKDReliableMessage> rMsg = DKDReliableMessageParse(msg);
-    NSLog(@"sending (%lu bytes): %@, priority: %d", [data length], msg, prior);
-    SessionController *controller = [SessionController sharedInstance];
-    DIMClientSession *session = [controller session];
-    if (session) {
-        [session queueMessage:rMsg package:data priority:prior];
-    } else {
-        NSLog(@"session not start yet");
-    }
-}
-
-static inline NSUInteger getState(void) {
-    SessionController *controller = [SessionController sharedInstance];
-    DIMSessionState *state = [controller state];
-    NSLog(@"session state: %@", state);
-    return [state index];
-}
-
-static inline void connectTo(NSString *host, UInt16 port) {
-    NSLog(@"connecting to %@:%u ...", host, port);
-    SessionController *controller = [SessionController sharedInstance];
-    [controller connectToHost:host port:port];
-}
-
-static inline BOOL loginUser(NSString *user) {
-    NSLog(@"login user: %@", user);
-    id<MKMID> ID = MKMIDParse(user);
-    assert(ID);
-    SessionController *controller = [SessionController sharedInstance];
-    return [controller loginWithUser:ID];
-}
-
-static inline void setSessionKey(NSString *sessionKey) {
-    NSLog(@"session key: %@", sessionKey);
-    SessionController *controller = [SessionController sharedInstance];
-    [controller setSessionKey:sessionKey];
-}
-
-static inline void onMethodCall(FlutterMethodCall* call, FlutterResult success) {
-    NSString *method = [call method];
-    if ([method isEqualToString:SessionChannelSendMessagePack]) {
-        // queueMessagePackage
-        NSDictionary *msg = [call.arguments objectForKey:@"msg"];
-        FlutterStandardTypedData *data = [call.arguments objectForKey:@"data"];
-        NSNumber *prior = [call.arguments objectForKey:@"priority"];
-        // call
-        queueMessagePackage(msg, [data data], [prior intValue]);
-        success(nil);
-    } else if ([method isEqualToString:SessionChannelGetState]) {
-        // getState
-        NSUInteger state = getState();
-        success(@(state));
-    } else if ([method isEqualToString:SessionChannelConnect]) {
-        // connect
-        NSString *host = [call.arguments objectForKey:@"host"];
-        NSNumber *port = [call.arguments objectForKey:@"port"];
-        // call
-        connectTo(host, [port unsignedShortValue]);
-        success(nil);
-    } else if ([method isEqualToString:SessionChannelLogin]) {
-        // login
-        NSString *user = [call.arguments objectForKey:@"user"];
-        BOOL ok = loginUser(user);
-        success(@(ok));
-    } else if ([method isEqualToString:SessionChannelSetSessionKey]) {
-        // setSessionKey
-        NSString *session = [call.arguments objectForKey:@"session"];
-        setSessionKey(session);
-        success(nil);
-    } else if ([method isEqualToString:SessionChannelPackData]) {
-        // packData
-        FlutterStandardTypedData *payload = [call.arguments objectForKey:@"payload"];
-        NSData *pack = packData([payload data]);
-        success(pack);
-    } else if ([method isEqualToString:SessionChannelUnpackData]) {
-        // unpackData
-        FlutterStandardTypedData *data = [call.arguments objectForKey:@"data"];
-        NSDictionary *info;
-        MarsSeekPackageResult *result = unpackData([data data]);
-        MarsPackage *pack = result.first;
-        NSData *payload = [pack body];
-        if ([payload length] == 0) {
-            assert(false);
-            payload = [[NSData alloc] init];
-        }
-        NSInteger offset = [result.second integerValue];
-        if (offset < 0) {
-            // data error, drop the whole buffer
-            info = @{
-                @"position": @([data.data length]),
-            };
-        } else {
-            info = @{
-                @"position": @(offset + pack.length),
-                @"payload": payload,
-            };
-        }
-        success(info);
-    } else {
-        NSLog(@"not implemented: %@", method);
-        assert(false);
-    }
-}
-
-#pragma mark -
+#import "MarsPackage.h"
 
 static inline NSData *int2buf(int number) {
     unsigned char buf[4];
@@ -197,7 +27,7 @@ static inline int buf2int(NSData *data, NSUInteger offset) {
 
 
 //
-//  Constants for Mars Header
+//  DIMConstants for Mars Header
 //
 #define MIN_HEAD_LEN      20
 #define MAX_HEAD_LEN      24

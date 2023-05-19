@@ -1,6 +1,5 @@
-#import <DIMClient/DIMClient.h>
 
-#import "ChannelManager.h"
+#import "SharedSession.h"
 
 #import "GeneratedPluginRegistrant.h"
 
@@ -13,8 +12,13 @@
     FlutterViewController* controller;
     controller = (FlutterViewController*)[self.window rootViewController];
     
-    ChannelManager *manager = [ChannelManager sharedInstance];
+    DIMChannelManager *manager = [DIMChannelManager sharedInstance];
     [manager initChannels:controller.binaryMessenger];
+    
+    DIMSessionController *sc = [DIMSessionController sharedInstance];
+    sc.creator = ^DIMClientSession *(id<DIMSessionDBI> db, id<MKMStation>  server) {
+        return [[SharedSession alloc] initWithDatabase:db station:server];
+    };
     
     [DIMClientFacebook prepare];
     

@@ -1,5 +1,5 @@
 //
-//  Constants.h
+//  DIMConstants.h
 //  Sechat
 //
 //  Created by Albert Moky on 2023/5/9.

@@ -1,11 +1,11 @@
 //
-//  Constants.m
+//  DIMConstants.m
 //  Sechat
 //
 //  Created by Albert Moky on 2023/5/9.
 //
 
-#import "Constants.h"
+#import "DIMConstants.h"
 
 
 NSString * const kNotificationName_ServerStateChanged  = @"DIM_ServerStateChanged";

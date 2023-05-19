@@ -1,5 +1,5 @@
 //
-//  PrivateKeyStore.h
+//  DIMPrivateKeyStore.h
 //  Runner
 //
 //  Created by Albert Moky on 2023/5/16.
@@ -9,7 +9,7 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
-@interface PrivateKeyStore : NSObject <DIMPrivateKeyDBI>
+@interface DIMPrivateKeyStore : NSObject <DIMPrivateKeyDBI>
 
 + (instancetype)sharedInstance;
 

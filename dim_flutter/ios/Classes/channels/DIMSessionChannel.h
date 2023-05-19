@@ -1,5 +1,5 @@
 //
-//  FileTransferChannel.h
+//  DIMSessionChannel.h
 //  Sechat
 //
 //  Created by Albert Moky on 2023/5/7.
@@ -10,11 +10,17 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
-@interface FileTransferChannel : FlutterMethodChannel <DIMUploadDelegate, DIMDownloadDelegate>
+@interface DIMSessionChannel : FlutterMethodChannel
 
 + (instancetype)channelWithName:(NSString*)name
                 binaryMessenger:(NSObject<FlutterBinaryMessenger>*)messenger
                           codec:(NSObject<FlutterMethodCodec>*)codec;
+
+- (void)onStateChangedFrom:(nullable DIMSessionState *)previous
+                        to:(nullable DIMSessionState *)current
+                      when:(NSTimeInterval)now;
+
+- (void)onReceivedData:(NSData *)pack from:(id<NIOSocketAddress>)remote;
 
 @end
 

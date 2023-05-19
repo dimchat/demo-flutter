@@ -1,5 +1,5 @@
 //
-//  FileTransfer.h
+//  DIMFileTransfer.h
 //  Sechat
 //
 //  Created by Albert Moky on 2019/9/6.
@@ -10,7 +10,7 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
-@interface FileTransfer : NSObject
+@interface DIMFileTransfer : NSObject
 
 // upload API
 //      @"https://sechat.dim.chat/{ID}/upload?md5={MD5}&salt={SALT}"
@@ -22,7 +22,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 @end
 
-@interface FileTransfer (Path)
+@interface DIMFileTransfer (Path)
 
 + (NSString *)filenameForData:(NSData *)data
                      filename:(NSString *)origin;
@@ -70,7 +70,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 @end
 
-@interface FileTransfer (Upload)
+@interface DIMFileTransfer (Upload)
 
 /**
  *  Upload avatar image data for user
@@ -98,7 +98,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 @end
 
-@interface FileTransfer (Download)
+@interface DIMFileTransfer (Download)
 
 /**
  *  Download avatar image file

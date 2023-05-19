@@ -1,5 +1,5 @@
 //
-//  AudioChannel.h
+//  DIMAudioChannel.h
 //  Runner
 //
 //  Created by Albert Moky on 2023/5/12.
@@ -9,7 +9,7 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
-@interface AudioChannel : FlutterMethodChannel
+@interface DIMAudioChannel : FlutterMethodChannel
 
 + (instancetype)channelWithName:(NSString*)name
                 binaryMessenger:(NSObject<FlutterBinaryMessenger>*)messenger

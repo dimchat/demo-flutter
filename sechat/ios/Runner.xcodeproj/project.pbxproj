@@ -17,18 +17,8 @@
 		97C147011CF9000F007C117D /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 97C146FF1CF9000F007C117D /* LaunchScreen.storyboard */; };
 		E93DAE782A0A8FD800B516A9 /* MarsGate.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = E9C70B9D2A07D8DD00717E42 /* MarsGate.framework */; };
 		E93DAE792A0A8FD800B516A9 /* MarsGate.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = E9C70B9D2A07D8DD00717E42 /* MarsGate.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
-		E93DAE7C2A0A90EB00B516A9 /* Constants.m in Sources */ = {isa = PBXBuildFile; fileRef = E93DAE7B2A0A90EB00B516A9 /* Constants.m */; };
 		E93DAE7F2A0A925E00B516A9 /* MarsHub.m in Sources */ = {isa = PBXBuildFile; fileRef = E93DAE7E2A0A925E00B516A9 /* MarsHub.m */; };
-		E93F42602A13BB7300DCE984 /* PrivateKeyStore.m in Sources */ = {isa = PBXBuildFile; fileRef = E93F425F2A13BB7300DCE984 /* PrivateKeyStore.m */; };
-		E93F42632A13BBD600DCE984 /* DatabaseChannel.m in Sources */ = {isa = PBXBuildFile; fileRef = E93F42622A13BBD600DCE984 /* DatabaseChannel.m */; };
-		E9C70B862A07ABD000717E42 /* ChannelManager.m in Sources */ = {isa = PBXBuildFile; fileRef = E9C70B852A07ABD000717E42 /* ChannelManager.m */; };
-		E9C70B892A07ABF500717E42 /* SessionChannel.m in Sources */ = {isa = PBXBuildFile; fileRef = E9C70B882A07ABF500717E42 /* SessionChannel.m */; };
-		E9C70B8C2A07AC0700717E42 /* FileTransferChannel.m in Sources */ = {isa = PBXBuildFile; fileRef = E9C70B8B2A07AC0700717E42 /* FileTransferChannel.m */; };
-		E9C70B902A07AC3F00717E42 /* FileTransfer.m in Sources */ = {isa = PBXBuildFile; fileRef = E9C70B8F2A07AC3F00717E42 /* FileTransfer.m */; };
 		E9C70B932A07AC7500717E42 /* SharedSession.m in Sources */ = {isa = PBXBuildFile; fileRef = E9C70B922A07AC7500717E42 /* SharedSession.m */; };
-		E9EC0BB82A0E1DB600E4A7F2 /* EMAudioPlayerHelper.m in Sources */ = {isa = PBXBuildFile; fileRef = E9EC0BB72A0E1DB600E4A7F2 /* EMAudioPlayerHelper.m */; };
-		E9EC0BBB2A0E1DD600E4A7F2 /* EMAudioRecordHelper.m in Sources */ = {isa = PBXBuildFile; fileRef = E9EC0BBA2A0E1DD600E4A7F2 /* EMAudioRecordHelper.m */; };
-		E9EC0BBE2A0E1DF400E4A7F2 /* AudioChannel.m in Sources */ = {isa = PBXBuildFile; fileRef = E9EC0BBD2A0E1DF400E4A7F2 /* AudioChannel.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -86,31 +76,11 @@
 		97C146FD1CF9000F007C117D /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		97C147001CF9000F007C117D /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		97C147021CF9000F007C117D /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
-		E93DAE7A2A0A90EB00B516A9 /* Constants.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Constants.h; sourceTree = "<group>"; };
-		E93DAE7B2A0A90EB00B516A9 /* Constants.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = Constants.m; sourceTree = "<group>"; };
 		E93DAE7D2A0A925E00B516A9 /* MarsHub.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MarsHub.h; sourceTree = "<group>"; };
 		E93DAE7E2A0A925E00B516A9 /* MarsHub.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = MarsHub.m; sourceTree = "<group>"; };
-		E93F425E2A13BB7300DCE984 /* PrivateKeyStore.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = PrivateKeyStore.h; sourceTree = "<group>"; };
-		E93F425F2A13BB7300DCE984 /* PrivateKeyStore.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = PrivateKeyStore.m; sourceTree = "<group>"; };
-		E93F42612A13BBD600DCE984 /* DatabaseChannel.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = DatabaseChannel.h; sourceTree = "<group>"; };
-		E93F42622A13BBD600DCE984 /* DatabaseChannel.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = DatabaseChannel.m; sourceTree = "<group>"; };
-		E9C70B842A07ABD000717E42 /* ChannelManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ChannelManager.h; sourceTree = "<group>"; };
-		E9C70B852A07ABD000717E42 /* ChannelManager.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ChannelManager.m; sourceTree = "<group>"; };
-		E9C70B872A07ABF500717E42 /* SessionChannel.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SessionChannel.h; sourceTree = "<group>"; };
-		E9C70B882A07ABF500717E42 /* SessionChannel.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = SessionChannel.m; sourceTree = "<group>"; };
-		E9C70B8A2A07AC0700717E42 /* FileTransferChannel.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = FileTransferChannel.h; sourceTree = "<group>"; };
-		E9C70B8B2A07AC0700717E42 /* FileTransferChannel.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = FileTransferChannel.m; sourceTree = "<group>"; };
-		E9C70B8E2A07AC3F00717E42 /* FileTransfer.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = FileTransfer.h; sourceTree = "<group>"; };
-		E9C70B8F2A07AC3F00717E42 /* FileTransfer.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = FileTransfer.m; sourceTree = "<group>"; };
 		E9C70B912A07AC7500717E42 /* SharedSession.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SharedSession.h; sourceTree = "<group>"; };
 		E9C70B922A07AC7500717E42 /* SharedSession.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = SharedSession.m; sourceTree = "<group>"; };
 		E9C70B962A07D8DD00717E42 /* MarsGate.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = MarsGate.xcodeproj; path = ../../../../moky/StarGate/MarsGate/MarsGate.xcodeproj; sourceTree = "<group>"; };
-		E9EC0BB62A0E1DB600E4A7F2 /* EMAudioPlayerHelper.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = EMAudioPlayerHelper.h; sourceTree = "<group>"; };
-		E9EC0BB72A0E1DB600E4A7F2 /* EMAudioPlayerHelper.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = EMAudioPlayerHelper.m; sourceTree = "<group>"; };
-		E9EC0BB92A0E1DD600E4A7F2 /* EMAudioRecordHelper.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = EMAudioRecordHelper.h; sourceTree = "<group>"; };
-		E9EC0BBA2A0E1DD600E4A7F2 /* EMAudioRecordHelper.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = EMAudioRecordHelper.m; sourceTree = "<group>"; };
-		E9EC0BBC2A0E1DF400E4A7F2 /* AudioChannel.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AudioChannel.h; sourceTree = "<group>"; };
-		E9EC0BBD2A0E1DF400E4A7F2 /* AudioChannel.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = AudioChannel.m; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -204,56 +174,15 @@
 			name = Frameworks;
 			sourceTree = "<group>";
 		};
-		E93F425B2A13BB5200DCE984 /* db */ = {
-			isa = PBXGroup;
-			children = (
-				E93F425E2A13BB7300DCE984 /* PrivateKeyStore.h */,
-				E93F425F2A13BB7300DCE984 /* PrivateKeyStore.m */,
-			);
-			path = db;
-			sourceTree = "<group>";
-		};
 		E9C70B7F2A07AB4600717E42 /* Classes */ = {
 			isa = PBXGroup;
 			children = (
-				E9EC0BB32A0E1DAA00E4A7F2 /* media */,
-				E9C70B8D2A07AC2F00717E42 /* http */,
-				E93F425B2A13BB5200DCE984 /* db */,
-				E9C70B832A07ABD000717E42 /* channels */,
-				E93DAE7A2A0A90EB00B516A9 /* Constants.h */,
-				E93DAE7B2A0A90EB00B516A9 /* Constants.m */,
 				E9C70B912A07AC7500717E42 /* SharedSession.h */,
 				E9C70B922A07AC7500717E42 /* SharedSession.m */,
 				E93DAE7D2A0A925E00B516A9 /* MarsHub.h */,
 				E93DAE7E2A0A925E00B516A9 /* MarsHub.m */,
 			);
 			path = Classes;
-			sourceTree = "<group>";
-		};
-		E9C70B832A07ABD000717E42 /* channels */ = {
-			isa = PBXGroup;
-			children = (
-				E9C70B842A07ABD000717E42 /* ChannelManager.h */,
-				E9C70B852A07ABD000717E42 /* ChannelManager.m */,
-				E9EC0BBC2A0E1DF400E4A7F2 /* AudioChannel.h */,
-				E9EC0BBD2A0E1DF400E4A7F2 /* AudioChannel.m */,
-				E9C70B872A07ABF500717E42 /* SessionChannel.h */,
-				E9C70B882A07ABF500717E42 /* SessionChannel.m */,
-				E9C70B8A2A07AC0700717E42 /* FileTransferChannel.h */,
-				E9C70B8B2A07AC0700717E42 /* FileTransferChannel.m */,
-				E93F42612A13BBD600DCE984 /* DatabaseChannel.h */,
-				E93F42622A13BBD600DCE984 /* DatabaseChannel.m */,
-			);
-			path = channels;
-			sourceTree = "<group>";
-		};
-		E9C70B8D2A07AC2F00717E42 /* http */ = {
-			isa = PBXGroup;
-			children = (
-				E9C70B8E2A07AC3F00717E42 /* FileTransfer.h */,
-				E9C70B8F2A07AC3F00717E42 /* FileTransfer.m */,
-			);
-			path = http;
 			sourceTree = "<group>";
 		};
 		E9C70B972A07D8DD00717E42 /* Products */ = {
@@ -263,17 +192,6 @@
 				E9C70B9F2A07D8DD00717E42 /* MarsGateTests.xctest */,
 			);
 			name = Products;
-			sourceTree = "<group>";
-		};
-		E9EC0BB32A0E1DAA00E4A7F2 /* media */ = {
-			isa = PBXGroup;
-			children = (
-				E9EC0BB62A0E1DB600E4A7F2 /* EMAudioPlayerHelper.h */,
-				E9EC0BB72A0E1DB600E4A7F2 /* EMAudioPlayerHelper.m */,
-				E9EC0BB92A0E1DD600E4A7F2 /* EMAudioRecordHelper.h */,
-				E9EC0BBA2A0E1DD600E4A7F2 /* EMAudioRecordHelper.m */,
-			);
-			path = media;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -445,21 +363,11 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				E9C70B892A07ABF500717E42 /* SessionChannel.m in Sources */,
-				E9EC0BB82A0E1DB600E4A7F2 /* EMAudioPlayerHelper.m in Sources */,
 				978B8F6F1D3862AE00F588F7 /* AppDelegate.m in Sources */,
-				E9EC0BBB2A0E1DD600E4A7F2 /* EMAudioRecordHelper.m in Sources */,
 				E93DAE7F2A0A925E00B516A9 /* MarsHub.m in Sources */,
-				E9EC0BBE2A0E1DF400E4A7F2 /* AudioChannel.m in Sources */,
-				E9C70B8C2A07AC0700717E42 /* FileTransferChannel.m in Sources */,
-				E9C70B902A07AC3F00717E42 /* FileTransfer.m in Sources */,
 				97C146F31CF9000F007C117D /* main.m in Sources */,
 				E9C70B932A07AC7500717E42 /* SharedSession.m in Sources */,
-				E93F42632A13BBD600DCE984 /* DatabaseChannel.m in Sources */,
 				1498D2341E8E89220040F4C2 /* GeneratedPluginRegistrant.m in Sources */,
-				E9C70B862A07ABD000717E42 /* ChannelManager.m in Sources */,
-				E93DAE7C2A0A90EB00B516A9 /* Constants.m in Sources */,
-				E93F42602A13BB7300DCE984 /* PrivateKeyStore.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

@@ -1,5 +1,5 @@
 //
-//  DatabaseChannel.h
+//  DIMDatabaseChannel.h
 //  Runner
 //
 //  Created by Albert Moky on 2023/5/16.
@@ -9,7 +9,7 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
-@interface DatabaseChannel : FlutterMethodChannel
+@interface DIMDatabaseChannel : FlutterMethodChannel
 
 + (instancetype)channelWithName:(NSString*)name
                 binaryMessenger:(NSObject<FlutterBinaryMessenger>*)messenger

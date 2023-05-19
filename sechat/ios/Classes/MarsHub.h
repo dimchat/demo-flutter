@@ -5,7 +5,7 @@
 //  Created by Albert Moky on 2023/5/9.
 //
 
-#import <DIMClient/DIMClient.h>
+#import <dim_flutter/DimFlutterPlugin.h>
 
 NS_ASSUME_NONNULL_BEGIN
 

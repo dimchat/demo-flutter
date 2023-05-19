@@ -1,5 +1,5 @@
 //
-//  AudioChannel.m
+//  DIMAudioChannel.m
 //  Runner
 //
 //  Created by Albert Moky on 2023/5/12.
@@ -10,13 +10,13 @@
 
 #import "EMAudioPlayerHelper.h"
 #import "EMAudioRecordHelper.h"
-#import "ChannelManager.h"
+#import "DIMChannelManager.h"
 
-#import "AudioChannel.h"
+#import "DIMAudioChannel.h"
 
 static void onMethodCall(FlutterMethodCall* call, FlutterResult result);
 
-@implementation AudioChannel
+@implementation DIMAudioChannel
 
 + (instancetype)channelWithName:(NSString*)name
                 binaryMessenger:(NSObject<FlutterBinaryMessenger>*)messenger
@@ -36,16 +36,16 @@ static void onMethodCall(FlutterMethodCall* call, FlutterResult result);
         @"data": [FlutterStandardTypedData typedDataWithBytes:data],
         @"current": @(seconds),
     };
-    NSLog(@"Audio channel: %@, method: %@", self, AudioChannelOnRecordFinished);
-    [self invokeMethod:AudioChannelOnRecordFinished arguments:params];
+    NSLog(@"Audio channel: %@, method: %@", self, kChannelMethod_OnRecordFinished);
+    [self invokeMethod:kChannelMethod_OnRecordFinished arguments:params];
 }
 
 - (void)onPlayFinished:(NSString *)mp4Path {
     NSDictionary *params = @{
         @"path": mp4Path,
     };
-    NSLog(@"Audio channel: %@, method: %@", self, AudioChannelOnPlayFinished);
-    [self invokeMethod:AudioChannelOnPlayFinished arguments:params];
+    NSLog(@"Audio channel: %@, method: %@", self, kChannelMethod_OnPlayFinished);
+    [self invokeMethod:kChannelMethod_OnPlayFinished arguments:params];
 }
 
 @end
@@ -81,7 +81,7 @@ static inline void stopRecord(void) {
             if (session.status == AVAssetExportSessionStatusCompleted) {
                 NSLog(@"AV Export success");
                 Float64 duration = CMTimeGetSeconds(asset.duration);
-                ChannelManager *man = [ChannelManager sharedInstance];
+                DIMChannelManager *man = [DIMChannelManager sharedInstance];
                 [man.audioChannel onRecordFinished:mp4Path duration:duration];
             } else if (session.status == AVAssetExportSessionStatusCancelled) {
                 NSLog(@"AV Export success");
@@ -93,7 +93,7 @@ static inline void stopRecord(void) {
 }
 
 static inline void startPlay(NSString *path) {
-    ChannelManager *man = [ChannelManager sharedInstance];
+    DIMChannelManager *man = [DIMChannelManager sharedInstance];
     EMAudioPlayerHelper *player = [EMAudioPlayerHelper sharedHelper];
     if ([player isPlaying]) {
         NSString *old = [player playingPath];
@@ -127,20 +127,20 @@ static inline void stopPlay(NSString *path) {
 
 static inline void onMethodCall(FlutterMethodCall* call, FlutterResult success) {
     NSString *method = [call method];
-    if ([method isEqualToString:AudioChannelStartRecord]) {
+    if ([method isEqualToString:kChannelMethod_StartRecord]) {
         // startRecord
         startRecord();
         success(nil);
-    } else if ([method isEqualToString:AudioChannelStopRecord]) {
+    } else if ([method isEqualToString:kChannelMethod_StopRecord]) {
         // stopRecord
         stopRecord();
         success(nil);
-    } else if ([method isEqualToString:AudioChannelStartPlay]) {
+    } else if ([method isEqualToString:kChannelMethod_StartPlay]) {
         // startPlay
         NSString *path = [call.arguments objectForKey:@"path"];
         startPlay(path);
         success(nil);
-    } else if ([method isEqualToString:AudioChannelStopPlay]) {
+    } else if ([method isEqualToString:kChannelMethod_StopPlay]) {
         // stopPlay
         NSString *path = [call.arguments objectForKey:@"path"];
         stopPlay(path);

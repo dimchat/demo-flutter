@@ -1,5 +1,5 @@
 //
-//  ChannelManager.m
+//  DIMChannelManager.m
 //  Sechat
 //
 //  Created by Albert Moky on 2023/5/7.
@@ -7,25 +7,25 @@
 
 #import <DIMClient/DIMClient.h>
 
-#import "AudioChannel.h"
-#import "SessionChannel.h"
-#import "FileTransferChannel.h"
-#import "DatabaseChannel.h"
+#import "DIMAudioChannel.h"
+#import "DIMSessionChannel.h"
+#import "DIMFileTransferChannel.h"
+#import "DIMDatabaseChannel.h"
 
-#import "ChannelManager.h"
+#import "DIMChannelManager.h"
 
-@interface ChannelManager ()
+@interface DIMChannelManager ()
 
-@property(nonatomic, strong) AudioChannel *audioChannel;
-@property(nonatomic, strong) SessionChannel *sessionChannel;
-@property(nonatomic, strong) FileTransferChannel *ftpChannel;
-@property(nonatomic, strong) DatabaseChannel *dbChannel;
+@property(nonatomic, strong) DIMAudioChannel *audioChannel;
+@property(nonatomic, strong) DIMSessionChannel *sessionChannel;
+@property(nonatomic, strong) DIMFileTransferChannel *ftpChannel;
+@property(nonatomic, strong) DIMDatabaseChannel *dbChannel;
 
 @end
 
-@implementation ChannelManager
+@implementation DIMChannelManager
 
-OKSingletonImplementations(ChannelManager, sharedInstance)
+OKSingletonImplementations(DIMChannelManager, sharedInstance)
 
 - (instancetype)init {
     if (self = [super init]) {
@@ -43,16 +43,16 @@ OKSingletonImplementations(ChannelManager, sharedInstance)
     FlutterStandardMethodCodec *codec;
     codec = [FlutterStandardMethodCodec codecWithReaderWriter:rw];
     
-    self.audioChannel = [AudioChannel channelWithName:ChannelNameAudio
+    self.audioChannel = [DIMAudioChannel channelWithName:kChannelName_Audio
                                       binaryMessenger:messenger
                                                 codec:codec];
-    self.sessionChannel = [SessionChannel channelWithName:ChannelNameSession
+    self.sessionChannel = [DIMSessionChannel channelWithName:kChannelName_Session
                                           binaryMessenger:messenger
                                                     codec:codec];
-    self.ftpChannel = [FileTransferChannel channelWithName:ChannelNameFileTransfer
+    self.ftpChannel = [DIMFileTransferChannel channelWithName:kChannelName_FileTransfer
                                            binaryMessenger:messenger
                                                      codec:codec];
-    self.dbChannel = [DatabaseChannel channelWithName:ChannelNameDatabase
+    self.dbChannel = [DIMDatabaseChannel channelWithName:kChannelName_Database
                                       binaryMessenger:messenger
                                                 codec:codec];
 }

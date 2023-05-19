@@ -1,5 +1,5 @@
 //
-//  FileTransfer.m
+//  DIMFileTransfer.m
 //  Sechat
 //
 //  Created by Albert Moky on 2019/9/6.
@@ -8,11 +8,11 @@
 
 #import <ObjectKey/ObjectKey.h>
 
-#import "ChannelManager.h"
-#import "FileTransferChannel.h"
-#import "SharedSession.h"
+#import "DIMChannelManager.h"
+#import "DIMFileTransferChannel.h"
+#import "DIMSessionController.h"
 
-#import "FileTransfer.h"
+#import "DIMFileTransfer.h"
 
 static NSPredicate *s_pred = nil;
 static inline NSPredicate *hex_predicate(void) {
@@ -97,15 +97,15 @@ static const NSTimeInterval TEMPORARY_EXPIRES = 7 * 24 * 3600;
 
 @end
 
-@interface FileTransfer ()
+@interface DIMFileTransfer ()
 
 @property(nonatomic, strong) DIMHttpClient *http;
 
 @end
 
-@implementation FileTransfer
+@implementation DIMFileTransfer
 
-OKSingletonImplementations(FileTransfer, sharedInstance)
+OKSingletonImplementations(DIMFileTransfer, sharedInstance)
 
 - (instancetype)init {
     if (self = [super init]) {
@@ -119,7 +119,7 @@ OKSingletonImplementations(FileTransfer, sharedInstance)
 
 @end
 
-@implementation FileTransfer (Path)
+@implementation DIMFileTransfer (Path)
 
 + (NSString *)filenameForData:(NSData *)data
                      filename:(NSString *)origin {
@@ -183,7 +183,7 @@ OKSingletonImplementations(FileTransfer, sharedInstance)
         return nil;
     }
     // save decrypted file data
-    BOOL ok = [FileTransfer cacheFileData:data filename:cachePath];
+    BOOL ok = [DIMFileTransfer cacheFileData:data filename:cachePath];
     if (!ok) {
         NSLog(@"failed to cache file: %@", cachePath);
         return nil;
@@ -211,18 +211,18 @@ OKSingletonImplementations(FileTransfer, sharedInstance)
 
 @end
 
-static inline FileTransferChannel *ftp_channel(void) {
-    ChannelManager *man = [ChannelManager sharedInstance];
+static inline DIMFileTransferChannel *ftp_channel(void) {
+    DIMChannelManager *man = [DIMChannelManager sharedInstance];
     return [man ftpChannel];
 }
 
-@implementation FileTransfer (Upload)
+@implementation DIMFileTransfer (Upload)
 
 - (nullable NSURL *)uploadAvatar:(NSData *)image
                         filename:(NSString *)filename
                           sender:(id<MKMID>)from {
     //filename = [filename lastPathComponent];
-    filename = [FileTransfer filenameForData:image filename:filename];
+    filename = [DIMFileTransfer filenameForData:image filename:filename];
     NSString *path = [DIMStorage avatarPathWithFilename:filename];
     return [self upload:image path:path name:FORM_AVATAR sender:from];
 }
@@ -231,7 +231,7 @@ static inline FileTransferChannel *ftp_channel(void) {
                                filename:(NSString *)filename
                                  sender:(id<MKMID>)from {
     //filename = [filename lastPathComponent];
-    filename = [FileTransfer filenameForData:data filename:filename];
+    filename = [DIMFileTransfer filenameForData:data filename:filename];
     NSString *path = [DIMStorage uploadPathWithFilename:filename];
     return [self upload:data path:path name:FORM_FILE sender:from];
 }
@@ -254,16 +254,16 @@ static inline FileTransferChannel *ftp_channel(void) {
 
 @end
 
-@implementation FileTransfer (Download)
+@implementation DIMFileTransfer (Download)
 
 - (nullable NSString *)downloadAvatar:(NSURL *)url {
-    NSString *filename = [FileTransfer filenameForURL:url];
+    NSString *filename = [DIMFileTransfer filenameForURL:url];
     NSString *path = [DIMStorage avatarPathWithFilename:filename];
     return [_http download:url path:path delegate:ftp_channel()];
 }
 
 - (nullable NSString *)downloadEncryptedData:(NSURL *)url {
-    NSString *filename = [FileTransfer filenameForURL:url];
+    NSString *filename = [DIMFileTransfer filenameForURL:url];
     NSString *path = [DIMStorage downloadPathWithFilename:filename];
     return [_http download:url path:path delegate:ftp_channel()];
 }

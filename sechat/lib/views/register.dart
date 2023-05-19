@@ -1,18 +1,10 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
-import 'package:dim_client/dim_client.dart';
-import 'package:lnc/lnc.dart';
+import 'package:dim_flutter/dim_flutter.dart';
 
-import '../client/shared.dart';
 import '../main.dart';
-import '../models/config.dart';
-import '../web3/account.dart';
-import '../web3/keychain.dart';
-import '../widgets/alert.dart';
-import '../widgets/browser.dart';
-import '../widgets/permissions.dart';
-import 'styles.dart';
+
 
 class RegisterPage extends StatefulWidget {
   RegisterPage({super.key});

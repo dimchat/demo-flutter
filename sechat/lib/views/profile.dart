@@ -1,18 +1,11 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
-import 'package:dim_client/dim_client.dart';
+import 'package:dim_flutter/dim_flutter.dart';
 import 'package:lnc/lnc.dart' as lnc;
-import 'package:lnc/lnc.dart' show Log;
 
-import '../client/constants.dart';
-import '../client/shared.dart';
-import '../models/contact.dart';
-import '../models/conversation.dart';
-import '../widgets/alert.dart';
-import '../widgets/preview.dart';
-import '../widgets/table.dart';
 import 'chat_box.dart';
+
 
 class ProfilePage extends StatefulWidget {
   const ProfilePage(this.info, this.fromWhere, {super.key});

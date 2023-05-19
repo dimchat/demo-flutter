@@ -4,15 +4,13 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 
-import 'package:lnc/lnc.dart' show Log;
+import 'package:dim_flutter/dim_flutter.dart';
 
-import 'client/shared.dart';
 import 'views/chats.dart';
 import 'views/customizer.dart';
 import 'views/contacts.dart';
 import 'views/register.dart';
-import 'views/styles.dart';
-import 'widgets/permissions.dart';
+
 
 void main() {
   WidgetsFlutterBinding.ensureInitialized();

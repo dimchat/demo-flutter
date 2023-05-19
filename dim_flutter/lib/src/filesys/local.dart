@@ -28,7 +28,7 @@
  * SOFTWARE.
  * =============================================================================
  */
-import '../../channels/manager.dart';
+import '../channels/manager.dart';
 import 'paths.dart';
 
 class LocalStorage {

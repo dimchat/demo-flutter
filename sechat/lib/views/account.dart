@@ -4,16 +4,8 @@ import 'dart:typed_data';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
-import 'package:dim_client/dim_client.dart';
-import 'package:lnc/lnc.dart';
+import 'package:dim_flutter/dim_flutter.dart';
 
-import '../client/facebook.dart';
-import '../client/filesys/paths.dart';
-import '../client/shared.dart';
-import '../network/ftp.dart';
-import '../widgets/alert.dart';
-import '../widgets/picker.dart';
-import 'styles.dart';
 
 class AccountPage extends StatefulWidget {
   const AccountPage(this.user, {super.key});

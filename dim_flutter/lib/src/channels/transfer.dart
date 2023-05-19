@@ -4,7 +4,7 @@ import 'package:dim_client/dim_client.dart';
 import 'package:lnc/lnc.dart';
 
 import '../client/constants.dart';
-import '../client/filesys/paths.dart';
+import '../filesys/paths.dart';
 import '../models/config.dart';
 import '../widgets/browser.dart';
 import 'manager.dart';

@@ -33,7 +33,7 @@ import 'package:sqflite/sqflite.dart';
 import 'package:dim_client/dim_client.dart';
 import 'package:lnc/lnc.dart';
 
-import '../../client/filesys/paths.dart';
+import '../../filesys/paths.dart';
 
 
 ///

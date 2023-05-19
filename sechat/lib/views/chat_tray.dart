@@ -1,13 +1,9 @@
 import 'dart:typed_data';
 
 import 'package:flutter/cupertino.dart';
-import 'package:lnc/lnc.dart';
 
-import '../client/shared.dart';
-import '../models/contact.dart';
-import '../widgets/audio.dart';
-import '../widgets/picker.dart';
-import 'styles.dart';
+import 'package:dim_flutter/dim_flutter.dart';
+
 
 class ChatInputTray extends StatefulWidget {
   const ChatInputTray(this.info, {super.key});

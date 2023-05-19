@@ -9,9 +9,9 @@ import '../client/shared.dart';
 import '../models/contact.dart';
 import '../models/message.dart';
 import '../network/image_view.dart';
-import '../views/styles.dart';
 import 'audio.dart';
 import 'preview.dart';
+import 'styles.dart';
 
 abstract class ContentViewUtils {
 

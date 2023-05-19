@@ -1,7 +1,6 @@
 import 'package:flutter/cupertino.dart';
 
-import '../client/shared.dart';
-import '../web3/keychain.dart';
+import 'package:dim_flutter/dim_flutter.dart';
 
 
 class ExportPage extends StatefulWidget {

@@ -30,7 +30,7 @@
  */
 import 'package:flutter/cupertino.dart';
 
-import '../views/styles.dart';
+import 'styles.dart';
 
 class CupertinoTableCell extends StatelessWidget {
   const CupertinoTableCell({super.key, this.leadingSize = 60, this.leading,

@@ -1,18 +1,12 @@
 import 'package:flutter/cupertino.dart';
 
-import 'package:dim_client/dim_client.dart';
+import 'package:dim_flutter/dim_flutter.dart';
 import 'package:lnc/lnc.dart' as lnc;
-import 'package:lnc/lnc.dart' show Log;
 
-import '../client/constants.dart';
-import '../client/shared.dart';
-import '../models/config.dart';
-import '../models/contact.dart';
-import '../widgets/browser.dart';
 import 'account.dart';
 import 'account_export.dart';
 import 'network.dart';
-import 'styles.dart';
+
 
 class SettingsPage extends StatelessWidget {
   const SettingsPage({super.key});

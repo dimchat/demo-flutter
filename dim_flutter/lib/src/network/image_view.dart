@@ -38,7 +38,7 @@ import 'package:lnc/lnc.dart' show Log;
 
 import '../client/constants.dart';
 import '../client/shared.dart';
-import '../views/styles.dart';
+import '../widgets/styles.dart';
 import 'image_factory.dart';
 
 class ImageViewFactory {

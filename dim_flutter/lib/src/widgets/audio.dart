@@ -9,8 +9,8 @@ import 'package:lnc/lnc.dart' show Log;
 import '../channels/manager.dart';
 import '../client/constants.dart';
 import '../network/ftp.dart';
-import '../views/styles.dart';
 import 'permissions.dart';
+import 'styles.dart';
 
 typedef OnVoiceRecordComplected = void Function(Uint8List mp4, double duration);
 

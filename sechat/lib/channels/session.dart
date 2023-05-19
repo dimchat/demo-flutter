@@ -19,14 +19,34 @@ class SessionChannel extends MethodChannel {
     String method = call.method;
     Map arguments = call.arguments;
     if (method == ChannelMethods.onStateChanged) {
+      // onStateChanged
       int previous = Converter.getInt(arguments['previous']) ?? 0;
       int current = Converter.getInt(arguments['current']) ?? 0;
       int now = Converter.getInt(arguments['now']) ?? 0;
       _onStateChanged(previous, current, now);
     } else if (method == ChannelMethods.onReceived) {
+      // onReceived
       Uint8List payload = arguments['payload'];
       String remote = arguments['remote'];
       _onReceived(payload, remote);
+    } else if (method == ChannelMethods.sendContent) {
+      // sendContent
+      Content? content = Content.parse(arguments['content']);
+      ID? receiver = ID.parse(arguments['receiver']);
+      if (content == null || receiver == null) {
+        assert(false, 'failed to send content: $arguments');
+      } else {
+        _sendContent(content, receiver: receiver);
+      }
+    } else if (method == ChannelMethods.sendCommand) {
+      // sendCommand
+      Command? content = Command.parse(arguments['content']);
+      ID? receiver = ID.parse(arguments['receiver']);
+      if (content == null) {
+        assert(false, 'failed to send command: $arguments');
+      } else {
+        _sendCommand(content, receiver: receiver);
+      }
     }
   }
 
@@ -62,6 +82,27 @@ class SessionChannel extends MethodChannel {
         messenger.session.sendResponse(res, ship, remote: remoteAddress);
       }
     });
+  }
+
+  void _sendCommand(Command content, {ID? sender, ID? receiver, int priority = 0}) {
+    if (receiver == null) {
+      // sending command to current station
+      GlobalVariable shared = GlobalVariable();
+      SharedMessenger? messenger = shared.messenger;
+      receiver = messenger?.session.station.identifier;
+      if (receiver == null) {
+        assert(false, 'failed to get current station');
+        return;
+      }
+    }
+    _sendContent(content, sender: sender, receiver: receiver, priority: priority);
+  }
+
+  void _sendContent(Content content, {ID? sender, required ID receiver, int priority = 0}) {
+    GlobalVariable shared = GlobalVariable();
+    SharedMessenger? messenger = shared.messenger;
+    assert(messenger != null, 'messenger not set, not connect yet?');
+    messenger?.sendContent(content, sender: sender, receiver: receiver, priority: priority);
   }
 
   //

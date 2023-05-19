@@ -67,6 +67,7 @@ class FileTransferChannel extends MethodChannel {
     String method = call.method;
     Map arguments = call.arguments;
     if (method == ChannelMethods.onDownloadSuccess) {
+      // onDownloadSuccess
       String urlString = arguments['url'];
       Uri? url = Browser.parseUri(urlString);
       String path = arguments['path'];
@@ -75,6 +76,7 @@ class FileTransferChannel extends MethodChannel {
         _downloads[url] = path;
       }
     } else if (method == ChannelMethods.onDownloadFailure) {
+      // onDownloadFailed
       String urlString = arguments['url'];
       Uri? url = Browser.parseUri(urlString);
       Log.error('download $url error: ${arguments['error']}');
@@ -82,6 +84,7 @@ class FileTransferChannel extends MethodChannel {
         _downloads[url] = _downError;
       }
     } else if (method == ChannelMethods.onUploadSuccess) {
+      // onUploadSuccess
       String? filename = arguments['filename'];
       filename ??= Paths.filename(arguments['path']);
       Map res = arguments['response'];
@@ -91,6 +94,7 @@ class FileTransferChannel extends MethodChannel {
         _uploads[filename!] = url;
       }
     } else if (method == ChannelMethods.onUploadFailure) {
+      // onUploadFailed
       String? filename = arguments['filename'];
       filename ??= Paths.filename(arguments['path']);
       Log.error('upload $filename error: ${arguments['error']}');

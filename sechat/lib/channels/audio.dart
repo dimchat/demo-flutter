@@ -14,6 +14,7 @@ class AudioChannel extends MethodChannel {
     String method = call.method;
     Map arguments = call.arguments;
     if (method == ChannelMethods.onRecordFinished) {
+      // onRecordFinished
       Uint8List mp4 = arguments['data'];
       double duration = arguments['current'];
       // post notification async
@@ -23,6 +24,7 @@ class AudioChannel extends MethodChannel {
         'duration': duration,
       });
     } else if (method == ChannelMethods.onPlayFinished) {
+      // onPlayFinished
       String? path = arguments['path'];
       // post notification async
       var nc = NotificationCenter();

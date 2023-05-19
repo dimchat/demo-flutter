@@ -2,25 +2,9 @@
     package="chat.dim.sechat">
     <!--  https://developer.android.google.cn/reference/android/Manifest.permission  -->
 
-    <!-- Internet permissions do not affect the `permission_handler` plugin,
-         but are required if your app needs access to the internet. -->
-    <uses-permission android:name="android.permission.INTERNET" />
-    <!-- Permissions options for the `storage` group -->
-    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" android:maxSdkVersion="32" />
-<!--    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />-->
-    <!-- Permissions options for the `photos` group -->
-    <uses-permission android:name="android.permission.READ_MEDIA_IMAGES" />
-    <!-- Permissions options for the `camera` group -->
-    <uses-permission android:name="android.permission.CAMERA" />
-    <!-- Permissions options for the `microphone` or `speech` group -->
-    <uses-permission android:name="android.permission.RECORD_AUDIO" />
-    <uses-permission android:name="android.permission.REQUEST_INSTALL_PACKAGES"/>
-
     <application
         android:label="SecureChat"
         android:name="${applicationName}"
-        android:networkSecurityConfig="@xml/network_security_config"
-        android:usesCleartextTraffic="true"
         android:icon="@mipmap/ic_launcher">
         <activity
             android:name="chat.dim.MainActivity"
@@ -43,18 +27,6 @@
                 <category android:name="android.intent.category.LAUNCHER"/>
             </intent-filter>
         </activity>
-
-        <service android:name="chat.dim.ui.media.MediaService" />
-
-        <provider
-            android:name="androidx.core.content.FileProvider"
-            android:authorities="chat.dim.sechat.provider"
-            android:grantUriPermissions="true"
-            android:exported="false">
-            <meta-data
-                android:name="android.support.FILE_PROVIDER_PATHS"
-                android:resource="@xml/provider_paths" />
-        </provider>
         <!-- Don't delete the meta-data below.
              This is used by the Flutter tool to generate GeneratedPluginRegistrant.java -->
         <meta-data

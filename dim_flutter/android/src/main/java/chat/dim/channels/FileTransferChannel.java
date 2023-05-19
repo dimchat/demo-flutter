@@ -179,7 +179,7 @@ public class FileTransferChannel extends MethodChannel implements UploadDelegate
             try {
                 return new URL(urlString);
             } catch (MalformedURLException e) {
-                Log.error("URL error: " + e);
+                Log.error("URL error: " + urlString + ", " + e);
                 return null;
             }
         }

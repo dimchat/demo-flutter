@@ -19,7 +19,7 @@ import java.io.InputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
 
-import chat.dim.sechat.R;
+import chat.dim.dim_flutter.R;
 import chat.dim.utils.Log;
 
 public class UpdateManager {
@@ -146,7 +146,7 @@ public class UpdateManager {
             InputStream ins = conn.getInputStream();
             File file = getSaveDir();
             if (!file.exists()) {
-               boolean ok = file.mkdir();
+               boolean ok = file.mkdirs();
                assert ok : "failed to create dir: " ;
             }
             File apkFile = getSavePath();
@@ -185,7 +185,7 @@ public class UpdateManager {
       Uri apkPath;
       if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
          apkPath = FileProvider.getUriForFile(mContext,
-                 "chat.dim.sechat.provider", apkFile);
+                 "chat.dim.dim_flutter.provider", apkFile);
       } else {
          apkPath = Uri.fromFile(apkFile);
       }

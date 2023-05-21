@@ -22,7 +22,7 @@ class SessionChannel extends MethodChannel {
       // onStateChanged
       int previous = Converter.getInt(arguments['previous']) ?? 0;
       int current = Converter.getInt(arguments['current']) ?? 0;
-      int now = Converter.getInt(arguments['now']) ?? 0;
+      double now = Converter.getDouble(arguments['now']) ?? 0;
       _onStateChanged(previous, current, now);
     } else if (method == ChannelMethods.onReceived) {
       // onReceived
@@ -50,7 +50,7 @@ class SessionChannel extends MethodChannel {
     }
   }
 
-  void _onStateChanged(int previous, int current, int now) {
+  void _onStateChanged(int previous, int current, double now) {
     Log.warning('onStateChanged: $previous -> $current');
     GlobalVariable shared = GlobalVariable();
     Client? client = shared.terminal;

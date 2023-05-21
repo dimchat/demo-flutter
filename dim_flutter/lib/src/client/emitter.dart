@@ -20,9 +20,9 @@ class Emitter implements Observer {
   /// filename => task
   final Map<String, InstantMessage> _outgoing = {};
 
-  void _addTask(String filename, InstantMessage item) {
-    _outgoing[filename] = item;
-  }
+  // void _addTask(String filename, InstantMessage item) {
+  //   _outgoing[filename] = item;
+  // }
 
   InstantMessage? _popTask(String filename) {
     InstantMessage? item = _outgoing[filename];

@@ -30,13 +30,13 @@ android {
     }
 
     defaultConfig {
-        minSdkVersion 16
+        minSdkVersion 17
     }
 
     dependencies {
 
         implementation group: 'chat.dim', name: 'Client', version: '0.1.1'
-        implementation group: 'chat.dim', name: 'CryptoPlugins', version: '0.0.3'
+        implementation group: 'chat.dim', name: 'CryptoPlugins', version: '0.0.4'
         implementation group: 'chat.dim', name: 'LNC', version: '0.1.1'
 
         testImplementation 'junit:junit:4.13.2'

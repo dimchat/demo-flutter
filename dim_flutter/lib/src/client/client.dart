@@ -71,7 +71,7 @@ class Client extends Terminal {
   //
 
   @override
-  Future<void> exitState(SessionState previous, SessionStateMachine ctx, int now) async {
+  Future<void> exitState(SessionState previous, SessionStateMachine ctx, double now) async {
     await super.exitState(previous, ctx, now);
     SessionState? current = ctx.currentState;
     var nc = NotificationCenter();

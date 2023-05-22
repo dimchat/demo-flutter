@@ -6,7 +6,7 @@ repository: https://github.com/dimchat/demo-flutter
 issue_tracker: https://github.com/dimchat/demo-flutter/issues
 
 environment:
-  sdk: '>=3.0.0-417.0.dev <4.0.0'
+  sdk: '>=3.0.0-290.3.beta <4.0.0'
   flutter: ">=3.3.0"
 
 dependencies:

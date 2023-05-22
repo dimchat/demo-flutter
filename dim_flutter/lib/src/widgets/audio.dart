@@ -132,26 +132,56 @@ class _RecordState extends State<RecordButton> implements lnc.Observer {
 
 /// AudioView
 class AudioContentView extends StatefulWidget {
-  const AudioContentView(this.content, {this.color, super.key});
+  AudioContentView(this.content, {this.color, super.key}) {
+    // get file path
+    Future.delayed(const Duration(milliseconds: 32))
+        .then((value) => _reload());
+  }
 
   final AudioContent content;
   final Color? color;
+
+  final _AudioPlayInfo _info = _AudioPlayInfo();
+
+  Future<void> _reload() async {
+    FileTransfer ftp = FileTransfer();
+    String? path = await ftp.getFilePath(content);
+    if (path == null) {
+      Log.debug('audio file not found: ${content.url}');
+    } else {
+      _info.path = path;
+      await lnc.NotificationCenter().postNotification(kVoiceRefresh, this, {
+        'content': content,
+      });
+    }
+  }
 
   @override
   State<StatefulWidget> createState() => _AudioContentState();
 
 }
 
+const String kVoiceRefresh = 'VoiceRefresh';
+
+class _AudioPlayInfo {
+  String? path;
+  bool playing = false;
+}
+
 class _AudioContentState extends State<AudioContentView> implements lnc.Observer {
   _AudioContentState() {
     var nc = lnc.NotificationCenter();
+    nc.addObserver(this, NotificationNames.kFileDownloadSuccess);
     nc.addObserver(this, NotificationNames.kPlayFinished);
+    nc.addObserver(this, kVoiceRefresh);
   }
 
   @override
   void dispose() {
     var nc = lnc.NotificationCenter();
+    nc.removeObserver(this, kVoiceRefresh);
     nc.removeObserver(this, NotificationNames.kPlayFinished);
+    nc.removeObserver(this, NotificationNames.kFileDownloadSuccess);
     super.dispose();
   }
 
@@ -166,41 +196,43 @@ class _AudioContentState extends State<AudioContentView> implements lnc.Observer
       }
       if (mounted) {
         setState(() {
-          _playing = false;
+          widget._info.playing = false;
+        });
+      }
+    } else if (name == NotificationNames.kFileDownloadSuccess) {
+      Uri? url = userInfo?['url'];
+      String? path = userInfo?['path'];
+      assert(url != null, 'download URL not found: $userInfo');
+      if (url?.toString() == widget.content.url) {
+        Log.info('audio file downloaded: $url => $path');
+        if (path != null && mounted) {
+          setState(() {
+            widget._info.path = path;
+          });
+        }
+      }
+    } else if (name == kVoiceRefresh) {
+      AudioContent? content = userInfo?['content'];
+      if (mounted && identical(content, widget.content)) {
+        setState(() {
+          //
         });
       }
     }
   }
 
-  bool _playing = false;
-
   Future<String?> get _path async {
-    FileTransfer ftp = FileTransfer();
-    return await ftp.getFilePath(widget.content);
+    String? path = widget._info.path;
+    if (path == null) {
+      FileTransfer ftp = FileTransfer();
+      path = await ftp.getFilePath(widget.content);
+      widget._info.path = path;
+    }
+    return path;
   }
 
   String? get _duration {
     return widget.content.getDouble('duration')?.toStringAsFixed(3);
-  }
-
-  Future<void> _togglePlay() async {
-    ChannelManager man = ChannelManager();
-    String? path = await _path;
-    if (_playing) {
-      await man.audioChannel.stopPlay(path);
-      if (mounted) {
-        setState(() {
-          _playing = false;
-        });
-      }
-    } else if (path != null) {
-      if (mounted) {
-        setState(() {
-          _playing = true;
-        });
-      }
-      await man.audioChannel.startPlay(path);
-    }
   }
 
   @override
@@ -212,16 +244,44 @@ class _AudioContentState extends State<AudioContentView> implements lnc.Observer
       onTap: _togglePlay,
       child: Row(
         children: [
-          _playing ? const Icon(Styles.playingAudioIcon) : const Icon(Styles.playAudioIcon),
+          _button(),
           Expanded(
             flex: 1,
             child: Text('${_duration ?? 0} s',
               textAlign: TextAlign.center,
+              style: TextStyle(color: _color(), ),
             ),
           ),
         ],
       ),
     ),
   );
+
+  Future<void> _togglePlay() async {
+    ChannelManager man = ChannelManager();
+    String? path = await _path;
+    if (widget._info.playing) {
+      await man.audioChannel.stopPlay(path);
+      if (mounted) {
+        setState(() {
+          widget._info.playing = false;
+        });
+      }
+    } else if (path != null) {
+      if (mounted) {
+        setState(() {
+          widget._info.playing = true;
+        });
+      }
+      await man.audioChannel.startPlay(path);
+    }
+  }
+
+  Widget _button() => widget._info.path == null
+      ? Icon(Styles.waitAudioIcon, color: _color(), ) : widget._info.playing
+      ? const Icon(Styles.playingAudioIcon)
+      : const Icon(Styles.playAudioIcon);
+
+  Color? _color() => widget._info.path == null ? Colors.grey : null;
 
 }

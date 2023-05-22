@@ -120,6 +120,7 @@ abstract class Styles {
   static const IconData chatFunctionIcon = Icons.add_circle_outline;
   static const IconData     chatSendIcon = Icons.send;
   // Audio
+  static const IconData    waitAudioIcon = CupertinoIcons.cloud_download;
   static const IconData    playAudioIcon = CupertinoIcons.play;
   static const IconData playingAudioIcon = CupertinoIcons.volume_up;
   // Msg Status

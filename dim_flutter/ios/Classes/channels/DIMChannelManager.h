@@ -41,6 +41,9 @@ NS_ASSUME_NONNULL_BEGIN
 #define kChannelMethod_OnStateChanged             @"onStateChanged"
 #define kChannelMethod_OnReceived                 @"onReceived"
 
+#define kChannelMethod_SendContent                @"sendContent"
+#define kChannelMethod_SendCommand                @"sendCommand"
+
 #define kChannelMethod_PackData                   @"packData"
 #define kChannelMethod_UnpackData                 @"unpackData"
 

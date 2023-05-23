@@ -48,6 +48,28 @@ static void onMethodCall(FlutterMethodCall* call, FlutterResult result);
     [self invokeMethod:kChannelMethod_OnReceived arguments:params];
 }
 
+- (void)sendCommand:(id<DKDCommand>)content {
+    NSDictionary *params = @{
+        @"content": [content dictionary],
+    };
+    [self invokeMethod:kChannelMethod_SendCommand arguments:params];
+}
+- (void)sendCommand:(id<DKDCommand>)content receiver:(id<MKMID>)to {
+    NSDictionary *params = @{
+        @"content": [content dictionary],
+        @"receiver": [to string],
+    };
+    [self invokeMethod:kChannelMethod_SendCommand arguments:params];
+}
+
+- (void)sendContent:(id<DKDContent>)content receiver:(id<MKMID>)to {
+    NSDictionary *params = @{
+        @"content": [content dictionary],
+        @"receiver": [to string],
+    };
+    [self invokeMethod:kChannelMethod_SendContent arguments:params];
+}
+
 @end
 
 static inline NSData *packData(NSData *payload) {

@@ -22,6 +22,10 @@ NS_ASSUME_NONNULL_BEGIN
 
 - (void)onReceivedData:(NSData *)pack from:(id<NIOSocketAddress>)remote;
 
+- (void)sendCommand:(id<DKDCommand>)content;
+- (void)sendCommand:(id<DKDCommand>)content receiver:(id<MKMID>)to;
+- (void)sendContent:(id<DKDContent>)content receiver:(id<MKMID>)to;
+
 @end
 
 NS_ASSUME_NONNULL_END

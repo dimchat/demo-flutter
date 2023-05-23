@@ -5,6 +5,8 @@
 //  Created by Albert Moky on 2023/5/7.
 //
 
+#import <UIKit/UIKit.h>
+#import <UserNotifications/UserNotifications.h>
 #import <DIMClient/DIMClient.h>
 
 NS_ASSUME_NONNULL_BEGIN
@@ -31,6 +33,17 @@ typedef DIMClientSession *_Nonnull(^DIMSessionCreator)(id<DIMSessionDBI> db,
 - (void)setSessionKey:(NSString *)session;
 
 - (DIMSessionState *)state;
+
+@end
+
+@interface DIMPushNotificationController : NSObject <UIApplicationDelegate, UNUserNotificationCenterDelegate>
+
+@property(nonatomic, readonly) NSData *deviceToken;
+
++ (instancetype)sharedInstance;
+
+// callback after handshake accepted
+- (void)reportDeviceToken;
 
 @end
 

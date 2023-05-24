@@ -1,3 +1,8 @@
+import 'dart:io';
+
+import 'package:device_info_plus/device_info_plus.dart';
+import 'package:package_info_plus/package_info_plus.dart';
+
 import 'package:dim_client/dim_client.dart';
 import 'package:lnc/lnc.dart';
 
@@ -85,31 +90,128 @@ class Client extends Terminal {
   //  DeviceMixin
   //
 
-  @override
-  String get language => "zh-CN";
+  final _DeviceInfo _deviceInfo = _DeviceInfo();
+  final _PackageInfo _packageInfo = _PackageInfo();
 
   @override
-  String get displayName => "DIM";
+  String get displayName => _packageInfo.displayName;
 
   @override
-  String get versionName => "1.0.1";
+  String get versionName => _packageInfo.versionName;
 
   @override
-  String get systemVersion => "4.0";
+  String get language => _deviceInfo.language;
 
   @override
-  String get systemModel => "HMS";
+  String get systemVersion => _deviceInfo.systemVersion;
 
   @override
-  String get systemDevice => "hammerhead";
+  String get systemModel => _deviceInfo.systemModel;
 
   @override
-  String get deviceBrand => "HUAWEI";
+  String get systemDevice => _deviceInfo.systemDevice;
 
   @override
-  String get deviceBoard => "hammerhead";
+  String get deviceBrand => _deviceInfo.deviceBrand;
 
   @override
-  String get deviceManufacturer => "HUAWEI";
+  String get deviceBoard => _deviceInfo.deviceBoard;
+
+  @override
+  String get deviceManufacturer => _deviceInfo.deviceManufacturer;
+
+}
+
+class _DeviceInfo {
+  factory _DeviceInfo() => _instance;
+  static final _DeviceInfo _instance = _DeviceInfo._internal();
+  _DeviceInfo._internal() {
+    DeviceInfoPlugin info = DeviceInfoPlugin();
+    if (Platform.isAndroid) {
+      info.androidInfo.then(_loadAndroid);
+    } else if (Platform.isIOS) {
+      info.iosInfo.then(_loadIOS);
+    } else if (Platform.isMacOS) {
+      info.macOsInfo.then(_loadMacOS);
+    } else if (Platform.isLinux) {
+      info.linuxInfo.then(_loadLinux);
+    } else if (Platform.isWindows) {
+      info.windowsInfo.then(_loadWindows);
+    } else {
+      assert(false, 'unknown platform');
+    }
+    language = "en-US";
+  }
+
+  void _loadAndroid(AndroidDeviceInfo info) {
+    systemVersion = info.version.release;
+    systemModel = info.model;
+    systemDevice = info.device;
+    deviceBrand = info.brand;
+    deviceBoard = info.board;
+    deviceManufacturer = info.manufacturer;
+  }
+  void _loadIOS(IosDeviceInfo info) {
+    // FIXME: device, brand, board
+    systemVersion = info.systemVersion;
+    systemModel = info.model;
+    systemDevice = info.utsname.machine;
+    deviceBrand = "Apple";
+    deviceBoard = info.utsname.machine;
+    deviceManufacturer = "Apple Inc.";
+  }
+  void _loadMacOS(MacOsDeviceInfo info) {
+    // FIXME: device, brand, board
+    systemVersion = '${info.majorVersion}.${info.minorVersion}.${info.patchVersion}';
+    systemModel = info.model;
+    systemDevice = info.systemGUID ?? info.osRelease;
+    deviceBrand = "Apple";
+    deviceBoard = info.systemGUID ?? info.osRelease;
+    deviceManufacturer = "Apple Inc.";
+  }
+  void _loadLinux(LinuxDeviceInfo info) {
+    // FIXME: model, device, brand, board, manufacturer
+    systemVersion = info.version ?? info.versionId ?? info.versionCodename ?? '';
+    systemModel = info.name;
+    systemDevice = info.prettyName;
+    deviceBrand = "Linux";
+    deviceBoard = info.prettyName;
+    deviceManufacturer = "Linux";
+  }
+  void _loadWindows(WindowsDeviceInfo info) {
+    // FIXME: model, device, brand, board
+    systemVersion = '${info.majorVersion}.${info.minorVersion}.${info.buildNumber}';
+    systemModel = info.csdVersion;
+    systemDevice = info.deviceId;
+    deviceBrand = "Windows";
+    deviceBoard = info.productName;
+    deviceManufacturer = info.registeredOwner;
+  }
+
+  String language = "zh-CN";
+  String systemVersion = "4.0";
+  String systemModel = "HMS";
+  String systemDevice = "hammerhead";
+  String deviceBrand = "HUAWEI";
+  String deviceBoard = "hammerhead";
+  String deviceManufacturer = "HUAWEI";
+
+}
+
+class _PackageInfo {
+  factory _PackageInfo() => _instance;
+  static final _PackageInfo _instance = _PackageInfo._internal();
+  _PackageInfo._internal() {
+    PackageInfo.fromPlatform().then(_load);
+  }
+
+  void _load(PackageInfo info) {
+    displayName = info.appName;
+    versionName = info.version;
+  }
+
+  String displayName = "DIM";
+
+  String versionName = "1.0.0";
 
 }

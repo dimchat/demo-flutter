@@ -130,6 +130,30 @@ OKSingletonImplementations(DIMSessionController, sharedInstance)
 
 #pragma mark -
 
+static inline NSString *device_model(void) {
+    // @"iPhone", @"iPad", @"iPod touch"
+    return [[UIDevice currentDevice] model];
+}
+static inline NSString *device_system(void) {
+    // @"iPadOS 16.3"
+    NSString *name = [[UIDevice currentDevice] systemName];
+    NSString *version = [[UIDevice currentDevice] systemVersion];
+    return [NSString stringWithFormat:@"%@ %@", name, version];
+}
+static inline NSString *bundle_id(void) {
+    // @"chat.dim.sechat"
+    return [[NSBundle mainBundle] bundleIdentifier];
+}
+static inline BOOL is_sandbox(void) {
+#if DEBUG
+    return YES;
+#else
+    NSURL *receiptURL = [[NSBundle mainBundle] appStoreReceiptURL];
+    NSLog(@"appStoreReceiptURL: %@", receiptURL);
+    return [receiptURL.path hasSuffix:@"sandboxReceipt"];
+#endif
+}
+
 @interface DIMPushNotificationController () {
     
     bool _sent;
@@ -169,8 +193,14 @@ OKSingletonImplementations(DIMPushNotificationController, sharedInstance)
     NSString *hex = MKMHexEncode(token);
     DIMReportCommand *content = [[DIMReportCommand alloc] initWithTitle:@"apns"];
     [content setObject:hex forKey:@"device_token"];
-    // TODO: get platform name
     [content setObject:@"iOS" forKey:@"platform"];
+    [content setObject:device_system() forKey:@"system"];
+    [content setObject:device_model() forKey:@"model"];
+    [content setObject:bundle_id() forKey:@"topic"];
+    if (is_sandbox()) {
+        // development
+        [content setObject:@(YES) forKey:@"sandbox"];
+    }
     NSLog(@"APNs report command: %@", content);
     DIMChannelManager *man = [DIMChannelManager sharedInstance];
     DIMSessionChannel *channel = [man sessionChannel];

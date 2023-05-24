@@ -4,6 +4,7 @@ import 'package:dim_client/dim_client.dart';
 
 import '../models/conversation.dart';
 import 'compatible.dart';
+import 'shared.dart';
 
 class SharedMessenger extends ClientMessenger {
   SharedMessenger(super.session, super.facebook, super.mdb);
@@ -47,6 +48,21 @@ class SharedMessenger extends ClientMessenger {
       iMsg['signature'] = rMsg.getString('signature');
     }
     return rMsg;
+  }
+
+  @override
+  Future<void> handshakeSuccess() async {
+    await super.handshakeSuccess();
+    // // 1. broadcast current documents after handshake success
+    // await broadcastDocument();
+    // 2. broadcast login command with current station info
+    GlobalVariable shared = GlobalVariable();
+    User? user = await shared.facebook.currentUser;
+    if (user == null) {
+      assert(false, 'should not happen');
+    } else {
+      await broadcastLogin(user.identifier, shared.terminal.userAgent);
+    }
   }
 
 }

@@ -4,6 +4,7 @@ export 'widgets/alert.dart';
 export 'widgets/audio.dart';
 export 'widgets/badge.dart';
 export 'widgets/browser.dart';
+export 'widgets/gaussian.dart';
 export 'widgets/message.dart';
 export 'widgets/permissions.dart';
 export 'widgets/picker.dart';

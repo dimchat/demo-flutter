@@ -118,7 +118,7 @@ class Keychain {
   Future<PrivateKey?> get btcKey async => getPrivateKey(await btcWallet);
   Future<PrivateKey?> get ethKey async => getPrivateKey(await ethWallet);
 
-  static Future<PrivateKey?> getPrivateKey(BIP32? wallet) async {
+  static PrivateKey? getPrivateKey(BIP32? wallet) {
     Uint8List? privateKey = wallet?.privateKey;
     if (privateKey == null) {
       return null;

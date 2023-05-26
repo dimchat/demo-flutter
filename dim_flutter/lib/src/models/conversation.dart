@@ -142,6 +142,11 @@ class Amanuensis implements lnc.Observer {
   ///  Conversations
   ///
 
+  Future<bool> isBlocked(ID chat) async {
+    // TODO: get block-list from database
+    return chat.type == EntityType.kStation;
+  }
+
   List<Conversation>? _allConversations;
   final Map<ID, Conversation> _conversationMap = {};
 
@@ -157,6 +162,18 @@ class Amanuensis implements lnc.Observer {
     // get ID list from database
     array = await shared.database.getConversations();
     Log.debug('${array.length} conversation(s) loaded');
+    if (array.isNotEmpty) {
+      // hide blocked list
+      List<Conversation> blockList = [];
+      for (var item in array) {
+        if (await isBlocked(item.identifier)) {
+          blockList.add(item);
+        }
+      }
+      for (var item in blockList) {
+        array.remove(item);
+      }
+    }
     // build conversations
     for (Conversation item in array) {
       await item.reloadData();
@@ -279,6 +296,10 @@ class Amanuensis implements lnc.Observer {
   }
 
   Future<void> _update(ID cid, InstantMessage iMsg) async {
+    if (await isBlocked(cid)) {
+      Log.warning('blocked: $cid');
+      return;
+    }
     Content content = iMsg.content;
     DefaultMessageBuilder mb = DefaultMessageBuilder();
     if (mb.isCommand(content)) {

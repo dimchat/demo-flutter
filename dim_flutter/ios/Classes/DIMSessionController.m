@@ -246,6 +246,7 @@ OKSingletonImplementations(DIMPushNotificationController, sharedInstance)
     UNUserNotificationCenter *center;
     center = [UNUserNotificationCenter currentNotificationCenter];
     [center removeAllDeliveredNotifications];
+    application.applicationIconBadgeNumber = -1;
     NSLog(@"APNs: notifications cleared");
 }
 

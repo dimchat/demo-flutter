@@ -12,6 +12,10 @@ abstract class Styles {
   //
   static const Color themeBarBackgroundColor = CupertinoColors.white;
 
+  static const Color logoBackgroundColor = Color(0xFF33C0F3);
+
+  static const Color idColor = Colors.teal;
+
   //
   //  Navigation
   //
@@ -138,8 +142,10 @@ abstract class Styles {
   static const IconData groupChatsIcon = CupertinoIcons.person_2;
 
   // Settings
-  static const IconData exportAccountIcon = Icons.account_balance_wallet_outlined;
-  static const IconData    setNetworkIcon = CupertinoIcons.settings;
+  static const IconData exportAccountIcon = CupertinoIcons.lock_shield;
+  // static const IconData exportAccountIcon = Icons.vpn_key_outlined;
+  // static const IconData exportAccountIcon = Icons.account_balance_wallet_outlined;
+  static const IconData    setNetworkIcon = CupertinoIcons.cloud;
   static const IconData setWhitePaperIcon = CupertinoIcons.doc;
   static const IconData setOpenSourceIcon = Icons.code;
   static const IconData      setTermsIcon = CupertinoIcons.doc_checkmark;

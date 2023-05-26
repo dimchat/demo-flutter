@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:flutter/cupertino.dart';
 import 'package:lnc/lnc.dart';
 import 'package:permission_handler/permission_handler.dart';
@@ -111,13 +113,16 @@ class _PermissionHandler {
     /// When running on Android < T: Nothing
     /// iOS: Photos
     /// iOS 14+ read & write access level
+    if (Platform.isIOS)
     Permission.photos,
 
     /// Android: Nothing
     /// iOS: Photos
     /// iOS 14+ read & write access level
-    // Permission.photosAddOnly,
+    if (Platform.isIOS)
+    Permission.photosAddOnly,
 
+    if (Platform.isAndroid)
     Permission.storage,
   ];
 

@@ -99,6 +99,8 @@ class Client extends Terminal {
   @override
   String get versionName => _packageInfo.versionName;
 
+  String get buildNumber => _packageInfo.buildNumber;
+
   @override
   String get language => _deviceInfo.language;
 
@@ -208,10 +210,13 @@ class _PackageInfo {
   void _load(PackageInfo info) {
     displayName = info.appName;
     versionName = info.version;
+    buildNumber = info.buildNumber;
   }
 
   String displayName = "DIM";
 
   String versionName = "1.0.0";
+
+  String buildNumber = "10001";
 
 }

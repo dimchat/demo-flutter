@@ -14,7 +14,7 @@ class FrostedGlassPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) => BackdropFilter(
-    filter: ImageFilter.blur(sigmaY: 2.0, sigmaX: 2.0),
+    filter: ImageFilter.blur(sigmaY: 8.0, sigmaX: 8.0),
     child: Stack(
       children: [
         GestureDetector(onTap: () => Navigator.pop(context)),
@@ -35,7 +35,7 @@ class FrostedGlassPage extends StatelessWidget {
 
   Widget _body() => ClipRect(
     child: Container(
-      padding: const EdgeInsets.all(8),
+      padding: const EdgeInsets.all(12),
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(8),
         color: CupertinoColors.white,

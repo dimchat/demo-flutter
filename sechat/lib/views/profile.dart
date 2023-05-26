@@ -181,7 +181,7 @@ class _ProfileState extends State<ProfilePage> implements lnc.Observer {
         constraints: const BoxConstraints(maxWidth: 320),
         child: SelectableText(widget.info.identifier.toString(),
           style: const TextStyle(fontSize: 12,
-            color: Colors.teal,
+            color: Styles.idColor,
           ),
         ),
       ),

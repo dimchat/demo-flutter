@@ -177,7 +177,7 @@ static inline void onMethodCall(FlutterMethodCall* call, FlutterResult success) 
         MarsPackage *pack = result.first;
         NSData *payload = [pack body];
         if ([payload length] == 0) {
-            assert(false);
+            // incompleted package?
             payload = [[NSData alloc] init];
         }
         NSInteger offset = [result.second integerValue];

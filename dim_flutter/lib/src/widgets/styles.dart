@@ -4,62 +4,351 @@
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:lnc/lnc.dart' show Log;
 
-abstract class Styles {
+/// Colors
+abstract class ThemeColors {
+
+  Color get logoBackgroundColor => const Color(0xFF33C0F3);
+
+  Color get scaffoldBackgroundColor;
+  Color get appBardBackgroundColor;
+
+  Color get inputTrayBackgroundColor;
+  Color get commandBackgroundColor;
+
+  Color get sectionHeaderBackgroundColor;
+  Color get sectionItemBackgroundColor;
+  Color get sectionItemDividerColor;
+
+  Color get normalButtonColor => CupertinoColors.systemBlue;
+  Color get importantButtonColor => CupertinoColors.systemOrange;
+  Color get criticalButtonColor => CupertinoColors.systemRed;
+
+  Color get primaryTextColor;
+  Color get secondaryTextColor;
+  Color get tertiaryTextColor;
 
   //
-  //  Theme
+  //  Mnemonic Codes
   //
-  static const Color themeBarBackgroundColor = CupertinoColors.white;
+  Color get tileBackgroundColor;
+  Color get tileInvisibleColor;
+  Color get tileColor;
+  Color get tileBadgeColor;
+  Color get tileOrderColor;
 
-  static const Color logoBackgroundColor = Color(0xFF33C0F3);
+}
 
-  static const Color idColor = Colors.teal;
+class _LightThemeColors extends ThemeColors {
+  factory _LightThemeColors() => _instance;
+  static final _LightThemeColors _instance = _LightThemeColors._internal();
+  _LightThemeColors._internal();
 
-  //
-  //  Navigation
-  //
-  static const Border navigationBarBorder = Border(
-    bottom: BorderSide(
-      color: Color(0x4D000000),
-      width: 0.0, // 0.0 means one physical pixel
-    ),
+  @override
+  Color get scaffoldBackgroundColor => CupertinoColors.extraLightBackgroundGray;
+
+  @override
+  Color get appBardBackgroundColor => CupertinoColors.extraLightBackgroundGray;
+
+  @override
+  Color get inputTrayBackgroundColor => CupertinoColors.white;
+
+  @override
+  Color get commandBackgroundColor => CupertinoColors.lightBackgroundGray;
+
+  @override
+  Color get sectionHeaderBackgroundColor => Colors.white70;
+
+  @override
+  Color get sectionItemBackgroundColor => CupertinoColors.systemBackground;
+
+  @override
+  Color get sectionItemDividerColor => CupertinoColors.secondarySystemBackground;
+
+  @override
+  Color get primaryTextColor => CupertinoColors.black;
+
+  @override
+  Color get secondaryTextColor => CupertinoColors.darkBackgroundGray;
+
+  @override
+  Color get tertiaryTextColor => CupertinoColors.systemGrey;
+
+  @override
+  Color get tileBackgroundColor => CupertinoColors.lightBackgroundGray;
+
+  @override
+  Color get tileInvisibleColor => CupertinoColors.systemGrey;
+
+  @override
+  Color get tileColor => CupertinoColors.black;
+
+  @override
+  Color get tileBadgeColor => CupertinoColors.white;
+
+  @override
+  Color get tileOrderColor => CupertinoColors.systemGrey;
+
+}
+
+class _DarkThemeColors extends ThemeColors {
+  factory _DarkThemeColors() => _instance;
+  static final _DarkThemeColors _instance = _DarkThemeColors._internal();
+  _DarkThemeColors._internal();
+
+  @override
+  Color get scaffoldBackgroundColor => CupertinoColors.darkBackgroundGray;
+
+  @override
+  Color get appBardBackgroundColor => CupertinoColors.darkBackgroundGray;
+
+  @override
+  Color get inputTrayBackgroundColor => CupertinoColors.systemFill;
+
+  @override
+  Color get commandBackgroundColor => CupertinoColors.systemFill;
+
+  @override
+  Color get sectionHeaderBackgroundColor => Colors.black54;
+
+  @override
+  Color get sectionItemBackgroundColor => CupertinoColors.darkBackgroundGray;
+
+  @override
+  Color get sectionItemDividerColor => CupertinoColors.systemFill;
+
+  @override
+  Color get primaryTextColor => CupertinoColors.white;
+
+  @override
+  Color get secondaryTextColor => CupertinoColors.lightBackgroundGray;
+
+  @override
+  Color get tertiaryTextColor => CupertinoColors.systemGrey;
+
+  @override
+  Color get tileBackgroundColor => CupertinoColors.systemFill;
+
+  @override
+  Color get tileInvisibleColor => CupertinoColors.systemGrey;
+
+  @override
+  Color get tileColor => CupertinoColors.white;
+
+  @override
+  Color get tileBadgeColor => CupertinoColors.darkBackgroundGray;
+
+  @override
+  Color get tileOrderColor => CupertinoColors.systemGrey;
+
+}
+
+/// Styles
+abstract class ThemeStyles {
+
+  TextStyle get titleTextStyle;
+
+  TextStyle get sectionHeaderTextStyle;
+  TextStyle get sectionItemTitleTextStyle;
+  TextStyle get sectionItemSubtitleTextStyle;
+  TextStyle get sectionItemAdditionalTextStyle;
+
+  TextStyle get textFieldStyle;
+  BoxDecoration get textFieldDecoration;
+
+  TextStyle get buttonStyle => const TextStyle(
+    color: CupertinoColors.white,
+    fontWeight: FontWeight.bold,
   );
-  static const Color navigationBarBackground = CupertinoColors.systemBackground;
-  static const Color navigationBarIconColor = CupertinoColors.systemBlue;
-  static const double navigationBarIconSize = 16;
 
-  static const backgroundColor = CupertinoColors.secondarySystemBackground;
+  TextStyle get commandTextStyle;
 
-  //
-  //  Section
-  //
-  static const Color sectionHeaderBackground = CupertinoColors.secondarySystemBackground;
-  static const EdgeInsets sectionHeaderPadding = EdgeInsets.fromLTRB(16, 4, 16, 4);
-  static const TextStyle sectionHeaderTextStyle = TextStyle(
+  TextStyle get messageTimeTextStyle;
+
+  TextStyle get messageSenderNameTextStyle => const TextStyle(
+    fontSize: 12,
+    color: CupertinoColors.systemGrey,
+    overflow: TextOverflow.ellipsis,
+  );
+
+  TextStyle get identifierTextStyle => const TextStyle(
+    fontSize: 12,
+    color: Colors.teal,
+  );
+
+}
+
+class _LightThemeStyles extends ThemeStyles {
+  factory _LightThemeStyles() => _instance;
+  static final _LightThemeStyles _instance = _LightThemeStyles._internal();
+  _LightThemeStyles._internal();
+
+  @override
+  TextStyle get titleTextStyle => const TextStyle(
+    color: CupertinoColors.black,
+  );
+
+  @override
+  TextStyle get sectionHeaderTextStyle => const TextStyle(
     fontSize: 12,
     color: CupertinoColors.systemGrey,
   );
 
-  static const Color sectionItemDividerColor = CupertinoColors.secondarySystemBackground;
-
-  static const Color sectionItemBackground = CupertinoColors.systemBackground;
-  static const EdgeInsets sectionItemPadding = EdgeInsets.fromLTRB(0, 8, 0, 8);
-
-  static const TextStyle sectionItemTitleTextStyle = TextStyle(
+  @override
+  TextStyle get sectionItemTitleTextStyle => const TextStyle(
     fontSize: 16,
     color: CupertinoColors.black,
     overflow: TextOverflow.ellipsis,
   );
-  static const TextStyle sectionItemSubtitleTextStyle = TextStyle(
+
+  @override
+  TextStyle get sectionItemSubtitleTextStyle => const TextStyle(
     fontSize: 10,
     color: CupertinoColors.systemGrey,
     overflow: TextOverflow.fade,
   );
-  static const TextStyle sectionItemAdditionalTextStyle = TextStyle(
+
+  @override
+  TextStyle get sectionItemAdditionalTextStyle => const TextStyle(
     fontSize: 12,
     color: CupertinoColors.systemGrey,
   );
+
+  @override
+  TextStyle get textFieldStyle => const TextStyle(
+    height: 1.6,
+    color: CupertinoColors.black,
+  );
+
+  @override
+  BoxDecoration get textFieldDecoration => BoxDecoration(
+    color: CupertinoColors.white,
+    border: Border.all(
+      color: CupertinoColors.lightBackgroundGray,
+      style: BorderStyle.solid,
+      width: 1,
+    ),
+    borderRadius: BorderRadius.circular(8),
+  );
+
+  @override
+  TextStyle get commandTextStyle => const TextStyle(
+    fontSize: 10,
+    color: CupertinoColors.systemGrey,
+  );
+
+  @override
+  TextStyle get messageTimeTextStyle => const TextStyle(
+    fontSize: 10,
+    color: CupertinoColors.systemGrey,
+  );
+
+}
+
+class _DarkThemeStyles extends ThemeStyles {
+  factory _DarkThemeStyles() => _instance;
+  static final _DarkThemeStyles _instance = _DarkThemeStyles._internal();
+  _DarkThemeStyles._internal();
+
+  @override
+  TextStyle get titleTextStyle => const TextStyle(
+    color: CupertinoColors.white,
+  );
+
+  @override
+  TextStyle get sectionHeaderTextStyle => const TextStyle(
+    fontSize: 12,
+    color: CupertinoColors.systemGrey,
+  );
+
+  @override
+  TextStyle get sectionItemTitleTextStyle => const TextStyle(
+    fontSize: 16,
+    color: CupertinoColors.white,
+    overflow: TextOverflow.ellipsis,
+  );
+
+  @override
+  TextStyle get sectionItemSubtitleTextStyle => const TextStyle(
+    fontSize: 10,
+    color: CupertinoColors.systemGrey,
+    overflow: TextOverflow.fade,
+  );
+
+  @override
+  TextStyle get sectionItemAdditionalTextStyle => const TextStyle(
+    fontSize: 12,
+    color: CupertinoColors.systemGrey,
+  );
+
+  @override
+  TextStyle get textFieldStyle => const TextStyle(
+    height: 1.6,
+    color: CupertinoColors.white,
+  );
+
+  @override
+  BoxDecoration get textFieldDecoration => BoxDecoration(
+    color: CupertinoColors.darkBackgroundGray,
+    border: Border.all(
+      color: CupertinoColors.systemGrey,
+      style: BorderStyle.solid,
+      width: 1,
+    ),
+    borderRadius: BorderRadius.circular(8),
+  );
+
+  @override
+  TextStyle get commandTextStyle => const TextStyle(
+    fontSize: 10,
+    color: CupertinoColors.systemGrey,
+  );
+
+  @override
+  TextStyle get messageTimeTextStyle => const TextStyle(
+    fontSize: 10,
+    color: CupertinoColors.systemGrey,
+  );
+
+}
+
+/// Theme
+class Facade {
+  Facade(this.context);
+
+  final BuildContext context;
+
+  static Facade of(BuildContext ctx) => Facade(ctx);
+
+  Brightness get brightness {
+    Brightness b = Theme.of(context).brightness;
+    Log.warning('brightness: $b');
+    // b = Brightness.dark;
+    return b;
+  }
+
+  ThemeColors get colors =>
+      brightness == Brightness.dark ? _DarkThemeColors() : _LightThemeColors();
+
+  ThemeStyles get styles =>
+      brightness == Brightness.dark ? _DarkThemeStyles() : _LightThemeStyles();
+
+}
+
+abstract class Styles {
+
+  //
+  //  Navigation
+  //
+  static const double navigationBarIconSize = 16;
+
+  //
+  //  Section
+  //
+  static const EdgeInsets sectionHeaderPadding = EdgeInsets.fromLTRB(16, 4, 16, 4);
+
+  static const EdgeInsets sectionItemPadding = EdgeInsets.fromLTRB(0, 8, 0, 8);
 
   static const EdgeInsets settingsSectionItemPadding = EdgeInsets.all(16);
 
@@ -67,19 +356,10 @@ abstract class Styles {
   //  Chat Box
   //
   static const EdgeInsets messageItemMargin = EdgeInsets.fromLTRB(8, 4, 8, 4);
-  static const TextStyle messageTimeTextStyle = TextStyle(
-    fontSize: 10,
-    color: CupertinoColors.systemGrey,
-  );
 
   static const EdgeInsets messageSenderAvatarPadding = EdgeInsets.fromLTRB(8, 4, 8, 4);
 
   static const EdgeInsets messageSenderNameMargin = EdgeInsets.all(2);
-  static const TextStyle messageSenderNameTextStyle = TextStyle(
-    fontSize: 12,
-    color: CupertinoColors.systemGrey,
-    overflow: TextOverflow.ellipsis,
-  );
 
   static const EdgeInsets messageContentMargin = EdgeInsets.fromLTRB(2, 8, 2, 8);
   static const Color messageIsMineBackgroundColor = CupertinoColors.systemGreen;
@@ -89,12 +369,6 @@ abstract class Styles {
   static const EdgeInsets audioMessagePadding = EdgeInsets.fromLTRB(16, 12, 16, 12);
 
   static const EdgeInsets commandPadding = EdgeInsets.fromLTRB(8, 4, 8, 4);
-  static const Color commandBackgroundColor = CupertinoColors.lightBackgroundGray;
-  static const TextStyle commandTextStyle = TextStyle(
-    fontSize: 10,
-    color: CupertinoColors.systemGrey,
-  );
-  static const Color inputTrayBackground = CupertinoColors.systemBackground;
 
   static const Color avatarDefaultColor = CupertinoColors.inactiveGray;
 

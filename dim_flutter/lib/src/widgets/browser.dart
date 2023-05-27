@@ -35,6 +35,7 @@ import 'package:flutter_inappwebview/flutter_inappwebview.dart';
 import 'package:lnc/lnc.dart' show Log;
 
 import 'alert.dart';
+import 'styles.dart';
 
 class Browser extends StatefulWidget {
   const Browser({super.key, required this.uri, required this.title});
@@ -82,6 +83,7 @@ class _BrowserState extends State<Browser> {
     ),
     android: AndroidInAppWebViewOptions(
       useHybridComposition: true,
+      forceDark: AndroidForceDark.FORCE_DARK_AUTO,
     ),
     ios: IOSInAppWebViewOptions(
       allowsInlineMediaPlayback: true,
@@ -89,13 +91,15 @@ class _BrowserState extends State<Browser> {
   );
 
   @override
-  Widget build(BuildContext context) => CupertinoPageScaffold(
-    navigationBar: CupertinoNavigationBar(
-      middle: Text(widget.title),
+  Widget build(BuildContext context) => Scaffold(
+    backgroundColor: Facade.of(context).colors.scaffoldBackgroundColor,
+    appBar: CupertinoNavigationBar(
+      backgroundColor: Facade.of(context).colors.appBardBackgroundColor,
+      middle: Text(widget.title, style: Facade.of(context).styles.titleTextStyle),
       trailing: _progress <= 99 ? const SizedBox(width: 16, height: 16,
           child: CircularProgressIndicator(strokeWidth: 2.0)) : null,
     ),
-    child: Stack(
+    body: Stack(
       alignment: AlignmentDirectional.bottomStart,
       children: [
         InAppWebView(
@@ -116,6 +120,7 @@ class _BrowserState extends State<Browser> {
               fontSize: 10,
               color: Colors.white,
               overflow: TextOverflow.ellipsis,
+              decoration: TextDecoration.none,
             ),
           ),
         ),

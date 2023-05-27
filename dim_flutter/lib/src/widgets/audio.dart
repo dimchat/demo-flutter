@@ -1,5 +1,6 @@
 import 'dart:typed_data';
 
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
 import 'package:dim_client/dim_client.dart';
@@ -60,7 +61,7 @@ class _RecordState extends State<RecordButton> implements lnc.Observer {
 
   Color? get _color {
     if (!_recording) {
-      return null;
+      return CupertinoColors.lightBackgroundGray;
     } else if (_position.dy < 0.0) {
       return Colors.grey.shade100;
     } else {
@@ -282,6 +283,6 @@ class _AudioContentState extends State<AudioContentView> implements lnc.Observer
       ? const Icon(Styles.playingAudioIcon)
       : const Icon(Styles.playAudioIcon);
 
-  Color? _color() => widget._info.path == null ? Colors.grey : null;
+  Color _color() => widget._info.path == null ? Colors.grey : Colors.black;
 
 }

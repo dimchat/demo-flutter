@@ -1,3 +1,4 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
 import 'package:dim_client/dim_client.dart';
@@ -47,29 +48,33 @@ abstract class ContentViewUtils {
     return text;
   }
 
-  static Widget getCommandLabel(String text) => Column(
+  static Widget getCommandLabel(BuildContext context, String text) => Column(
     children: [
       ClipRRect(
         borderRadius: const BorderRadius.all(Radius.circular(4)),
         child: Container(
           padding: Styles.commandPadding,
-          color: Styles.commandBackgroundColor,
-          child: Text(text, style: Styles.commandTextStyle),
+          color: Facade.of(context).colors.commandBackgroundColor,
+          child: Text(text, style: Facade.of(context).styles.commandTextStyle),
         ),
       )
     ],
   );
 
-  static Widget getNameLabel(ID sender) => Container(
+  static Widget getNameLabel(BuildContext context, ID sender) => Container(
     margin: Styles.messageSenderNameMargin,
     constraints: const BoxConstraints(maxWidth: 256),
-    child: _NameView(sender, style: Styles.messageSenderNameTextStyle),
+    child: _NameView(sender,
+      style: Facade.of(context).styles.messageSenderNameTextStyle,
+    ),
   );
 
   static Widget getTextContentView(Content content, ID sender) => Container(
     color: getBackgroundColor(sender),
     padding: Styles.textMessagePadding,
-    child: SelectableText('${content["text"]}'),
+    child: SelectableText('${content["text"]}',
+      style: const TextStyle(color: CupertinoColors.black),
+    ),
   );
 
   static Widget getAudioContentView(AudioContent content, ID sender) =>

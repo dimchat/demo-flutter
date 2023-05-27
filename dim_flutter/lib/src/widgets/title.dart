@@ -8,11 +8,16 @@ import '../client/constants.dart';
 import '../client/shared.dart';
 import '../models/station.dart';
 import '../network/velocity.dart';
+import 'styles.dart';
 
 class StatedTitleView extends StatefulWidget {
-  const StatedTitleView(this.getTitle, {super.key});
+  const StatedTitleView(this.getTitle, {required this.style, super.key});
 
   final String Function() getTitle;
+  final TextStyle style;
+
+  static StatedTitleView from(BuildContext context, String Function() getTitle) =>
+      StatedTitleView(getTitle, style: Facade.of(context).styles.titleTextStyle);
 
   @override
   State<StatefulWidget> createState() => _TitleState();
@@ -70,7 +75,10 @@ class _TitleState extends State<StatedTitleView> implements lnc.Observer {
   }
 
   @override
-  Widget build(BuildContext context) => Text(_titleWithState(widget.getTitle()));
+  Widget build(BuildContext context) => Text(
+    _titleWithState(widget.getTitle()),
+    style: widget.style,
+  );
 
 }
 

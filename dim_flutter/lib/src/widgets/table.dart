@@ -56,20 +56,20 @@ class CupertinoTableCell extends StatelessWidget {
       children: [
         Container(
           padding: Styles.sectionItemPadding,
-          color: Styles.sectionItemBackground,
+          color: Facade.of(context).colors.sectionItemBackgroundColor,
           child: Row(
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
               _head(),
               Expanded(
-                child: _body(),
+                child: _body(context),
               ),
-              _additional(),
+              _additional(context),
               _tail(),
             ],
           ),
         ),
-        _divider(),
+        _divider(context),
       ],
     ),
   );
@@ -80,14 +80,14 @@ class CupertinoTableCell extends StatelessWidget {
     child: leading,
   );
 
-  Widget _body() => Column(
+  Widget _body(BuildContext context) => Column(
     mainAxisAlignment: MainAxisAlignment.center,
     crossAxisAlignment: CrossAxisAlignment.start,
     children: [
       DefaultTextStyle(
         maxLines: 1,
         softWrap: false,
-        style: Styles.sectionItemTitleTextStyle,
+        style: Facade.of(context).styles.sectionItemTitleTextStyle,
         child: title,
       ),
       if (subtitle != null)
@@ -96,17 +96,17 @@ class CupertinoTableCell extends StatelessWidget {
           child: DefaultTextStyle(
             maxLines: 1,
             softWrap: false,
-            style: Styles.sectionItemSubtitleTextStyle,
+            style: Facade.of(context).styles.sectionItemSubtitleTextStyle,
             child: subtitle!,
           ),
         ),
     ],
   );
 
-  Widget _additional() => Container(
+  Widget _additional(BuildContext context) => Container(
     padding: const EdgeInsets.fromLTRB(8, 8, 2, 8),
     child: DefaultTextStyle(
-      style: Styles.sectionItemAdditionalTextStyle,
+      style: Facade.of(context).styles.sectionItemAdditionalTextStyle,
       child: additionalInfo ?? Container(),
     ),
   );
@@ -116,11 +116,11 @@ class CupertinoTableCell extends StatelessWidget {
     child: trailing ?? Container(),
   );
 
-  Widget _divider() => Container(
-    color: Styles.sectionItemBackground,
+  Widget _divider(BuildContext context) => Container(
+    color: Facade.of(context).colors.sectionItemBackgroundColor,
     child: Container(
       margin: leading == null ? null : EdgeInsetsDirectional.only(start: leadingSize),
-      color: Styles.sectionItemDividerColor,
+      color: Facade.of(context).colors.sectionItemDividerColor,
       height: 1,
     ),
   );

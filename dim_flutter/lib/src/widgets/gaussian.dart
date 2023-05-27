@@ -60,15 +60,22 @@ class GaussianInfo extends StatelessWidget {
   Widget build(BuildContext context) => Column(
     children: [
       Center(child: Text(title,
-        style: const TextStyle(color: CupertinoColors.systemBlue),
+        style: const TextStyle(
+          fontSize: 18,
+          color: CupertinoColors.systemBlue,
+          decoration: TextDecoration.none,
+        ),
       )),
       Container(
-        width: width ?? 200,
-        padding: const EdgeInsets.all(8),
+        width: width ?? 256,
+        padding: const EdgeInsets.fromLTRB(8, 16, 8, 16),
         alignment: Alignment.topLeft,
         child: Text(message,
-          style: const TextStyle(fontSize: 12,
+          style: const TextStyle(
+            fontSize: 12,
+            fontWeight: FontWeight.normal,
             color: CupertinoColors.systemGrey,
+            decoration: TextDecoration.none,
           ),
         ),
       ),

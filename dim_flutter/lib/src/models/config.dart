@@ -41,6 +41,12 @@ class Config {
     return conf!;
   }
 
+  /// Default contacts
+  Future<List<ID>> get contacts async {
+    List? array = (await info)['contacts'];
+    return array == null ? [] : ID.convert(array);
+  }
+
   Future<List> get stations async => (await info)['stations'];
 
   // 'http://106.52.25.169:8081/{ID}/upload?md5={MD5}&salt={SALT}'

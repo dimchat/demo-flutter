@@ -1,6 +1,7 @@
 import 'dart:typed_data';
 
 import 'package:dim_client/dim_client.dart';
+import 'package:lnc/lnc.dart';
 
 import '../models/conversation.dart';
 import 'compatible.dart';
@@ -42,7 +43,14 @@ class SharedMessenger extends ClientMessenger {
 
   @override
   Future<ReliableMessage?> sendInstantMessage(InstantMessage iMsg, {int priority = 0}) async {
-    ReliableMessage? rMsg = await super.sendInstantMessage(iMsg, priority: priority);
+    ReliableMessage? rMsg;
+    try {
+      rMsg = await super.sendInstantMessage(iMsg, priority: priority);
+    } catch (e) {
+      Log.error('failed to send message to: ${iMsg.receiver}');
+      assert(false, '$e');
+      return null;
+    }
     if (rMsg != null) {
       // keep signature for checking traces
       iMsg['signature'] = rMsg.getString('signature');
@@ -52,7 +60,11 @@ class SharedMessenger extends ClientMessenger {
 
   @override
   Future<void> handshakeSuccess() async {
-    await super.handshakeSuccess();
+    try {
+      await super.handshakeSuccess();
+    } catch (e) {
+      Log.error('failed to broadcast document: $e');
+    }
     // // 1. broadcast current documents after handshake success
     // await broadcastDocument();
     // 2. broadcast login command with current station info

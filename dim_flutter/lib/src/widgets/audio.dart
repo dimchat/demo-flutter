@@ -1,6 +1,5 @@
 import 'dart:typed_data';
 
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
 import 'package:dim_client/dim_client.dart';
@@ -59,13 +58,13 @@ class _RecordState extends State<RecordButton> implements lnc.Observer {
 
   Offset _position = Offset.zero;
 
-  Color? get _color {
+  Color? _color(BuildContext context) {
     if (!_recording) {
-      return CupertinoColors.lightBackgroundGray;
-    } else if (_position.dy < 0.0) {
-      return Colors.grey.shade100;
+      return Facade.of(context).colors.recorderBackgroundColor;
+    } else if (_position.dy > 0.0) {
+      return Facade.of(context).colors.recordingBackgroundColor;
     } else {
-      return Colors.lightGreen.shade100;
+      return Facade.of(context).colors.cancelRecordingBackgroundColor;
     }
   }
   String get _text {
@@ -78,16 +77,24 @@ class _RecordState extends State<RecordButton> implements lnc.Observer {
     }
   }
 
+  Widget _button(BuildContext context) => Container(
+    decoration: BoxDecoration(
+      borderRadius: BorderRadius.circular(8),
+      color: _color(context),
+    ),
+    alignment: Alignment.center,
+    child: Text(_text, textAlign: TextAlign.center,
+      style: TextStyle(
+        color: Facade.of(context).colors.recorderTextColor,
+      ),
+    ),
+  );
+
   @override
   Widget build(BuildContext context) => SizedBox(
     height: 36,
-    // color: _color,
     child: GestureDetector(
-      child: Container(
-        color: _color,
-        alignment: Alignment.center,
-        child: Text(_text, textAlign: TextAlign.center),
-      ),
+      child: _button(context),
       onLongPressDown: (details) {
         Log.warning('tap down: ${details.localPosition}');
         setState(() {
@@ -133,14 +140,15 @@ class _RecordState extends State<RecordButton> implements lnc.Observer {
 
 /// AudioView
 class AudioContentView extends StatefulWidget {
-  AudioContentView(this.content, {this.color, super.key}) {
+  AudioContentView(this.content, {this.textColor, this.backgroundColor, super.key}) {
     // get file path
     Future.delayed(const Duration(milliseconds: 32))
         .then((value) => _reload());
   }
 
   final AudioContent content;
-  final Color? color;
+  final Color? backgroundColor;
+  final Color? textColor;
 
   final _AudioPlayInfo _info = _AudioPlayInfo();
 
@@ -239,7 +247,7 @@ class _AudioContentState extends State<AudioContentView> implements lnc.Observer
   @override
   Widget build(BuildContext context) => Container(
     width: 200,
-    color: widget.color,
+    color: widget.backgroundColor,
     padding: Styles.audioMessagePadding,
     child: GestureDetector(
       onTap: _togglePlay,
@@ -280,9 +288,9 @@ class _AudioContentState extends State<AudioContentView> implements lnc.Observer
 
   Widget _button() => widget._info.path == null
       ? Icon(Styles.waitAudioIcon, color: _color(), ) : widget._info.playing
-      ? const Icon(Styles.playingAudioIcon)
-      : const Icon(Styles.playAudioIcon);
+      ? Icon(Styles.playingAudioIcon, color: _color())
+      : Icon(Styles.playAudioIcon, color: _color());
 
-  Color _color() => widget._info.path == null ? Colors.grey : Colors.black;
+  Color? _color() => widget._info.path == null ? Colors.grey : widget.textColor;
 
 }

@@ -233,13 +233,13 @@ class _FacadeState extends State<_FacadeView> implements lnc.Observer {
 
   static Widget _avatarNotFound(ID identifier, {double? size}) {
     if (identifier.type == EntityType.kStation) {
-      return Icon(Styles.stationIcon, size: size);
+      return Icon(Styles.stationIcon, size: size, color: Styles.avatarColor);
     } else if (identifier.type == EntityType.kBot) {
-      return Icon(Styles.botIcon, size: size);
+      return Icon(Styles.botIcon, size: size, color: Styles.avatarColor);
     } else if (identifier.type == EntityType.kISP) {
-      return Icon(Styles.ispIcon, size: size);
+      return Icon(Styles.ispIcon, size: size, color: Styles.avatarColor);
     } else if (identifier.type == EntityType.kICP) {
-      return Icon(Styles.icpIcon, size: size);
+      return Icon(Styles.icpIcon, size: size, color: Styles.avatarColor);
     }
     if (identifier.isUser) {
       return Icon(Styles.userIcon, size: size, color: Styles.avatarDefaultColor);

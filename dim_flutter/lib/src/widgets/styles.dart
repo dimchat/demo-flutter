@@ -9,7 +9,7 @@ import 'package:lnc/lnc.dart' show Log;
 /// Colors
 abstract class ThemeColors {
 
-  Color get logoBackgroundColor => const Color(0xFF33C0F3);
+  Color get logoBackgroundColor => Styles.logoBackgroundColor;
 
   Color get scaffoldBackgroundColor;
   Color get appBardBackgroundColor;
@@ -37,6 +37,20 @@ abstract class ThemeColors {
   Color get tileColor;
   Color get tileBadgeColor;
   Color get tileOrderColor;
+
+  //
+  //  Audio Recorder
+  //
+  Color get recorderTextColor;
+  Color get recorderBackgroundColor;
+  Color get recordingBackgroundColor;
+  Color get cancelRecordingBackgroundColor;
+
+  //
+  //  Text Message
+  //
+  Color get textMessageColor;
+  Color get textMessageBackgroundColor;
 
 }
 
@@ -75,6 +89,9 @@ class _LightThemeColors extends ThemeColors {
   @override
   Color get tertiaryTextColor => CupertinoColors.systemGrey;
 
+  //
+  //  Mnemonic Codes
+  //
   @override
   Color get tileBackgroundColor => CupertinoColors.lightBackgroundGray;
 
@@ -89,6 +106,30 @@ class _LightThemeColors extends ThemeColors {
 
   @override
   Color get tileOrderColor => CupertinoColors.systemGrey;
+
+  //
+  //  Audio Recorder
+  //
+  @override
+  Color get recorderTextColor => CupertinoColors.black;
+
+  @override
+  Color get recorderBackgroundColor => CupertinoColors.extraLightBackgroundGray;
+
+  @override
+  Color get recordingBackgroundColor => Colors.green.shade100;
+
+  @override
+  Color get cancelRecordingBackgroundColor => Colors.yellow.shade100;
+
+  //
+  //  Text Message
+  //
+  @override
+  Color get textMessageBackgroundColor => CupertinoColors.white;
+
+  @override
+  Color get textMessageColor => CupertinoColors.black;
 
 }
 
@@ -110,13 +151,13 @@ class _DarkThemeColors extends ThemeColors {
   Color get commandBackgroundColor => CupertinoColors.systemFill;
 
   @override
-  Color get sectionHeaderBackgroundColor => Colors.black54;
+  Color get sectionHeaderBackgroundColor => CupertinoColors.systemFill;
 
   @override
   Color get sectionItemBackgroundColor => CupertinoColors.darkBackgroundGray;
 
   @override
-  Color get sectionItemDividerColor => CupertinoColors.systemFill;
+  Color get sectionItemDividerColor => CupertinoColors.secondarySystemFill;
 
   @override
   Color get primaryTextColor => CupertinoColors.white;
@@ -127,6 +168,9 @@ class _DarkThemeColors extends ThemeColors {
   @override
   Color get tertiaryTextColor => CupertinoColors.systemGrey;
 
+  //
+  //  Mnemonic Codes
+  //
   @override
   Color get tileBackgroundColor => CupertinoColors.systemFill;
 
@@ -141,6 +185,30 @@ class _DarkThemeColors extends ThemeColors {
 
   @override
   Color get tileOrderColor => CupertinoColors.systemGrey;
+
+  //
+  //  Audio Recorder
+  //
+  @override
+  Color get recorderTextColor => CupertinoColors.white;
+
+  @override
+  Color get recorderBackgroundColor => CupertinoColors.systemFill;
+
+  @override
+  Color get recordingBackgroundColor => CupertinoColors.systemGrey;
+
+  @override
+  Color get cancelRecordingBackgroundColor => CupertinoColors.darkBackgroundGray;
+
+  //
+  //  Text Message
+  //
+  @override
+  Color get textMessageBackgroundColor => CupertinoColors.systemFill;
+
+  @override
+  Color get textMessageColor => CupertinoColors.white;
 
 }
 
@@ -324,6 +392,7 @@ class Facade {
   Brightness get brightness {
     Brightness b = Theme.of(context).brightness;
     Log.warning('brightness: $b');
+    // TODO: test switch
     // b = Brightness.dark;
     return b;
   }
@@ -337,6 +406,8 @@ class Facade {
 }
 
 abstract class Styles {
+
+  static const Color logoBackgroundColor = Color(0xFF33C0F3);
 
   //
   //  Navigation
@@ -363,13 +434,14 @@ abstract class Styles {
 
   static const EdgeInsets messageContentMargin = EdgeInsets.fromLTRB(2, 8, 2, 8);
   static const Color messageIsMineBackgroundColor = CupertinoColors.systemGreen;
-  static const Color messageNotMineBackgroundColor = CupertinoColors.white;
+  // static const Color messageNotMineBackgroundColor = CupertinoColors.systemFill;
 
   static const EdgeInsets textMessagePadding = EdgeInsets.fromLTRB(16, 12, 16, 12);
   static const EdgeInsets audioMessagePadding = EdgeInsets.fromLTRB(16, 12, 16, 12);
 
   static const EdgeInsets commandPadding = EdgeInsets.fromLTRB(8, 4, 8, 4);
 
+  static const Color avatarColor = logoBackgroundColor;
   static const Color avatarDefaultColor = CupertinoColors.inactiveGray;
 
   //

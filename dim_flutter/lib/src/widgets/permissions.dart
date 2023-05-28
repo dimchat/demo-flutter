@@ -88,7 +88,13 @@ class _PermissionHandler {
       {required void Function(Permission permission) onDenied}) async {
     PermissionStatus status;
     for (Permission item in permissions) {
-      status = await item.request();
+      try {
+        status = await item.request();
+      } catch (e, st) {
+        Log.error('request permission error: $e, $st');
+        assert(false, 'failed to request permission: $item');
+        continue;
+      }
       if (status == PermissionStatus.granted) {
         // OK
         continue;

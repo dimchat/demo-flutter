@@ -18,10 +18,15 @@ abstract class ContentViewUtils {
 
   static User? currentUser;
 
-  static Color getBackgroundColor(ID sender) =>
+  static Color getBackgroundColor(BuildContext context, ID sender) =>
       sender == currentUser?.identifier
           ? Styles.messageIsMineBackgroundColor
-          : Styles.messageNotMineBackgroundColor;
+          : Facade.of(context).colors.textMessageBackgroundColor;
+
+  static Color getTextColor(BuildContext context, ID sender) =>
+      sender == currentUser?.identifier
+          ? CupertinoColors.black
+          : Facade.of(context).colors.textMessageColor;
 
   /// return null if it's not a command
   ///        empty string ('') for ignored command
@@ -69,19 +74,20 @@ abstract class ContentViewUtils {
     ),
   );
 
-  static Widget getTextContentView(Content content, ID sender) => Container(
-    color: getBackgroundColor(sender),
+  static Widget getTextContentView(BuildContext ctx, Content content, ID sender) => Container(
+    color: getBackgroundColor(ctx, sender),
     padding: Styles.textMessagePadding,
     child: SelectableText('${content["text"]}',
-      style: const TextStyle(color: CupertinoColors.black),
+      style: TextStyle(color: getTextColor(ctx, sender)),
     ),
   );
 
-  static Widget getAudioContentView(AudioContent content, ID sender) =>
-      AudioContentView(content, color: getBackgroundColor(sender));
+  static Widget getAudioContentView(BuildContext ctx, AudioContent content, ID sender) =>
+      AudioContentView(content, textColor: getTextColor(ctx, sender),
+          backgroundColor: getBackgroundColor(ctx, sender));
 
   // TODO:
-  static Widget getVideoContentView(VideoContent content, ID sender) =>
+  static Widget getVideoContentView(BuildContext ctx, VideoContent content, ID sender) =>
       Text('Movie[${content.filename}]: ${content.url}');
 
   static Widget getImageContentView(BuildContext ctx,

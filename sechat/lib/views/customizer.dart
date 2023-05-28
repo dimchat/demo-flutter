@@ -21,17 +21,19 @@ class SettingsPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return CupertinoPageScaffold(
-      backgroundColor: Styles.backgroundColor,
+      backgroundColor: Facade.of(context).colors.scaffoldBackgroundColor,
       // A ScrollView that creates custom scroll effects using slivers.
       child: CustomScrollView(
         // A list of sliver widgets.
         slivers: <Widget>[
-          const CupertinoSliverNavigationBar(
+          CupertinoSliverNavigationBar(
+            backgroundColor: Facade.of(context).colors.appBardBackgroundColor,
             // This title is visible in both collapsed and expanded states.
             // When the "middle" parameter is omitted, the widget provided
             // in the "largeTitle" parameter is used instead in the collapsed state.
-            largeTitle: Text('Settings'),
-            border: Styles.navigationBarBorder,
+            largeTitle: Text('Settings',
+              style: Facade.of(context).styles.titleTextStyle,
+            ),
           ),
           // This widget fills the remaining space in the viewport.
           // Drag the scrollable area to collapse the CupertinoSliverNavigationBar.

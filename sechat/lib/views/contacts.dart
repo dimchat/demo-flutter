@@ -97,11 +97,10 @@ class _ContactListState extends State<ContactListPage> implements lnc.Observer {
 
   @override
   Widget build(BuildContext context) => Scaffold(
-    backgroundColor: Styles.backgroundColor,
+    backgroundColor: Facade.of(context).colors.scaffoldBackgroundColor,
     appBar: CupertinoNavigationBar(
-      backgroundColor: Styles.navigationBarBackground,
-      border: Styles.navigationBarBorder,
-      middle: StatedTitleView(() => 'Contacts'),
+      backgroundColor: Facade.of(context).colors.appBardBackgroundColor,
+      middle: StatedTitleView.from(context, () => 'Contacts'),
       trailing: SearchPage.searchButton(context),
     ),
     body: SectionListView.builder(
@@ -134,10 +133,10 @@ class _ContactListAdapter with SectionAdapterMixin {
     // }
     String title = _dataSource.getSection(section);// - 1);
     return Container(
-      color: Styles.sectionHeaderBackground,
+      color: Facade.of(context).colors.sectionHeaderBackgroundColor,
       padding: Styles.sectionHeaderPadding,
       child: Text(title,
-        style: Styles.sectionHeaderTextStyle,
+        style: Facade.of(context).styles.sectionHeaderTextStyle,
       ),
     );
   }

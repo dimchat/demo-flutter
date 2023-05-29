@@ -1,4 +1,5 @@
 import 'package:flutter/cupertino.dart';
+import 'package:flutter/material.dart';
 
 import 'package:dim_flutter/dim_flutter.dart';
 import 'package:lnc/lnc.dart' as lnc;
@@ -11,28 +12,28 @@ import 'network.dart';
 class SettingsPage extends StatelessWidget {
   const SettingsPage({super.key});
 
-  static BottomNavigationBarItem barItem() {
-    return const BottomNavigationBarItem(
-      icon: Icon(Styles.settingsTabIcon),
-      label: 'Settings',
-    );
-  }
+  static BottomNavigationBarItem barItem() => const BottomNavigationBarItem(
+    icon: Icon(Styles.settingsTabIcon),
+    label: 'Settings',
+  );
 
   @override
   Widget build(BuildContext context) {
-    return CupertinoPageScaffold(
-      backgroundColor: Facade.of(context).colors.scaffoldBackgroundColor,
+    var colors = Facade.of(context).colors;
+    var styles = Facade.of(context).styles;
+    return Scaffold(
+      backgroundColor: colors.scaffoldBackgroundColor,
       // A ScrollView that creates custom scroll effects using slivers.
-      child: CustomScrollView(
+      body: CustomScrollView(
         // A list of sliver widgets.
         slivers: <Widget>[
           CupertinoSliverNavigationBar(
-            backgroundColor: Facade.of(context).colors.appBardBackgroundColor,
+            backgroundColor: colors.appBardBackgroundColor,
             // This title is visible in both collapsed and expanded states.
             // When the "middle" parameter is omitted, the widget provided
             // in the "largeTitle" parameter is used instead in the collapsed state.
             largeTitle: Text('Settings',
-              style: Facade.of(context).styles.titleTextStyle,
+              style: styles.titleTextStyle,
             ),
           ),
           // This widget fills the remaining space in the viewport.
@@ -40,35 +41,12 @@ class SettingsPage extends StatelessWidget {
           SliverFillRemaining(
             hasScrollBody: false,
             fillOverscroll: true,
-            child: Column(
-              // mainAxisSize: MainAxisSize.min,
-              children: [
-                CupertinoListSection(
-                  topMargin: 0,
-                  additionalDividerMargin: 32,
-                  children: [
-                    _myAccount(context),
-                    _exportAccount(context),
-                  ],
-                ),
-                CupertinoListSection(
-                  topMargin: 0,
-                  additionalDividerMargin: 32,
-                  children: [
-                    _network(context),
-                  ],
-                ),
-                CupertinoListSection(
-                  topMargin: 0,
-                  additionalDividerMargin: 32,
-                  children: [
-                    _whitePaper(context),
-                    _source(context),
-                    _term(context),
-                    _about(context),
-                  ],
-                ),
-              ],
+            child: _table(context,
+              backgroundColor: colors.sectionItemBackgroundColor,
+              backgroundColorActivated: colors.sectionItemDividerColor,
+              dividerColor: colors.sectionItemDividerColor,
+              primaryTextColor: colors.primaryTextColor,
+              secondaryTextColor: colors.tertiaryTextColor,
             ),
           ),
         ],
@@ -76,82 +54,145 @@ class SettingsPage extends StatelessWidget {
     );
   }
 
-  Widget _myAccount(BuildContext context) => _MyAccountSection();
-
-  Widget _exportAccount(BuildContext context) => CupertinoListTile(
-    padding: Styles.settingsSectionItemPadding,
-    leading: const Icon(Styles.exportAccountIcon),
-    title: const Text('Export'),
-    additionalInfo: const Text('Mnemonic'),
-    trailing: const CupertinoListTileChevron(),
-    onTap: () => showCupertinoDialog(
-      context: context,
-      builder: (context) => const ExportPage(),
-    ),
+  Widget _table(BuildContext context,
+      {required Color backgroundColor, required Color backgroundColorActivated, required Color dividerColor,
+        required Color primaryTextColor, required Color secondaryTextColor}) => Column(
+    // mainAxisSize: MainAxisSize.min,
+    children: [
+      CupertinoListSection(
+        backgroundColor: dividerColor,
+        topMargin: 0,
+        additionalDividerMargin: 32,
+        children: [
+          /// Edit Profile
+          _MyAccountSection(
+            backgroundColor: backgroundColor,
+            backgroundColorActivated: backgroundColorActivated,
+            primaryTextColor: primaryTextColor,
+            secondaryTextColor: secondaryTextColor,
+          ),
+          /// Export Private Key
+          _listTile(
+            leading: Styles.exportAccountIcon, title: 'Export',
+            additional: 'Mnemonic',
+            backgroundColor: backgroundColor,
+            backgroundColorActivated: backgroundColorActivated,
+            primaryTextColor: primaryTextColor,
+            secondaryTextColor: secondaryTextColor,
+            onTap: () => showCupertinoDialog(
+              context: context,
+              builder: (context) => const ExportPage(),
+            ),
+          ),
+        ],
+      ),
+      CupertinoListSection(
+        backgroundColor: dividerColor,
+        topMargin: 0,
+        additionalDividerMargin: 32,
+        children: [
+          /// Relay Stations
+          _listTile(
+            leading: Styles.setNetworkIcon, title: 'Network',
+            additional: 'Relay Stations',
+            backgroundColor: backgroundColor,
+            backgroundColorActivated: backgroundColorActivated,
+            primaryTextColor: primaryTextColor,
+            secondaryTextColor: secondaryTextColor,
+            onTap: () => showCupertinoDialog(
+              context: context,
+              builder: (context) => const NetworkSettingPage(),
+            ),
+          ),
+        ],
+      ),
+      CupertinoListSection(
+        backgroundColor: dividerColor,
+        topMargin: 0,
+        additionalDividerMargin: 32,
+        children: [
+          /// White Page
+          _listTile(
+            leading: Styles.setWhitePaperIcon, title: 'White Paper',
+            additional: 'zh-CN',
+            backgroundColor: backgroundColor,
+            backgroundColorActivated: backgroundColorActivated,
+            primaryTextColor: primaryTextColor,
+            secondaryTextColor: secondaryTextColor,
+            onTap: () => Browser.open(context,
+              url: 'https://github.com/moky/DIMP/blob/master/zh-CN/TechnicalWhitePaper.md',
+              title: 'Technical White Paper (zh-CN)',
+            ),
+          ),
+          /// Source Codes
+          _listTile(
+            leading: Styles.setOpenSourceIcon, title: 'Source',
+            additional: 'github.com/dimchat',
+            backgroundColor: backgroundColor,
+            backgroundColorActivated: backgroundColorActivated,
+            primaryTextColor: primaryTextColor,
+            secondaryTextColor: secondaryTextColor,
+            onTap: () => Config().termsURL.then((url) => Browser.open(context,
+              url: 'https://github.com/dimgame/tarsier', title: 'Open Source',
+            )),
+          ),
+          /// Privacy Policy
+          _listTile(
+            leading: Styles.setTermsIcon, title: 'Terms',
+            additional: 'Privacy Policy',
+            backgroundColor: backgroundColor,
+            backgroundColorActivated: backgroundColorActivated,
+            primaryTextColor: primaryTextColor,
+            secondaryTextColor: secondaryTextColor,
+            onTap: () => Config().termsURL.then((url) => Browser.open(context,
+              url: url, title: 'Privacy Policy',
+            )),
+          ),
+          /// About Tarsier
+          _listTile(
+            leading: Styles.setAboutIcon, title: 'About',
+            additional: 'DIM',
+            backgroundColor: backgroundColor,
+            backgroundColorActivated: backgroundColorActivated,
+            primaryTextColor: primaryTextColor,
+            secondaryTextColor: secondaryTextColor,
+            onTap: () => Config().aboutURL.then((url) => Browser.open(context,
+              url: url,
+              title: 'Decentralized Instant Messaging',
+            )),
+          ),
+        ],
+      ),
+    ],
   );
 
-  Widget _network(BuildContext context) => CupertinoListTile(
-    padding: Styles.settingsSectionItemPadding,
-    leading: const Icon(Styles.setNetworkIcon),
-    title: const Text('Network'),
-    additionalInfo: const Text('Relay Stations'),
-    trailing: const CupertinoListTileChevron(),
-    onTap: () => showCupertinoDialog(
-      context: context,
-      builder: (context) => const NetworkSettingPage(),
-    ),
-  );
-
-  Widget _whitePaper(BuildContext context) => CupertinoListTile(
-    padding: Styles.settingsSectionItemPadding,
-    leading: const Icon(Styles.setWhitePaperIcon),
-    title: const Text('White Paper'),
-    additionalInfo: const Text('zh-CN'),
-    trailing: const CupertinoListTileChevron(),
-    onTap: () => Config().termsURL.then((url) => Browser.open(context,
-      url: 'https://github.com/moky/DIMP/blob/master/zh-CN/TechnicalWhitePaper.md',
-      title: 'Technical White Paper (zh-CN)',
-    )),
-  );
-
-  Widget _source(BuildContext context) => CupertinoListTile(
-    padding: Styles.settingsSectionItemPadding,
-    leading: const Icon(Styles.setOpenSourceIcon),
-    title: const Text('Source'),
-    additionalInfo: const Text('github.com/dimchat'),
-    trailing: const CupertinoListTileChevron(),
-    onTap: () => Config().termsURL.then((url) => Browser.open(context,
-      url: 'https://github.com/dimchat/demo-flutter',
-      title: 'Open Source',
-    )),
-  );
-
-  Widget _term(BuildContext context) => CupertinoListTile(
-    padding: Styles.settingsSectionItemPadding,
-    leading: const Icon(Styles.setTermsIcon),
-    title: const Text('Terms'),
-    additionalInfo: const Text('Privacy Policy'),
-    trailing: const CupertinoListTileChevron(),
-    onTap: () => Config().termsURL.then((url) => Browser.open(context,
-      url: url,
-      title: 'Privacy Policy',
-    )),
-  );
-
-  Widget _about(BuildContext context) => CupertinoListTile(
-    padding: Styles.settingsSectionItemPadding,
-    leading: const Icon(Styles.setAboutIcon),
-    title: const Text('About'),
-    additionalInfo: const Text('DIM'),
-    trailing: const CupertinoListTileChevron(),
-    onTap: () => Config().aboutURL.then((url) => Browser.open(context,
-      url: url,
-      title: 'Decentralized Instant Messaging',
-    )),
-  );
 }
 
+Widget _listTile({required IconData leading,
+  required String title, required String additional, bool trailing = true,
+  required Color backgroundColor, required Color backgroundColorActivated,
+  required Color primaryTextColor, required Color secondaryTextColor,
+  required VoidCallback onTap}) =>
+    CupertinoListTile(
+      backgroundColor: backgroundColor,
+      backgroundColorActivated: backgroundColorActivated,
+      padding: Styles.settingsSectionItemPadding,
+      leading: Icon(leading, color: primaryTextColor),
+      title: Text(title, style: TextStyle(color: primaryTextColor)),
+      additionalInfo: Text(additional, style: TextStyle(color: secondaryTextColor)),
+      trailing: trailing ? const CupertinoListTileChevron() : null,
+      onTap: onTap,
+    );
+
 class _MyAccountSection extends StatefulWidget {
+  const _MyAccountSection({
+    required this.backgroundColor, required this.backgroundColorActivated,
+    required this.primaryTextColor, required this.secondaryTextColor});
+
+  final Color backgroundColor;
+  final Color backgroundColorActivated;
+  final Color primaryTextColor;
+  final Color secondaryTextColor;
 
   @override
   State<StatefulWidget> createState() => _MyAccountState();
@@ -214,11 +255,17 @@ class _MyAccountState extends State<_MyAccountSection> implements lnc.Observer {
 
   @override
   Widget build(BuildContext context) => CupertinoListTile(
+    backgroundColor: widget.backgroundColor,
+    backgroundColorActivated: widget.backgroundColorActivated,
     padding: const EdgeInsets.all(16),
     leadingSize: 64,
     leading: _info?.getImage(width: 64, height: 64),
-    title: Text('${_info?.name}'),
-    subtitle: Text('${_info?.identifier}'),
+    title: Text('${_info?.name}', style: TextStyle(
+      color: widget.primaryTextColor,
+    )),
+    subtitle: Text('${_info?.identifier}', style: TextStyle(
+      color: widget.secondaryTextColor,
+    )),
     trailing: const CupertinoListTileChevron(),
     onTap: () => AccountPage.open(context),
   );

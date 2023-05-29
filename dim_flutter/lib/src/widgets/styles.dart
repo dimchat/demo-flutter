@@ -4,7 +4,6 @@
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:lnc/lnc.dart' show Log;
 
 /// Colors
 abstract class ThemeColors {
@@ -157,7 +156,7 @@ class _DarkThemeColors extends ThemeColors {
   Color get sectionItemBackgroundColor => CupertinoColors.darkBackgroundGray;
 
   @override
-  Color get sectionItemDividerColor => CupertinoColors.secondarySystemFill;
+  Color get sectionItemDividerColor => const Color(0xFF222222);
 
   @override
   Color get primaryTextColor => CupertinoColors.white;
@@ -389,13 +388,7 @@ class Facade {
 
   static Facade of(BuildContext ctx) => Facade(ctx);
 
-  Brightness get brightness {
-    Brightness b = Theme.of(context).brightness;
-    Log.warning('brightness: $b');
-    // TODO: test switch
-    // b = Brightness.dark;
-    return b;
-  }
+  Brightness get brightness => Theme.of(context).brightness;
 
   ThemeColors get colors =>
       brightness == Brightness.dark ? _DarkThemeColors() : _LightThemeColors();

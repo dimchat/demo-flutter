@@ -59,6 +59,38 @@ class SharedMessenger extends ClientMessenger {
   }
 
   @override
+  Future<void> handshake(String? sessionKey) async {
+    if (sessionKey == null) {
+      // first handshake, update visa document first
+      User? user = await facebook.currentUser;
+      if (user == null) {
+        assert(false, 'current user not found');
+        return;
+      }
+      SignKey? sKey = await facebook.getPrivateKeyForVisaSignature(user.identifier);
+      if (sKey == null) {
+        assert(false, 'private key not found: $user');
+        return;
+      }
+      Visa? doc = await user.visa;
+      if (doc == null) {
+        // FIXME: query from station?
+        assert(false, 'user error: $user');
+      } else {
+        // touch visa to update time
+        var app = doc.getProperty('app');
+        app ??= 'chat.dim.sechat';
+        doc.setProperty('app', app);
+        Uint8List? sig = doc.sign(sKey);
+        assert(sig != null, 'failed to sign visa: $doc');
+        bool ok = await facebook.saveDocument(doc);
+        assert(ok, 'failed to save document: $doc');
+      }
+    }
+    await super.handshake(sessionKey);
+  }
+
+  @override
   Future<void> handshakeSuccess() async {
     try {
       await super.handshakeSuccess();

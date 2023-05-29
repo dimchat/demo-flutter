@@ -97,7 +97,7 @@ class _RegisterState extends State<RegisterPage> {
                 if (!widget._info.importing)
                 SizedBox(
                   width: 320,
-                  height: 256,
+                  height: 288,
                   child: _welcome(),
                 ),
                 const SizedBox(

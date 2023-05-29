@@ -105,10 +105,10 @@ class _ProfileState extends State<ProfilePage> implements lnc.Observer {
   }
 
   @override
-  Widget build(BuildContext context) => CupertinoPageScaffold(
+  Widget build(BuildContext context) => Scaffold(
     backgroundColor: Facade.of(context).colors.scaffoldBackgroundColor,
     // A ScrollView that creates custom scroll effects using slivers.
-    child: CustomScrollView(
+    body: CustomScrollView(
       // A list of sliver widgets.
       slivers: <Widget>[
         CupertinoSliverNavigationBar(

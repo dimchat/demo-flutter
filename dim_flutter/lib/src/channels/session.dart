@@ -29,6 +29,12 @@ class SessionChannel extends MethodChannel {
       Uint8List payload = arguments['payload'];
       String remote = arguments['remote'];
       _onReceived(payload, remote);
+    } else if (method == ChannelMethods.onEnterBackground) {
+      // onEnterBackground
+      _onEnterBackground();
+    } else if (method == ChannelMethods.onEnterForeground) {
+      // onEnterForeground
+      _onEnterForeground();
     } else if (method == ChannelMethods.sendContent) {
       // sendContent
       Content? content = Content.parse(arguments['content']);
@@ -82,6 +88,18 @@ class SessionChannel extends MethodChannel {
         messenger.session.sendResponse(res, ship, remote: remoteAddress);
       }
     });
+  }
+
+  void _onEnterBackground() {
+    GlobalVariable shared = GlobalVariable();
+    Client client = shared.terminal;
+    client.enterBackground();
+  }
+
+  void _onEnterForeground() {
+    GlobalVariable shared = GlobalVariable();
+    Client client = shared.terminal;
+    client.enterForeground();
   }
 
   void _sendCommand(Command content, {ID? sender, ID? receiver, int priority = 0}) {

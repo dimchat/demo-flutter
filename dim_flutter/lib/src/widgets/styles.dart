@@ -473,11 +473,12 @@ abstract class Styles {
   static const IconData  msgReceivedIcon = Icons.done_all;
   static const IconData       msgExpired = CupertinoIcons.refresh;
 
-  // Contacts
+  // Search
   static const IconData searchIcon = CupertinoIcons.search;
 
-  // Search
+  // Contacts
   static const IconData newFriendsIcon = CupertinoIcons.person_add;
+  static const IconData  blockListIcon = CupertinoIcons.person_crop_square_fill;
   static const IconData groupChatsIcon = CupertinoIcons.person_2;
 
   // Settings

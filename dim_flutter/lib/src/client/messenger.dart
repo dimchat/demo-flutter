@@ -42,6 +42,29 @@ class SharedMessenger extends ClientMessenger {
   }
 
   @override
+  Future<Pair<InstantMessage, ReliableMessage?>> sendContent(Content content,
+      {required ID? sender, required ID receiver, int priority = 0}) async {
+    if (receiver.isBroadcast) {
+      // check whether need to wrap this message
+      if (receiver.isUser && receiver != Station.kAny) {
+        String? name = receiver.name;
+        ID? aid;
+        if (name != null) {
+          aid = ClientFacebook.ans?.identifier(name);
+        }
+        if (aid == null) {
+          Log.info('broadcast message with receiver: $receiver');
+          // TODO: wrap it by ForwardContent
+        } else {
+          Log.info('convert receiver: $receiver => $aid');
+          receiver = aid;
+        }
+      }
+    }
+    return super.sendContent(content, sender: sender, receiver: receiver, priority: priority);
+  }
+
+  @override
   Future<ReliableMessage?> sendInstantMessage(InstantMessage iMsg, {int priority = 0}) async {
     ReliableMessage? rMsg;
     try {
@@ -79,7 +102,7 @@ class SharedMessenger extends ClientMessenger {
       } else {
         // touch visa to update time
         var app = doc.getProperty('app');
-        app ??= 'chat.dim.sechat';
+        app ??= 'chat.dim.tarsier';
         doc.setProperty('app', app);
         Uint8List? sig = doc.sign(sKey);
         assert(sig != null, 'failed to sign visa: $doc');

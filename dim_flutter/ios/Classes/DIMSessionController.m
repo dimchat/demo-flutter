@@ -201,10 +201,11 @@ OKSingletonImplementations(DIMPushNotificationController, sharedInstance)
         // development
         [content setObject:@(YES) forKey:@"sandbox"];
     }
-    NSLog(@"APNs report command: %@", content);
+    id<MKMID> receiver = MKMIDParse(@"apns@anywhere");
+    NSLog(@"APNs report command: %@ => %@", content, receiver);
     DIMChannelManager *man = [DIMChannelManager sharedInstance];
     DIMSessionChannel *channel = [man sessionChannel];
-    [channel sendCommand:content];
+    [channel sendCommand:content receiver:receiver];
     _sent = YES;
 }
 
@@ -248,6 +249,22 @@ OKSingletonImplementations(DIMPushNotificationController, sharedInstance)
     [center removeAllDeliveredNotifications];
     application.applicationIconBadgeNumber = -1;
     NSLog(@"APNs: notifications cleared");
+    
+    DIMChannelManager *man = [DIMChannelManager sharedInstance];
+    DIMSessionChannel *channel = [man sessionChannel];
+    [channel onEnterForeground];
+}
+
+- (void)applicationWillResignActive:(UIApplication *)application {
+    UNUserNotificationCenter *center;
+    center = [UNUserNotificationCenter currentNotificationCenter];
+    [center removeAllDeliveredNotifications];
+    application.applicationIconBadgeNumber = -1;
+    NSLog(@"APNs: notifications cleared");
+    
+    DIMChannelManager *man = [DIMChannelManager sharedInstance];
+    DIMSessionChannel *channel = [man sessionChannel];
+    [channel onEnterBackground];
 }
 
 #pragma mark UNUserNotificationCenterDelegate

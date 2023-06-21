@@ -41,6 +41,9 @@ NS_ASSUME_NONNULL_BEGIN
 #define kChannelMethod_OnStateChanged             @"onStateChanged"
 #define kChannelMethod_OnReceived                 @"onReceived"
 
+#define kChannelMethod_OnEnterBackground          @"onEnterBackground"
+#define kChannelMethod_OnEnterForeground          @"onEnterForeground"
+
 #define kChannelMethod_SendContent                @"sendContent"
 #define kChannelMethod_SendCommand                @"sendCommand"
 

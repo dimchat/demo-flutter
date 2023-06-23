@@ -5,3 +5,4 @@ export 'models/contact.dart';
 export 'models/conversation.dart';
 export 'models/message.dart';
 export 'models/station.dart';
+export 'models/shield.dart';

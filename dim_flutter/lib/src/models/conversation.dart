@@ -6,7 +6,9 @@ import '../client/constants.dart';
 import '../client/facebook.dart';
 import '../client/messenger.dart';
 import '../client/shared.dart';
+
 import 'contact.dart';
+import 'shield.dart';
 import 'message.dart';
 
 
@@ -142,47 +144,57 @@ class Amanuensis implements lnc.Observer {
   ///  Conversations
   ///
 
-  Future<bool> isBlocked(ID chat) async {
-    // TODO: get block-list from database
-    return chat.type == EntityType.kStation;
+  List<Conversation>? _conversations;
+  final Map<ID, Conversation> _conversationMap = WeakValueMap();
+
+  List<Conversation> get conversations {
+    List<Conversation>? all = _conversations;
+    if (all == null) {
+      return [];
+    }
+    List<Conversation> array = [];
+    for (Conversation chat in all) {
+      if (chat.isBlocked) {
+      } else if (chat.isFriend) {
+        array.add(chat);
+      }
+    }
+    return array;
   }
 
-  List<Conversation>? _allConversations;
-  final Map<ID, Conversation> _conversationMap = {};
+  List<Conversation> get strangers {
+    List<Conversation>? all = _conversations;
+    if (all == null) {
+      return [];
+    }
+    List<Conversation> array = [];
+    for (Conversation chat in all) {
+      if (chat.isBlocked) {
+      } else if (chat.isFriend) {
+      } else {
+        array.add(chat);
+      }
+    }
+    return array;
+  }
 
   Future<List<Conversation>> loadConversations() async {
-    List<Conversation>? array;
-    // get ID list from database
-    array = _allConversations;
-    if (array != null) {
-      Log.warning('${array.length} conversation(s) exists');
-      return array;
-    }
-    GlobalVariable shared = GlobalVariable();
-    // get ID list from database
-    array = await shared.database.getConversations();
-    Log.debug('${array.length} conversation(s) loaded');
-    if (array.isNotEmpty) {
-      // hide blocked list
-      List<Conversation> blockList = [];
-      for (var item in array) {
-        if (await isBlocked(item.identifier)) {
-          blockList.add(item);
-        }
+    List<Conversation>? array = _conversations;
+    if (array == null) {
+      GlobalVariable shared = GlobalVariable();
+      // get ID list from database
+      array = await shared.database.getConversations();
+      Log.debug('${array.length} conversation(s) loaded');
+      // build conversations
+      for (Conversation item in array) {
+        await item.reloadData();
+        // TODO: get last message & unread count
+        Log.debug('new conversation created: $item');
+        _conversationMap[item.identifier] = item;
       }
-      for (var item in blockList) {
-        array.remove(item);
-      }
+      Log.warning('${array.length} conversation(s) loaded');
+      _conversations = array;
     }
-    // build conversations
-    for (Conversation item in array) {
-      await item.reloadData();
-      // TODO: get last message & unread count
-      Log.debug('new conversation created: $item');
-      _conversationMap[item.identifier] = item;
-    }
-    _allConversations = array;
-    Log.warning('${array.length} conversation(s) loaded');
     return array;
   }
 
@@ -225,27 +237,12 @@ class Amanuensis implements lnc.Observer {
     // 3. remove from cache
     Conversation? chat = _conversationMap[identifier];
     if (chat != null) {
-      _allConversations?.remove(chat);
+      _conversations?.remove(chat);
       _conversationMap.remove(identifier);
     }
     // OK
     Log.warning('conversation cleared: $identifier');
     return true;
-  }
-
-  int get numberOfConversation {
-    List<Conversation>? array = _allConversations;
-    return array == null ? 0 : array.length;
-  }
-
-  Conversation conversationAtIndex(int index) {
-    List<Conversation>? array = _allConversations;
-    if (array == null) {
-      throw Exception('call loadConversations() first');
-    } else if (index < 0 || index >= array.length) {
-      throw Exception('out of range: $index, count: ${array.length}');
-    }
-    return array[index];
   }
 
   /// get conversation ID for message envelope
@@ -296,7 +293,8 @@ class Amanuensis implements lnc.Observer {
   }
 
   Future<void> _update(ID cid, InstantMessage iMsg) async {
-    if (await isBlocked(cid)) {
+    Shield shield = Shield();
+    if (await shield.isBlocked(cid)) {
       Log.warning('blocked: $cid');
       return;
     }
@@ -323,7 +321,7 @@ class Amanuensis implements lnc.Observer {
         await chatBox.reloadData();
         // add to cache
         _conversationMap[cid] = chatBox;
-        // _allConversations?.insert(0, chatBox);
+        // _conversations?.insert(0, chatBox);
       } else {
         Log.error('failed to add conversation: $chatBox');
         return;

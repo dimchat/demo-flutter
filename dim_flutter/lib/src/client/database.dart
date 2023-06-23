@@ -3,6 +3,7 @@ import 'package:lnc/lnc.dart';
 
 import '../models/conversation.dart';
 import '../sqlite/contact.dart';
+import '../sqlite/blocked.dart';
 import '../sqlite/conversation.dart';
 import '../sqlite/document.dart';
 import '../sqlite/group.dart';
@@ -18,7 +19,7 @@ import '../sqlite/user.dart';
 
 class SharedDatabase implements AccountDBI, SessionDBI, MessageDBI,
                                 ConversationDBI, InstantMessageDBI, TraceDBI,
-                                SpeedDBI {
+                                BlockedDBI, SpeedDBI {
 
   /// Account
   PrivateKeyDBI privateKeyTable = PrivateKeyCache();
@@ -26,6 +27,7 @@ class SharedDatabase implements AccountDBI, SessionDBI, MessageDBI,
   DocumentDBI documentTable = DocumentCache();
   UserDBI userTable = UserCache();
   ContactDBI contactTable = ContactCache();
+  BlockedDBI blockedTable = BlockedCache();
   GroupDBI groupTable = GroupCache();
 
   /// Session
@@ -131,6 +133,26 @@ class SharedDatabase implements AccountDBI, SessionDBI, MessageDBI,
   @override
   Future<bool> removeContact(ID contact, {required ID user}) async =>
       await contactTable.removeContact(contact, user: user);
+
+  //
+  //  Blocked Table
+  //
+
+  @override
+  Future<List<ID>> getBlockList({required ID user}) async =>
+      await blockedTable.getBlockList(user: user);
+
+  @override
+  Future<bool> saveBlockList(List<ID> contacts, {required ID user}) async =>
+      await blockedTable.saveBlockList(contacts, user: user);
+
+  @override
+  Future<bool> addBlocked(ID contact, {required ID user}) async =>
+      await blockedTable.addBlocked(contact, user: user);
+
+  @override
+  Future<bool> removeBlocked(ID contact, {required ID user}) async =>
+      await blockedTable.removeBlocked(contact, user: user);
 
   //
   //  Group Table

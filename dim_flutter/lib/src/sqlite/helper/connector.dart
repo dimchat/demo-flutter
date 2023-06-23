@@ -68,12 +68,11 @@ class DatabaseConnector {
     throw Exception('external database: $name in $dir');
   }
 
-  Future<Database> _open(String path) async {
-    return await openDatabase(path, version: version,
-        onConfigure: onConfigure,
-        onCreate: onCreate, onUpgrade: onUpgrade, onDowngrade: onDowngrade,
-        onOpen: onOpen);
-  }
+  Future<Database> _open(String path) async =>
+      await openDatabase(path, version: version,
+          onConfigure: onConfigure,
+          onCreate: onCreate, onUpgrade: onUpgrade, onDowngrade: onDowngrade,
+          onOpen: onOpen);
 
   Future<DBConnection?> get connection async {
     DBConnection? conn = _connection;
@@ -107,7 +106,7 @@ class DatabaseConnector {
   static void createIndex(Database db, String table,
       {required String name, required List<String> fields}) {
     String keys = fields.join(',');
-    String sql = 'CREATE INDEX $name ON $table ($keys)';
+    String sql = 'CREATE INDEX IF NOT EXISTS $name ON $table ($keys)';
     DBLogger.output('createIndex: $sql');
     db.execute(sql);
   }
@@ -141,9 +140,7 @@ class _Connection extends DBConnection {
   }
 
   @override
-  Statement createStatement() {
-    return _Statement(database);
-  }
+  Statement createStatement() => _Statement(database);
 }
 
 class _Statement extends Statement {

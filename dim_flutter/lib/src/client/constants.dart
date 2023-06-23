@@ -17,6 +17,7 @@ abstract class NotificationNames {
 
   static const String kLocalUsersUpdated = 'LocalUsersUpdated';
   static const String kContactsUpdated = 'ContactsUpdated';
+  static const String kBlockListUpdated = 'BlockListUpdated';
 
   static const String kLoginCommandUpdated = 'LoginCommandUpdated';
 

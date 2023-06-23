@@ -8,12 +8,16 @@ import '../client/constants.dart';
 import '../client/shared.dart';
 import '../network/image_view.dart';
 import '../widgets/alert.dart';
+
 import 'conversation.dart';
+import 'shield.dart';
 
 class ContactInfo implements lnc.Observer {
-  ContactInfo(this.identifier) : _name = identifier.name {
+  ContactInfo(this.identifier) {
     var nc = lnc.NotificationCenter();
     nc.addObserver(this, NotificationNames.kDocumentUpdated);
+    nc.addObserver(this, NotificationNames.kContactsUpdated);
+    nc.addObserver(this, NotificationNames.kBlockListUpdated);
   }
 
   @override
@@ -27,6 +31,24 @@ class ContactInfo implements lnc.Observer {
         Log.info('document updated: $did');
         await reloadData();
       }
+    } else if (name == NotificationNames.kContactsUpdated) {
+      ID? contact = userInfo?['contact'];
+      Log.info('contact updated: $contact');
+      if (contact == identifier) {
+        await reloadData();
+      }
+    } else if (name == NotificationNames.kBlockListUpdated) {
+      ID? contact = userInfo?['blocked'];
+      contact ??= userInfo?['unblocked'];
+      Log.info('blocked contact updated: $contact');
+      if (contact != null) {
+        if (contact == identifier) {
+          await reloadData();
+        }
+      } else {
+        // block-list updated
+        await reloadData();
+      }
     } else {
       Log.error('notification error: $notification');
     }
@@ -35,10 +57,16 @@ class ContactInfo implements lnc.Observer {
   final ID identifier;
   String? _name;
 
+  bool _friend = false;
+  bool _blocked = false;
+
   int get type => identifier.type;
 
   bool get isUser  => identifier.isUser;
   bool get isGroup => identifier.isGroup;
+
+  bool get isFriend => _friend;
+  bool get isBlocked => _blocked;
 
   String get name {
     String? nickname = _name;
@@ -63,7 +91,21 @@ class ContactInfo implements lnc.Observer {
 
   Future<void> reloadData() async {
     GlobalVariable shared = GlobalVariable();
+    // get name
     _name = await shared.facebook.getName(identifier);
+    // get friendship
+    User? user = await shared.facebook.currentUser;
+    if (user == null) {
+      Log.error('current user not found');
+      _friend = false;
+    } else {
+      List<ID> contacts = await shared.facebook.getContacts(user.identifier);
+      _friend = contacts.contains(identifier);
+    }
+    // get block status
+    Shield shield = Shield();
+    _blocked = await shield.isBlocked(identifier);
+    Log.info('contact: $identifier, friend: $_friend, blocked: $_blocked');
   }
 
   void addToUser(User user, {required BuildContext context}) {
@@ -102,6 +144,25 @@ class ContactInfo implements lnc.Observer {
         Alert.confirm(context, 'Confirm', msg,
           okAction: () => _doRemove(context, identifier, user.identifier),
         );
+      }
+    });
+  }
+
+  void block({required BuildContext context}) {
+    Shield shield = Shield();
+    shield.addBlocked(identifier).then((ok) {
+      if (ok) {
+        Alert.show(context, 'Blocked',
+            'You will never receive message from this contact again.');
+      }
+    });
+  }
+  void unblock({required BuildContext context}) {
+    Shield shield = Shield();
+    shield.removeBlocked(identifier).then((ok) {
+      if (ok) {
+        Alert.show(context, 'Unblocked',
+            'You can receive message from this contact now.');
       }
     });
   }

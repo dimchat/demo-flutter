@@ -47,6 +47,8 @@ class EntityDatabase extends DatabaseConnector {
         ]);
         DatabaseConnector.createIndex(db, tContact,
             name: 'user_id_index', fields: ['uid']);
+        // block-list
+        _createBlockedTable(db);
         // group
         // member
         DatabaseConnector.createTable(db, tMember, fields: [
@@ -58,17 +60,31 @@ class EntityDatabase extends DatabaseConnector {
             name: 'group_id_index', fields: ['gid']);
       },
       onUpgrade: (db, oldVersion, newVersion) {
-        // TODO:
+        if (oldVersion < 2) {
+          _createBlockedTable(db);
+        }
       });
 
+  // block-list
+  static void _createBlockedTable(Database db) {
+    DatabaseConnector.createTable(db, tBlocked, fields: [
+      "id INTEGER PRIMARY KEY AUTOINCREMENT",
+      "uid VARCHAR(64) NOT NULL",
+      "blocked VARCHAR(64) NOT NULL",  // contact ID
+    ]);
+    DatabaseConnector.createIndex(db, tBlocked,
+        name: 'user_id_index', fields: ['uid']);
+  }
+
   static const String dbName = 'mkm.db';
-  static const int dbVersion = 1;
+  static const int dbVersion = 2;
 
   static const String tMeta     = 't_meta';
   static const String tDocument = 't_document';
 
-  static const String tLocalUser     = 't_local_user';
-  static const String tContact  = 't_contact';
+  static const String tLocalUser = 't_local_user';
+  static const String tContact   = 't_contact';
+  static const String tBlocked   = 't_blocked';
 
   static const String tGroup    = 't_group';
   static const String tMember   = 't_member';

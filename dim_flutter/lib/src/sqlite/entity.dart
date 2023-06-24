@@ -47,8 +47,12 @@ class EntityDatabase extends DatabaseConnector {
         ]);
         DatabaseConnector.createIndex(db, tContact,
             name: 'user_id_index', fields: ['uid']);
+
         // block-list
         _createBlockedTable(db);
+        // mute-list
+        _createMutedTable(db);
+
         // group
         // member
         DatabaseConnector.createTable(db, tMember, fields: [
@@ -60,8 +64,9 @@ class EntityDatabase extends DatabaseConnector {
             name: 'group_id_index', fields: ['gid']);
       },
       onUpgrade: (db, oldVersion, newVersion) {
-        if (oldVersion < 2) {
+        if (oldVersion < 4) {
           _createBlockedTable(db);
+          _createMutedTable(db);
         }
       });
 
@@ -75,16 +80,28 @@ class EntityDatabase extends DatabaseConnector {
     DatabaseConnector.createIndex(db, tBlocked,
         name: 'user_id_index', fields: ['uid']);
   }
+  // mute-list
+  static void _createMutedTable(Database db) {
+    DatabaseConnector.createTable(db, tMuted, fields: [
+      "id INTEGER PRIMARY KEY AUTOINCREMENT",
+      "uid VARCHAR(64) NOT NULL",
+      "muted VARCHAR(64) NOT NULL",  // contact ID
+    ]);
+    DatabaseConnector.createIndex(db, tMuted,
+        name: 'user_id_index', fields: ['uid']);
+  }
 
   static const String dbName = 'mkm.db';
-  static const int dbVersion = 2;
+  static const int dbVersion = 4;
 
   static const String tMeta     = 't_meta';
   static const String tDocument = 't_document';
 
   static const String tLocalUser = 't_local_user';
   static const String tContact   = 't_contact';
+
   static const String tBlocked   = 't_blocked';
+  static const String tMuted   = 't_muted';
 
   static const String tGroup    = 't_group';
   static const String tMember   = 't_member';

@@ -59,6 +59,7 @@ class ContactInfo implements lnc.Observer {
 
   bool _friend = false;
   bool _blocked = false;
+  bool _muted = false;
 
   int get type => identifier.type;
 
@@ -67,6 +68,7 @@ class ContactInfo implements lnc.Observer {
 
   bool get isFriend => _friend;
   bool get isBlocked => _blocked;
+  bool get isMuted => _muted;
 
   String get name {
     String? nickname = _name;
@@ -106,6 +108,8 @@ class ContactInfo implements lnc.Observer {
     Shield shield = Shield();
     _blocked = await shield.isBlocked(identifier);
     Log.info('contact: $identifier, friend: $_friend, blocked: $_blocked');
+    _muted = await shield.isMuted(identifier);
+    Log.info('contact: $identifier, friend: $_friend, muted: $_muted');
   }
 
   void addToUser(User user, {required BuildContext context}) {
@@ -156,6 +160,7 @@ class ContactInfo implements lnc.Observer {
             'You will never receive message from this contact again.');
       }
     });
+    _blocked = true;
   }
   void unblock({required BuildContext context}) {
     Shield shield = Shield();
@@ -165,6 +170,28 @@ class ContactInfo implements lnc.Observer {
             'You can receive message from this contact now.');
       }
     });
+    _blocked = false;
+  }
+
+  void mute({required BuildContext context}) {
+    Shield shield = Shield();
+    shield.addMuted(identifier).then((ok) {
+      if (ok) {
+        Alert.show(context, 'Muted',
+            'You will never receive notification from this contact again.');
+      }
+    });
+    _muted = true;
+  }
+  void unmute({required BuildContext context}) {
+    Shield shield = Shield();
+    shield.removeMuted(identifier).then((ok) {
+      if (ok) {
+        Alert.show(context, 'Unmuted',
+            'You can receive notification from this contact now.');
+      }
+    });
+    _muted = false;
   }
 
   static ContactInfo fromID(ID identifier) =>

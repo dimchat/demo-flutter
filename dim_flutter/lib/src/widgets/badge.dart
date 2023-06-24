@@ -1,27 +1,36 @@
 import 'package:flutter/material.dart';
 
-class BadgeView extends StatelessWidget {
-  const BadgeView(this.icon, this.number, {super.key});
+class IconView extends StatelessWidget {
+  const IconView(this.icon, this.badge, {super.key});
 
   final Widget icon;
-  final int number;
+  final Widget? badge;
+
+  static Widget from(Widget icon, int number) {
+    Widget? badge = IconBadge.fromInt(number);
+    return badge == null ? icon : IconView(icon, badge);
+  }
 
   @override
-  Widget build(BuildContext context) => Stack(
+  Widget build(BuildContext context) => badge == null ? icon : Stack(
     alignment: const AlignmentDirectional(1.6, -1.6),
-    children: [
-      icon,
-      if (number > 0)
-        NumberView(number),
-    ],
+    children: [icon, badge!],
   );
 
 }
 
-class NumberView extends StatelessWidget {
-  const NumberView(this.number, {super.key});
+class IconBadge extends StatelessWidget {
+  const IconBadge(this.text, {super.key});
 
-  final int number;
+  final String text;
+
+  static IconBadge? fromInt(int number) {
+    if (number <= 0) {
+      return null;
+    }
+    String text = number > 99 ? '99+' : number.toString();
+    return IconBadge(text);
+  }
 
   @override
   Widget build(BuildContext context) => ClipRect(
@@ -33,22 +42,19 @@ class NumberView extends StatelessWidget {
         borderRadius: BorderRadius.circular(8),
         color: Colors.red,
       ),
-      child: Text(number < 100 ? number.toString() : '99+',
+      child: Text(text,
         style: const TextStyle(color: Colors.white, fontSize: 8),
       ),
     ),
   );
 
-  // @override
-  // Widget build(BuildContext context) => ClipOval(
-  //   child: Container(
-  //     alignment: Alignment.center,
-  //     width: 12, height: 12,
-  //     color: Colors.red,
-  //     child: Text(number < 100 ? number.toString() : '99+',
-  //       style: const TextStyle(color: Colors.white, fontSize: 8),
-  //     ),
-  //   ),
-  // );
+}
+
+class NumberBubble extends IconBadge {
+  const NumberBubble(super.text, {super.key});
+
+  static Widget? fromInt(int number) {
+    return IconBadge.fromInt(number);
+  }
 
 }

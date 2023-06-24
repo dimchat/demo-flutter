@@ -1,4 +1,5 @@
 import 'package:dim_client/dim_client.dart';
+import 'package:dim_flutter/src/sqlite/muted.dart';
 import 'package:lnc/lnc.dart';
 
 import '../models/conversation.dart';
@@ -19,7 +20,7 @@ import '../sqlite/user.dart';
 
 class SharedDatabase implements AccountDBI, SessionDBI, MessageDBI,
                                 ConversationDBI, InstantMessageDBI, TraceDBI,
-                                BlockedDBI, SpeedDBI {
+                                BlockedDBI, MutedDBI, SpeedDBI {
 
   /// Account
   PrivateKeyDBI privateKeyTable = PrivateKeyCache();
@@ -27,8 +28,10 @@ class SharedDatabase implements AccountDBI, SessionDBI, MessageDBI,
   DocumentDBI documentTable = DocumentCache();
   UserDBI userTable = UserCache();
   ContactDBI contactTable = ContactCache();
-  BlockedDBI blockedTable = BlockedCache();
   GroupDBI groupTable = GroupCache();
+
+  BlockedDBI blockedTable = BlockedCache();
+  MutedDBI mutedTable = MutedCache();
 
   /// Session
   LoginDBI loginTable = LoginCommandCache();
@@ -153,6 +156,26 @@ class SharedDatabase implements AccountDBI, SessionDBI, MessageDBI,
   @override
   Future<bool> removeBlocked(ID contact, {required ID user}) async =>
       await blockedTable.removeBlocked(contact, user: user);
+
+  //
+  //  Muted Table
+  //
+
+  @override
+  Future<List<ID>> getMuteList({required ID user}) async =>
+      await mutedTable.getMuteList(user: user);
+
+  @override
+  Future<bool> saveMuteList(List<ID> contacts, {required ID user}) async =>
+      await mutedTable.saveMuteList(contacts, user: user);
+
+  @override
+  Future<bool> addMuted(ID contact, {required ID user}) async =>
+      await mutedTable.addMuted(contact, user: user);
+
+  @override
+  Future<bool> removeMuted(ID contact, {required ID user}) async =>
+      await mutedTable.removeMuted(contact, user: user);
 
   //
   //  Group Table

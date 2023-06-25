@@ -114,8 +114,8 @@ class _BrowserState extends State<Browser> {
         if (_progress <= 99)
         Container(
           color: Colors.black54,
-          padding: const EdgeInsets.fromLTRB(4, 2, 4, 2),
-          child: Text('$_progress% | ${widget.uri}',
+          padding: const EdgeInsets.fromLTRB(20, 4, 8, 16),
+          child: Text('$_progress% | ${widget.uri} ...',
             style: const TextStyle(
               fontSize: 10,
               color: Colors.white,

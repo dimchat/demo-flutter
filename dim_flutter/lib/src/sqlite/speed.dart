@@ -1,19 +1,9 @@
 import 'package:dim_client/dim_client.dart';
 
+import '../common/dbi/network.dart';
+
 import 'helper/handler.dart';
 import 'service.dart';
-
-abstract class SpeedDBI {
-
-  Future<List<Triplet<Pair<String, int>, ID, Pair<DateTime, double>>>>
-  getSpeeds(String host, int port);
-
-  Future<bool> addSpeed(String host, int port,
-      {required ID identifier, required DateTime time, required double duration});
-
-  Future<bool> removeExpiredSpeed(DateTime? expired);
-
-}
 
 /// Speed test result: ((host, port), sid, (test_time, response_time))
 typedef _SpeedInfo = Triplet<Pair<String, int>, ID, Pair<DateTime, double>>;

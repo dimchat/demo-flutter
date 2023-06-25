@@ -4,6 +4,8 @@ import 'package:dim_client/dim_client.dart';
 import 'package:lnc/lnc.dart';
 
 import '../models/conversation.dart';
+import '../models/shield.dart';
+
 import 'compatible.dart';
 import 'shared.dart';
 
@@ -129,7 +131,14 @@ class SharedMessenger extends ClientMessenger {
       assert(false, 'should not happen');
     } else {
       await broadcastLogin(user.identifier, shared.terminal.userAgent);
+      Shield shield = Shield();
+      await shield.broadcastBlockList();
+      await shield.broadcastMuteList();
     }
+  }
+
+  Future<void> broadcastStationCommand(Command content, {ID? sender}) async {
+    await sendContent(content, sender: sender, receiver: Station.kEvery, priority: 1);
   }
 
 }

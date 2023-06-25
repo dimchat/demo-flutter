@@ -5,6 +5,7 @@ export 'package:lnc/lnc.dart' show Log;
 
 export 'src/dim_channels.dart';
 export 'src/dim_client.dart';
+export 'src/dim_common.dart';
 export 'src/dim_filesys.dart';
 export 'src/dim_models.dart';
 export 'src/dim_network.dart';

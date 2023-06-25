@@ -17,6 +17,7 @@ abstract class ThemeColors {
   Color get commandBackgroundColor;
 
   Color get sectionHeaderBackgroundColor;
+  Color get sectionFooterBackgroundColor;
   Color get sectionItemBackgroundColor;
   Color get sectionItemDividerColor;
 
@@ -72,6 +73,9 @@ class _LightThemeColors extends ThemeColors {
 
   @override
   Color get sectionHeaderBackgroundColor => Colors.white70;
+
+  @override
+  Color get sectionFooterBackgroundColor => Colors.white70;
 
   @override
   Color get sectionItemBackgroundColor => CupertinoColors.systemBackground;
@@ -153,6 +157,9 @@ class _DarkThemeColors extends ThemeColors {
   Color get sectionHeaderBackgroundColor => CupertinoColors.systemFill;
 
   @override
+  Color get sectionFooterBackgroundColor => CupertinoColors.systemFill;
+
+  @override
   Color get sectionItemBackgroundColor => CupertinoColors.darkBackgroundGray;
 
   @override
@@ -217,6 +224,7 @@ abstract class ThemeStyles {
   TextStyle get titleTextStyle;
 
   TextStyle get sectionHeaderTextStyle;
+  TextStyle get sectionFooterTextStyle;
   TextStyle get sectionItemTitleTextStyle;
   TextStyle get sectionItemSubtitleTextStyle;
   TextStyle get sectionItemAdditionalTextStyle;
@@ -258,6 +266,12 @@ class _LightThemeStyles extends ThemeStyles {
 
   @override
   TextStyle get sectionHeaderTextStyle => const TextStyle(
+    fontSize: 12,
+    color: CupertinoColors.systemGrey,
+  );
+
+  @override
+  TextStyle get sectionFooterTextStyle => const TextStyle(
     fontSize: 12,
     color: CupertinoColors.systemGrey,
   );
@@ -325,6 +339,12 @@ class _DarkThemeStyles extends ThemeStyles {
 
   @override
   TextStyle get sectionHeaderTextStyle => const TextStyle(
+    fontSize: 12,
+    color: CupertinoColors.systemGrey,
+  );
+
+  @override
+  TextStyle get sectionFooterTextStyle => const TextStyle(
     fontSize: 12,
     color: CupertinoColors.systemGrey,
   );
@@ -411,6 +431,7 @@ abstract class Styles {
   //  Section
   //
   static const EdgeInsets sectionHeaderPadding = EdgeInsets.fromLTRB(16, 4, 16, 4);
+  static const EdgeInsets sectionFooterPadding = EdgeInsets.fromLTRB(16, 4, 16, 4);
 
   static const EdgeInsets sectionItemPadding = EdgeInsets.fromLTRB(0, 8, 0, 8);
 
@@ -479,7 +500,13 @@ abstract class Styles {
   // Contacts
   static const IconData newFriendsIcon = CupertinoIcons.person_add;
   static const IconData  blockListIcon = CupertinoIcons.person_crop_square_fill;
+  static const IconData   muteListIcon = CupertinoIcons.app_badge;
   static const IconData groupChatsIcon = CupertinoIcons.person_2;
+
+  static const IconData  addFriendIcon = CupertinoIcons.person_add;
+  static const IconData    sendMsgIcon = CupertinoIcons.chat_bubble;
+  static const IconData  clearChatIcon = CupertinoIcons.delete;
+  static const IconData     deleteIcon = CupertinoIcons.delete;
 
   // Settings
   static const IconData exportAccountIcon = CupertinoIcons.lock_shield;

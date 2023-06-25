@@ -1,46 +1,9 @@
 import 'package:lnc/lnc.dart';
 
+import '../common/dbi/message.dart';
+
 import 'helper/sqlite.dart';
 import 'message.dart';
-
-abstract class TraceDBI {
-
-  ///  Get traces for message
-  ///
-  /// @param sender    - message's sender
-  /// @param sn        - message's serial number
-  /// @param signature - message's signature
-  /// @return MTA list
-  Future<List<String>> getTraces(ID sender, int sn, String? signature);
-
-  ///  Save message trace (response)
-  ///
-  /// @param trace     - response: '{"ID": "{MTA_ID}", "time": 0}'
-  /// @param cid       - conversation ID
-  /// @param sender    - original message's sender
-  /// @param sn        - original message's serial number
-  /// @param signature - original message's signature (last 8 characters)
-  /// @return false on error
-  Future<bool> addTrace(String trace, ID cid,
-      {required ID sender, required int sn, required String? signature});
-
-  ///  Remove traces for message
-  ///  (call when message delete)
-  ///
-  /// @param sender    - message's sender
-  /// @param sn        - message's serial number
-  /// @param signature - message's signature
-  /// @return false on error
-  Future<bool> removeTraces(ID sender, int sn, String? signature);
-
-  ///  Remove all traces in the conversation
-  ///  (call when conversation cleared)
-  ///
-  /// @param cid       - conversation ID
-  /// @return false on error
-  Future<bool> removeAllTraces(ID cid);
-
-}
 
 String _extractTrace(ResultSet resultSet, int index) {
   return resultSet.getString('trace')!;

@@ -1,43 +1,10 @@
 import 'package:lnc/lnc.dart';
 
+import '../common/dbi/message.dart';
 import '../client/constants.dart';
 import '../filesys/local.dart';
 import '../filesys/paths.dart';
 import 'helper/sqlite.dart';
-
-
-abstract class InstantMessageDBI {
-
-  ///  Get stored messages
-  ///
-  /// @param chat  - conversation ID
-  /// @param start - start position for loading message
-  /// @param limit - max count for loading message
-  /// @return partial messages and remaining count, 0 means there are all messages cached
-  Future<Pair<List<InstantMessage>, int>> getInstantMessages(ID chat,
-      {int start = 0, int? limit});
-
-  ///  Save the message
-  ///
-  /// @param chat - conversation ID
-  /// @param iMsg - instant message
-  /// @return true on success
-  Future<bool> saveInstantMessage(ID chat, InstantMessage iMsg);
-
-  ///  Delete the message
-  ///
-  /// @param chat - conversation ID
-  /// @param iMsg - instant message
-  /// @return true on row(s) affected
-  Future<bool> removeInstantMessage(ID chat, InstantMessage iMsg);
-
-  ///  Delete all messages in this conversation
-  ///
-  /// @param chat - conversation ID
-  /// @return true on row(s) affected
-  Future<bool> removeInstantMessages(ID chat);
-
-}
 
 
 ///

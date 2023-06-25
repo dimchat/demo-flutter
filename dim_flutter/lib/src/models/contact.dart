@@ -4,9 +4,9 @@ import 'package:dim_client/dim_client.dart';
 import 'package:lnc/lnc.dart' as lnc;
 import 'package:lnc/lnc.dart' show Log;
 
+import '../common/dbi/contact.dart';
 import '../client/constants.dart';
 import '../client/shared.dart';
-import '../sqlite/alias.dart';
 import '../network/image_view.dart';
 import '../widgets/alert.dart';
 
@@ -229,6 +229,7 @@ class ContactInfo implements lnc.Observer {
     Shield shield = Shield();
     shield.addBlocked(identifier).then((ok) {
       if (ok) {
+        shield.broadcastBlockList();
         Alert.show(context, 'Blocked',
             'You will never receive message from this contact again.');
       }
@@ -239,6 +240,7 @@ class ContactInfo implements lnc.Observer {
     Shield shield = Shield();
     shield.removeBlocked(identifier).then((ok) {
       if (ok) {
+        shield.broadcastBlockList();
         Alert.show(context, 'Unblocked',
             'You can receive message from this contact now.');
       }
@@ -250,6 +252,7 @@ class ContactInfo implements lnc.Observer {
     Shield shield = Shield();
     shield.addMuted(identifier).then((ok) {
       if (ok) {
+        shield.broadcastMuteList();
         Alert.show(context, 'Muted',
             'You will never receive notification from this contact again.');
       }
@@ -260,6 +263,7 @@ class ContactInfo implements lnc.Observer {
     Shield shield = Shield();
     shield.removeMuted(identifier).then((ok) {
       if (ok) {
+        shield.broadcastMuteList();
         Alert.show(context, 'Unmuted',
             'You can receive notification from this contact now.');
       }

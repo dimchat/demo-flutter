@@ -1,21 +1,9 @@
 import 'package:lnc/lnc.dart';
 
+import '../common/dbi/contact.dart';
 import '../client/constants.dart';
 import 'helper/sqlite.dart';
 import 'entity.dart';
-
-
-abstract class MutedDBI {
-
-  Future<List<ID>> getMuteList({required ID user});
-
-  Future<bool> saveMuteList(List<ID> contacts, {required ID user});
-
-  Future<bool> addMuted(ID contact, {required ID user});
-
-  Future<bool> removeMuted(ID contact, {required ID user});
-
-}
 
 
 ID _extractMuted(ResultSet resultSet, int index) {

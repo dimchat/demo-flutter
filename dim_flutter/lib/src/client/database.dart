@@ -1,6 +1,9 @@
 import 'package:dim_client/dim_client.dart';
 import 'package:lnc/lnc.dart';
 
+import '../common/dbi/contact.dart';
+import '../common/dbi/message.dart';
+import '../common/dbi/network.dart';
 import '../models/conversation.dart';
 import '../sqlite/contact.dart';
 import '../sqlite/conversation.dart';

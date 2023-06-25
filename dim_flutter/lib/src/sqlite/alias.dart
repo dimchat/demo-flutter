@@ -1,38 +1,9 @@
 import 'package:lnc/lnc.dart';
 
+import '../common/dbi/contact.dart';
 import '../client/constants.dart';
 import 'helper/sqlite.dart';
 import 'entity.dart';
-
-
-class ContactRemark {
-  ContactRemark(this.identifier, {required this.alias, required this.description});
-
-  final ID identifier;
-  String alias;
-  String description;
-
-  @override
-  String toString() {
-    Type clazz = runtimeType;
-    return '<$clazz id="$identifier" alias="$alias" desc="$description" />';
-  }
-
-  static ContactRemark empty(ID identifier) =>
-      ContactRemark(identifier, alias: '', description: '');
-
-}
-
-
-abstract class RemarkDBI {
-
-  Future<List<ContactRemark>> allRemarks({required ID user});
-
-  Future<ContactRemark?> getRemark(ID contact, {required ID user});
-
-  Future<bool> setRemark(ContactRemark remark, {required ID user});
-
-}
 
 
 ContactRemark _extractRemark(ResultSet resultSet, int index) {
@@ -129,10 +100,10 @@ class RemarkCache extends _RemarkTable {
       _caches.remove(user);
       // post notification
       var nc = NotificationCenter();
-      nc.postNotification(NotificationNames.kContactsUpdated, this, {
-        'action': 'remove',
+      nc.postNotification(NotificationNames.kRemarkUpdated, this, {
         'user': user,
         'contact': remark.identifier,
+        'remark': remark,
       });
     }
     return ok;

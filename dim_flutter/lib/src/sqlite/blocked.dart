@@ -1,21 +1,9 @@
 import 'package:lnc/lnc.dart';
 
+import '../common/dbi/contact.dart';
 import '../client/constants.dart';
 import 'helper/sqlite.dart';
 import 'entity.dart';
-
-
-abstract class BlockedDBI {
-
-  Future<List<ID>> getBlockList({required ID user});
-
-  Future<bool> saveBlockList(List<ID> contacts, {required ID user});
-
-  Future<bool> addBlocked(ID contact, {required ID user});
-
-  Future<bool> removeBlocked(ID contact, {required ID user});
-
-}
 
 
 ID _extractBlocked(ResultSet resultSet, int index) {

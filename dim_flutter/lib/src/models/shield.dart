@@ -1,5 +1,8 @@
 import 'package:dim_client/dim_client.dart';
+import 'package:lnc/lnc.dart';
 
+import '../common/protocol/block.dart';
+import '../common/protocol/mute.dart';
 import '../client/shared.dart';
 
 
@@ -18,6 +21,19 @@ class Shield {
   Future<bool> addBlocked(ID contact) async => await _blockShield.addBlocked(contact);
   Future<bool> removeBlocked(ID contact) async => await _blockShield.removeBlocked(contact);
 
+  Future<void> broadcastBlockList() async {
+    GlobalVariable shared = GlobalVariable();
+    var messenger = shared.messenger;
+    if (messenger == null) {
+      Log.error('messenger not set');
+      return;
+    }
+    List<ID> contacts = await getBlockList();
+    Log.info('broadcast block-list command: $contacts');
+    BlockCommand command = BlockCommand.fromList(contacts);
+    await messenger.broadcastStationCommand(command);
+  }
+
   ///
   /// Mute
   ///
@@ -27,6 +43,19 @@ class Shield {
   Future<bool> isMuted(ID contact) async => await _muteShield.isMuted(contact);
   Future<bool> addMuted(ID contact) async => await _muteShield.addMuted(contact);
   Future<bool> removeMuted(ID contact) async => await _muteShield.removeMuted(contact);
+
+  Future<void> broadcastMuteList() async {
+    GlobalVariable shared = GlobalVariable();
+    var messenger = shared.messenger;
+    if (messenger == null) {
+      Log.error('messenger not set');
+      return;
+    }
+    List<ID> contacts = await getMuteList();
+    Log.info('broadcast mute-list command: $contacts');
+    MuteCommand command = MuteCommand.fromList(contacts);
+    await messenger.broadcastStationCommand(command);
+  }
 
 }
 

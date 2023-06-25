@@ -6,6 +6,7 @@ import 'package:lnc/lnc.dart' show Log;
 
 import '../client/constants.dart';
 import '../client/shared.dart';
+import '../sqlite/alias.dart';
 import '../network/image_view.dart';
 import '../widgets/alert.dart';
 
@@ -56,6 +57,7 @@ class ContactInfo implements lnc.Observer {
 
   final ID identifier;
   String? _name;
+  ContactRemark? _remark;
 
   bool _friend = false;
   bool _blocked = false;
@@ -79,6 +81,34 @@ class ContactInfo implements lnc.Observer {
     return nickname;
   }
 
+  ContactRemark get remark {
+    ContactRemark? cr = _remark;
+    if (cr == null) {
+      cr = _remark = ContactRemark.empty(identifier);
+      reloadData();
+    }
+    return cr;
+  }
+
+  String get title {
+    bool flag = false;
+    String? nickname = _name;
+    if (nickname == null) {
+      nickname = _name = '';
+      flag = true;
+    }
+    ContactRemark? cr = _remark;
+    if (cr == null) {
+      cr = _remark = ContactRemark.empty(identifier);
+      flag = true;
+    }
+    if (flag) {
+      reloadData();
+    }
+    String alias = cr.alias;
+    return alias.isEmpty ? nickname : '$nickname ($alias)';
+  }
+
   Widget getImage({double? width, double? height, GestureTapCallback? onTap}) =>
       ImageViewFactory().fromID(identifier, width: width, height: height, onTap: onTap);
 
@@ -93,12 +123,22 @@ class ContactInfo implements lnc.Observer {
 
   Future<void> reloadData() async {
     GlobalVariable shared = GlobalVariable();
-    // get name
-    _name = await shared.facebook.getName(identifier);
-    // get friendship
     User? user = await shared.facebook.currentUser;
     if (user == null) {
       Log.error('current user not found');
+    }
+    // get name
+    _name = await shared.facebook.getName(identifier);
+    // get remark
+    if (user == null) {
+      _remark = ContactRemark.empty(identifier);
+    } else {
+      var cr = await shared.database.getRemark(identifier, user: user.identifier);
+      cr ??= ContactRemark.empty(identifier);
+      _remark = cr;
+    }
+    // get friendship
+    if (user == null) {
       _friend = false;
     } else {
       List<ID> contacts = await shared.facebook.getContacts(user.identifier);
@@ -148,6 +188,39 @@ class ContactInfo implements lnc.Observer {
         Alert.confirm(context, 'Confirm', msg,
           okAction: () => _doRemove(context, identifier, user.identifier),
         );
+      }
+    });
+  }
+
+  void setRemark({required BuildContext context, String? alias, String? description}) {
+    // update memory
+    ContactRemark? cr = _remark;
+    if (cr == null) {
+      cr = ContactRemark(identifier, alias: alias ?? '', description: description ?? '');
+      _remark = cr;
+    } else {
+      if (alias != null) {
+        cr.alias = alias;
+      }
+      if (description != null) {
+        cr.description = description;
+      }
+    }
+    // save into local database
+    GlobalVariable shared = GlobalVariable();
+    shared.facebook.currentUser.then((user) {
+      if (user == null) {
+        Log.error('current user not found, failed to add contact: $identifier');
+        Alert.show(context, 'Error', 'Current user not found');
+      } else {
+        shared.database.setRemark(cr!, user: user.identifier).then((ok) {
+          if (ok) {
+            Log.info('set remark: $cr, user: $user');
+          } else {
+            Log.error('failed to set remark: $cr, user: $user');
+            Alert.show(context, 'Error', 'Failed to set remark');
+          }
+        });
       }
     });
   }

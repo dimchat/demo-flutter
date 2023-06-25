@@ -14,8 +14,8 @@ class _ContactTable extends DataTableHandler<ID> implements ContactDBI {
   _ContactTable() : super(EntityDatabase(), _extractContact);
 
   static const String _table = EntityDatabase.tContact;
-  static const List<String> _selectColumns = ["contact", "alias"];
-  static const List<String> _insertColumns = ["uid", "contact", "alias"];
+  static const List<String> _selectColumns = ["contact"];
+  static const List<String> _insertColumns = ["uid", "contact"];
 
   // protected
   Future<int> updateContacts(List<ID> newContacts, List<ID> oldContacts, ID user) async {
@@ -55,7 +55,7 @@ class _ContactTable extends DataTableHandler<ID> implements ContactDBI {
       if (oldContacts.contains(item)) {
         continue;
       }
-      List values = [user.toString(), item.toString(), ''];
+      List values = [user.toString(), item.toString()];
       if (await insert(_table, columns: _insertColumns, values: values) < 0) {
         Log.error('failed to add contact: $item, user: $user');
         return -1;

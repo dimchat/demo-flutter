@@ -1,10 +1,8 @@
 import 'package:dim_client/dim_client.dart';
-import 'package:dim_flutter/src/sqlite/muted.dart';
 import 'package:lnc/lnc.dart';
 
 import '../models/conversation.dart';
 import '../sqlite/contact.dart';
-import '../sqlite/blocked.dart';
 import '../sqlite/conversation.dart';
 import '../sqlite/document.dart';
 import '../sqlite/group.dart';
@@ -18,9 +16,14 @@ import '../sqlite/station.dart';
 import '../sqlite/trace.dart';
 import '../sqlite/user.dart';
 
+import '../sqlite/alias.dart';
+import '../sqlite/blocked.dart';
+import '../sqlite/muted.dart';
+
 class SharedDatabase implements AccountDBI, SessionDBI, MessageDBI,
                                 ConversationDBI, InstantMessageDBI, TraceDBI,
-                                BlockedDBI, MutedDBI, SpeedDBI {
+                                RemarkDBI, BlockedDBI, MutedDBI,
+                                SpeedDBI {
 
   /// Account
   PrivateKeyDBI privateKeyTable = PrivateKeyCache();
@@ -30,6 +33,7 @@ class SharedDatabase implements AccountDBI, SessionDBI, MessageDBI,
   ContactDBI contactTable = ContactCache();
   GroupDBI groupTable = GroupCache();
 
+  RemarkDBI remarkTable = RemarkCache();
   BlockedDBI blockedTable = BlockedCache();
   MutedDBI mutedTable = MutedCache();
 
@@ -136,6 +140,22 @@ class SharedDatabase implements AccountDBI, SessionDBI, MessageDBI,
   @override
   Future<bool> removeContact(ID contact, {required ID user}) async =>
       await contactTable.removeContact(contact, user: user);
+
+  //
+  //  Remark Table
+  //
+
+  @override
+  Future<List<ContactRemark>> allRemarks({required ID user}) async =>
+      await remarkTable.allRemarks(user: user);
+
+  @override
+  Future<ContactRemark?> getRemark(ID contact, {required ID user}) async =>
+      await remarkTable.getRemark(contact, user: user);
+
+  @override
+  Future<bool> setRemark(ContactRemark remark, {required ID user}) async =>
+      await remarkTable.setRemark(remark, user: user);
 
   //
   //  Blocked Table

@@ -18,6 +18,8 @@ export 'sqlite/speed.dart';
 export 'sqlite/station.dart';
 export 'sqlite/trace.dart';
 export 'sqlite/user.dart';
+
+export 'sqlite/alias.dart';
 export 'sqlite/blocked.dart';
 export 'sqlite/muted.dart';
 

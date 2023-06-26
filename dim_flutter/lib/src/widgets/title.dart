@@ -110,7 +110,12 @@ String _titleWithState(String title) {
       _reconnect(true);
       break;
   }
-  return sub == null ? title : '$title ($sub)';
+  if (sub == null) {
+    return title;
+  } else if (title.length > 15) {
+    title = '${title.substring(0, 12)}...';
+  }
+  return '$title ($sub)';
 }
 
 void _reconnect(bool test) async {

@@ -23,15 +23,15 @@ class _MutedTable extends DataTableHandler<ID> implements MutedDBI {
     assert(!identical(newContacts, oldContacts), 'should not be the same object');
     SQLConditions cond;
 
-    // 0. check new block-list
+    // 0. check new mute-list
     if (newContacts.isEmpty) {
-      assert(oldContacts.isNotEmpty, 'new block-list empty??');
+      assert(oldContacts.isNotEmpty, 'new mute-list empty??');
       cond = SQLConditions(left: 'uid', comparison: '=', right: user.toString());
       if (await delete(_table, conditions: cond) < 0) {
-        Log.error('failed to clear block-list for user: $user');
+        Log.error('failed to clear mute-list for user: $user');
         return -1;
       }
-      Log.warning('block-list cleared for user: $user');
+      Log.warning('mute-list cleared for user: $user');
       return oldContacts.length;
     }
     int count = 0;
@@ -65,7 +65,7 @@ class _MutedTable extends DataTableHandler<ID> implements MutedDBI {
     }
 
     if (count == 0) {
-      Log.warning('block-list not changed: $user');
+      Log.warning('mute-list not changed: $user');
       return 0;
     }
     Log.info('updated $count muted contact(s) for user: $user');
@@ -138,7 +138,7 @@ class MutedCache extends _MutedTable {
       nc.postNotification(NotificationNames.kMuteListUpdated, this, {
         'action': 'update',
         'user': user,
-        'block_list': contacts,
+        'mute_list': contacts,
       });
     }
     return cnt >= 0;
@@ -162,7 +162,7 @@ class MutedCache extends _MutedTable {
         'action': 'add',
         'user': user,
         'muted': contact,
-        'block_list': newContacts,
+        'mute_list': newContacts,
       });
     }
     return cnt >= 0;
@@ -187,7 +187,7 @@ class MutedCache extends _MutedTable {
         'action': 'remove',
         'user': user,
         'unmuted': contact,
-        'block_list': newContacts,
+        'mute_list': newContacts,
       });
     }
     return cnt >= 0;

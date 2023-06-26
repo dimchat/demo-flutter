@@ -24,7 +24,8 @@ class Conversation extends ContactInfo {
   @override
   String toString() {
     Type clazz = runtimeType;
-    return '<$clazz id="$identifier" name="$name">\n'
+    return '<$clazz id="$identifier" type=$type name="$name"'
+        ' isFriend=$isFriend blocked=$isBlocked muted=$isMuted>\n'
         '\t<unread>$unread</unread>\n'
         '\t<msg>$lastMessage</msg>\n\t<time>$lastTime</time>\n</$clazz>';
   }
@@ -192,7 +193,7 @@ class Amanuensis implements lnc.Observer {
         Log.debug('new conversation created: $item');
         _conversationMap[item.identifier] = item;
       }
-      Log.warning('${array.length} conversation(s) loaded');
+      Log.debug('${array.length} conversation(s) loaded: $array');
       _conversations = array;
     }
     return array;
@@ -316,7 +317,7 @@ class Amanuensis implements lnc.Observer {
     Conversation? chatBox = _conversationMap[cid];
     if (chatBox == null) {
       // new conversation
-      chatBox = Conversation(cid, unread: 0, lastMessage: last, lastTime: time);
+      chatBox = Conversation(cid, unread: 1, lastMessage: last, lastTime: time);
       if (await shared.database.addConversation(chatBox)) {
         await chatBox.reloadData();
         // add to cache

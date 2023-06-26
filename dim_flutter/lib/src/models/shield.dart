@@ -12,7 +12,7 @@ class Shield {
   Shield._internal();
 
   ///
-  /// Block
+  ///   Block
   ///
   final _BlockShield _blockShield = _BlockShield();
 
@@ -31,11 +31,13 @@ class Shield {
     List<ID> contacts = await getBlockList();
     Log.info('broadcast block-list command: $contacts');
     BlockCommand command = BlockCommand.fromList(contacts);
-    await messenger.broadcastStationCommand(command);
+    // broadcast 'block-list' to all stations,
+    // so that the blocked user's message will be stopped at the first station.
+    await messenger.sendContent(command, sender: null, receiver: Station.kEvery, priority: 1);
   }
 
   ///
-  /// Mute
+  ///   Mute
   ///
   final _MuteShield _muteShield = _MuteShield();
 
@@ -54,7 +56,10 @@ class Shield {
     List<ID> contacts = await getMuteList();
     Log.info('broadcast mute-list command: $contacts');
     MuteCommand command = MuteCommand.fromList(contacts);
-    await messenger.broadcastStationCommand(command);
+    // send 'mute-list' to current station only,
+    // because other stations will know that where this user is roaming to,
+    // and only the last roamed station will push notification when the user is offline.
+    await messenger.sendContent(command, sender: null, receiver: Station.kAny, priority: 1);
   }
 
 }

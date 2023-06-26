@@ -137,8 +137,4 @@ class SharedMessenger extends ClientMessenger {
     }
   }
 
-  Future<void> broadcastStationCommand(Command content, {ID? sender}) async {
-    await sendContent(content, sender: sender, receiver: Station.kEvery, priority: 1);
-  }
-
 }

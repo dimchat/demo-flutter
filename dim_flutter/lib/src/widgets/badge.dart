@@ -1,20 +1,48 @@
 import 'package:flutter/material.dart';
 
 class IconView extends StatelessWidget {
-  const IconView(this.icon, this.badge, {super.key});
+  const IconView(this.icon, {required this.badge, required this.alignment, super.key});
 
   final Widget icon;
-  final Widget? badge;
+  final Widget badge;
+  final AlignmentGeometry alignment;
 
-  static Widget from(Widget icon, int number) {
+  static Widget fromNumber(Widget icon, int number) {
     Widget? badge = IconBadge.fromInt(number);
-    return badge == null ? icon : IconView(icon, badge);
+    return badge == null ? icon : IconView(icon, badge: badge, alignment: IconBadge.alignment,);
+  }
+  static Widget fromSpot(Widget icon, int number) {
+    Widget? badge = IconSpot.fromInt(number);
+    return badge == null ? icon : IconView(icon, badge: badge, alignment: IconSpot.alignment,);
   }
 
   @override
-  Widget build(BuildContext context) => badge == null ? icon : Stack(
-    alignment: const AlignmentDirectional(1.6, -1.6),
-    children: [icon, badge!],
+  Widget build(BuildContext context) => Stack(
+    alignment: alignment,
+    children: [icon, badge],
+  );
+
+}
+
+class IconSpot extends StatelessWidget {
+  const IconSpot({super.key});
+
+  static const AlignmentGeometry alignment = AlignmentDirectional(1.3, -1.3);
+
+  static IconSpot? fromInt(int number) {
+    if (number <= 0) {
+      return null;
+    }
+    return const IconSpot();
+  }
+
+  @override
+  Widget build(BuildContext context) => ClipOval(
+    child: Container(
+      width: 8,
+      height: 8,
+      color: Colors.red,
+    ),
   );
 
 }
@@ -23,6 +51,8 @@ class IconBadge extends StatelessWidget {
   const IconBadge(this.text, {super.key});
 
   final String text;
+
+  static const AlignmentGeometry alignment = AlignmentDirectional(1.6, -1.6);
 
   static IconBadge? fromInt(int number) {
     if (number <= 0) {

@@ -77,6 +77,8 @@ class ContactInfo implements lnc.Observer {
     if (nickname == null) {
       nickname = _name = '';
       reloadData();
+    } else {
+      nickname = nickname.trim();
     }
     return nickname;
   }
@@ -96,6 +98,8 @@ class ContactInfo implements lnc.Observer {
     if (nickname == null) {
       nickname = _name = '';
       flag = true;
+    } else {
+      nickname = nickname.trim();
     }
     ContactRemark? cr = _remark;
     if (cr == null) {
@@ -106,7 +110,12 @@ class ContactInfo implements lnc.Observer {
       reloadData();
     }
     String alias = cr.alias;
-    return alias.isEmpty ? nickname : '$nickname ($alias)';
+    if (alias.isEmpty) {
+      return nickname;
+    } else if (nickname.length > 15) {
+      nickname = '${nickname.substring(0, 12)}...';
+    }
+    return '$nickname ($alias)';
   }
 
   Widget getImage({double? width, double? height, GestureTapCallback? onTap}) =>
@@ -115,9 +124,11 @@ class ContactInfo implements lnc.Observer {
   @override
   String toString() {
     if (isUser) {
-      return '<User id="$identifier" type=$type name="$name" />';
+      return '<User id="$identifier" type=$type name="$name"'
+          ' isFriend=$_friend blocked=$_blocked muted=$_muted />';
     } else {
-      return '<Group id="$identifier" type=$type name="$name" />';
+      return '<Group id="$identifier" type=$type name="$name"'
+          ' isFriend=$_friend blocked=$_blocked muted=$_muted />';
     }
   }
 
@@ -147,9 +158,7 @@ class ContactInfo implements lnc.Observer {
     // get block status
     Shield shield = Shield();
     _blocked = await shield.isBlocked(identifier);
-    Log.info('contact: $identifier, friend: $_friend, blocked: $_blocked');
     _muted = await shield.isMuted(identifier);
-    Log.info('contact: $identifier, friend: $_friend, muted: $_muted');
   }
 
   void addToUser(User user, {required BuildContext context}) {
@@ -226,6 +235,8 @@ class ContactInfo implements lnc.Observer {
   }
 
   void block({required BuildContext context}) {
+    _blocked = true;
+    // update database and broadcast
     Shield shield = Shield();
     shield.addBlocked(identifier).then((ok) {
       if (ok) {
@@ -234,9 +245,10 @@ class ContactInfo implements lnc.Observer {
             'You will never receive message from this contact again.');
       }
     });
-    _blocked = true;
   }
   void unblock({required BuildContext context}) {
+    _blocked = false;
+    // update database and broadcast
     Shield shield = Shield();
     shield.removeBlocked(identifier).then((ok) {
       if (ok) {
@@ -245,10 +257,11 @@ class ContactInfo implements lnc.Observer {
             'You can receive message from this contact now.');
       }
     });
-    _blocked = false;
   }
 
   void mute({required BuildContext context}) {
+    _muted = true;
+    // update database and broadcast
     Shield shield = Shield();
     shield.addMuted(identifier).then((ok) {
       if (ok) {
@@ -257,9 +270,10 @@ class ContactInfo implements lnc.Observer {
             'You will never receive notification from this contact again.');
       }
     });
-    _muted = true;
   }
   void unmute({required BuildContext context}) {
+    _muted = false;
+    // update database and broadcast
     Shield shield = Shield();
     shield.removeMuted(identifier).then((ok) {
       if (ok) {
@@ -268,7 +282,6 @@ class ContactInfo implements lnc.Observer {
             'You can receive notification from this contact now.');
       }
     });
-    _muted = false;
   }
 
   static ContactInfo fromID(ID identifier) =>

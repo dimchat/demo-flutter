@@ -12,7 +12,7 @@ class AudioChannel extends MethodChannel {
   /// MethodCallHandler
   Future<void> _handle(MethodCall call) async {
     String method = call.method;
-    Map arguments = call.arguments;
+    var arguments = call.arguments;
     if (method == ChannelMethods.onRecordFinished) {
       // onRecordFinished
       Uint8List mp4 = arguments['data'];

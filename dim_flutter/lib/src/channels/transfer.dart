@@ -65,7 +65,7 @@ class FileTransferChannel extends MethodChannel {
   /// MethCallHandler
   Future<void> _handle(MethodCall call) async {
     String method = call.method;
-    Map arguments = call.arguments;
+    var arguments = call.arguments;
     if (method == ChannelMethods.onDownloadSuccess) {
       // onDownloadSuccess
       String urlString = arguments['url'];

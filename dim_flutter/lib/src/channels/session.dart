@@ -17,7 +17,7 @@ class SessionChannel extends MethodChannel {
   /// MethCallHandler
   Future<void> _handle(MethodCall call) async {
     String method = call.method;
-    Map arguments = call.arguments;
+    var arguments = call.arguments;
     if (method == ChannelMethods.onStateChanged) {
       // onStateChanged
       int previous = Converter.getInt(arguments['previous']) ?? 0;

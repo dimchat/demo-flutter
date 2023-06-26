@@ -409,6 +409,7 @@ class Facade {
   static Facade of(BuildContext ctx) => Facade(ctx);
 
   Brightness get brightness => Theme.of(context).brightness;
+  // Brightness get brightness => Brightness.dark;
 
   ThemeColors get colors =>
       brightness == Brightness.dark ? _DarkThemeColors() : _LightThemeColors();
@@ -525,5 +526,7 @@ abstract class Styles {
 
   // Register
   static const IconData agreeIcon = CupertinoIcons.check_mark;
+
+  static const IconData updateDocIcon = CupertinoIcons.cloud_upload;
 
 }

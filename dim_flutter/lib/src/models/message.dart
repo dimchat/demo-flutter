@@ -18,6 +18,9 @@ abstract class MessageBuilder {
     } else if (text.startsWith('Document not accept')) {
       // take it as a receipt command
       return true;
+    } else if (text.startsWith('Document not change')) {
+      // take it as a receipt command
+      return true;
     } else if (text.startsWith('Document receive')) {
       // take it as a receipt command
       return true;
@@ -33,11 +36,15 @@ abstract class MessageBuilder {
     String? text = content['text'];
     if (text == null) {
       // unknown content
-    } else if (text.startsWith('Document not accepted: ')) {
+    } else if (text.startsWith('Document not accept')) {
       String sub = text.substring('Document not accepted: '.length);
       text = _replaceName(text, sub);
       return text;
-    } else if (text.startsWith('Document received: ')) {
+    } else if (text.startsWith('Document not change')) {
+      String sub = text.substring('Document not changed: '.length);
+      text = _replaceName(text, sub);
+      return text;
+    } else if (text.startsWith('Document receive')) {
       String sub = text.substring('Document received: '.length);
       text = _replaceName(text, sub);
       return text;

@@ -45,6 +45,7 @@ abstract class ContentViewUtils {
       // check text
       text = mb.getText(content, sender);
       if (text.startsWith('Document receive') ||
+          text.startsWith('Document not change') ||
           text.startsWith('Document not accept')) {
         // // hide it
         // Log.warning('hide command from: $sender, $text');

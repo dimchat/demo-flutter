@@ -36,7 +36,7 @@ abstract class ContentViewUtils {
   static String? getCommandText(Content content, ID sender, ContactInfo chat) {
     String? text;
     DefaultMessageBuilder mb = DefaultMessageBuilder();
-    if (mb.isCommand(content)) {
+    if (mb.isCommand(content, sender)) {
       // check sender
       if (sender != chat.identifier) {
         // it's a command but not from my friend,

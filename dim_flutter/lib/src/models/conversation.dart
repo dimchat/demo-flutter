@@ -155,8 +155,7 @@ class Amanuensis implements lnc.Observer {
     }
     List<Conversation> array = [];
     for (Conversation chat in all) {
-      if (chat.isBlocked) {
-      } else if (chat.isFriend) {
+      if (chat.isFriend) {
         array.add(chat);
       }
     }
@@ -170,9 +169,7 @@ class Amanuensis implements lnc.Observer {
     }
     List<Conversation> array = [];
     for (Conversation chat in all) {
-      if (chat.isBlocked) {
-      } else if (chat.isFriend) {
-      } else {
+      if (chat.isNewFriend) {
         array.add(chat);
       }
     }
@@ -301,7 +298,7 @@ class Amanuensis implements lnc.Observer {
     }
     Content content = iMsg.content;
     DefaultMessageBuilder mb = DefaultMessageBuilder();
-    if (mb.isCommand(content)) {
+    if (mb.isCommand(content, iMsg.sender)) {
       Log.debug('ignore command for conversation updating');
       return;
     }

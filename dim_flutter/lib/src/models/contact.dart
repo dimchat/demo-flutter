@@ -72,6 +72,20 @@ class ContactInfo implements lnc.Observer {
   bool get isBlocked => _blocked;
   bool get isMuted => _muted;
 
+  bool get isNewFriend {
+    if (_friend) {
+      // already be friend
+      return false;
+    } else if (_blocked) {
+      // blocked user will not show in stranger list
+      return false;
+    } else if (identifier.type == EntityType.kStation) {
+      // should not add the station as a friend
+      return false;
+    }
+    return true;
+  }
+
   String get name {
     String? nickname = _name;
     if (nickname == null) {

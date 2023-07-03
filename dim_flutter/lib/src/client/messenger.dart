@@ -44,6 +44,17 @@ class SharedMessenger extends ClientMessenger {
   }
 
   @override
+  Future<SecureMessage?> verifyMessage(ReliableMessage rMsg) async {
+    Shield shield = Shield();
+    if (await shield.isBlocked(rMsg.sender)) {
+      Log.warning('receiver is blocked: ${rMsg.sender}');
+      // TODO: upload blocked-list to current station?
+      return null;
+    }
+    return await super.verifyMessage(rMsg);
+  }
+
+  @override
   Future<Pair<InstantMessage, ReliableMessage?>> sendContent(Content content,
       {required ID? sender, required ID receiver, int priority = 0}) async {
     if (receiver.isBroadcast) {

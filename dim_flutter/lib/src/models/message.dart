@@ -8,24 +8,48 @@ abstract class MessageBuilder {
   String getName(ID identifier);
 
   /// Check whether this message content should be a command
-  bool isCommand(Content content) {
+  bool isCommand(Content content, ID sender) {
     if (content is Command) {
       return true;
     }
     String? text = content['text'];
-    if (text == null) {
-      // unknown content
-    } else if (text.startsWith('Document not accept')) {
-      // take it as a receipt command
-      return true;
-    } else if (text.startsWith('Document not change')) {
-      // take it as a receipt command
-      return true;
-    } else if (text.startsWith('Document receive')) {
-      // take it as a receipt command
-      return true;
+    if (text != null) {
+      // check for text receipts
+      if (_checkText(text, [
+        'Document not accept',
+        'Document not change',
+        'Document receive',
+      ])) {
+        return true;
+      }
+      int network = sender.type;
+      if (network == EntityType.kStation) {
+        if (_checkText(text, [
+          'Login command receive',
+          'Block command receive',
+          'Mute command receive',
+        ])) {
+          // receipts from station
+          return true;
+        }
+      } else if (network == EntityType.kBot) {
+        if (_checkText(text, [
+          'Device token receive',
+        ])) {
+          // receipts from service bot
+          return true;
+        }
+      }
     }
     // TODO: other situations?
+    return false;
+  }
+  bool _checkText(String text, List<String> array) {
+    for (String prefix in array) {
+      if (text.startsWith(prefix)) {
+        return true;
+      }
+    }
     return false;
   }
 
@@ -34,22 +58,46 @@ abstract class MessageBuilder {
       return _getCommandText(content, sender);
     }
     String? text = content['text'];
-    if (text == null) {
-      // unknown content
-    } else if (text.startsWith('Document not accept')) {
-      String sub = text.substring('Document not accepted: '.length);
-      text = _replaceName(text, sub);
-      return text;
-    } else if (text.startsWith('Document not change')) {
-      String sub = text.substring('Document not changed: '.length);
-      text = _replaceName(text, sub);
-      return text;
-    } else if (text.startsWith('Document receive')) {
-      String sub = text.substring('Document received: '.length);
-      text = _replaceName(text, sub);
-      return text;
+    if (text != null) {
+      // check for text receipts
+      String? sub = _replaceText(text, [
+        'Document not accepted: ',
+        'Document not changed: ',
+        'Document received: ',
+      ]);
+      if (sub != null) {
+        return _replaceName(text, sub);
+      }
+      int network = sender.type;
+      if (network == EntityType.kStation) {
+        sub = _replaceText(text, [
+          'Login command received: ',
+          'Block command received: ',
+          'Mute command received: ',
+        ]);
+        if (sub != null) {
+          // receipts from station
+          return _replaceName(text, sub);
+        }
+      } else if (network == EntityType.kBot) {
+        sub = _replaceText(text, [
+          'Device token received: ',
+        ]);
+        if (sub != null) {
+          // receipts from service bot
+          return _replaceName(text, sub);
+        }
+      }
     }
     return _getContentText(content);
+  }
+  String? _replaceText(String text, List<String> array) {
+    for (String prefix in array) {
+      if (text.startsWith(prefix)) {
+        return text.substring(prefix.length);
+      }
+    }
+    return null;
   }
 
   String _replaceName(String text, String sub) {

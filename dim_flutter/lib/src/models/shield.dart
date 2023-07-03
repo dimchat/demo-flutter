@@ -89,10 +89,6 @@ class _BlockShield {
   }
 
   Future<bool> isBlocked(ID contact) async {
-    if (contact.type == EntityType.kStation) {
-      // block all stations
-      return true;
-    }
     if (_blockList == null) {
       await getBlockList();
     }

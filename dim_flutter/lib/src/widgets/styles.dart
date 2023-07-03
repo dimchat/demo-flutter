@@ -52,6 +52,12 @@ abstract class ThemeColors {
   Color get textMessageColor;
   Color get textMessageBackgroundColor;
 
+  //
+  //  Web Page Message
+  //
+  Color get pageMessageColor;
+  Color get pageMessageBackgroundColor;
+
 }
 
 class _LightThemeColors extends ThemeColors {
@@ -133,6 +139,15 @@ class _LightThemeColors extends ThemeColors {
 
   @override
   Color get textMessageColor => CupertinoColors.black;
+
+  //
+  //  Web Page Message
+  //
+  @override
+  Color get pageMessageBackgroundColor => CupertinoColors.white;
+
+  @override
+  Color get pageMessageColor => CupertinoColors.black;
 
 }
 
@@ -216,6 +231,15 @@ class _DarkThemeColors extends ThemeColors {
   @override
   Color get textMessageColor => CupertinoColors.white;
 
+  //
+  //  Web Page Message
+  //
+  @override
+  Color get pageMessageBackgroundColor => CupertinoColors.systemFill;
+
+  @override
+  Color get pageMessageColor => CupertinoColors.white;
+
 }
 
 /// Styles
@@ -251,6 +275,12 @@ abstract class ThemeStyles {
     fontSize: 12,
     color: Colors.teal,
   );
+
+  //
+  //  Web Page Message
+  //
+  TextStyle get pageTitleTextStyle;
+  TextStyle get pageDescTextStyle;
 
 }
 
@@ -323,6 +353,24 @@ class _LightThemeStyles extends ThemeStyles {
   TextStyle get messageTimeTextStyle => const TextStyle(
     fontSize: 10,
     color: CupertinoColors.systemGrey,
+  );
+
+  //
+  //  Web Page Message
+  //
+
+  @override
+  TextStyle get pageTitleTextStyle => const TextStyle(
+    fontSize: 14,
+    color: CupertinoColors.black,
+    overflow: TextOverflow.ellipsis,
+  );
+
+  @override
+  TextStyle get pageDescTextStyle => const TextStyle(
+    fontSize: 10,
+    color: CupertinoColors.systemGrey,
+    overflow: TextOverflow.ellipsis,
   );
 
 }
@@ -398,6 +446,24 @@ class _DarkThemeStyles extends ThemeStyles {
     color: CupertinoColors.systemGrey,
   );
 
+  //
+  //  Web Page Message
+  //
+
+  @override
+  TextStyle get pageTitleTextStyle => const TextStyle(
+    fontSize: 14,
+    color: CupertinoColors.white,
+    overflow: TextOverflow.ellipsis,
+  );
+
+  @override
+  TextStyle get pageDescTextStyle => const TextStyle(
+    fontSize: 10,
+    color: CupertinoColors.systemGrey,
+    overflow: TextOverflow.ellipsis,
+  );
+
 }
 
 /// Theme
@@ -451,8 +517,12 @@ abstract class Styles {
   static const Color messageIsMineBackgroundColor = CupertinoColors.systemGreen;
   // static const Color messageNotMineBackgroundColor = CupertinoColors.systemFill;
 
+  static const Color pageContentBackgroundColor = CupertinoColors.systemGreen;
+
   static const EdgeInsets textMessagePadding = EdgeInsets.fromLTRB(16, 12, 16, 12);
   static const EdgeInsets audioMessagePadding = EdgeInsets.fromLTRB(16, 12, 16, 12);
+
+  static const EdgeInsets pageMessagePadding = EdgeInsets.fromLTRB(12, 8, 8, 8);
 
   static const EdgeInsets commandPadding = EdgeInsets.fromLTRB(8, 4, 8, 4);
 
@@ -493,7 +563,9 @@ abstract class Styles {
   static const IconData   msgWaitingIcon = CupertinoIcons.ellipsis;
   static const IconData      msgSentIcon = Icons.done;
   static const IconData  msgReceivedIcon = Icons.done_all;
-  static const IconData       msgExpired = CupertinoIcons.refresh;
+  static const IconData   msgExpiredIcon = CupertinoIcons.refresh;
+
+  static const IconData      webpageIcon = CupertinoIcons.compass;
 
   // Search
   static const IconData searchIcon = CupertinoIcons.search;

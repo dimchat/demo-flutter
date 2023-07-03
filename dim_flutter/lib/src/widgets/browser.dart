@@ -28,6 +28,9 @@
  * SOFTWARE.
  * =============================================================================
  */
+import 'dart:typed_data';
+
+import 'package:dim_client/dim_client.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_inappwebview/flutter_inappwebview.dart';
@@ -38,12 +41,12 @@ import 'alert.dart';
 import 'styles.dart';
 
 class Browser extends StatefulWidget {
-  const Browser({super.key, required this.uri, required this.title});
+  const Browser({super.key, required this.uri, this.title});
 
   final Uri uri;
-  final String title;
+  final String? title;
 
-  static void open(BuildContext context, {required String url, required String title}) {
+  static void open(BuildContext context, {required String url, String? title}) {
     Uri? uri = parseUri(url);
     if (uri == null) {
       Alert.show(context, 'Error', 'Failed to open URL: $url');
@@ -75,6 +78,9 @@ class Browser extends StatefulWidget {
 class _BrowserState extends State<Browser> {
 
   int _progress = 0;
+  String? _title;
+
+  String get title => widget.title ?? _title ?? '';
 
   final InAppWebViewGroupOptions options = InAppWebViewGroupOptions(
     crossPlatform: InAppWebViewOptions(
@@ -95,7 +101,7 @@ class _BrowserState extends State<Browser> {
     backgroundColor: Facade.of(context).colors.scaffoldBackgroundColor,
     appBar: CupertinoNavigationBar(
       backgroundColor: Facade.of(context).colors.appBardBackgroundColor,
-      middle: Text(widget.title, style: Facade.of(context).styles.titleTextStyle),
+      middle: Text(title, style: Facade.of(context).styles.titleTextStyle),
       trailing: _progress <= 99 ? const SizedBox(width: 16, height: 16,
           child: CircularProgressIndicator(strokeWidth: 2.0)) : null,
     ),
@@ -109,6 +115,9 @@ class _BrowserState extends State<Browser> {
           initialOptions: options,
           onProgressChanged: (controller, progress) => setState(() {
             _progress = progress;
+          }),
+          onTitleChanged: (controller, title) => setState(() {
+            _title = title;
           }),
         ),
         if (_progress <= 99)
@@ -127,4 +136,80 @@ class _BrowserState extends State<Browser> {
       ],
     ),
   );
+}
+
+
+/// WebPageView
+class PageContentView extends StatelessWidget {
+  const PageContentView({super.key, required this.content});
+
+  final PageContent content;
+
+  Widget? get icon {
+    try {
+      Uint8List? icon = content.icon;
+      if (icon != null) {
+        return Image(image: MemoryImage(icon));
+      }
+    } catch (e) {
+      Log.error('web page icon error: $e');
+    }
+    return null;
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    var colors = Facade.of(context).colors;
+    var styles = Facade.of(context).styles;
+    String url = content.url;
+    String title = content.title;
+    String desc = content.desc ?? '';
+    Widget image = icon ?? Icon(Styles.webpageIcon, color: colors.pageMessageColor,);
+    if (title.isEmpty) {
+      title = url;
+      url = '';
+    } else if (desc.isEmpty) {
+      desc = url;
+      url = '';
+    }
+    return Container(
+      color: colors.pageMessageBackgroundColor,
+      padding: Styles.pageMessagePadding,
+      width: 256,
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(title,
+            maxLines: 2,
+            style: styles.pageTitleTextStyle,
+          ),
+          Row(
+            children: [
+              Expanded(
+                child: Text(desc,
+                  maxLines: 3,
+                  style: styles.pageDescTextStyle,
+                ),
+              ),
+              ClipRRect(
+                borderRadius: const BorderRadius.all(
+                    Radius.elliptical(8, 8)
+                ),
+                child: SizedBox(
+                  width: 48, height: 48,
+                  // color: CupertinoColors.systemIndigo,
+                  child: image,
+                ),
+              ),
+            ],
+          ),
+          if (url.isNotEmpty)
+            Text(url,
+              style: styles.pageDescTextStyle,
+            ),
+        ],
+      ),
+    );
+  }
+
 }

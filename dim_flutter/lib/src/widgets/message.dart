@@ -1,5 +1,5 @@
 import 'package:flutter/cupertino.dart';
-import 'package:flutter/material.dart';
+import 'package:flutter_linkify/flutter_linkify.dart';
 
 import 'package:dim_client/dim_client.dart';
 import 'package:lnc/lnc.dart' as lnc;
@@ -10,9 +10,12 @@ import '../client/shared.dart';
 import '../models/contact.dart';
 import '../models/message.dart';
 import '../network/image_view.dart';
+
 import 'audio.dart';
+import 'browser.dart';
 import 'preview.dart';
 import 'styles.dart';
+
 
 abstract class ContentViewUtils {
 
@@ -79,8 +82,16 @@ abstract class ContentViewUtils {
   static Widget getTextContentView(BuildContext ctx, Content content, ID sender) => Container(
     color: getBackgroundColor(ctx, sender),
     padding: Styles.textMessagePadding,
-    child: SelectableText('${content["text"]}',
+    // child: SelectableText('${content["text"]}',
+    //   style: TextStyle(color: getTextColor(ctx, sender)),
+    // ),
+    child: SelectableLinkify(
+      text: '${content["text"]}',
       style: TextStyle(color: getTextColor(ctx, sender)),
+      linkStyle: const TextStyle(decoration: TextDecoration.none,),
+      // options: const LinkifyOptions(humanize: false),
+      linkifiers: const [UrlLinkifier(),],
+      onOpen: (link) => Browser.open(ctx, url: link.url),
     ),
   );
 
@@ -96,6 +107,9 @@ abstract class ContentViewUtils {
       ImageContent content, ID sender, List<InstantMessage> messages) =>
       ImageViewFactory().fromContent(content,
           onTap: () => previewImageContent(ctx, content, messages));
+
+  static Widget getPageContentView(BuildContext ctx, PageContent content, ID sender) =>
+      PageContentView(content: content,);
 
 }
 

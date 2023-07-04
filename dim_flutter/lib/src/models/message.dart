@@ -12,6 +12,11 @@ abstract class MessageBuilder {
     if (content is Command) {
       return true;
     }
+    String? cmd = content['command'];
+    cmd ??= content['cmd'];
+    if (cmd != null) {
+      return true;
+    }
     String? text = content['text'];
     if (text != null) {
       // check for text receipts

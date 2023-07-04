@@ -17,9 +17,10 @@ class Shield {
   final _BlockShield _blockShield = _BlockShield();
 
   Future<List<ID>> getBlockList() async => await _blockShield.getBlockList();
-  Future<bool> isBlocked(ID contact) async => await _blockShield.isBlocked(contact);
   Future<bool> addBlocked(ID contact) async => await _blockShield.addBlocked(contact);
   Future<bool> removeBlocked(ID contact) async => await _blockShield.removeBlocked(contact);
+  Future<bool> isBlocked(ID contact, {ID? group}) async =>
+      await _blockShield.isBlocked(contact, group: group);
 
   Future<void> broadcastBlockList() async {
     GlobalVariable shared = GlobalVariable();
@@ -42,9 +43,9 @@ class Shield {
   final _MuteShield _muteShield = _MuteShield();
 
   Future<List<ID>> getMuteList() async => await _muteShield.getMuteList();
-  Future<bool> isMuted(ID contact) async => await _muteShield.isMuted(contact);
   Future<bool> addMuted(ID contact) async => await _muteShield.addMuted(contact);
   Future<bool> removeMuted(ID contact) async => await _muteShield.removeMuted(contact);
+  Future<bool> isMuted(ID contact) async => await _muteShield.isMuted(contact);
 
   Future<void> broadcastMuteList() async {
     GlobalVariable shared = GlobalVariable();
@@ -88,9 +89,12 @@ class _BlockShield {
     return contacts ?? [];
   }
 
-  Future<bool> isBlocked(ID contact) async {
+  Future<bool> isBlocked(ID contact, {required ID? group}) async {
     if (_blockList == null) {
       await getBlockList();
+    }
+    if (group != null/* && !group.isBroadcast*/) {
+      return _blockMap[group] ?? false;
     }
     return _blockMap[contact] ?? false;
   }

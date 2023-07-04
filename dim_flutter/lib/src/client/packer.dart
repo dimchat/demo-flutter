@@ -68,18 +68,34 @@ class SharedPacker extends ClientMessagePacker {
     InstantMessage? iMsg = await super.decryptMessage(sMsg);
     if (iMsg != null) {
       Content content = iMsg.content;
-      if (content is FileContent) {
-        if (!content.containsKey('data') && content.containsKey('URL')) {
-          ID sender = iMsg.sender;
-          ID receiver = iMsg.receiver;
-          SymmetricKey? key = await messenger.getCipherKey(sender, receiver);
-          assert(key != null, 'failed to get password: $sender -> $receiver');
-          // keep password to decrypt data after downloaded
-          content.password = key;
-        }
+      if (content is FileContent && content.containsKey('URL')) {
+        // now received file content with remote data,
+        // which must be encrypted before upload to CDN;
+        // so keep the password here for decrypting after downloaded.
+        await _keepPassword(content, iMsg);
       }
     }
     return iMsg;
+  }
+
+  Future<void> _keepPassword(FileContent content, InstantMessage iMsg) async {
+    if (content.containsKey('data')) {
+      // this content was sent with plain file data, no need to decrypt
+      Log.warning('file data exists: $content');
+      return;
+    }
+    DecryptKey? key = content.password;
+    if (key != null) {
+      // this content was sent with a decrypt key, no need to be replaced
+      Log.warning('password already exists: $content');
+      return;
+    }
+    ID sender = iMsg.sender;
+    ID receiver = iMsg.receiver;
+    key = await messenger.getCipherKey(sender, receiver);
+    assert(key != null, 'failed to get password: $sender -> $receiver');
+    // keep password to decrypt data after downloaded
+    content.password = key;
   }
 
 }

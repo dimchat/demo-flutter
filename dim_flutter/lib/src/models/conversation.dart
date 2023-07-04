@@ -292,8 +292,9 @@ class Amanuensis implements lnc.Observer {
 
   Future<void> _update(ID cid, InstantMessage iMsg) async {
     Shield shield = Shield();
-    if (await shield.isBlocked(cid)) {
-      Log.warning('blocked: $cid');
+    if (await shield.isBlocked(iMsg.sender, group: iMsg.group)) {
+      // this message should have been blocked before verifying by messenger
+      Log.error('contact is blocked: ${iMsg.sender}, group: ${iMsg.group}');
       return;
     }
     Content content = iMsg.content;

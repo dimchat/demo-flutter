@@ -46,8 +46,8 @@ class SharedMessenger extends ClientMessenger {
   @override
   Future<SecureMessage?> verifyMessage(ReliableMessage rMsg) async {
     Shield shield = Shield();
-    if (await shield.isBlocked(rMsg.sender)) {
-      Log.warning('receiver is blocked: ${rMsg.sender}');
+    if (await shield.isBlocked(rMsg.sender, group: rMsg.group)) {
+      Log.warning('contact is blocked: ${rMsg.sender}, group: ${rMsg.group}');
       // TODO: upload blocked-list to current station?
       return null;
     }

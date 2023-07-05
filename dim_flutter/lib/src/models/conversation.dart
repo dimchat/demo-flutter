@@ -435,8 +435,12 @@ class Amanuensis implements lnc.Observer {
     String trace = JSON.encode(mta);
     ID cid = await _cid(env);
     ID sender = env.sender;  // original sender
-    int sn = content.originalSerialNumber;
+    int? sn = content.originalSerialNumber;
     String? signature = content.originalSignature;
+    if (sn == null) {
+      sn = 0;
+      Log.error('original sn not found: $content');
+    }
     // save trace
     GlobalVariable shared = GlobalVariable();
     if (await shared.database.addTrace(trace, cid,

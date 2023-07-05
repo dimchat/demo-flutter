@@ -33,7 +33,7 @@ dependencies:
   bip39: ^1.0.6
 
   lnc: ^0.1.0-dev.3
-  dim_client: ^0.1.0-dev.10
+  dim_client: ^0.1.0-dev.11
 
 dev_dependencies:
   flutter_test:

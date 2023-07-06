@@ -1,4 +1,5 @@
 import 'package:dim_client/dim_client.dart';
+import 'package:lnc/lnc.dart';
 
 import 'contact.dart';
 
@@ -9,12 +10,7 @@ abstract class MessageBuilder {
 
   /// Check whether this message content should be a command
   bool isCommand(Content content, ID sender) {
-    if (content is Command) {
-      return true;
-    }
-    String? cmd = content['command'];
-    cmd ??= content['cmd'];
-    if (cmd != null) {
+    if (content.containsKey('command')) {
       return true;
     }
     String? text = content['text'];
@@ -27,27 +23,9 @@ abstract class MessageBuilder {
       ])) {
         return true;
       }
-      int network = sender.type;
-      if (network == EntityType.kStation) {
-        if (_checkText(text, [
-          'Login command receive',
-          'Block command receive',
-          'Mute command receive',
-        ])) {
-          // receipts from station
-          return true;
-        }
-      } else if (network == EntityType.kBot) {
-        if (_checkText(text, [
-          'Device token receive',
-        ])) {
-          // receipts from service bot
-          return true;
-        }
-      }
     }
     // TODO: other situations?
-    return false;
+    return content is Command;
   }
   bool _checkText(String text, List<String> array) {
     for (String prefix in array) {
@@ -59,62 +37,35 @@ abstract class MessageBuilder {
   }
 
   String getText(Content content, ID sender) {
-    if (content is Command) {
-      return _getCommandText(content, sender);
-    }
-    String? text = content['text'];
-    if (text != null) {
-      // check for text receipts
-      String? sub = _replaceText(text, [
-        'Document not accepted: ',
-        'Document not changed: ',
-        'Document received: ',
-      ]);
-      if (sub != null) {
-        return _replaceName(text, sub);
+    try {
+      String? template = content['template'];
+      Map? info = content['replacements'];
+      if (template != null && info != null) {
+        return _getTempText(template, info);
       }
-      int network = sender.type;
-      if (network == EntityType.kStation) {
-        sub = _replaceText(text, [
-          'Login command received: ',
-          'Block command received: ',
-          'Mute command received: ',
-        ]);
-        if (sub != null) {
-          // receipts from station
-          return _replaceName(text, sub);
-        }
-      } else if (network == EntityType.kBot) {
-        sub = _replaceText(text, [
-          'Device token received: ',
-        ]);
-        if (sub != null) {
-          // receipts from service bot
-          return _replaceName(text, sub);
-        }
+      if (content is Command) {
+        return _getCommandText(content, sender);
       }
+      return _getContentText(content);
+    } catch (e) {
+      Log.error('content error: $e, $content');
+      return e.toString();
     }
-    return _getContentText(content);
-  }
-  String? _replaceText(String text, List<String> array) {
-    for (String prefix in array) {
-      if (text.startsWith(prefix)) {
-        return text.substring(prefix.length);
-      }
-    }
-    return null;
   }
 
-  String _replaceName(String text, String sub) {
-    ID? identifier = ID.parse(sub);
-    if (identifier == null) {
-      return text;
-    }
-    String name = getName(identifier);
-    if (name.isEmpty) {
-      return text;
-    }
-    return text.replaceAll(sub, name);
+  String _getTempText(String template, Map info) {
+    Log.info('template: $template');
+    String text = template;
+    info.forEach((key, value) {
+      if (key == 'ID') {
+        ID? identifier = ID.parse(value);
+        if (identifier != null) {
+          value = getName(identifier);
+        }
+      }
+      text = text.replaceAll('\${$key}', '$value');
+    });
+    return text;
   }
 
   String _getContentText(Content content) {

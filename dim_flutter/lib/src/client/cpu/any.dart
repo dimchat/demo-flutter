@@ -40,9 +40,7 @@ class AnyContentProcessor extends BaseContentProcessor {
     }
 
     // response
-    ReceiptCommand receipt = ReceiptCommand.create(text, rMsg);
-    //receipt.put("signature", signature);
-    return [receipt];
+    return respondReceipt(text, rMsg);
   }
 
 }

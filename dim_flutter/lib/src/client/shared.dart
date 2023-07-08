@@ -35,17 +35,6 @@ void _registerPlugins() {
 
   ClientFacebook.prepare();
 
-  // Text Receipt
-  Content.setFactory(ContentType.kText, ContentParser((dict) {
-    CommandFactoryManager man = CommandFactoryManager();
-    String? cmd = man.generalFactory.getCmd(dict);
-    if (cmd == Command.kReceipt) {
-      return TextReceiptCommand(dict);
-    } else {
-      return BaseTextContent(dict);
-    }
-  }));
-
   //
   //  Register command parsers
   //

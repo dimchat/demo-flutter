@@ -65,123 +65,146 @@ class Shield {
 
 }
 
-class _BlockShield {
+abstract class _BaseShield {
 
-  final Map<ID, bool> _blockMap = {};
-  List<ID>? _blockList;
+  final Map<ID, bool> _map = {};
+  List<ID>? _list;
+  User? _user;
 
-  Future<List<ID>> getBlockList() async {
-    List<ID>? contacts = _blockList;
-    if (contacts == null) {
-      _blockMap.clear();
-      GlobalVariable shared = GlobalVariable();
-      User? currentUser = await shared.facebook.currentUser;
-      if (currentUser == null) {
-        assert(false, 'current user not set');
-      } else {
-        contacts = await shared.database.getBlockList(user: currentUser.identifier);
-        for (ID item in contacts) {
-          _blockMap[item] = true;
-        }
-        _blockList = contacts;
-      }
-    }
-    return contacts ?? [];
+  void _clear() {
+    _list = null;
+    // _map.clear();
   }
 
-  Future<bool> isBlocked(ID contact, {required ID? group}) async {
-    if (_blockList == null) {
-      await getBlockList();
+  Future<bool> _check(ID contact, User current) async {
+    // make sure data loaded
+    await _get(current);
+    // check value
+    return _map[contact] ?? false;
+  }
+
+  Future<List<ID>> _get(User current) async {
+    if (_user != current) {
+      _user = current;
+      _clear();
+    }
+    List<ID>? contacts = _list;
+    if (contacts == null) {
+      _map.clear();
+      contacts = await _load(current);
+      for (ID item in contacts) {
+        _map[item] = true;
+      }
+      _list = contacts;
+    }
+    return contacts;
+  }
+
+  Future<List<ID>> _load(User current);
+
+  Future<User?> get currentUser async {
+    GlobalVariable shared = GlobalVariable();
+    User? current = await shared.facebook.currentUser;
+    assert(current != null, 'current user not set');
+    return current;
+  }
+}
+
+class _BlockShield extends _BaseShield {
+
+  Future<List<ID>> getBlockList() async {
+    User? current = await currentUser;
+    if (current == null) {
+      return [];
+    }
+    return await _get(current);
+  }
+
+  Future<bool> isBlocked(ID contact, {required ID? group, req}) async {
+    User? current = await currentUser;
+    if (current == null) {
+      return false;
     }
     if (group != null/* && !group.isBroadcast*/) {
-      return _blockMap[group] ?? false;
+      return await _check(group, current);
     }
-    return _blockMap[contact] ?? false;
+    return await _check(contact, current);
   }
 
   Future<bool> addBlocked(ID contact) async {
-    GlobalVariable shared = GlobalVariable();
-    User? currentUser = await shared.facebook.currentUser;
-    if (currentUser == null) {
-      assert(false, 'current user not set');
+    User? current = await currentUser;
+    if (current == null) {
       return false;
     }
     // clear to reload
-    _blockList = null;
-    _blockMap.clear();
-    return await shared.database.addBlocked(contact, user: currentUser.identifier);
+    _clear();
+    GlobalVariable shared = GlobalVariable();
+    return await shared.database.addBlocked(contact, user: current.identifier);
   }
 
   Future<bool> removeBlocked(ID contact) async {
-    GlobalVariable shared = GlobalVariable();
-    User? currentUser = await shared.facebook.currentUser;
-    if (currentUser == null) {
-      assert(false, 'current user not set');
+    User? current = await currentUser;
+    if (current == null) {
       return false;
     }
     // clear to reload
-    _blockList = null;
-    _blockMap.clear();
-    return await shared.database.removeBlocked(contact, user: currentUser.identifier);
+    _clear();
+    GlobalVariable shared = GlobalVariable();
+    return await shared.database.removeBlocked(contact, user: current.identifier);
+  }
+
+  @override
+  Future<List<ID>> _load(User current) async {
+    GlobalVariable shared = GlobalVariable();
+    return await shared.database.getBlockList(user: current.identifier);
   }
 
 }
 
-class _MuteShield {
-
-  final Map<ID, bool> _muteMap = {};
-  List<ID>? _muteList;
+class _MuteShield extends _BaseShield {
 
   Future<List<ID>> getMuteList() async {
-    List<ID>? contacts = _muteList;
-    if (contacts == null) {
-      _muteMap.clear();
-      GlobalVariable shared = GlobalVariable();
-      User? currentUser = await shared.facebook.currentUser;
-      if (currentUser == null) {
-        assert(false, 'current user not set');
-      } else {
-        contacts = await shared.database.getMuteList(user: currentUser.identifier);
-        for (ID item in contacts) {
-          _muteMap[item] = true;
-        }
-        _muteList = contacts;
-      }
+    User? current = await currentUser;
+    if (current == null) {
+      return [];
     }
-    return contacts ?? [];
+    return await _get(current);
   }
 
   Future<bool> isMuted(ID contact) async {
-    if (_muteList == null) {
-      await getMuteList();
+    User? current = await currentUser;
+    if (current == null) {
+      return false;
     }
-    return _muteMap[contact] ?? false;
+    return await _check(contact, current);
   }
 
   Future<bool> addMuted(ID contact) async {
-    GlobalVariable shared = GlobalVariable();
-    User? currentUser = await shared.facebook.currentUser;
-    if (currentUser == null) {
-      assert(false, 'current user not set');
+    User? current = await currentUser;
+    if (current == null) {
       return false;
     }
     // clear to reload
-    _muteList = null;
-    _muteMap.clear();
-    return await shared.database.addMuted(contact, user: currentUser.identifier);
+    _clear();
+    GlobalVariable shared = GlobalVariable();
+    return await shared.database.addMuted(contact, user: current.identifier);
   }
 
   Future<bool> removeMuted(ID contact) async {
-    GlobalVariable shared = GlobalVariable();
-    User? currentUser = await shared.facebook.currentUser;
-    if (currentUser == null) {
-      assert(false, 'current user not set');
+    User? current = await currentUser;
+    if (current == null) {
       return false;
     }
     // clear to reload
-    _muteList = null;
-    _muteMap.clear();
-    return await shared.database.removeMuted(contact, user: currentUser.identifier);
+    _clear();
+    GlobalVariable shared = GlobalVariable();
+    return await shared.database.removeMuted(contact, user: current.identifier);
+  }
+
+  @override
+  Future<List<ID>> _load(User current) async {
+    GlobalVariable shared = GlobalVariable();
+    return await shared.database.getMuteList(user: current.identifier);
   }
 
 }

@@ -123,12 +123,20 @@ void _reconnect(bool test) async {
   if (test) {
     SessionDBI database = shared.sdb;
     List<Pair<ID, int>> records = await database.getProviders();
+    ID pid;
     for (Pair<ID, int> provider in records) {
-      var items = await database.getStations(provider: provider.first);
+      pid = provider.first;
+      var items = await database.getStations(provider: pid);
       List<StationInfo> stations = await StationInfo.fromList(items);
-      for (StationInfo srv in stations) {
-        VelocityMeter.ping(srv);
+      // check all stations of this provider
+      List<Future<VelocityMeter>> futures = [];
+      for (StationInfo info in stations) {
+        futures.add(VelocityMeter.ping(info));
       }
+      // report speeds after all stations tested
+      Future.wait(futures).then((meters) {
+        shared.messenger?.reportSpeeds(meters, pid);
+      });
     }
     await Future.delayed(const Duration(seconds: 3));
   } else {

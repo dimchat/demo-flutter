@@ -5,12 +5,15 @@ import 'package:lnc/lnc.dart';
 
 import '../models/conversation.dart';
 import '../models/shield.dart';
+import '../network/velocity.dart';
 
 import 'compatible.dart';
 import 'shared.dart';
 
 class SharedMessenger extends ClientMessenger {
   SharedMessenger(super.session, super.facebook, super.mdb);
+  
+  String? _remoteAddress;  // login IP
 
   @override
   void suspendInstantMessage(InstantMessage iMsg, Map info) {
@@ -29,6 +32,13 @@ class SharedMessenger extends ClientMessenger {
       SymmetricKey password, InstantMessage iMsg) async {
     if (content is Command) {
       content = Compatible.fixCommand(content);
+      // get client IP from handshake response
+      if (content is HandshakeCommand) {
+        String? remote = content.getString('remote_address');
+        if (remote != null) {
+          _remoteAddress = remote;
+        }
+      }
     }
     return await super.serializeContent(content, password, iMsg);
   }
@@ -128,24 +138,54 @@ class SharedMessenger extends ClientMessenger {
 
   @override
   Future<void> handshakeSuccess() async {
+    // 1. broadcast current documents after handshake success
     try {
       await super.handshakeSuccess();
     } catch (e) {
       Log.error('failed to broadcast document: $e');
     }
-    // // 1. broadcast current documents after handshake success
-    // await broadcastDocument();
-    // 2. broadcast login command with current station info
     GlobalVariable shared = GlobalVariable();
     User? user = await shared.facebook.currentUser;
     if (user == null) {
       assert(false, 'should not happen');
-    } else {
+      return;
+    }
+    // 2. broadcast login command with current station info
+    try {
       await broadcastLogin(user.identifier, shared.terminal.userAgent);
+    } catch (e) {
+      Log.error('failed to broadcast login command: $e');
+    }
+    // 3. broadcast block/mute list
+    try {
       Shield shield = Shield();
       await shield.broadcastBlockList();
       await shield.broadcastMuteList();
+    } catch (e) {
+      Log.error('failed to broadcast block/mute list: $e');
     }
+    // 4. report station speeds to master after tested speeds
+  }
+
+  Future<void> reportSpeeds(List<VelocityMeter> meters, ID provider) async {
+    if (meters.isEmpty) {
+      Log.warning('meters empty');
+      return;
+    }
+    List stations = [];
+    for (VelocityMeter item in meters) {
+      stations.add({
+        'host': item.host,
+        'port': item.port,
+        'response_time': item.responseTime,
+      });
+    }
+    ID master = ID.parse('master@anywhere')!;
+    ReportCommand content = ReportCommand.fromTitle('speeds');
+    content['provider'] = provider.toString();
+    content['stations'] = stations;
+    content['remote_address'] = _remoteAddress;
+    await sendContent(content, sender: null, receiver: master, priority: 1);
   }
 
 }

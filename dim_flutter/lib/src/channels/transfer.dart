@@ -157,29 +157,28 @@ class FileTransferChannel extends MethodChannel {
     await _prepare();
     // 1. check old task
     Uri? url = _uploads[filename];
-    if (url == null) {
-      Log.warning('new task, try to upload: $filename');
-      url = _upWaiting;
-      _uploads[filename] = url;
-    } else if (url == _upError) {
+    if (url == _upError) {
       Log.warning('error task, try to upload again: $filename');
-      url = _upWaiting;
-      _uploads[filename] = url;
+      url = null;
     }
-    // 2. do upload
-    if (url == _upWaiting) {
+    if (url == null) {
+      Log.info('try to upload: $filename');
+      _uploads[filename] = _upWaiting;
       // call ftp client to upload
       url = await _invoke(method, {
         'data': data,
         'filename': filename,
         'sender': sender.toString(),
       });
-      if (url != null) {
-        Log.error('same file uploaded: $filename -> $url');
-      }
+      Log.info('uploaded: $filename -> $url');
+      url ??= _upWaiting;
+      _uploads[filename] = url;
+    }
+    // 2. do upload
+    if (url == _upWaiting) {
       double now = Time.currentTimeSeconds;
       double expired = now + uploadExpires;
-      while (url == null || url == _upWaiting) {
+      while (url == _upWaiting) {
         // wait a while to check the result
         await Future.delayed(const Duration(milliseconds: 512));
         url = _uploads[filename];
@@ -218,27 +217,26 @@ class FileTransferChannel extends MethodChannel {
     await _prepare();
     // 1. check old task
     String? path = _downloads[url];
-    if (path == null) {
-      Log.info('new task, try to download: $url');
-      path = _downWaiting;
-      _downloads[url] = path;
-    } else if (path == _downError) {
+    if (path == _downError) {
       Log.warning('error task, try to download again: $url');
-      path = _downWaiting;
-      _downloads[url] = path;
+      path = null;
     }
-    // 2. do download
-    if (path == _downWaiting) {
+    if (path == null) {
+      Log.info('try to download: $url');
+      _downloads[url] = _downWaiting;
       // call ftp client to download
       path = await _invoke(method, {
         'url': url.toString(),
       });
-      if (path != null) {
-        Log.debug('found cached file: $path -> $url');
-      }
+      Log.info('downloaded: $url -> $path');
+      path ??= _downWaiting;
+      _downloads[url] = path;
+    }
+    // 2. check download tasks
+    if (path == _downWaiting) {
       double now = Time.currentTimeSeconds;
       double expired = now + uploadExpires;
-      while (path == null || path == _downWaiting) {
+      while (path == _downWaiting) {
         // wait a while to check the result
         await Future.delayed(const Duration(milliseconds: 512));
         path = _downloads[url];

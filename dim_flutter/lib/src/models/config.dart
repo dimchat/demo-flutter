@@ -16,8 +16,7 @@ class Config {
 
   // TODO: start a background thread to query 'https://dim.chat/sechat/gsp.js'
   //       for updating configurations
-  static String entrance = 'https://raw.githubusercontent.com/dimchat/'
-      'demo-flutter/main/sechat/assets/config.json';
+  static String entrance = 'http://apps.dim.chat/Tarsier/config.json';
 
   Map? _info;
 
@@ -28,11 +27,22 @@ class Config {
       conf = await _load(path);
       conf ??= await _init(path);
       // update for next reading
-      Uri? url = Browser.parseUri(entrance);
-      if (url == null) {
+      Uri? url = entrance.isEmpty ? null : Browser.parseUri(entrance);
+      if (entrance.isEmpty) {
+        Log.debug('config.json already downloaded');
+      } else if (url == null) {
         Log.error('entrance url error: $entrance');
       } else {
-        _refresh(url, path).onError((error, stackTrace) {
+        Log.info('try to refresh config: $url -> $path');
+        entrance = '';
+        _refresh(url, path).then((value) {
+          if (value == null) {
+            Log.error('failed to refresh config: $url, $path');
+          } else {
+            Log.info('config reloaded: $path');
+            _info = value;
+          }
+        }).onError((error, stackTrace) {
           Log.error('failed to update config: $entrance, $error, $stackTrace');
           return null;
         });
@@ -103,30 +113,35 @@ Future<Map?> _refresh(Uri url, String path) async {
   } else {
     Log.debug('download config: $url -> $tmp');
   }
-  // 2. check config
+  // get config from temporary file
   Map? conf;
   try {
     conf = await ExternalStorage.loadJson(tmp);
-    if (conf == null) {
-      Log.warning('config not exists: $tmp');
-      return null;
-    }
   } catch (e) {
-    Log.error('failed to load config: $e');
+    Log.error('downloaded config error: $e');
+    conf = null;
+  }
+  // remove temporary file
+  if (await Paths.delete(tmp)) {
+    Log.debug('temporary config file removed: $tmp');
+  }
+  // 2. check config
+  if (conf == null) {
+    Log.warning('failed to load config: $tmp');
     return null;
   }
-  ID? gsp = ID.parse(conf['ID']);
+  ID? provider = ID.parse(conf['ID']);
   List? stations = conf['stations'];
   List? uploads = conf['uploads'];
-  if (gsp == null || stations == null || uploads == null) {
-    Log.error('config error: $conf');
+  if (provider == null || stations == null || uploads == null) {
+    Log.error('not a config: $conf');
     return null;
   } else if (stations.isEmpty || uploads.isEmpty) {
     Log.error('config error: $conf');
     return null;
   }
   // 3. replace config
-  Log.warning('replace config: $tmp => $path, $conf');
+  Log.warning('replace config file: $path, $conf');
   await ExternalStorage.saveJson(conf, path);
   return conf;
 }

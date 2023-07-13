@@ -90,8 +90,10 @@ abstract class ContentViewUtils {
   );
 
   static Widget getAudioContentView(BuildContext ctx, AudioContent content, ID sender) =>
-      AudioContentView(content, textColor: getTextColor(ctx, sender),
-          backgroundColor: getBackgroundColor(ctx, sender));
+      AudioContentView(content,
+        textColor: getTextColor(ctx, sender),
+        backgroundColor: getBackgroundColor(ctx, sender),
+      );
 
   // TODO:
   static Widget getVideoContentView(BuildContext ctx, VideoContent content, ID sender) =>
@@ -100,10 +102,13 @@ abstract class ContentViewUtils {
   static Widget getImageContentView(BuildContext ctx,
       ImageContent content, ID sender, List<InstantMessage> messages) =>
       ImageViewFactory().fromContent(content,
-          onTap: () => previewImageContent(ctx, content, messages));
+        onTap: () => previewImageContent(ctx, content, messages),
+      );
 
   static Widget getPageContentView(BuildContext ctx, PageContent content, ID sender) =>
-      PageContentView(content: content,);
+      PageContentView(content: content,
+        onTap: () => Browser.open(ctx, url: content.url, title: content.title),
+      );
 
 }
 

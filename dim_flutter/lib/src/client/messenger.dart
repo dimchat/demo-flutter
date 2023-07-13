@@ -13,7 +13,7 @@ import 'shared.dart';
 class SharedMessenger extends ClientMessenger {
   SharedMessenger(super.session, super.facebook, super.mdb);
   
-  String? _remoteAddress;  // login IP
+  dynamic _remoteAddress;  // Tuple[str, int]
 
   @override
   void suspendInstantMessage(InstantMessage iMsg, Map info) {
@@ -32,13 +32,6 @@ class SharedMessenger extends ClientMessenger {
       SymmetricKey password, InstantMessage iMsg) async {
     if (content is Command) {
       content = Compatible.fixCommand(content);
-      // get client IP from handshake response
-      if (content is HandshakeCommand) {
-        String? remote = content.getString('remote_address');
-        if (remote != null) {
-          _remoteAddress = remote;
-        }
-      }
     }
     return await super.serializeContent(content, password, iMsg);
   }
@@ -49,6 +42,13 @@ class SharedMessenger extends ClientMessenger {
     Content? content = await super.deserializeContent(data, password, sMsg);
     if (content is Command) {
       content = Compatible.fixCommand(content);
+      // get client IP from handshake response
+      if (content is HandshakeCommand) {
+        var remote = content['remote_address'];
+        if (remote != null) {
+          _remoteAddress = remote;
+        }
+      }
     }
     return content;
   }
@@ -180,8 +180,12 @@ class SharedMessenger extends ClientMessenger {
         'response_time': item.responseTime,
       });
     }
-    ID master = ID.parse('master@anywhere')!;
-    ReportCommand content = ReportCommand.fromTitle('speeds');
+    ID master = ID.parse('monitor@anywhere')!;
+    Content content = CustomizedContent.create(
+      app: 'chat.dim.monitor',
+      mod: 'speeds',
+      act: 'post',
+    );
     content['provider'] = provider.toString();
     content['stations'] = stations;
     content['remote_address'] = _remoteAddress;

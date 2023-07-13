@@ -6,6 +6,7 @@ import 'package:flutter_image_compress/flutter_image_compress.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:lnc/lnc.dart';
 
+import '../filesys/paths.dart';
 import 'alert.dart';
 import 'permissions.dart';
 
@@ -26,18 +27,23 @@ void _openImagePicker(BuildContext context, bool camera, OnImagePicked? onPicked
     ImagePicker().pickImage(source: camera ? ImageSource.camera : ImageSource.gallery).then((file) {
       if (file == null) {
         Log.error('failed to get image file');
-      } else {
-        String path = file.path;
-        if (onPicked != null) {
-          onPicked(path);
-        }
-        file.readAsBytes().then((data) {
-          Log.debug('image file length: ${data.length}, path: ${file.path}');
-          onRead(path, data);
-        }).onError((error, stackTrace) {
-          Alert.show(context, 'Image File Error', '$error');
-        });
+        return;
       }
+      String path = file.path;
+      String? filename = Paths.filename(path);
+      Alert.confirm(context, 'Pick Image', '$filename',
+        okAction: () {
+          if (onPicked != null) {
+            onPicked(path);
+          }
+          file.readAsBytes().then((data) {
+            Log.debug('image file length: ${data.length}, path: $path');
+            onRead(path, data);
+          }).onError((error, stackTrace) {
+            Alert.show(context, 'Image File Error', '$error');
+          });
+        }
+      );
     }).onError((error, stackTrace) {
       String name = camera ? 'Camera' : 'Gallery';
       Alert.show(context, '$name Error', '$error');

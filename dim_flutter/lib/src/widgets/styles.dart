@@ -565,7 +565,7 @@ abstract class Styles {
   static const IconData  msgReceivedIcon = Icons.done_all;
   static const IconData   msgExpiredIcon = CupertinoIcons.refresh;
 
-  static const IconData      webpageIcon = CupertinoIcons.compass;
+  static const IconData      webpageIcon = CupertinoIcons.link;
 
   // Search
   static const IconData searchIcon = CupertinoIcons.search;

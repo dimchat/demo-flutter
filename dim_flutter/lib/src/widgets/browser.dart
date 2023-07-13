@@ -51,6 +51,9 @@ class Browser extends StatefulWidget {
     if (uri == null) {
       Alert.show(context, 'Error', 'Failed to open URL: $url');
     } else {
+      if (title != null && title.isEmpty) {
+        title = null;
+      }
       showCupertinoDialog(context: context,
         builder: (context) => Browser(uri: uri, title: title),
       );
@@ -78,8 +81,11 @@ class Browser extends StatefulWidget {
 class _BrowserState extends State<Browser> {
 
   int _progress = 0;
+
+  Uri? _url;
   String? _title;
 
+  Uri get url => _url ?? widget.uri;
   String get title => widget.title ?? _title ?? '';
 
   final InAppWebViewGroupOptions options = InAppWebViewGroupOptions(
@@ -116,6 +122,9 @@ class _BrowserState extends State<Browser> {
           onProgressChanged: (controller, progress) => setState(() {
             _progress = progress;
           }),
+          onLoadStart: (controller, url) => setState(() {
+            _url = url;
+          }),
           onTitleChanged: (controller, title) => setState(() {
             _title = title;
           }),
@@ -124,7 +133,7 @@ class _BrowserState extends State<Browser> {
         Container(
           color: Colors.black54,
           padding: const EdgeInsets.fromLTRB(20, 4, 8, 16),
-          child: Text('$_progress% | ${widget.uri} ...',
+          child: Text('$_progress% | $url ...',
             style: const TextStyle(
               fontSize: 10,
               color: Colors.white,
@@ -141,8 +150,9 @@ class _BrowserState extends State<Browser> {
 
 /// WebPageView
 class PageContentView extends StatelessWidget {
-  const PageContentView({super.key, required this.content});
+  const PageContentView({super.key, required this.content, this.onTap});
 
+  final GestureTapCallback? onTap;
   final PageContent content;
 
   Widget? get icon {
@@ -158,7 +168,12 @@ class PageContentView extends StatelessWidget {
   }
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context) => GestureDetector(
+    onTap: onTap ?? () => Browser.open(context, url: content.url, title: content.title),
+    child: _widget(context),
+  );
+
+  Widget _widget(BuildContext context) {
     var colors = Facade.of(context).colors;
     var styles = Facade.of(context).styles;
     String url = content.url;

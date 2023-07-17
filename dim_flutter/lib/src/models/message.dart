@@ -1,6 +1,7 @@
 import 'package:dim_client/dim_client.dart';
 import 'package:lnc/lnc.dart';
 
+import '../common/protocol/name_card.dart';
 import 'contact.dart';
 
 abstract class MessageBuilder {
@@ -88,6 +89,8 @@ abstract class MessageBuilder {
       }
     } else if (content is PageContent) {
       text = '[URL:${content.url}]';
+    } else if (content is NameCard) {
+      text = '[NameCard:${content.identifier}]';
     } else {
       text = "Current version doesn't support this message type: ${content.type}.";
     }

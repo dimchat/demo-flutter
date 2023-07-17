@@ -554,6 +554,7 @@ abstract class Styles {
   static const IconData chatKeyboardIcon = CupertinoIcons.keyboard;
   static const IconData chatFunctionIcon = Icons.add_circle_outline;
   static const IconData     chatSendIcon = Icons.send;
+  static const IconData      noImageIcon = CupertinoIcons.photo;
   // Audio
   static const IconData    waitAudioIcon = CupertinoIcons.cloud_download;
   static const IconData    playAudioIcon = CupertinoIcons.play;
@@ -578,6 +579,7 @@ abstract class Styles {
 
   static const IconData  addFriendIcon = CupertinoIcons.person_add;
   static const IconData    sendMsgIcon = CupertinoIcons.chat_bubble;
+  static const IconData      shareIcon = CupertinoIcons.share;
   static const IconData  clearChatIcon = CupertinoIcons.delete;
   static const IconData     deleteIcon = CupertinoIcons.delete;
 

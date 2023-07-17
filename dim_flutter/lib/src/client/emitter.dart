@@ -141,7 +141,7 @@ class Emitter implements Observer {
   /// @throws IOException on failed to save message
   Future<void> sendText(String text, ID receiver) async {
     TextContent content = TextContent.create(text);
-    await _sendContent(content, receiver);
+    await sendContent(content, receiver);
   }
 
   ///  Send image message to receiver
@@ -158,7 +158,7 @@ class Emitter implements Observer {
     // add image data length & thumbnail into message content
     content['length'] = jpeg.length;
     content.thumbnail = thumbnail;
-    await _sendContent(content, receiver);
+    await sendContent(content, receiver);
   }
 
   ///  Send voice message to receiver
@@ -175,10 +175,10 @@ class Emitter implements Observer {
     // add voice data length & duration into message content
     content['length'] = mp4.length;
     content['duration'] = duration;
-    await _sendContent(content, receiver);
+    await sendContent(content, receiver);
   }
 
-  Future<void> _sendContent(Content content, ID receiver) async {
+  Future<void> sendContent(Content content, ID receiver) async {
     GlobalVariable shared = GlobalVariable();
     Pair<InstantMessage, ReliableMessage?> result;
     result = await shared.messenger!.sendContent(content, sender: null, receiver: receiver);

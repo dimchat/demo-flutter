@@ -8,12 +8,14 @@ import 'package:lnc/lnc.dart' show Log;
 
 import '../client/constants.dart';
 import '../client/shared.dart';
+import '../common/protocol/name_card.dart';
 import '../models/contact.dart';
 import '../models/message.dart';
 import '../network/image_view.dart';
 
 import 'audio.dart';
 import 'browser.dart';
+import 'name_card.dart';
 import 'preview.dart';
 import 'styles.dart';
 
@@ -77,11 +79,12 @@ abstract class ContentViewUtils {
   static Widget getTextContentView(BuildContext ctx, Content content, ID sender) => Container(
     color: getBackgroundColor(ctx, sender),
     padding: Styles.textMessagePadding,
-    // child: SelectableText('${content["text"]}',
+    // child: SelectableText(
+    //   DefaultMessageBuilder().getText(content, sender),
     //   style: TextStyle(color: getTextColor(ctx, sender)),
     // ),
     child: SelectableLinkify(
-      text: '${content["text"]}',
+      text: DefaultMessageBuilder().getText(content, sender),
       style: TextStyle(color: getTextColor(ctx, sender)),
       linkStyle: const TextStyle(decoration: TextDecoration.none,),
       // options: const LinkifyOptions(humanize: false),
@@ -113,6 +116,9 @@ abstract class ContentViewUtils {
       PageContentView(content: content,
         onTap: () => Browser.open(ctx, url: content.url, title: content.title),
       );
+
+  static Widget getNameCardView(BuildContext ctx, NameCard content,
+      {GestureTapCallback? onTap}) => NameCardView(content: content, onTap: onTap,);
 
 }
 

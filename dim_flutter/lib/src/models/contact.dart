@@ -57,6 +57,7 @@ class ContactInfo implements lnc.Observer {
 
   final ID identifier;
   String? _name;
+  String? _avatar;
   ContactRemark? _remark;
 
   bool _friend = false;
@@ -95,6 +96,17 @@ class ContactInfo implements lnc.Observer {
       nickname = nickname.trim();
     }
     return nickname;
+  }
+
+  String? get avatar {
+    String? url = _avatar;
+    if (url == null) {
+      _avatar = '';
+      reloadData();
+    } else if (url.isEmpty) {
+      url = null;
+    }
+    return url;
   }
 
   ContactRemark get remark {
@@ -154,6 +166,13 @@ class ContactInfo implements lnc.Observer {
     }
     // get name
     _name = await shared.facebook.getName(identifier);
+    // get avatar
+    Document? visa = await shared.facebook.getDocument(identifier, '*');
+    if (visa is Visa) {
+      _avatar = visa.avatar ?? '';
+    } else {
+      _avatar = '';
+    }
     // get remark
     if (user == null) {
       _remark = ContactRemark.empty(identifier);

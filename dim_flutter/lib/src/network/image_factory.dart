@@ -53,42 +53,60 @@ class ImageFactory {
   /// Get avatar
   ImageProvider? fromID(ID identifier) => _providers[identifier.toString()];
 
-  /// Download avatar from visa document
-  Future<ImageProvider?> downloadDocument(Document visa) async {
-    ID identifier = visa.identifier;
-    String? url;
-    if (visa is Visa) {
-      url = visa.avatar;
-    } else {
-      url = visa.getProperty('avatar');
+  ImageProvider? getImage(String url) => _providers[url];
+
+  /// Download avatar from remote URL
+  Future<ImageProvider?> downloadImage(String url) async {
+    if (!url.contains('://')) {
+      Log.warning('image url error: $url');
+      return null;
     }
-    if (url == null || !url.contains('://')) {
-      Log.warning('avatar url not found: $identifier, $visa');
-      return _providers[identifier.toString()];
-    }
-    ImageProvider? image;
     // check cache
-    image = _providers[url];
+    ImageProvider? image = _providers[url];
     if (image != null) {
       return image;
     }
     Uri? uri = Browser.parseUri(url);
     if (uri == null) {
-      Log.error('avatar url error: $url');
+      Log.error('image url error: $url');
       return null;
     }
     // get local file path, if not exists
     // try to download from file server
     String? path = await FileTransfer().downloadAvatar(uri);
     if (path == null) {
-      Log.error('failed to download avatar: $identifier -> $url');
-      return _providers[identifier.toString()];
+      Log.error('failed to download image: $url');
+      return null;
     } else {
       image = _providers[path];
       image ??= FileImage(File(path));
       // cache it
       _providers[path] = image;
       _providers[url] = image;
+      return image;
+    }
+  }
+
+  /// Download avatar from visa document
+  Future<ImageProvider?> downloadDocument(Document visa) async {
+    ID identifier = visa.identifier;
+    // get avatar url from visa
+    String? url;
+    if (visa is Visa) {
+      url = visa.avatar;
+    } else {
+      url = visa.getProperty('avatar');
+    }
+    if (url == null) {
+      Log.warning('avatar url not found: $identifier, $visa');
+      return _providers[identifier.toString()];
+    }
+    // download image
+    ImageProvider? image = await downloadImage(url);
+    if (image == null) {
+      Log.error('cannot download avatar: $identifier -> $url');
+      return _providers[identifier.toString()];
+    } else {
       _providers[identifier.toString()] = image;
       return image;
     }

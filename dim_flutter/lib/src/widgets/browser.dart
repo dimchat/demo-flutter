@@ -190,7 +190,7 @@ class PageContentView extends StatelessWidget {
     return Container(
       color: colors.pageMessageBackgroundColor,
       padding: Styles.pageMessagePadding,
-      width: 256,
+      // width: 256,
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [

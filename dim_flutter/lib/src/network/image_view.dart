@@ -317,15 +317,16 @@ class _AutoImageState extends State<_AutoImageView> implements lnc.Observer {
 Widget _imageNotFound(ImageContent content) {
   // check thumbnail
   Uint8List? thumbnail = content.thumbnail;
-  if (thumbnail == null) {
-    Log.error('image content error: $content');
-    return Container(
-      padding: const EdgeInsets.fromLTRB(16, 12, 16, 12),
-      child: const Text('Image not found'),
-    );
-  } else {
+  if (thumbnail != null) {
     // thumbnail image
-    Image image = Image.memory(thumbnail);
-    return Container(child: image);
+    return Image.memory(thumbnail);
   }
+  Log.error('image content error: $content');
+  return Container(
+    padding: const EdgeInsets.fromLTRB(16, 12, 16, 12),
+    // child: const Text('Image not found'),
+    child: const Icon(Styles.noImageIcon,
+      color: Styles.avatarDefaultColor,
+    ),
+  );
 }

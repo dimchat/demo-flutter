@@ -1,5 +1,9 @@
 import 'package:dim_client/dim_client.dart';
 
+import '../common/protocol/name_card.dart';
+import '../common/protocol/block.dart';
+import '../common/protocol/mute.dart';
+
 import 'client.dart';
 import 'database.dart';
 import 'emitter.dart';
@@ -36,7 +40,7 @@ void _registerPlugins() {
   ClientFacebook.prepare();
 
   //
-  //  Register command parsers
+  //  Register command/content parsers
   //
 
   // Report (online, offline)
@@ -52,5 +56,12 @@ void _registerPlugins() {
   // Search (users)
   Command.setFactory(SearchCommand.kSearch, CommandParser((dict) => SearchCommand(dict)));
   Command.setFactory(SearchCommand.kOnlineUsers, CommandParser((dict) => SearchCommand(dict)));
+
+  // Block, Mute
+  Command.setFactory(BlockCommand.kBlock, CommandParser((dict) => BlockCommand(dict)));
+  Command.setFactory(MuteCommand.kMute, CommandParser((dict) => MuteCommand(dict)));
+
+  // Name Card
+  Content.setFactory(NameCard.kNameCard, ContentParser((dict) => NameCardContent(dict)));
 
 }

@@ -1,5 +1,6 @@
 library dim_flutter;
 
+export 'common/protocol/name_card.dart';
 export 'common/protocol/block.dart';
 export 'common/protocol/mute.dart';
 

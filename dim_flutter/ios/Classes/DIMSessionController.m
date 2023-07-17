@@ -249,10 +249,6 @@ OKSingletonImplementations(DIMPushNotificationController, sharedInstance)
     [center removeAllDeliveredNotifications];
     application.applicationIconBadgeNumber = -1;
     NSLog(@"APNs: notifications cleared on become active");
-    
-    DIMChannelManager *man = [DIMChannelManager sharedInstance];
-    DIMSessionChannel *channel = [man sessionChannel];
-    [channel onEnterForeground];
 }
 
 - (void)applicationWillResignActive:(UIApplication *)application {
@@ -261,10 +257,6 @@ OKSingletonImplementations(DIMPushNotificationController, sharedInstance)
     [center removeAllDeliveredNotifications];
     application.applicationIconBadgeNumber = -1;
     NSLog(@"APNs: notifications cleared on resign active");
-    
-    DIMChannelManager *man = [DIMChannelManager sharedInstance];
-    DIMSessionChannel *channel = [man sessionChannel];
-    [channel onEnterBackground];
 }
 
 #pragma mark UNUserNotificationCenterDelegate

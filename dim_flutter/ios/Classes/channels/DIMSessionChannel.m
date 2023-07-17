@@ -48,14 +48,6 @@ static void onMethodCall(FlutterMethodCall* call, FlutterResult result);
     [self invokeMethod:kChannelMethod_OnReceived arguments:params];
 }
 
-- (void)onEnterBackground {
-    [self invokeMethod:kChannelMethod_OnEnterBackground arguments:nil];
-}
-
-- (void)onEnterForeground {
-    [self invokeMethod:kChannelMethod_OnEnterForeground arguments:nil];
-}
-
 - (void)sendCommand:(id<DKDCommand>)content {
     NSDictionary *params = @{
         @"content": [content dictionary],

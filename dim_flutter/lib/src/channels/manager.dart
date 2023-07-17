@@ -40,9 +40,6 @@ class ChannelMethods {
   static const String onStateChanged     = "onStateChanged";
   static const String onReceived         = "onReceived";
 
-  static const String onEnterBackground  = "onEnterBackground";
-  static const String onEnterForeground  = "onEnterForeground";
-
   static const String sendContent        = "sendContent";
   static const String sendCommand        = "sendCommand";
 

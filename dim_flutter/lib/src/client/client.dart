@@ -1,4 +1,5 @@
 import 'dart:io';
+import 'dart:ui';
 
 import 'package:device_info_plus/device_info_plus.dart';
 import 'package:package_info_plus/package_info_plus.dart';
@@ -28,6 +29,8 @@ class Client extends Terminal {
       Log.error('failed to get neighbor station');
       return null;
     }
+    Log.warning('connecting to station: $station');
+    // return await connect('192.168.31.152', 9394);
     return await connect(station.host, station.port);
   }
 
@@ -69,6 +72,22 @@ class Client extends Terminal {
   @override
   Processor createProcessor(CommonFacebook facebook, ClientMessenger messenger) {
     return SharedProcessor(facebook, messenger);
+  }
+
+  Future<void> onAppLifecycleStateChanged(AppLifecycleState state) async {
+    switch (state) {
+      case AppLifecycleState.resumed:
+        await enterForeground();
+        break;
+      case AppLifecycleState.inactive:
+        break;
+      case AppLifecycleState.paused:
+      case AppLifecycleState.detached:
+        await enterBackground();
+        break;
+      default:
+        break;
+    }
   }
 
   //

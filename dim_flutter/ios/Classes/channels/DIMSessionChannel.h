@@ -22,9 +22,6 @@ NS_ASSUME_NONNULL_BEGIN
 
 - (void)onReceivedData:(NSData *)pack from:(id<NIOSocketAddress>)remote;
 
-- (void)onEnterBackground;
-- (void)onEnterForeground;
-
 - (void)sendCommand:(id<DKDCommand>)content;
 - (void)sendCommand:(id<DKDCommand>)content receiver:(id<MKMID>)to;
 - (void)sendContent:(id<DKDContent>)content receiver:(id<MKMID>)to;

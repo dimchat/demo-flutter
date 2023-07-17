@@ -1,4 +1,5 @@
 import 'package:flutter/cupertino.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter_linkify/flutter_linkify.dart';
 
 import 'package:dim_client/dim_client.dart';
@@ -85,6 +86,9 @@ abstract class ContentViewUtils {
       linkStyle: const TextStyle(decoration: TextDecoration.none,),
       // options: const LinkifyOptions(humanize: false),
       linkifiers: const [UrlLinkifier(),],
+      contextMenuBuilder: (context, state) => AdaptiveTextSelectionToolbar.editableText(
+        editableTextState: state,
+      ),
       onOpen: (link) => Browser.open(ctx, url: link.url),
     ),
   );

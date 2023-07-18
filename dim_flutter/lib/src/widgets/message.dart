@@ -107,18 +107,24 @@ abstract class ContentViewUtils {
       Text('Movie[${content.filename}]: ${content.url}');
 
   static Widget getImageContentView(BuildContext ctx,
-      ImageContent content, ID sender, List<InstantMessage> messages) =>
+      ImageContent content, ID sender, List<InstantMessage> messages,
+      {GestureTapCallback? onTap, GestureLongPressCallback? onLongPress}) =>
       ImageViewFactory().fromContent(content,
-        onTap: () => previewImageContent(ctx, content, messages),
+        onTap: onTap ?? () => previewImageContent(ctx, content, messages),
+        onLongPress: onLongPress,
       );
 
-  static Widget getPageContentView(BuildContext ctx, PageContent content, ID sender) =>
+  static Widget getPageContentView(BuildContext ctx, PageContent content, ID sender,
+      {GestureTapCallback? onTap}) =>
       PageContentView(content: content,
-        onTap: () => Browser.open(ctx, url: content.url, title: content.title),
+        onTap: onTap ?? () => Browser.open(ctx, url: content.url, title: content.title),
       );
 
   static Widget getNameCardView(BuildContext ctx, NameCard content,
-      {GestureTapCallback? onTap}) => NameCardView(content: content, onTap: onTap,);
+      {GestureTapCallback? onTap}) =>
+      NameCardView(content: content,
+        onTap: onTap,
+      );
 
 }
 

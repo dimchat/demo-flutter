@@ -66,17 +66,19 @@ class ImageViewFactory {
   }
 
   /// show ImageContent
-  Widget fromContent(ImageContent content, {GestureTapCallback? onTap}) {
+  Widget fromContent(ImageContent content,
+      {GestureTapCallback? onTap, GestureLongPressCallback? onLongPress}) {
     ImageFactory factory = ImageFactory();
     // 0. check cache
     ImageProvider? image = factory.fromContent(content);
     if (image != null) {
       // local cached image
-      if (onTap == null) {
+      if (onTap == null && onLongPress == null) {
         return Image(image: image);
       }
       return GestureDetector(
         onTap: onTap,
+        onLongPress: onLongPress,
         child: Image(image: image),
       );
     }
@@ -87,7 +89,10 @@ class ImageViewFactory {
       return _imageNotFound(content);
     }
     // 1. create image view
-    _AutoImageView view = _AutoImageView(content, onTap: onTap);
+    _AutoImageView view = _AutoImageView(content,
+      onTap: onTap,
+      onLongPress: onLongPress,
+    );
     // 2. delay a while to refresh image
     _delay(() => view.refresh());
     // 3. OK
@@ -252,10 +257,12 @@ class _FacadeState extends State<_FacadeView> implements lnc.Observer {
 
 /// Auto refresh image view
 class _AutoImageView extends StatefulWidget {
-  const _AutoImageView(this.content, {this.onTap});
+  const _AutoImageView(this.content, {this.onTap, this.onLongPress});
 
   final ImageContent content;
+
   final GestureTapCallback? onTap;
+  final GestureLongPressCallback? onLongPress;
 
   /// refresh image
   Future<void> refresh() async {
@@ -308,7 +315,11 @@ class _AutoImageState extends State<_AutoImageView> implements lnc.Observer {
     if (image == null) {
       return _imageNotFound(widget.content);
     } else {
-      return GestureDetector(onTap: widget.onTap, child: Image(image: image,));
+      return GestureDetector(
+        onTap: widget.onTap,
+        onLongPress: widget.onLongPress,
+        child: Image(image: image,),
+      );
     }
   }
 

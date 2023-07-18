@@ -76,7 +76,7 @@ abstract class ContentViewUtils {
     ),
   );
 
-  static Widget getTextContentView(BuildContext ctx, Content content, ID sender) => Container(
+  static Widget getTextContentView(BuildContext ctx, Content content, ID sender, {OnWebShare? onWebShare}) => Container(
     color: getBackgroundColor(ctx, sender),
     padding: Styles.textMessagePadding,
     // child: SelectableText(
@@ -92,7 +92,7 @@ abstract class ContentViewUtils {
       contextMenuBuilder: (context, state) => AdaptiveTextSelectionToolbar.editableText(
         editableTextState: state,
       ),
-      onOpen: (link) => Browser.open(ctx, url: link.url),
+      onOpen: (link) => Browser.open(ctx, url: link.url, onShare: onWebShare,),
     ),
   );
 
@@ -115,9 +115,9 @@ abstract class ContentViewUtils {
       );
 
   static Widget getPageContentView(BuildContext ctx, PageContent content, ID sender,
-      {GestureTapCallback? onTap}) =>
+      {GestureTapCallback? onTap, OnWebShare? onWebShare}) =>
       PageContentView(content: content,
-        onTap: onTap ?? () => Browser.open(ctx, url: content.url, title: content.title),
+        onTap: onTap ?? () => Browser.open(ctx, url: content.url, onShare: onWebShare,),
       );
 
   static Widget getNameCardView(BuildContext ctx, NameCard content,

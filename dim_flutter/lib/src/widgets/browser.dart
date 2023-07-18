@@ -40,22 +40,22 @@ import 'package:lnc/lnc.dart' show Log;
 import 'alert.dart';
 import 'styles.dart';
 
+typedef OnWebShare = void Function(Uri url, {required String title, String? desc, Uint8List? icon});
+
+
 class Browser extends StatefulWidget {
-  const Browser({super.key, required this.uri, this.title});
+  const Browser({super.key, required this.uri, this.onShare});
 
   final Uri uri;
-  final String? title;
+  final OnWebShare? onShare;
 
-  static void open(BuildContext context, {required String url, String? title}) {
+  static void open(BuildContext context, {required String url, OnWebShare? onShare}) {
     Uri? uri = parseUri(url);
     if (uri == null) {
       Alert.show(context, 'Error', 'Failed to open URL: $url');
     } else {
-      if (title != null && title.isEmpty) {
-        title = null;
-      }
       showCupertinoDialog(context: context,
-        builder: (context) => Browser(uri: uri, title: title),
+        builder: (context) => Browser(uri: uri, onShare: onShare,),
       );
     }
   }
@@ -86,7 +86,7 @@ class _BrowserState extends State<Browser> {
   String? _title;
 
   Uri get url => _url ?? widget.uri;
-  String get title => widget.title ?? _title ?? '';
+  String get title => _title ?? '';
 
   final InAppWebViewGroupOptions options = InAppWebViewGroupOptions(
     crossPlatform: InAppWebViewOptions(
@@ -107,42 +107,69 @@ class _BrowserState extends State<Browser> {
     backgroundColor: Facade.of(context).colors.scaffoldBackgroundColor,
     appBar: CupertinoNavigationBar(
       backgroundColor: Facade.of(context).colors.appBardBackgroundColor,
-      middle: Text(title, style: Facade.of(context).styles.titleTextStyle),
-      trailing: _progress <= 99 ? const SizedBox(width: 16, height: 16,
-          child: CircularProgressIndicator(strokeWidth: 2.0)) : null,
+      middle: Text(title,
+        maxLines: 1,
+        overflow: TextOverflow.ellipsis,
+        style: Facade.of(context).styles.titleTextStyle,
+      ),
+      trailing: _naviItem(),
     ),
     body: Stack(
       alignment: AlignmentDirectional.bottomStart,
       children: [
-        InAppWebView(
-          initialUrlRequest: URLRequest(
-            url: widget.uri,
-          ),
-          initialOptions: options,
-          onProgressChanged: (controller, progress) => setState(() {
-            _progress = progress;
-          }),
-          onLoadStart: (controller, url) => setState(() {
-            _url = url;
-          }),
-          onTitleChanged: (controller, title) => setState(() {
-            _title = title;
-          }),
-        ),
+        _webView(),
         if (_progress <= 99)
-        Container(
-          color: Colors.black54,
-          padding: const EdgeInsets.fromLTRB(20, 4, 8, 16),
-          child: Text('$_progress% | $url ...',
-            style: const TextStyle(
-              fontSize: 10,
-              color: Colors.white,
-              overflow: TextOverflow.ellipsis,
-              decoration: TextDecoration.none,
-            ),
-          ),
-        ),
+          _statusBar(),
       ],
+    ),
+  );
+
+  Widget? _naviItem() => _progress <= 99 ? _indicator() : _shareButton();
+  Widget _indicator() => const SizedBox(
+    width: Styles.navigationBarIconSize, height: Styles.navigationBarIconSize,
+    child: CircularProgressIndicator(strokeWidth: 2.0),
+  );
+  Widget? _shareButton() {
+    OnWebShare? onShare = widget.onShare;
+    if (onShare == null) {
+      return null;
+    }
+    return IconButton(
+      icon: const Icon(
+        Styles.shareIcon,
+        size: Styles.navigationBarIconSize,
+        // color: Styles.avatarColor,
+      ),
+      onPressed: () => onShare(url, title: title),
+    );
+  }
+
+  Widget _webView() => InAppWebView(
+    initialUrlRequest: URLRequest(
+      url: widget.uri,
+    ),
+    initialOptions: options,
+    onProgressChanged: (controller, progress) => setState(() {
+      _progress = progress;
+    }),
+    onLoadStart: (controller, url) => setState(() {
+      _url = url;
+    }),
+    onTitleChanged: (controller, title) => setState(() {
+      _title = title;
+    }),
+  );
+
+  Widget _statusBar() => Container(
+    color: Colors.black54,
+    padding: const EdgeInsets.fromLTRB(20, 4, 8, 16),
+    child: Text('$_progress% | $url ...',
+      style: const TextStyle(
+        fontSize: 10,
+        color: Colors.white,
+        overflow: TextOverflow.ellipsis,
+        decoration: TextDecoration.none,
+      ),
     ),
   );
 }
@@ -169,7 +196,7 @@ class PageContentView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) => GestureDetector(
-    onTap: onTap ?? () => Browser.open(context, url: content.url, title: content.title),
+    onTap: onTap ?? () => Browser.open(context, url: content.url),
     child: _widget(context),
   );
 

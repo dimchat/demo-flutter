@@ -121,9 +121,7 @@ class VelocityMeter {
       Log.error('failed to connect $host:$port, $e');
       return null;
     }
-    Log.debug('connected, sending ${data.length} bytes to $host:$port ...');
-    socket.add(data);
-    Log.debug('sent, waiting response from $host:$port ...');
+    // prepare data handler
     socket.listen((pack) async {
       Log.debug('received ${pack.length} bytes from $host:$port');
       _buffer.add(pack);
@@ -131,6 +129,10 @@ class VelocityMeter {
       Log.warning('speed task finished: $info');
       socket.destroy();
     });
+    // send
+    Log.debug('connected, sending ${data.length} bytes to $host:$port ...');
+    socket.add(data);
+    Log.debug('sent, waiting response from $host:$port ...');
     return socket;
   }
 
@@ -220,24 +222,19 @@ Future<ReliableMessage?> _decodeMsg(Uint8List data) async {
 }
 
 Future<Uint8List?> _getPack() async {
-  Uint8List? pack = _pack;
-  if (pack == null) {
-    ReliableMessage? rMsg = await _packMsg();
-    if (rMsg == null) {
-      return null;
-    }
-    String json = JSONMap.encode(rMsg.toMap());
-    Uint8List data = UTF8.encode(json);
-    // MTP packing
-    ChannelManager manager = ChannelManager();
-    SessionChannel channel = manager.sessionChannel;
-    pack = await channel.packData(data);
-    Log.warning('packed ${data.length} bytes to ${pack.length} bytes');
-    _pack = pack;
+  ReliableMessage? rMsg = await _packMsg();
+  if (rMsg == null) {
+    return null;
   }
+  String json = JSONMap.encode(rMsg.toMap());
+  Uint8List data = UTF8.encode(json);
+  // MTP packing
+  ChannelManager manager = ChannelManager();
+  SessionChannel channel = manager.sessionChannel;
+  Uint8List? pack = await channel.packData(data);
+  Log.warning('packed ${data.length} bytes to ${pack.length} bytes');
   return pack;
 }
-Uint8List? _pack;
 
 Future<ReliableMessage?> _packMsg() async {
   GlobalVariable shared = GlobalVariable();

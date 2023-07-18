@@ -16,7 +16,7 @@ class Config {
 
   // TODO: start a background thread to query 'https://dim.chat/sechat/gsp.js'
   //       for updating configurations
-  static String entrance = 'http://apps.dim.chat/Tarsier/config.json';
+  static String entrance = 'http://tarsier.dim.chat/config.json';
 
   Map? _info;
 

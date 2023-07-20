@@ -115,9 +115,10 @@ abstract class ContentViewUtils {
       );
 
   static Widget getPageContentView(BuildContext ctx, PageContent content, ID sender,
-      {GestureTapCallback? onTap, OnWebShare? onWebShare}) =>
+      {GestureTapCallback? onTap, GestureLongPressCallback? onLongPress, OnWebShare? onWebShare}) =>
       PageContentView(content: content,
         onTap: onTap ?? () => Browser.open(ctx, url: content.url, onShare: onWebShare,),
+        onLongPress: onLongPress,
       );
 
   static Widget getNameCardView(BuildContext ctx, NameCard content,

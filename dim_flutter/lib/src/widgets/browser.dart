@@ -177,10 +177,11 @@ class _BrowserState extends State<Browser> {
 
 /// WebPageView
 class PageContentView extends StatelessWidget {
-  const PageContentView({super.key, required this.content, this.onTap});
+  const PageContentView({super.key, required this.content, this.onTap, this.onLongPress});
 
-  final GestureTapCallback? onTap;
   final PageContent content;
+  final GestureTapCallback? onTap;
+  final GestureLongPressCallback? onLongPress;
 
   Widget? get icon {
     try {
@@ -197,6 +198,7 @@ class PageContentView extends StatelessWidget {
   @override
   Widget build(BuildContext context) => GestureDetector(
     onTap: onTap ?? () => Browser.open(context, url: content.url),
+    onLongPress: onLongPress,
     child: _widget(context),
   );
 

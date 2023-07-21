@@ -54,8 +54,8 @@ public enum VersionManager {
         return INSTANCE;
     }
 
-    static final String ENTRANCE = "https://raw.githubusercontent.com/dimchat/" +
-            "demo-flutter/main/sechat/assets/apk-release.json";
+    // "https://raw.githubusercontent.com/dimchat/demo-flutter/main/sechat/assets/apk-release.json";
+    static final String ENTRANCE = "http://tarsier.dim.chat/apk-release.json";
 
     private JSONObject newestInfo = null;
 
@@ -90,16 +90,17 @@ public enum VersionManager {
         }
     }
 
-    private JSONObject getNewestInfo() {
+    public JSONObject downloadNewestInfo() {
         JSONObject info = newestInfo;
         if (info == null) {
             info = download();
+            Log.info("downloaded newest info: " + ENTRANCE + ", " + info);
         }
         return info;
     }
 
     public String getNewestApk() {
-        JSONObject info = getNewestInfo();
+        JSONObject info = newestInfo;
         if (info == null) {
             return null;
         }
@@ -119,7 +120,7 @@ public enum VersionManager {
     }
 
     public String getNewestVersionName() {
-        JSONObject info = getNewestInfo();
+        JSONObject info = newestInfo;
         if (info == null) {
             return null;
         }
@@ -133,7 +134,7 @@ public enum VersionManager {
     }
 
     public int getNewestVersionCode() {
-        JSONObject info = getNewestInfo();
+        JSONObject info = newestInfo;
         if (info == null) {
             return 0;
         }

@@ -2,7 +2,6 @@ package chat.dim.http;
 
 import android.app.AlertDialog;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Build;
@@ -13,6 +12,8 @@ import android.widget.ProgressBar;
 
 import androidx.core.content.FileProvider;
 
+import org.json.JSONObject;
+
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.InputStream;
@@ -20,6 +21,7 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 
 import chat.dim.dim_flutter.R;
+import chat.dim.threading.BackgroundThreads;
 import chat.dim.utils.Log;
 
 public class UpdateManager {
@@ -29,6 +31,8 @@ public class UpdateManager {
 
    private int progress;
    private ProgressBar mProgress;
+
+   private static final int SHOW_UPGRADE = 0;
    private static final int DOWN_UPDATE = 1;
    private static final int DOWN_OVER = 2;
 
@@ -37,7 +41,10 @@ public class UpdateManager {
    }
 
    private boolean isNewest() {
-      boolean newest = VersionManager.getInstance().isNewest(mContext);
+      VersionManager man = VersionManager.getInstance();
+      JSONObject info = man.downloadNewestInfo();
+      assert info != null : "failed to download newest info";
+      boolean newest = man.isNewest(mContext);
       if (Log.LEVEL == Log.DEBUG) {
          // TEST:
          if (newest) {
@@ -47,7 +54,8 @@ public class UpdateManager {
       return newest;
    }
    private String getNewVersion() {
-      String version = VersionManager.getInstance().getNewestVersionName();
+      VersionManager man = VersionManager.getInstance();
+      String version = man.getNewestVersionName();
       if (Log.LEVEL == Log.DEBUG) {
          // TEST:
          if (version == null) {
@@ -58,7 +66,8 @@ public class UpdateManager {
    }
 
    private String getApkUrl() {
-      String url = VersionManager.getInstance().getNewestApk();
+      VersionManager man = VersionManager.getInstance();
+      String url = man.getNewestApk();
       if (Log.LEVEL == Log.DEBUG) {
          // TEST:
          if (url == null) {
@@ -81,32 +90,21 @@ public class UpdateManager {
 
    public void checkUpdateInfo() {
       Log.warning("checkUpdateInfo");
-      if (isNewest()) {
-         Log.warning("Already updated.");
-      } else {
-         showUpdateDialog();
-      }
+      BackgroundThreads.wait(() -> {
+         if (isNewest()) {
+            Log.warning("Already updated.");
+         } else {
+            mHandler.sendEmptyMessage(SHOW_UPGRADE);
+         }
+      });
    }
 
    private void showUpdateDialog() {
       AlertDialog.Builder builder = new AlertDialog.Builder(mContext);
       builder.setTitle("Upgrade (" + getNewVersion() + ")");
       builder.setMessage("New version is available, please download to upgrade.");
-      builder.setPositiveButton("Download", new DialogInterface.OnClickListener() {
-
-         @Override
-         public void onClick(DialogInterface dialog, int which) {
-            showDownloadDialog();
-         }
-
-      });
-      builder.setNegativeButton("Later", new DialogInterface.OnClickListener() {
-
-         @Override
-         public void onClick(DialogInterface dialog, int which) {
-            dialog.dismiss();
-         }
-      });
+      builder.setPositiveButton("Download", (dialog, which) -> showDownloadDialog());
+      builder.setNegativeButton("Later", (dialog, which) -> dialog.dismiss());
 
       builder.create().show();
    }
@@ -118,13 +116,7 @@ public class UpdateManager {
       View v = inflater.inflate(R.layout.progress, null);
       mProgress = v.findViewById(R.id.progress);
       builder.setView(v);
-      builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
-
-         @Override
-         public void onClick(DialogInterface dialog, int which) {
-            intercept = true;
-         }
-      });
+      builder.setNegativeButton("Cancel", (dialog, which) -> intercept = true);
       builder.create().show();
 
       // start downloading
@@ -200,6 +192,10 @@ public class UpdateManager {
    private final Handler mHandler = new Handler() {
       public void handleMessage(android.os.Message msg) {
          switch (msg.what) {
+
+            case SHOW_UPGRADE:
+               showUpdateDialog();
+               break;
 
             case DOWN_UPDATE:
                mProgress.setProgress(progress);

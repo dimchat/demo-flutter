@@ -78,6 +78,9 @@ public enum VersionManager {
         } catch (Exception e) {
             e.printStackTrace();
             Log.error("failed to download config: " + ENTRANCE);
+        } catch (Error e) {
+            e.printStackTrace();
+            Log.error("failed to download config: " + ENTRANCE);
         }
         return newestInfo;
     }

@@ -6,6 +6,7 @@ import android.content.Intent;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Handler;
+import android.os.Looper;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.ProgressBar;
@@ -43,7 +44,11 @@ public class UpdateManager {
    private boolean isNewest() {
       VersionManager man = VersionManager.getInstance();
       JSONObject info = man.downloadNewestInfo();
-      assert info != null : "failed to download newest info";
+      if (info == null) {
+         // assert false : "failed to download newest info";
+         Log.error("failed to download newest info");
+         return true;
+      }
       boolean newest = man.isNewest(mContext);
       if (Log.LEVEL == Log.DEBUG) {
          // TEST:
@@ -131,6 +136,7 @@ public class UpdateManager {
          URL url;
          try {
             url = new URL(getApkUrl());
+            Log.info("trying to download apk: " + url);
             HttpURLConnection conn = (HttpURLConnection) url
                     .openConnection();
             conn.connect();
@@ -162,6 +168,8 @@ public class UpdateManager {
 
          } catch (Exception e) {
             e.printStackTrace();
+         } catch (Error e) {
+            e.printStackTrace();
          }
       }
    };
@@ -189,7 +197,7 @@ public class UpdateManager {
       mContext.startActivity(intent);
    }
 
-   private final Handler mHandler = new Handler() {
+   private final Handler mHandler = new Handler(Looper.getMainLooper()) {
       public void handleMessage(android.os.Message msg) {
          switch (msg.what) {
 

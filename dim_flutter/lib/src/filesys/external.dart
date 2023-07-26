@@ -51,25 +51,21 @@ abstract class ExternalStorage {
   ///
   /// @param path - file path
   /// @return file data
-  static Future<Uint8List> loadBinary(String path) async {
-    Uint8List? data = await _load(path);
-    if (data == null) {
-      throw Exception('failed to load binary file: $path');
-    }
-    return data;
-  }
+  static Future<Uint8List?> loadBinary(String path) async =>
+      await _load(path);
 
   ///  Load text from file path
   ///
   /// @param path - file path
   /// @return text string
-  static Future<String> loadText(String path) async {
+  static Future<String?> loadText(String path) async {
     Uint8List? data = await _load(path);
     if (data == null) {
-      throw Exception('failed to load text file: $path');
+      return null;
     }
     String? text = UTF8.decode(data);
-    return text!;
+    assert(text != null, 'Text file error: $path, size: ${data.length}');
+    return text;
   }
 
   ///  Load JSON from file path
@@ -79,18 +75,30 @@ abstract class ExternalStorage {
   static Future<dynamic> loadJson(String path) async {
     Uint8List? data = await _load(path);
     if (data == null) {
-      throw Exception('failed to load JSON file: $path');
+      return null;
     }
     String? text = UTF8.decode(data);
-    return JSON.decode(text!);
+    if (text == null) {
+      assert(false, 'JsON file error: $path, size: ${data.length}');
+      return null;
+    }
+    return JSON.decode(text);
   }
+  static Future<Map?> loadJsonMap(String path) async =>
+      await loadJson(path);
+  static Future<List?> loadJsonList(String path) async =>
+      await loadJson(path);
 
   //-------- write
 
   static Future<int> _save(Uint8List data, String path) async {
     Storage file = Storage();
     file.data = data;
-    return await file.write(path);
+    try {
+      return await file.write(path);
+    } catch (e) {
+      return -1;
+    }
   }
 
   ///  Save data into binary file
@@ -98,13 +106,8 @@ abstract class ExternalStorage {
   /// @param data - binary data
   /// @param path - file path
   /// @return true on success
-  static Future<int> saveBinary(Uint8List data, String path) async {
-    int len = await _save(data, path);
-    if (len != data.length) {
-      throw Exception('failed to save binary file: $path');
-    }
-    return len;
-  }
+  static Future<int> saveBinary(Uint8List data, String path) async =>
+      await _save(data, path);
 
   ///  Save string into Text file
   ///
@@ -113,11 +116,7 @@ abstract class ExternalStorage {
   /// @return true on success
   static Future<int> saveText(String text, String path) async {
     Uint8List data = UTF8.encode(text);
-    int len = await _save(data, path);
-    if (len != data.length) {
-      throw Exception('failed to save text file: $path');
-    }
-    return len;
+    return await _save(data, path);
   }
 
   ///  Save Map/List into JSON file
@@ -128,11 +127,11 @@ abstract class ExternalStorage {
   static Future<int> saveJson(Object container, String path) async {
     String text = JSON.encode(container);
     Uint8List data = UTF8.encode(text);
-    int len = await _save(data, path);
-    if (len != data.length) {
-      throw Exception('failed to save json file: $path');
-    }
-    return len;
+    return await _save(data, path);
   }
+  static Future<int> saveJsonMap(Map container, String path) async =>
+      await saveJson(container, path);
+  static Future<int> saveJsonList(List container, String path) async =>
+      await saveJson(container, path);
 
 }

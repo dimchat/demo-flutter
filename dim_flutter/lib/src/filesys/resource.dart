@@ -120,7 +120,7 @@ class Storage extends Resource implements Writable {
   Future<int> write(String path) async {
     Uint8List? bytes = _content;
     if (bytes == null) {
-      return -1;
+      throw Exception('content empty, failed to save file: $path');
     }
     File file = File(path);
     if (await file.exists()) {} else {

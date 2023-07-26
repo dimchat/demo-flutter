@@ -83,7 +83,7 @@ Future<String> _path() async {
 /// load config info from caches path
 Future<Map?> _load(String path) async {
   if (await Paths.exists(path)) {
-    return await ExternalStorage.loadJson(path);
+    return await ExternalStorage.loadJsonMap(path);
   } else {
     return null;
   }
@@ -97,7 +97,7 @@ Future<Map?> _init(String path) async {
     assert(false, 'config error: $json');
   } else {
     Log.warning('initialize config: $path, $conf');
-    await ExternalStorage.saveJson(conf, path);
+    await ExternalStorage.saveJsonMap(conf, path);
   }
   return conf;
 }
@@ -116,7 +116,7 @@ Future<Map?> _refresh(Uri url, String path) async {
   // get config from temporary file
   Map? conf;
   try {
-    conf = await ExternalStorage.loadJson(tmp);
+    conf = await ExternalStorage.loadJsonMap(tmp);
   } catch (e) {
     Log.error('downloaded config error: $e');
     conf = null;
@@ -142,6 +142,6 @@ Future<Map?> _refresh(Uri url, String path) async {
   }
   // 3. replace config
   Log.warning('replace config file: $path, $conf');
-  await ExternalStorage.saveJson(conf, path);
+  await ExternalStorage.saveJsonMap(conf, path);
   return conf;
 }

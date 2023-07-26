@@ -80,9 +80,13 @@ class DatabaseConnector {
       String? filepath = await path;
       if (filepath != null) {
         Log.debug('opening database: $filepath');
-        Database db = await _open(filepath);
-        conn = _Connection(db);
-        _connection = conn;
+        try {
+          Database db = await _open(filepath);
+          conn = _Connection(db);
+          _connection = conn;
+        } on DatabaseException catch (e) {
+          Log.error('failed to open database: $e');
+        }
       }
     }
     return conn;

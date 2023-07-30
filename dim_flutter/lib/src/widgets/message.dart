@@ -122,9 +122,10 @@ abstract class ContentViewUtils {
       );
 
   static Widget getNameCardView(BuildContext ctx, NameCard content,
-      {GestureTapCallback? onTap}) =>
+      {GestureTapCallback? onTap, GestureLongPressCallback? onLongPress}) =>
       NameCardView(content: content,
         onTap: onTap,
+        onLongPress: onLongPress,
       );
 
 }

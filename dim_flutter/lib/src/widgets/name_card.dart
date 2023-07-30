@@ -41,14 +41,16 @@ import 'styles.dart';
 
 /// NameCardView
 class NameCardView extends StatelessWidget {
-  const NameCardView({super.key, required this.content, this.onTap});
+  const NameCardView({super.key, required this.content, this.onTap, this.onLongPress});
 
-  final GestureTapCallback? onTap;
   final NameCard content;
+  final GestureTapCallback? onTap;
+  final GestureLongPressCallback? onLongPress;
 
   @override
   Widget build(BuildContext context) => GestureDetector(
     onTap: onTap,
+    onLongPress: onLongPress,
     child: _widget(context),
   );
 

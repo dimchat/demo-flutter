@@ -33,7 +33,6 @@ import 'package:flutter/material.dart';
 
 import 'package:dim_client/dim_client.dart';
 
-import '../common/protocol/name_card.dart';
 import '../network/image_factory.dart';
 import '../network/image_view.dart';
 import 'styles.dart';

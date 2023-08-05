@@ -1,7 +1,6 @@
 import 'package:dim_client/dim_client.dart';
 import 'package:lnc/lnc.dart';
 
-import '../common/protocol/name_card.dart';
 import 'contact.dart';
 
 abstract class MessageBuilder {

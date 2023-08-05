@@ -8,7 +8,6 @@ import 'package:lnc/lnc.dart' show Log;
 
 import '../client/constants.dart';
 import '../client/shared.dart';
-import '../common/protocol/name_card.dart';
 import '../models/contact.dart';
 import '../models/message.dart';
 import '../network/image_view.dart';

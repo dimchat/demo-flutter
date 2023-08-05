@@ -1,6 +1,5 @@
 import 'package:dim_client/dim_client.dart';
 
-import '../common/protocol/name_card.dart';
 import '../common/protocol/block.dart';
 import '../common/protocol/mute.dart';
 
@@ -44,9 +43,9 @@ void _registerPlugins() {
   //
 
   // Report (online, offline)
-  Command.setFactory("broadcast", CommandParser((dict) => ReportCommand(dict)));
-  Command.setFactory(ReportCommand.kOnline, CommandParser((dict) => ReportCommand(dict)));
-  Command.setFactory(ReportCommand.kOffline, CommandParser((dict) => ReportCommand(dict)));
+  Command.setFactory("broadcast", CommandParser((dict) => BaseReportCommand(dict)));
+  Command.setFactory(ReportCommand.kOnline, CommandParser((dict) => BaseReportCommand(dict)));
+  Command.setFactory(ReportCommand.kOffline, CommandParser((dict) => BaseReportCommand(dict)));
 
   // // Storage (contacts, private_key)
   // Command.setFactory(StorageCommand.STORAGE, StorageCommand::new);
@@ -54,14 +53,17 @@ void _registerPlugins() {
   // Command.setFactory(StorageCommand.PRIVATE_KEY, StorageCommand::new);
 
   // Search (users)
-  Command.setFactory(SearchCommand.kSearch, CommandParser((dict) => SearchCommand(dict)));
-  Command.setFactory(SearchCommand.kOnlineUsers, CommandParser((dict) => SearchCommand(dict)));
+  Command.setFactory(SearchCommand.kSearch, CommandParser((dict) => BaseSearchCommand(dict)));
+  Command.setFactory(SearchCommand.kOnlineUsers, CommandParser((dict) => BaseSearchCommand(dict)));
 
   // Block, Mute
   Command.setFactory(BlockCommand.kBlock, CommandParser((dict) => BlockCommand(dict)));
   Command.setFactory(MuteCommand.kMute, CommandParser((dict) => MuteCommand(dict)));
 
   // Name Card
-  Content.setFactory(NameCard.kNameCard, ContentParser((dict) => NameCardContent(dict)));
+  Content.setFactory(ContentType.kNameCard, ContentParser((dict) => NameCardContent(dict)));
+
+  // Quote
+  Content.setFactory(ContentType.kQuote, ContentParser((dict) => BaseQuoteContent(dict)));
 
 }

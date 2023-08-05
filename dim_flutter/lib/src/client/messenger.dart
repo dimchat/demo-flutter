@@ -65,6 +65,26 @@ class SharedMessenger extends ClientMessenger {
   }
 
   @override
+  Future<InstantMessage?> decryptMessage(SecureMessage sMsg) async {
+    InstantMessage? iMsg = await super.decryptMessage(sMsg);
+    iMsg ??= _unableDecryptMessage(sMsg);
+    return iMsg;
+  }
+
+  InstantMessage _unableDecryptMessage(SecureMessage sMsg) {
+    Content content = BaseContent({
+      'type': 0,
+      'time': sMsg['time'],
+      'text': 'Unable to decrypt message content (type=${sMsg.type}).',
+    });
+    content.group = sMsg.group;
+    Envelope envelope = Envelope.create(
+      sender: sMsg.sender, receiver: sMsg.receiver, time: sMsg.time,
+    );
+    return InstantMessage.create(envelope, content);
+  }
+
+  @override
   Future<Pair<InstantMessage, ReliableMessage?>> sendContent(Content content,
       {required ID? sender, required ID receiver, int priority = 0}) async {
     if (receiver.isBroadcast) {
@@ -93,8 +113,8 @@ class SharedMessenger extends ClientMessenger {
     try {
       rMsg = await super.sendInstantMessage(iMsg, priority: priority);
     } catch (e) {
-      Log.error('failed to send message to: ${iMsg.receiver}');
-      assert(false, '$e');
+      Log.error('failed to send message to: ${iMsg.receiver}, $e');
+      // assert(false, '$e');
       return null;
     }
     if (rMsg != null) {

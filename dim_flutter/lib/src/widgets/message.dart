@@ -116,7 +116,7 @@ abstract class ContentViewUtils {
   static Widget getPageContentView(BuildContext ctx, PageContent content, ID sender,
       {GestureTapCallback? onTap, GestureLongPressCallback? onLongPress, OnWebShare? onWebShare}) =>
       PageContentView(content: content,
-        onTap: onTap ?? () => Browser.open(ctx, url: content.url, onShare: onWebShare,),
+        onTap: onTap ?? () => Browser.open(ctx, url: content.url.toString(), onShare: onWebShare,),
         onLongPress: onLongPress,
       );
 

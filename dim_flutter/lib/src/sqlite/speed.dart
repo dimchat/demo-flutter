@@ -12,7 +12,7 @@ _SpeedInfo _extractSpeed(ResultSet resultSet, int index) {
   String? host = resultSet.getString('host');
   int? port = resultSet.getInt('port');
   String? sid = resultSet.getString('sid');
-  DateTime? time = resultSet.getTime('time');
+  DateTime? time = resultSet.getDateTime('time');
   double? duration = resultSet.getDouble('duration');
   return Triplet(Pair(host!, port!), ID.parse(sid)!, Pair(time!, duration!));
 }

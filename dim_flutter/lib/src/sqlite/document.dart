@@ -16,8 +16,7 @@ Document _extractDocument(ResultSet resultSet, int index) {
   if (type == null || type.isEmpty) {
     type = '*';
   }
-  Document? doc = Document.create(type, identifier!, data: data, signature: signature);
-  assert(doc != null, 'document error: $did, $type, $data, $signature');
+  Document doc = Document.create(type, identifier!, data: data, signature: signature);
   if (type == '*') {
     if (identifier.isUser) {
       type = Document.kVisa;
@@ -25,7 +24,7 @@ Document _extractDocument(ResultSet resultSet, int index) {
       type = Document.kBulletin;
     }
   }
-  doc!['type'] = type;
+  doc['type'] = type;
   return doc;
 }
 
@@ -49,8 +48,8 @@ class _DocumentTable extends DataTableHandler<Document> implements DocumentDBI {
   Future<bool> updateDocument(Document doc) async {
     ID identifier = doc.identifier;
     String? type = doc.type;
-    String? data = doc.getString('data');
-    String? signature = doc.getString('signature');
+    String? data = doc.getString('data', null);
+    String? signature = doc.getString('signature', null);
     SQLConditions cond;
     cond = SQLConditions(left: 'did', comparison: '=', right: identifier.toString());
     Map<String, dynamic> values = {
@@ -65,8 +64,8 @@ class _DocumentTable extends DataTableHandler<Document> implements DocumentDBI {
   Future<bool> saveDocument(Document doc) async {
     ID identifier = doc.identifier;
     String? type = doc.type;
-    String? data = doc.getString('data');
-    String? signature = doc.getString('signature');
+    String? data = doc.getString('data', null);
+    String? signature = doc.getString('signature', null);
     List values = [identifier.toString(), type, data, signature];
     return await insert(_table, columns: _insertColumns, values: values) > 0;
   }
@@ -119,7 +118,7 @@ class DocumentCache extends _DocumentTable {
     if (old == null) {
       // insert as new record
       ok = await super.saveDocument(doc);
-    } else if (old.getString('signature') == doc.getString('signature')) {
+    } else if (old.getString('signature', null) == doc.getString('signature', null)) {
       // same document
       Log.warning('duplicated document: $identifier');
       return true;

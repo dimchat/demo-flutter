@@ -20,9 +20,9 @@ class SessionChannel extends MethodChannel {
     var arguments = call.arguments;
     if (method == ChannelMethods.onStateChanged) {
       // onStateChanged
-      int previous = Converter.getInt(arguments['previous']) ?? 0;
-      int current = Converter.getInt(arguments['current']) ?? 0;
-      double now = Converter.getDouble(arguments['now']) ?? 0;
+      int previous = Converter.getInt(arguments['previous'], 0)!;
+      int current = Converter.getInt(arguments['current'], 0)!;
+      double now = Converter.getDouble(arguments['now'], 0)!;
       _onStateChanged(previous, current, now);
     } else if (method == ChannelMethods.onReceived) {
       // onReceived

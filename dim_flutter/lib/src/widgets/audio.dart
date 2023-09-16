@@ -212,7 +212,7 @@ class _AudioContentState extends State<AudioContentView> implements lnc.Observer
       Uri? url = userInfo?['url'];
       String? path = userInfo?['path'];
       assert(url != null, 'download URL not found: $userInfo');
-      if (url?.toString() == widget.content.url) {
+      if (url == widget.content.url) {
         Log.info('audio file downloaded: $url => $path');
         if (path != null && mounted) {
           setState(() {
@@ -241,7 +241,7 @@ class _AudioContentState extends State<AudioContentView> implements lnc.Observer
   }
 
   String? get _duration {
-    return widget.content.getDouble('duration')?.toStringAsFixed(3);
+    return widget.content.getDouble('duration', 0)?.toStringAsFixed(3);
   }
 
   @override

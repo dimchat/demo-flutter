@@ -140,6 +140,7 @@ class PrivateKeyCache extends _PrivateKeyTable {
         // not load yet, wait to load
         _decryptKeysCache.updateValue(user, null, 128, now: now);
       } else {
+        // FIXME: no lock, should not return empty values here
         if (holder.isAlive(now: now)) {
           // value not exists
           return [];
@@ -168,6 +169,7 @@ class PrivateKeyCache extends _PrivateKeyTable {
         // not load yet, wait to load
         _privateKeyCaches.updateValue(user, null, 128, now: now);
       } else {
+        // FIXME: no lock, should not return empty value here
         if (holder.isAlive(now: now)) {
           // value not exists
           return null;

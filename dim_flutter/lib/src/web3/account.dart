@@ -77,7 +77,7 @@ class Account {
     //
     //  Step 1: generate meta with private key & meta type
     //
-    Meta meta = Meta.generate(type, idKey)!;
+    Meta meta = Meta.generate(type, idKey);
     //
     //  Step 2: generate user ID with meta & address type
     //
@@ -89,10 +89,10 @@ class Account {
     //
     //  Step 4: generate visa with ID and sign with private key
     //
-    Visa visa = BaseVisa.fromID(identifier);
+    Visa visa = BaseVisa.from(identifier);
     visa.name = name;
-    visa.avatar = avatar;
-    visa.key = msgKey.publicKey as EncryptKey;
+    visa.avatar = PortableNetworkFile.parse(avatar);
+    visa.publicKey = msgKey.publicKey as EncryptKey;
     Uint8List? sig = visa.sign(idKey);
     assert(sig != null, 'failed to sign visa: $identifier');
     //

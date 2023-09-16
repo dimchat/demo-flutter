@@ -93,7 +93,7 @@ class ImageFactory {
     // get avatar url from visa
     String? url;
     if (visa is Visa) {
-      url = visa.avatar;
+      url = visa.avatar?.toString();
     } else {
       url = visa.getProperty('avatar');
     }
@@ -118,7 +118,7 @@ class ImageFactory {
     // check avatar url
     String? url;
     if (visa is Visa) {
-      url = visa.avatar;
+      url = visa.avatar?.toString();
     } else {
       url = visa.getProperty('avatar');
     }
@@ -139,7 +139,7 @@ class ImageFactory {
       return image;
     }
     String? filename = content.filename;
-    String? url = content.url;
+    String? url = content.url?.toString();
     // get local file path, if not exists
     // try to download from file server
     String? path = await FileTransfer().getFilePath(content);
@@ -170,7 +170,7 @@ class ImageFactory {
         return image;
       }
     }
-    String? url = content.url;
+    String? url = content.url?.toString();
     if (url != null) {
       image = _providers[url];
       if (image != null) {

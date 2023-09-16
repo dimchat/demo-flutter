@@ -109,7 +109,7 @@ class Amanuensis implements lnc.Observer {
 
   void suspendReliableMessage(ReliableMessage rMsg) {
     // save this message in a queue waiting sender's meta response
-    ID? waiting = ID.parse(rMsg.getString('waiting'));
+    ID? waiting = ID.parse(rMsg['waiting']);
     if (waiting == null) {
       waiting = rMsg.group;
       waiting ??= rMsg.sender;
@@ -126,7 +126,7 @@ class Amanuensis implements lnc.Observer {
 
   void suspendInstantMessage(InstantMessage iMsg) {
     // save this message in a queue waiting receiver's visa/meta/members response
-    ID? waiting = ID.parse(iMsg.getString('waiting'));
+    ID? waiting = ID.parse(iMsg['waiting']);
     if (waiting == null) {
       waiting = iMsg.group;
       waiting ??= iMsg.receiver;

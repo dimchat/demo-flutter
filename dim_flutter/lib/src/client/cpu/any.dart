@@ -4,7 +4,7 @@ class AnyContentProcessor extends BaseContentProcessor {
   AnyContentProcessor(super.facebook, super.messenger);
 
   @override
-  Future<List<Content>> processContent(Content content, ReliableMessage rMsg) async {
+  Future<List<Content>> process(Content content, ReliableMessage rMsg) async {
     String text;
 
     // File: Image, Audio, Video
@@ -30,7 +30,7 @@ class AnyContentProcessor extends BaseContentProcessor {
       text = "Web page received";
     } else {
       // Other
-      return await super.processContent(content, rMsg);
+      return await super.process(content, rMsg);
     }
 
     var group = content.group;

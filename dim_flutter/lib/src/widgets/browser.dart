@@ -197,7 +197,7 @@ class PageContentView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) => GestureDetector(
-    onTap: onTap ?? () => Browser.open(context, url: content.url),
+    onTap: onTap ?? () => Browser.open(context, url: content.url.toString()),
     onLongPress: onLongPress,
     child: _widget(context),
   );
@@ -205,7 +205,7 @@ class PageContentView extends StatelessWidget {
   Widget _widget(BuildContext context) {
     var colors = Facade.of(context).colors;
     var styles = Facade.of(context).styles;
-    String url = content.url;
+    String url = content.url.toString();
     String title = content.title;
     String desc = content.desc ?? '';
     Widget image = icon ?? Icon(Styles.webpageIcon, color: colors.pageMessageColor,);

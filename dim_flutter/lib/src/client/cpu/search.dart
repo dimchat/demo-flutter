@@ -9,7 +9,7 @@ class SearchCommandProcessor extends BaseCommandProcessor {
   SearchCommandProcessor(super.facebook, super.messenger);
 
   @override
-  Future<List<Content>> processContent(Content content, ReliableMessage rMsg) async {
+  Future<List<Content>> process(Content content, ReliableMessage rMsg) async {
     assert(content is SearchCommand, 'search command error: $content');
     SearchCommand command = content as SearchCommand;
 

@@ -124,7 +124,7 @@ class InstantMessageTable extends DataTableHandler<InstantMessage> implements In
       time = time ~/ 1000;
     }
     Content content = iMsg.content;
-    String? sig = iMsg.getString('signature');
+    String? sig = iMsg.getString('signature', null);
     if (sig != null) {
       sig = sig.substring(sig.length - 8);
     }

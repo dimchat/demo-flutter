@@ -54,7 +54,7 @@ class Keychain {
 
   Future<String?> get mnemonic async {
     PrivateKey? puppet = await database.getPrivateKeyForVisaSignature(master);
-    String? pem = puppet?.getString('data');
+    String? pem = puppet?.getString('data', null);
     Log.debug('master key data: $pem, $master');
     if (pem == null) {
       return null;

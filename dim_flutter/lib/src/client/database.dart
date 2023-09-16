@@ -325,7 +325,7 @@ class SharedDatabase implements AccountDBI, SessionDBI, MessageDBI,
       await msgKeyTable.getCipherKey(sender, receiver, generate: generate);
 
   @override
-  Future<void> cacheCipherKey(ID sender, ID receiver, SymmetricKey? key) async =>
+  Future<void> cacheCipherKey(ID sender, ID receiver, SymmetricKey key) async =>
       await msgKeyTable.cacheCipherKey(sender, receiver, key);
 
   //

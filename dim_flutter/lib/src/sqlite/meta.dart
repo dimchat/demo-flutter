@@ -42,12 +42,12 @@ class _MetaTable extends DataTableHandler<Meta> implements MetaDBI {
   @override
   Future<bool> saveMeta(Meta meta, ID entity) async {
     int type = meta.type;
-    String json = JSON.encode(meta.key.toMap());
+    String json = JSON.encode(meta.publicKey.toMap());
     String seed;
     String fingerprint;
     if (MetaType.hasSeed(type)) {
       seed = meta.seed!;
-      fingerprint = meta.getString('fingerprint')!;
+      fingerprint = meta.getString('fingerprint', '')!;
     } else {
       seed = '';
       fingerprint = '';
@@ -93,7 +93,7 @@ class MetaCache extends _MetaTable {
   @override
   Future<bool> saveMeta(Meta meta, ID entity) async {
     // 0. check valid
-    if (!Meta.matchID(entity, meta)) {
+    if (meta.isValid && meta.matchIdentifier(entity)) {} else {
       Log.error('meta not match: $entity');
       return false;
     }

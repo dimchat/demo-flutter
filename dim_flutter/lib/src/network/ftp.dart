@@ -122,7 +122,7 @@ class FileTransfer {
       return cachePath;
     }
     // get download URL
-    String? urlString = content.url;
+    String? urlString = content.url?.toString();
     if (urlString == null) {
       Log.error('file URL not found: $content');
       return null;
@@ -145,7 +145,7 @@ class FileTransfer {
       Log.error('password not found: $content');
       return null;
     }
-    Uint8List? data = await _decryptFileData(tempPath, password);
+    Uint8List? data = await _decryptFileData(tempPath, password, content);
     if (data == null) {
       Log.error('failed to decrypt file: $tempPath, password: $password');
       // delete to download again
@@ -206,7 +206,7 @@ class FileTransfer {
   /// @param path     - temporary path
   /// @param password - symmetric key
   /// @return decrypted data
-  static Future<Uint8List?> _decryptFileData(String path, DecryptKey password) async {
+  static Future<Uint8List?> _decryptFileData(String path, DecryptKey password, FileContent content) async {
     Uint8List? data = await _loadDownloadedFileData(path);
     if (data == null) {
       Log.warning('failed to load temporary file: $path');
@@ -214,7 +214,7 @@ class FileTransfer {
     }
     Log.info('decrypting file: $path, size: ${data.length}');
     try {
-      return password.decrypt(data);
+      return password.decrypt(data, content);
     } catch (e) {
       Log.error('failed to decrypt file data: $path, $password');
       return null;

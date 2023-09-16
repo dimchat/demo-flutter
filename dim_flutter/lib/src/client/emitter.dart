@@ -61,7 +61,7 @@ class Emitter implements Observer {
     // and send the content to station
     FileContent content = iMsg.content as FileContent;
     // content.data = null;
-    content.url = url.toString();
+    content.url = url;
     return await _sendInstantMessage(iMsg).onError((error, stackTrace) {
       Log.error('failed to send message: $error');
     });
@@ -117,7 +117,7 @@ class Emitter implements Observer {
     content.data = null;
     await _saveInstantMessage(iMsg);
     // 3. add upload task with encrypted data
-    Uint8List encrypted = password.encrypt(data);
+    Uint8List encrypted = password.encrypt(data, iMsg);
     filename = FileTransfer.filenameFromData(encrypted, filename);
     ID sender = iMsg.sender;
     ChannelManager man = ChannelManager();
@@ -129,7 +129,7 @@ class Emitter implements Observer {
     } else {
       // upload success
       Log.info('uploaded filename: ${content.filename} -> $filename => $url');
-      content.url = url.toString();
+      content.url = url;
       await _sendInstantMessage(iMsg);
     }
   }
@@ -154,7 +154,7 @@ class Emitter implements Observer {
     assert(jpeg.isNotEmpty, 'image data should not empty');
     String filename = Hex.encode(MD5.digest(jpeg));
     filename += ".jpeg";
-    ImageContent content = FileContent.image(filename, binary: jpeg);
+    ImageContent content = FileContent.image(filename: filename, data: jpeg);
     // add image data length & thumbnail into message content
     content['length'] = jpeg.length;
     content.thumbnail = thumbnail;
@@ -171,7 +171,7 @@ class Emitter implements Observer {
     assert(mp4.isNotEmpty, 'voice data should not empty');
     String filename = Hex.encode(MD5.digest(mp4));
     filename += ".mp4";
-    AudioContent content = FileContent.audio(filename, binary: mp4);
+    AudioContent content = FileContent.audio(filename: filename, data: mp4);
     // add voice data length & duration into message content
     content['length'] = mp4.length;
     content['duration'] = duration;

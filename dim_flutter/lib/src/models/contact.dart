@@ -169,7 +169,7 @@ class ContactInfo implements lnc.Observer {
     // get avatar
     Document? visa = await shared.facebook.getDocument(identifier, '*');
     if (visa is Visa) {
-      _avatar = visa.avatar ?? '';
+      _avatar = visa.avatar?.url.toString();
     } else {
       _avatar = '';
     }

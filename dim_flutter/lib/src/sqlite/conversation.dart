@@ -38,7 +38,7 @@ Conversation _extractConversation(ResultSet resultSet, int index) {
   String? cid = resultSet.getString('cid');
   int? unread = resultSet.getInt('unread');
   String? last = resultSet.getString('last');
-  DateTime? time = resultSet.getTime('time');
+  DateTime? time = resultSet.getDateTime('time');
   return Conversation(ID.parse(cid)!, unread: unread!, lastMessage: last, lastTime: time);
 }
 

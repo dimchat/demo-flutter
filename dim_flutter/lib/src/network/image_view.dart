@@ -84,7 +84,7 @@ class ImageViewFactory {
     }
     // check content
     String? filename = content.filename;
-    String? url = content.url;
+    String? url = content.url?.toString();
     if (filename == null || url == null) {
       return _imageNotFound(content);
     }
@@ -100,7 +100,7 @@ class ImageViewFactory {
   }
 
   static void _delay(void Function() job) =>
-      Future.delayed(const Duration(milliseconds: 32)).then((value) => job());
+      Future.delayed(const Duration(milliseconds: 512)).then((value) => job());
 
 }
 

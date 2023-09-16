@@ -58,7 +58,7 @@ class NameCardView extends StatelessWidget {
     var styles = Facade.of(context).styles;
     ImageViewFactory factory = ImageViewFactory();
     ID identifier = content.identifier;
-    String? url = content.avatar;
+    String? url = content.avatar?.toString();
     Widget image = url == null
         ? factory.fromID(identifier, width: 32, height: 32)
         : ImageView(url: url, width: 32, height: 32,);

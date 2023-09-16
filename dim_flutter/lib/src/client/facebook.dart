@@ -12,7 +12,7 @@ class SharedFacebook extends ClientFacebook {
     Document? doc = await getDocument(user, '*');
     if (doc != null) {
       if (doc is Visa) {
-        urlString = doc.avatar;
+        urlString = doc.avatar?.toString();
       } else {
         urlString = doc.getProperty('avatar');
       }
@@ -34,7 +34,7 @@ class SharedFacebook extends ClientFacebook {
       if (meta == null) {
         Log.error('meta not found: $identifier');
         return false;
-      } else if (doc.verify(meta.key)) {
+      } else if (doc.verify(meta.publicKey)) {
         Log.debug('document verified: $identifier');
       } else {
         Log.error('failed to verify document: $identifier');

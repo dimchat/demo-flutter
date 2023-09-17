@@ -10,6 +10,7 @@ export 'client/constants.dart';
 export 'client/database.dart';
 export 'client/emitter.dart';
 export 'client/facebook.dart';
+export 'client/group.dart';
 export 'client/messenger.dart';
 export 'client/packer.dart';
 export 'client/processor.dart';

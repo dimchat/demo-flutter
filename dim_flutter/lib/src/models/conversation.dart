@@ -392,16 +392,16 @@ class Amanuensis implements lnc.Observer {
 
     GlobalVariable shared = GlobalVariable();
 
-    if (content is InviteCommand) {
-      // send keys again
-      ID me = iMsg.receiver;
-      ID group = content.group!;
-      SymmetricKey? key = await shared.mdb.getCipherKey(me, group);
-      if (key != null) {
-        //key.put("reused", null);
-        key.remove("reused");
-      }
-    }
+    // if (content is InviteCommand) {
+    //   // send keys again
+    //   ID me = iMsg.receiver;
+    //   ID group = content.group!;
+    //   SymmetricKey? key = await shared.mdb.getCipherKey(sender: me, receiver: group);
+    //   if (key != null) {
+    //     //key.put("reused", null);
+    //     key.remove("reused");
+    //   }
+    // }
     if (content is QueryCommand) {
       // FIXME: same query command sent to different members?
       return true;

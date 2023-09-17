@@ -2,8 +2,8 @@ import 'package:dim_client/dim_client.dart';
 
 import '../client/shared.dart';
 
-class StationInfo {
-  StationInfo(this.host, this.port, {required this.provider, required this.chosen});
+class NeighborInfo {
+  NeighborInfo(this.host, this.port, {required this.provider, required this.chosen});
 
   final String host;
   final int port;
@@ -47,27 +47,27 @@ class StationInfo {
   }
 
   /// create stations info from t_station
-  static Future<List<StationInfo>> fromList(List<Triplet<Pair<String, int>, ID, int>> records) async {
-    List<StationInfo> array = [];
+  static Future<List<NeighborInfo>> fromList(List<StationInfo> records) async {
+    List<NeighborInfo> array = [];
     for (var item in records) {
-      array.add(await StationInfo.newStation(item));
+      array.add(await NeighborInfo.newStation(item));
     }
     return array;
   }
 
   /// create station info from t_station
-  static Future<StationInfo> newStation(Triplet<Pair<String, int>, ID, int> record) async =>
+  static Future<NeighborInfo> newStation(StationInfo record) async =>
       await _StationManager().newStation(
-          record.first.first, record.first.second,
-          provider: record.second, chosen: record.third
+          record.host, record.port,
+          provider: record.provider ?? ProviderInfo.kGSP, chosen: record.chosen
       );
 
   /// get stations for speed tested
-  static List<StationInfo> getStations(String host, int port, {ID? provider}) =>
+  static List<NeighborInfo> getStations(String host, int port, {ID? provider}) =>
       _StationManager().getStations(host, port, provider: provider);
 
   /// sort stations with response time (chosen first)
-  static List<StationInfo> sortStations(List<StationInfo> stations) {
+  static List<NeighborInfo> sortStations(List<NeighborInfo> stations) {
     // sort with response time
     stations.sort((a, b) {
       double? art = a.responseTime;
@@ -122,18 +122,18 @@ class _StationManager {
   _StationManager._internal();
 
   // host => stations
-  final Map<String, List<StationInfo>> _stationMap = {};
+  final Map<String, List<NeighborInfo>> _stationMap = {};
 
-  Future<StationInfo> newStation(String host, int port,
+  Future<NeighborInfo> newStation(String host, int port,
       {required ID provider, required int chosen}) async {
-    List<StationInfo>? stations = _stationMap[host];
+    List<NeighborInfo>? stations = _stationMap[host];
     if (stations == null) {
       // new host
       stations = [];
       _stationMap[host] = stations;
     } else {
       // check for duplicated record
-      for (StationInfo srv in stations) {
+      for (NeighborInfo srv in stations) {
         if (srv.port == port && srv.provider == provider) {
           assert(srv.host == host, 'station error: $srv');
           // assert(srv.chosen == chosen, 'station error: srv');
@@ -141,19 +141,19 @@ class _StationManager {
         }
       }
     }
-    StationInfo info = StationInfo(host, port, provider: provider, chosen: chosen);
+    NeighborInfo info = NeighborInfo(host, port, provider: provider, chosen: chosen);
     stations.add(info);
     await info.reloadData();
     return info;
   }
 
-  List<StationInfo> getStations(String host, int port, {ID? provider}) {
-    List<StationInfo>? stations = _stationMap[host];
+  List<NeighborInfo> getStations(String host, int port, {ID? provider}) {
+    List<NeighborInfo>? stations = _stationMap[host];
     if (stations == null) {
       return [];
     }
-    List<StationInfo> array = [];
-    for (StationInfo srv in stations) {
+    List<NeighborInfo> array = [];
+    for (NeighborInfo srv in stations) {
       if (srv.port != port) {
         continue;
       } else if (provider != null && srv.provider != provider) {

@@ -3,7 +3,6 @@ import 'dart:typed_data';
 import 'package:dim_client/dim_client.dart';
 import 'package:lnc/lnc.dart';
 
-import '../models/conversation.dart';
 import '../models/shield.dart';
 import '../network/velocity.dart';
 
@@ -14,18 +13,6 @@ class SharedMessenger extends ClientMessenger {
   SharedMessenger(super.session, super.facebook, super.mdb);
   
   dynamic _remoteAddress;  // Tuple[str, int]
-
-  @override
-  void suspendInstantMessage(InstantMessage iMsg, Map info) {
-    Amanuensis clerk = Amanuensis();
-    clerk.suspendInstantMessage(iMsg);
-  }
-
-  @override
-  void suspendReliableMessage(ReliableMessage rMsg, Map info) {
-    Amanuensis clerk = Amanuensis();
-    clerk.suspendReliableMessage(rMsg);
-  }
 
   @override
   Future<Uint8List> serializeContent(Content content,

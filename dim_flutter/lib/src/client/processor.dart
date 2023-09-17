@@ -8,7 +8,7 @@ class SharedProcessor extends ClientMessageProcessor {
   SharedProcessor(super.facebook, super.messenger);
 
   @override
-  ContentProcessorCreator createCreator(Facebook facebook, Messenger messenger) {
+  ContentProcessorCreator createCreator() {
     return SharedContentProcessorCreator(facebook, messenger);
   }
 

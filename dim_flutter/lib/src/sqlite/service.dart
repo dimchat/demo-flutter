@@ -56,15 +56,13 @@ class ServiceProviderDatabase extends DatabaseConnector {
 }
 
 
-typedef _ProviderInfo = Pair<ID, int>;
-
-_ProviderInfo _extractProvider(ResultSet resultSet, int index) {
+ProviderInfo _extractProvider(ResultSet resultSet, int index) {
   String? sp = resultSet.getString('pid');
   int? chosen = resultSet.getInt('chosen');
-  return Pair(ID.parse(sp)!, chosen!);
+  return ProviderInfo(ID.parse(sp)!, chosen!);
 }
 
-class _ProviderTable extends DataTableHandler<_ProviderInfo> implements ProviderDBI {
+class _ProviderTable extends DataTableHandler<ProviderInfo> implements ProviderDBI {
   _ProviderTable() : super(ServiceProviderDatabase(), _extractProvider);
 
   static const String _table = ServiceProviderDatabase.tProvider;
@@ -72,7 +70,7 @@ class _ProviderTable extends DataTableHandler<_ProviderInfo> implements Provider
   static const List<String> _insertColumns = ["pid", "chosen"];
 
   @override
-  Future<List<_ProviderInfo>> getProviders() async {
+  Future<List<ProviderInfo>> allProviders() async {
     SQLConditions cond = SQLConditions.kTrue;
     return await select(_table, columns: _selectColumns,
         conditions: cond, orderBy: 'chosen DESC');
@@ -105,23 +103,23 @@ class _ProviderTable extends DataTableHandler<_ProviderInfo> implements Provider
 
 class ProviderCache extends _ProviderTable {
 
-  List<_ProviderInfo>? _caches;
+  List<ProviderInfo>? _caches;
 
-  static int? _find(ID identifier, List<_ProviderInfo> providers) {
-    for (_ProviderInfo item in providers) {
-      if (item.first == identifier) {
-        return item.second;
+  static int? _find(ID identifier, List<ProviderInfo> providers) {
+    for (ProviderInfo item in providers) {
+      if (item.identifier == identifier) {
+        return item.chosen;
       }
     }
     return null;
   }
 
   @override
-  Future<List<Pair<ID, int>>> getProviders() async {
-    List<_ProviderInfo>? pairs = _caches;
+  Future<List<ProviderInfo>> allProviders() async {
+    List<ProviderInfo>? pairs = _caches;
     if (pairs == null) {
       // cache not found, try to load from database
-      pairs = await super.getProviders();
+      pairs = await super.allProviders();
       _caches = pairs;
     }
     return pairs;
@@ -130,7 +128,7 @@ class ProviderCache extends _ProviderTable {
   @override
   Future<bool> addProvider(ID identifier, {int chosen = 0}) async {
     // 1. check old records
-    List<_ProviderInfo> providers = await getProviders();
+    List<ProviderInfo> providers = await allProviders();
     if (_find(identifier, providers) != null) {
       assert(false, 'duplicated provider: $identifier, chosen: $chosen');
       return updateProvider(identifier, chosen: chosen);
@@ -156,7 +154,7 @@ class ProviderCache extends _ProviderTable {
   @override
   Future<bool> updateProvider(ID identifier, {int chosen = 0}) async {
     // 1. check old records
-    List<_ProviderInfo> providers = await getProviders();
+    List<ProviderInfo> providers = await allProviders();
     if (_find(identifier, providers) == null) {
       assert(false, 'provider not found: $identifier, chosen: $chosen');
       return updateProvider(identifier, chosen: chosen);
@@ -182,7 +180,7 @@ class ProviderCache extends _ProviderTable {
   @override
   Future<bool> removeProvider(ID identifier) async {
     // 1. check old records
-    List<_ProviderInfo> providers = await getProviders();
+    List<ProviderInfo> providers = await allProviders();
     if (_find(identifier, providers) == null) {
       assert(false, 'provider not found: $identifier');
       return true;

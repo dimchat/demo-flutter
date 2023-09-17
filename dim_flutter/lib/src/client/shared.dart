@@ -1,8 +1,5 @@
 import 'package:dim_client/dim_client.dart';
 
-import '../common/protocol/block.dart';
-import '../common/protocol/mute.dart';
-
 import 'client.dart';
 import 'database.dart';
 import 'emitter.dart';
@@ -55,10 +52,6 @@ void _registerPlugins() {
   // Search (users)
   Command.setFactory(SearchCommand.kSearch, CommandParser((dict) => BaseSearchCommand(dict)));
   Command.setFactory(SearchCommand.kOnlineUsers, CommandParser((dict) => BaseSearchCommand(dict)));
-
-  // Block, Mute
-  Command.setFactory(BlockCommand.kBlock, CommandParser((dict) => BlockCommand(dict)));
-  Command.setFactory(MuteCommand.kMute, CommandParser((dict) => MuteCommand(dict)));
 
   // Name Card
   Content.setFactory(ContentType.kNameCard, ContentParser((dict) => NameCardContent(dict)));

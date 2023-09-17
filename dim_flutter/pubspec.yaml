@@ -33,9 +33,7 @@ dependencies:
   bip39: ^1.0.6
 
   lnc: ^0.1.0
-  dim_client: 0.2.0
-  dim_plugins: 0.2.0
-  dimsdk: 0.2.0
+  dim_client: ^0.2.2
 
 dev_dependencies:
   flutter_test:

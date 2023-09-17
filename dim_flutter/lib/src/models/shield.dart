@@ -1,8 +1,6 @@
 import 'package:dim_client/dim_client.dart';
 import 'package:lnc/lnc.dart';
 
-import '../common/protocol/block.dart';
-import '../common/protocol/mute.dart';
 import '../client/shared.dart';
 
 

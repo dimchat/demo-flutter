@@ -6,7 +6,7 @@ import '../models/config.dart';
 import '../models/station.dart';
 
 /// get nearest station, chosen provider first
-Future<StationInfo?> getNeighborStation() async {
+Future<NeighborInfo?> getNeighborStation() async {
   GlobalVariable shared = GlobalVariable();
   SessionDBI database = shared.sdb;
   try {
@@ -14,21 +14,21 @@ Future<StationInfo?> getNeighborStation() async {
   } catch (e) {
     Log.error('failed to update stations: $e');
   }
-  StationInfo? fast;
+  NeighborInfo? fast;
   // check service provider
-  List<Pair<ID, int>> providers = await database.getProviders();
-  List<_StationInfo> stations;
-  List<StationInfo> candidates;
+  List<ProviderInfo> providers = await database.allProviders();
+  List<StationInfo> stations;
+  List<NeighborInfo> candidates;
   for (var item in providers) {
-    stations = await database.getStations(provider: item.first);
+    stations = await database.allStations(provider: item.identifier);
     if (stations.isEmpty) {
       Log.error('no station in provider: $item');
       continue;
     }
     Log.info('got ${stations.length} station(s) in provider: $item');
     // check first station after sorted
-    candidates = await StationInfo.fromList(stations);
-    candidates = StationInfo.sortStations(candidates);
+    candidates = await NeighborInfo.fromList(stations);
+    candidates = NeighborInfo.sortStations(candidates);
     if (fast == null) {
       // take the first one whatever,
       // if it's tested before, then return it
@@ -62,7 +62,7 @@ Future<bool> _updateStations(SessionDBI database) async {
   }
 
   // 2. check service provider
-  List<Pair<ID, int>> providers = await database.getProviders();
+  List<ProviderInfo> providers = await database.allProviders();
   if (providers.isEmpty) {
     // database empty, add first provider
     if (await database.addProvider(pid, chosen: 1)) {
@@ -75,7 +75,7 @@ Future<bool> _updateStations(SessionDBI database) async {
     // check with providers from database
     bool exists = false;
     for (var item in providers) {
-      if (item.first == pid) {
+      if (item.identifier == pid) {
         exists = true;
         break;
       }
@@ -91,7 +91,7 @@ Future<bool> _updateStations(SessionDBI database) async {
   }
 
   // 3. check neighbor stations
-  List<_StationInfo> currentStations = await database.getStations(provider: pid);
+  List<StationInfo> currentStations = await database.allStations(provider: pid);
   String host;
   int port;
   for (Map item in stations) {
@@ -99,7 +99,7 @@ Future<bool> _updateStations(SessionDBI database) async {
     port = item['port'];
     if (_contains(host, port, currentStations)) {
       Log.debug('station exists: $item');
-    } else if (await database.addStation(host, port, provider: pid)) {
+    } else if (await database.addStation(null, host: host, port: port, provider: pid)) {
       Log.warning('station added: $item, $pid');
     } else {
       Log.error('failed to add station: $item');
@@ -111,14 +111,11 @@ Future<bool> _updateStations(SessionDBI database) async {
   return true;
 }
 
-bool _contains(String host, int port, List<_StationInfo> stations) {
-  Pair<String, int> srv = Pair(host, port);
+bool _contains(String host, int port, List<StationInfo> stations) {
   for (var item in stations) {
-    if (item.first == srv) {
+    if (item.host == host && item.port == port) {
       return true;
     }
   }
   return false;
 }
-
-typedef _StationInfo = Triplet<Pair<String, int>, ID, int>;

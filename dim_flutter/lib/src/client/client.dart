@@ -12,6 +12,7 @@ import '../channels/session.dart';
 import '../models/station.dart';
 import '../network/neighbor.dart';
 import 'constants.dart';
+import 'group.dart';
 import 'messenger.dart';
 import 'packer.dart';
 import 'processor.dart';
@@ -24,7 +25,7 @@ class Client extends Terminal {
 
   /// connect to the neighbor station
   Future<ClientMessenger?> reconnect() async {
-    StationInfo? station = await getNeighborStation();
+    NeighborInfo? station = await getNeighborStation();
     if (station == null) {
       Log.error('failed to get neighbor station');
       return null;
@@ -48,8 +49,8 @@ class Client extends Terminal {
   }
 
   @override
-  ClientSession createSession(Station station, SocketAddress remote) {
-    ClientSession session = SharedSession(station, remote, sdb);
+  ClientSession createSession(Station station) {
+    ClientSession session = SharedSession(station, sdb);
     session.start();
     return session;
   }

@@ -236,27 +236,23 @@ class MsgKeyCache implements CipherKeyDBI {
   final Map<ID, Map<ID, SymmetricKey>> _caches = {};
 
   @override
-  Future<void> cacheCipherKey(ID sender, ID receiver, SymmetricKey? key) async {
+  Future<void> cacheCipherKey({required ID sender, required ID receiver,
+                               required SymmetricKey key}) async {
     if (receiver.isBroadcast) {
       // broadcast message has no key
       return;
     }
     Map<ID, SymmetricKey>? keyMap = _caches[receiver];
-    if (key != null) {
-      if (keyMap == null) {
-        keyMap = {};
-        _caches[receiver] = keyMap;
-      }
-      keyMap[sender] = key;
-    } else if (keyMap == null || keyMap.remove(sender) == null) {
-      Log.warning('cipher key not exists: $sender -> $receiver');
-    } else {
-      Log.debug("cipher key removed: $sender -> $receiver");
+    if (keyMap == null) {
+      keyMap = {};
+      _caches[receiver] = keyMap;
     }
+    keyMap[sender] = key;
   }
 
   @override
-  Future<SymmetricKey?> getCipherKey(ID sender, ID receiver, {bool generate = false}) async {
+  Future<SymmetricKey?> getCipherKey({required ID sender, required ID receiver,
+                                      bool generate = false}) async {
     if (receiver.isBroadcast) {
       // broadcast message has no key
       return PlainKey.getInstance();

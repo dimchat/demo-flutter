@@ -32,9 +32,9 @@ class SharedDatabase implements AccountDBI, SessionDBI, MessageDBI,
   PrivateKeyDBI privateKeyTable = PrivateKeyCache();
   MetaDBI metaTable = MetaCache();
   DocumentDBI documentTable = DocumentCache();
-  UserDBI userTable = UserCache();
-  ContactDBI contactTable = ContactCache();
-  GroupDBI groupTable = GroupCache();
+  UserCache userTable = UserCache();
+  ContactCache contactTable = ContactCache();
+  GroupCache groupTable = GroupCache();
 
   RemarkDBI remarkTable = RemarkCache();
   BlockedDBI blockedTable = BlockedCache();
@@ -112,16 +112,12 @@ class SharedDatabase implements AccountDBI, SessionDBI, MessageDBI,
   @override
   Future<bool> saveLocalUsers(List<ID> users) async => await userTable.saveLocalUsers(users);
 
-  @override
   Future<bool> addUser(ID user) async => await userTable.addUser(user);
 
-  @override
   Future<bool> removeUser(ID user) async => await userTable.removeUser(user);
 
-  @override
   Future<bool> setCurrentUser(ID user) async => await userTable.setCurrentUser(user);
 
-  @override
   Future<ID?> getCurrentUser() async => await userTable.getCurrentUser();
 
   //
@@ -136,11 +132,9 @@ class SharedDatabase implements AccountDBI, SessionDBI, MessageDBI,
   Future<bool> saveContacts(List<ID> contacts, {required ID user}) async =>
       await contactTable.saveContacts(contacts, user: user);
 
-  @override
   Future<bool> addContact(ID contact, {required ID user}) async =>
       await contactTable.addContact(contact, user: user);
 
-  @override
   Future<bool> removeContact(ID contact, {required ID user}) async =>
       await contactTable.removeContact(contact, user: user);
 
@@ -220,6 +214,12 @@ class SharedDatabase implements AccountDBI, SessionDBI, MessageDBI,
   Future<bool> saveMembers(List<ID> members, {required ID group}) async =>
       await groupTable.saveMembers(members, group: group);
 
+  Future<bool> addMember(ID member, {required ID group}) async =>
+      await groupTable.addMember(member, group: group);
+
+  Future<bool> removeMember(ID member, {required ID group}) async =>
+      await groupTable.removeMember(member, group: group);
+
   @override
   Future<List<ID>> getAssistants({required ID group}) async =>
       await groupTable.getAssistants(group: group);
@@ -229,14 +229,27 @@ class SharedDatabase implements AccountDBI, SessionDBI, MessageDBI,
       await groupTable.saveAssistants(bots, group: group);
 
   @override
-  Future<bool> addMember(ID member, {required ID group}) async =>
-      await groupTable.addMember(member, group: group);
+  Future<List<ID>> getAdministrators({required ID group}) async =>
+      await groupTable.getAdministrators(group: group);
 
   @override
-  Future<bool> removeMember(ID member, {required ID group}) async =>
-      await groupTable.removeMember(member, group: group);
+  Future<bool> saveAdministrators(List<ID> members, {required ID group}) async =>
+      await groupTable.saveAdministrators(members, group: group);
 
   @override
+  Future<Pair<ResetCommand?, ReliableMessage?>> getResetCommandMessage(ID identifier) async {
+    // TODO: implement getResetCommandMessage
+    Log.error('implement getResetCommandMessage: $identifier');
+    return const Pair(null, null);
+  }
+
+  @override
+  Future<bool> saveResetCommandMessage(ID identifier, ResetCommand content, ReliableMessage rMsg) async {
+    // TODO: implement saveResetCommandMessage
+    Log.error('implement saveResetCommandMessage: $identifier');
+    return false;
+  }
+
   Future<bool> removeGroup({required ID group}) async =>
       await groupTable.removeGroup(group: group);
 
@@ -257,8 +270,8 @@ class SharedDatabase implements AccountDBI, SessionDBI, MessageDBI,
   //
 
   @override
-  Future<List<Pair<ID, int>>> getProviders() async =>
-      await providerTable.getProviders();
+  Future<List<ProviderInfo>> allProviders() async =>
+      await providerTable.allProviders();
 
   @override
   Future<bool> addProvider(ID identifier, {int chosen = 0}) async =>
@@ -277,20 +290,24 @@ class SharedDatabase implements AccountDBI, SessionDBI, MessageDBI,
   //
 
   @override
-  Future<List<Triplet<Pair<String, int>, ID, int>>> getStations({required ID provider}) async =>
-      await stationTable.getStations(provider: provider);
+  Future<List<StationInfo>> allStations({required ID provider}) async =>
+      await stationTable.allStations(provider: provider);
 
   @override
-  Future<bool> addStation(String host, int port, {required ID provider, int chosen = 0}) async =>
-      await stationTable.addStation(host, port, provider: provider, chosen: chosen);
+  Future<bool> addStation(ID? sid, {int chosen = 0,
+    required String host, required int port, required ID provider}) async =>
+      await stationTable.addStation(sid, chosen: chosen,
+          host: host, port: port, provider: provider);
 
   @override
-  Future<bool> updateStation(String host, int port, {required ID provider, int chosen = 0}) async =>
-      await stationTable.updateStation(host, port, provider: provider, chosen: chosen);
+  Future<bool> updateStation(ID? sid, {int chosen = 0,
+    required String host, required int port, required ID provider}) async =>
+      await stationTable.updateStation(sid, chosen: chosen,
+          host: host, port: port, provider: provider);
 
   @override
-  Future<bool> removeStation(String host, int port, {required ID provider}) async =>
-      await stationTable.removeStation(host, port, provider: provider);
+  Future<bool> removeStation({required String host, required int port, required ID provider}) async =>
+      await stationTable.removeStation(host: host, port: port, provider: provider);
 
   @override
   Future<bool> removeStations({required ID provider}) async =>
@@ -320,13 +337,28 @@ class SharedDatabase implements AccountDBI, SessionDBI, MessageDBI,
   //
 
   @override
-  Future<SymmetricKey?> getCipherKey(ID sender, ID receiver,
-      {bool generate = false}) async =>
-      await msgKeyTable.getCipherKey(sender, receiver, generate: generate);
+  Future<SymmetricKey?> getCipherKey({required ID sender, required ID receiver,
+    bool generate = false}) async =>
+      await msgKeyTable.getCipherKey(sender: sender, receiver: receiver, generate: generate);
 
   @override
-  Future<void> cacheCipherKey(ID sender, ID receiver, SymmetricKey key) async =>
-      await msgKeyTable.cacheCipherKey(sender, receiver, key);
+  Future<void> cacheCipherKey({required ID sender, required ID receiver,
+    required SymmetricKey key}) async =>
+      await msgKeyTable.cacheCipherKey(sender: sender, receiver: receiver, key: key);
+
+  @override
+  Map getGroupKeys({required ID group, required ID sender}) {
+    // TODO: implement getGroupKeys
+    Log.error('implement getGroupKeys: $group');
+    return {};
+  }
+
+  @override
+  bool saveGroupKeys({required ID group, required ID sender, required Map keys}) {
+    // TODO: implement saveGroupKeys
+    Log.error('implement saveGroupKeys: $group');
+    return false;
+  }
 
   //
   //  ReliableMessage Table

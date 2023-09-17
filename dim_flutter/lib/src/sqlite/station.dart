@@ -5,17 +5,16 @@ import 'helper/sqlite.dart';
 import 'service.dart';
 
 
-typedef _StationInfo = Triplet<Pair<String, int>, ID, int>;
-
-_StationInfo _extractStation(ResultSet resultSet, int index) {
+StationInfo _extractStation(ResultSet resultSet, int index) {
   String? host = resultSet.getString('host');
   int? port = resultSet.getInt('port');
   String? sp = resultSet.getString('pid');
   int? chosen = resultSet.getInt('chosen');
-  return Triplet(Pair(host!, port!), ID.parse(sp)!, chosen!);
+  ID? provider = ID.parse(sp);
+  return StationInfo(null, chosen!, host: host!, port: port!, provider: provider);
 }
 
-class _StationTable extends DataTableHandler<_StationInfo> implements StationDBI {
+class _StationTable extends DataTableHandler<StationInfo> implements StationDBI {
   _StationTable() : super(ServiceProviderDatabase(), _extractStation);
 
   static const String _table = ServiceProviderDatabase.tStation;
@@ -23,7 +22,7 @@ class _StationTable extends DataTableHandler<_StationInfo> implements StationDBI
   static const List<String> _insertColumns = ["pid", "host", "port", "chosen"];
 
   @override
-  Future<List<_StationInfo>> getStations({required ID provider}) async {
+  Future<List<StationInfo>> allStations({required ID provider}) async {
     SQLConditions cond;
     cond = SQLConditions(left: 'pid', comparison: '=', right: provider.toString());
     return await select(_table, columns: _selectColumns,
@@ -31,13 +30,15 @@ class _StationTable extends DataTableHandler<_StationInfo> implements StationDBI
   }
 
   @override
-  Future<bool> addStation(String host, int port, {required ID provider, int chosen = 0}) async {
+  Future<bool> addStation(ID? sid, {int chosen = 0,
+    required String host, required int port, required ID provider}) async {
     List values = [provider.toString(), host, port, chosen];
     return await insert(_table, columns: _insertColumns, values: values) > 0;
   }
 
   @override
-  Future<bool> updateStation(String host, int port, {required ID provider, int chosen = 0}) async {
+  Future<bool> updateStation(ID? sid, {int chosen = 0,
+    required String host, required int port, required ID provider}) async {
     SQLConditions cond;
     cond = SQLConditions(left: 'pid', comparison: '=', right: provider.toString());
     cond.addCondition(SQLConditions.kAnd, left: 'host', comparison: '=', right: host);
@@ -49,7 +50,7 @@ class _StationTable extends DataTableHandler<_StationInfo> implements StationDBI
   }
 
   @override
-  Future<bool> removeStation(String host, int port, {required ID provider}) async {
+  Future<bool> removeStation({required String host, required int port, required ID provider}) async {
     SQLConditions cond;
     cond = SQLConditions(left: 'pid', comparison: '=', right: provider.toString());
     cond.addCondition(SQLConditions.kAnd, left: 'host', comparison: '=', right: host);
@@ -69,11 +70,11 @@ class _StationTable extends DataTableHandler<_StationInfo> implements StationDBI
 class StationCache extends _StationTable {
 
   /// pid => [<<host, port>, pid, chosen>]
-  final CachePool<ID, List<_StationInfo>> _cache = CacheManager().getPool('stations');
+  final CachePool<ID, List<StationInfo>> _cache = CacheManager().getPool('stations');
 
-  static _StationInfo? _find(String host, int port, List<_StationInfo> stations) {
-    for (_StationInfo item in stations) {
-      if (item.first.first == host && item.first.second == port) {
+  static StationInfo? _find(String host, int port, List<StationInfo> stations) {
+    for (StationInfo item in stations) {
+      if (item.host == host && item.port == port) {
         return item;
       }
     }
@@ -81,12 +82,12 @@ class StationCache extends _StationTable {
   }
 
   @override
-  Future<List<Triplet<Pair<String, int>, ID, int>>> getStations({required ID provider}) async {
+  Future<List<StationInfo>> allStations({required ID provider}) async {
     double now = Time.currentTimeSeconds;
     // 1. check memory cache
-    CachePair<List<_StationInfo>>? pair = _cache.fetch(provider, now: now);
-    CacheHolder<List<_StationInfo>>? holder = pair?.holder;
-    List<_StationInfo>? value = pair?.value;
+    CachePair<List<StationInfo>>? pair = _cache.fetch(provider, now: now);
+    CacheHolder<List<StationInfo>>? holder = pair?.holder;
+    List<StationInfo>? value = pair?.value;
     if (value == null) {
       if (holder == null) {
         // not load yet, wait to load
@@ -100,7 +101,7 @@ class StationCache extends _StationTable {
         holder.renewal(128, now: now);
       }
       // 2. load from database
-      value = await super.getStations(provider: provider);
+      value = await super.allStations(provider: provider);
       // update cache
       _cache.updateValue(provider, value, 3600, now: now);
     }
@@ -109,15 +110,16 @@ class StationCache extends _StationTable {
   }
 
   @override
-  Future<bool> addStation(String host, int port, {required ID provider, int chosen = 0}) async {
+  Future<bool> addStation(ID? sid, {int chosen = 0,
+    required String host, required int port, required ID provider}) async {
     // 1. check old records
-    List<_StationInfo> stations = await getStations(provider: provider);
+    List<StationInfo> stations = await allStations(provider: provider);
     if (_find(host, port, stations) != null) {
       Log.warning('duplicated station: $host, $port, provider: $provider, chosen: $chosen');
-      return await updateStation(host, port, provider: provider, chosen: chosen);
+      return await updateStation(sid, host: host, port: port, provider: provider);
     }
     // 2. insert as new record
-    if (await super.addStation(host, port, provider: provider, chosen: chosen)) {
+    if (await super.addStation(sid, host: host, port: port, provider: provider)) {
       // clear for reload
       _cache.erase(provider);
     } else {
@@ -137,15 +139,16 @@ class StationCache extends _StationTable {
   }
 
   @override
-  Future<bool> updateStation(String host, int port, {required ID provider, int chosen = 0}) async {
+  Future<bool> updateStation(ID? sid, {int chosen = 0,
+    required String host, required int port, required ID provider}) async {
     // 1. check old records
-    List<_StationInfo> stations = await getStations(provider: provider);
+    List<StationInfo> stations = await allStations(provider: provider);
     if (_find(host, port, stations) == null) {
       Log.warning('station not found: $host, $port, provider: $provider, chosen: $chosen');
       return false;
     }
     // 2. update record
-    if (await super.updateStation(host, port, provider: provider, chosen: chosen)) {
+    if (await super.updateStation(sid, host: host, port: port, provider: provider)) {
       // clear for reload
       _cache.erase(provider);
     } else {
@@ -165,15 +168,15 @@ class StationCache extends _StationTable {
   }
 
   @override
-  Future<bool> removeStation(String host, int port, {required ID provider}) async {
+  Future<bool> removeStation({required String host, required int port, required ID provider}) async {
     // 1. check old records
-    List<_StationInfo> stations = await getStations(provider: provider);
+    List<StationInfo> stations = await allStations(provider: provider);
     if (_find(host, port, stations) == null) {
       Log.warning('station not found: $host, $port, provider: $provider');
       return false;
     }
     // 2. remove record
-    if (await super.removeStation(host, port, provider: provider)) {
+    if (await super.removeStation(host: host, port: port, provider: provider)) {
       // clear for reload
       _cache.erase(provider);
     } else {

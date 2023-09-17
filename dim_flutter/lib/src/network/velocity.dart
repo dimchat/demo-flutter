@@ -45,7 +45,7 @@ import '../models/station.dart';
 class VelocityMeter {
   VelocityMeter(this.info);
 
-  final StationInfo info;
+  final NeighborInfo info;
 
   String get host => info.host;
   int get port => info.port;
@@ -60,7 +60,7 @@ class VelocityMeter {
     return '<$clazz host="$host", port=$port id="$identifier" rt=$responseTime />';
   }
 
-  static Future<VelocityMeter> ping(StationInfo info) async {
+  static Future<VelocityMeter> ping(NeighborInfo info) async {
     var nc = NotificationCenter();
     VelocityMeter meter = VelocityMeter(info);
     nc.postNotification(NotificationNames.kStationSpeedUpdated, meter, {

@@ -234,11 +234,9 @@ class GroupCache implements GroupDBI {
   Future<bool> saveMembers(List<ID> members, {required ID group}) async =>
       await _memberTable.saveMembers(members, group);
 
-  @override
   Future<bool> addMember(ID member, {required ID group}) async =>
       await _memberTable.addMember(member, group: group);
 
-  @override
   Future<bool> removeMember(ID member, {required ID group}) async =>
       await _memberTable.removeMember(member, group: group);
 
@@ -257,6 +255,19 @@ class GroupCache implements GroupDBI {
   }
 
   @override
+  Future<List<ID>> getAdministrators({required ID group}) async {
+    // TODO: implement getAdministrators
+    Log.error('implement getAdministrators: $group');
+    return [];
+  }
+
+  @override
+  Future<bool> saveAdministrators(List<ID> members, {required ID group}) async {
+    // TODO: implement saveAdministrators
+    Log.error('implement saveAdministrators: $group, $members');
+    return false;
+  }
+
   Future<bool> removeGroup({required ID group}) async {
     // TODO: implement removeGroup
     Log.error('implement removeGroup: $group');

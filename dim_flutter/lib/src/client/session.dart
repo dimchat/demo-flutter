@@ -18,7 +18,7 @@ class StateMachine extends SessionStateMachine {
 
 
 class SharedSession extends ClientSession {
-  SharedSession(super.station, super.remoteAddress, super.database) {
+  SharedSession(super.station, super.database) {
     fsm = StateMachine(this);
   }
 

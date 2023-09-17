@@ -122,15 +122,15 @@ void _reconnect(bool test) async {
   GlobalVariable shared = GlobalVariable();
   if (test) {
     SessionDBI database = shared.sdb;
-    List<Pair<ID, int>> records = await database.getProviders();
+    List<ProviderInfo> records = await database.allProviders();
     ID pid;
-    for (Pair<ID, int> provider in records) {
-      pid = provider.first;
-      var items = await database.getStations(provider: pid);
-      List<StationInfo> stations = await StationInfo.fromList(items);
+    for (ProviderInfo provider in records) {
+      pid = provider.identifier;
+      var items = await database.allStations(provider: pid);
+      List<NeighborInfo> stations = await NeighborInfo.fromList(items);
       // check all stations of this provider
       List<Future<VelocityMeter>> futures = [];
-      for (StationInfo info in stations) {
+      for (NeighborInfo info in stations) {
         futures.add(VelocityMeter.ping(info));
       }
       // report speeds after all stations tested

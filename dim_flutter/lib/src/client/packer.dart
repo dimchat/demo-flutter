@@ -1,8 +1,8 @@
 import 'dart:typed_data';
 
 import 'package:dim_client/dim_client.dart';
-import 'package:lnc/lnc.dart';
 
+import '../models/conversation.dart';
 import 'compatible.dart';
 import 'shared.dart';
 
@@ -29,38 +29,17 @@ class SharedPacker extends ClientMessagePacker {
     // make sure visa.key exists before encrypting message
     Content content = iMsg.content;
     if (content is FileContent) {
-      if (content.containsKey('data')/* && content.containsKey('URL')*/) {
-        ID sender = iMsg.sender;
-        ID receiver = iMsg.receiver;
-        SymmetricKey? key = await messenger.getCipherKey(sender, receiver,
-            generate: true);
-        if (key == null) {
-          assert(false, 'failed to get msg key for: $sender -> $receiver');
-        } else {
-          // call emitter to encrypt & upload file data before send out
-          GlobalVariable shared = GlobalVariable();
-          await shared.emitter.sendFileContentMessage(iMsg, key);
-        }
-        return null;
+      if (content.data != null/* && content.url == null*/) {
+        SymmetricKey? key = await messenger?.getEncryptKey(iMsg);
+        assert(key != null, 'failed to get msg key: '
+            '${iMsg.sender} => ${iMsg.receiver}, ${iMsg['group']}');
+        // call emitter to encrypt & upload file data before send out
+        GlobalVariable shared = GlobalVariable();
+        await shared.emitter.sendFileContentMessage(iMsg, key!);
       }
     }
-
-    SecureMessage? sMsg;
-    try {
-      sMsg = await super.encryptMessage(iMsg);
-    } on RangeError catch (e) {
-      Log.error('failed to encrypt message: $e');
-      return null;
-    }
-    ID receiver = iMsg.receiver;
-    if (receiver.isGroup) {
-      // reuse group message keys
-      SymmetricKey? key = await messenger.getCipherKey(iMsg.sender, receiver);
-      key?['reused'] = true;
-    }
-    // TODO: reuse personal message key?
-
-    return sMsg;
+    // check receiver & encrypt
+    return await super.encryptMessage(iMsg);
   }
 
   @override
@@ -68,34 +47,32 @@ class SharedPacker extends ClientMessagePacker {
     InstantMessage? iMsg = await super.decryptMessage(sMsg);
     if (iMsg != null) {
       Content content = iMsg.content;
-      if (content is FileContent && content.containsKey('URL')) {
-        // now received file content with remote data,
-        // which must be encrypted before upload to CDN;
-        // so keep the password here for decrypting after downloaded.
-        await _keepPassword(content, iMsg);
+      if (content is FileContent) {
+        if (content.password == null && content.url != null) {
+          // now received file content with remote data,
+          // which must be encrypted before upload to CDN;
+          // so keep the password here for decrypting after downloaded.
+          SymmetricKey? key = await messenger?.getDecryptKey(sMsg);
+          assert(key != null, 'failed to get msg key: '
+              '${sMsg.sender} => ${sMsg.receiver}, ${sMsg['group']}');
+          // keep password to decrypt data after downloaded
+          content.password = key;
+        }
       }
     }
     return iMsg;
   }
 
-  Future<void> _keepPassword(FileContent content, InstantMessage iMsg) async {
-    if (content.containsKey('data')) {
-      // this content was sent with plain file data, no need to decrypt
-      Log.warning('file data exists: $content');
-      return;
-    }
-    DecryptKey? key = content.password;
-    if (key != null) {
-      // this content was sent with a decrypt key, no need to be replaced
-      Log.warning('password already exists: $content');
-      return;
-    }
-    ID sender = iMsg.sender;
-    ID receiver = iMsg.receiver;
-    key = await messenger.getCipherKey(sender, receiver);
-    assert(key != null, 'failed to get password: $sender -> $receiver');
-    // keep password to decrypt data after downloaded
-    content.password = key;
+  @override
+  void suspendInstantMessage(InstantMessage iMsg, Map info) {
+    Amanuensis clerk = Amanuensis();
+    clerk.suspendInstantMessage(iMsg);
+  }
+
+  @override
+  void suspendReliableMessage(ReliableMessage rMsg, Map info) {
+    Amanuensis clerk = Amanuensis();
+    clerk.suspendReliableMessage(rMsg);
   }
 
 }

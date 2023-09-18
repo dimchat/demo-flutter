@@ -14,7 +14,8 @@ class SharedFacebook extends ClientFacebook {
       if (doc is Visa) {
         urlString = doc.avatar?.toString();
       } else {
-        urlString = doc.getProperty('avatar');
+        var avatar = PortableNetworkFile.parse(doc.getProperty('avatar'));
+        urlString = avatar?.toString();
       }
     }
     String? path;

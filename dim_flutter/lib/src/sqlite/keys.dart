@@ -133,18 +133,21 @@ class PrivateKeyCache extends _PrivateKeyTable {
     double now = Time.currentTimeSeconds;
     // 1. check memory cache
     CachePair<List<DecryptKey>>? pair = _decryptKeysCache.fetch(user, now: now);
+    if (pair == null) {
+      // maybe another thread is trying to load data,
+      // so wait a while to check it again.
+      await randomWait();
+      pair = _decryptKeysCache.fetch(user, now: now);
+    }
     CacheHolder<List<DecryptKey>>? holder = pair?.holder;
     List<DecryptKey>? value = pair?.value;
     if (value == null) {
       if (holder == null) {
         // not load yet, wait to load
-        _decryptKeysCache.updateValue(user, null, 128, now: now);
+      } else if (holder.isAlive(now: now)) {
+        // value not exists
+        return [];
       } else {
-        // FIXME: no lock, should not return empty values here
-        if (holder.isAlive(now: now)) {
-          // value not exists
-          return [];
-        }
         // cache expired, wait to reload
         holder.renewal(128, now: now);
       }
@@ -162,18 +165,21 @@ class PrivateKeyCache extends _PrivateKeyTable {
     double now = Time.currentTimeSeconds;
     // 1. check memory cache
     CachePair<PrivateKey>? pair = _privateKeyCaches.fetch(user, now: now);
+    if (pair == null) {
+      // maybe another thread is trying to load data,
+      // so wait a while to check it again.
+      await randomWait();
+      pair = _privateKeyCaches.fetch(user, now: now);
+    }
     CacheHolder<PrivateKey>? holder = pair?.holder;
     PrivateKey? value = pair?.value;
     if (value == null) {
       if (holder == null) {
         // not load yet, wait to load
-        _privateKeyCaches.updateValue(user, null, 128, now: now);
+      } else if (holder.isAlive(now: now)) {
+        // value not exists
+        return null;
       } else {
-        // FIXME: no lock, should not return empty value here
-        if (holder.isAlive(now: now)) {
-          // value not exists
-          return null;
-        }
         // cache expired, wait to reload
         holder.renewal(128, now: now);
       }

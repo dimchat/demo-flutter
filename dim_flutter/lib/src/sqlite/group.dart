@@ -114,17 +114,21 @@ class _MemberCache extends _MemberTable {
     double now = Time.currentTimeSeconds;
     // 1. check memory cache
     CachePair<List<ID>>? pair = _cache.fetch(group, now: now);
+    if (pair == null) {
+      // maybe another thread is trying to load data,
+      // so wait a while to check it again.
+      await randomWait();
+      pair = _cache.fetch(group, now: now);
+    }
     CacheHolder<List<ID>>? holder = pair?.holder;
     List<ID>? value = pair?.value;
     if (value == null) {
       if (holder == null) {
         // not load yet, wait to load
-        _cache.updateValue(group, null, 128, now: now);
+      } else if (holder.isAlive(now: now)) {
+        // value not exists
+        return [];
       } else {
-        if (holder.isAlive(now: now)) {
-          // value not exists
-          return [];
-        }
         // cache expired, wait to reload
         holder.renewal(128, now: now);
       }

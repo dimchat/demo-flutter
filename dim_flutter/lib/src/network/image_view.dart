@@ -197,12 +197,13 @@ class _FacadeState extends State<_FacadeView> implements lnc.Observer {
     } else if (name == NotificationNames.kFileDownloadSuccess) {
       Uri? url = userInfo?['url'];
       Document? visa = widget.info.visa;
-      String? avatar = visa is Visa ? visa.avatar : visa?.getProperty('avatar');
+      var avatar = visa is Visa ? visa.avatar
+          : PortableNetworkFile.parse(visa?.getProperty('avatar'));
       if (avatar == null) {
         Log.warning('avatar not found: ${widget.info.identifier}');
-      } else if (url?.toString() == avatar) {
-        Log.info('avatar downloaded, refreshing facade: $url');
-        widget.refresh();
+      } else if (url?.toString() == avatar.toString()) {
+        Log.info('avatar downloaded, refreshing facade: $url, $avatar');
+        // widget.refresh();
       }
     } else {
       assert(false, 'should not happen');

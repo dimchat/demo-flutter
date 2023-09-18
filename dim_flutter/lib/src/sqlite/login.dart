@@ -106,17 +106,21 @@ class LoginCommandCache extends _LoginCommandTable {
     // 1. check memory cache
     CachePair<Pair<LoginCommand?, ReliableMessage?>>? pair;
     pair = _cache.fetch(identifier, now: now);
+    if (pair == null) {
+      // maybe another thread is trying to load data,
+      // so wait a while to check it again.
+      await randomWait();
+      pair = _cache.fetch(identifier, now: now);
+    }
     CacheHolder<Pair<LoginCommand?, ReliableMessage?>>? holder = pair?.holder;
     Pair<LoginCommand?, ReliableMessage?>? value = pair?.value;
     if (value == null) {
       if (holder == null) {
         // not load yet, wait to load
-        _cache.updateValue(identifier, null, 128, now: now);
+      } else if (holder.isAlive(now: now)) {
+        // value not exists
+        return const Pair(null, null);
       } else {
-        if (holder.isAlive(now: now)) {
-          // value not exists
-          return const Pair(null, null);
-        }
         // cache expired, wait to reload
         holder.renewal(128, now: now);
       }

@@ -81,17 +81,21 @@ class DocumentCache extends _DocumentTable {
     double now = Time.currentTimeSeconds;
     // 1. check memory cache
     CachePair<Document>? pair = _cache.fetch(entity, now: now);
+    if (pair == null) {
+      // maybe another thread is trying to load data,
+      // so wait a while to check it again.
+      await randomWait();
+      pair = _cache.fetch(entity, now: now);
+    }
     CacheHolder<Document>? holder = pair?.holder;
     Document? value = pair?.value;
     if (value == null) {
       if (holder == null) {
         // not load yet, wait to load
-        _cache.updateValue(entity, null, 128, now: now);
+      } else if (holder.isAlive(now: now)) {
+        // value not exists
+        return null;
       } else {
-        if (holder.isAlive(now: now)) {
-          // value not exists
-          return null;
-        }
         // cache expired, wait to reload
         holder.renewal(128, now: now);
       }

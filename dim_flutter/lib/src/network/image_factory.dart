@@ -79,6 +79,13 @@ class ImageFactory {
       return null;
     } else {
       image = _providers[path];
+      if (image == null) {
+        File file = File(path);
+        if (await file.length() == 0) {
+          Log.error('image file not found: $path');
+          return null;
+        }
+      }
       image ??= FileImage(File(path));
       // cache it
       _providers[path] = image;
@@ -95,7 +102,8 @@ class ImageFactory {
     if (visa is Visa) {
       url = visa.avatar?.toString();
     } else {
-      url = visa.getProperty('avatar');
+      var avatar = PortableNetworkFile.parse(visa.getProperty('avatar'));
+      url = avatar?.toString();
     }
     if (url == null) {
       Log.warning('avatar url not found: $identifier, $visa');
@@ -120,7 +128,8 @@ class ImageFactory {
     if (visa is Visa) {
       url = visa.avatar?.toString();
     } else {
-      url = visa.getProperty('avatar');
+      var avatar = PortableNetworkFile.parse(visa.getProperty('avatar'));
+      url = avatar?.toString();
     }
     if (url != null) {
       image = _providers[url];
@@ -147,6 +156,13 @@ class ImageFactory {
       Log.error('failed to download image: $filename -> $url');
     } else {
       image = _providers[path];
+      if (image == null) {
+        File file = File(path);
+        if (await file.length() == 0) {
+          Log.error('image file not found: $path');
+          return null;
+        }
+      }
       image ??= FileImage(File(path));
       // cache it
       _providers[path] = image;

@@ -29,6 +29,7 @@
  * =============================================================================
  */
 import 'package:dim_client/dim_client.dart';
+import 'package:lnc/lnc.dart' show Log;
 
 class GroupManager {
   factory GroupManager() => _instance;
@@ -42,6 +43,46 @@ class GroupManager {
 
   // private
   Future<User?> get currentUser async => await messenger?.facebook.currentUser;
+
+  Future<ID?> createGroup({required Set<ID> members}) async {
+    // 0. get current user
+    ClientFacebook? barrack = messenger?.facebook as ClientFacebook?;
+    User? user = await barrack?.currentUser;
+    if (user == null) {
+      assert(false, 'failed to get current user');
+      return null;
+    }
+    // 1. get members
+    AccountDBI db = barrack!.database;
+    ID me = user.identifier;
+    List<ID> allMembers = [me];
+    members.remove(me);
+    allMembers.addAll(members);
+    // 2. build group name
+    String groupName = await barrack.getName(me);
+    String nickname;
+    for (int i = 0; i < allMembers.length; ++i) {
+      nickname = await barrack.getName(allMembers[i]);
+      if (nickname.isEmpty) {
+        continue;
+      }
+      groupName += ', $nickname';
+      if (groupName.length > 32) {
+        groupName = '${groupName.substring(0, 28)} ...';
+        break;
+      }
+    }
+    // 3. create group
+    Register register = Register(db);
+    ID group = await register.createGroup(me, name: groupName);
+    Log.info('new group ID: $group');
+    if (await resetGroupMembers(group, allMembers)) {
+      Log.info('created group $group with ${allMembers.length} members');
+      return group;
+    }
+    Log.error('failed to created group $group with ${allMembers.length} members');
+    return null;
+  }
 
   // private
   Future<void> sendCommand(Command content, {required List<ID> members}) async {

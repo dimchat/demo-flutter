@@ -74,7 +74,12 @@ class Amanuensis implements lnc.Observer {
       }
     } else {
       assert(entity.isGroup, 'conversation ID error: $entity');
-      // check group member
+      // check group
+      Document? bulletin = await facebook.getDocument(entity, '*');
+      if (bulletin == null) {
+        Log.error('group not ready yet: $entity');
+        return;
+      }
       List<ID> members = await facebook.getMembers(entity);
       if (members.isEmpty) {
         Log.error('group not ready yet: $entity');

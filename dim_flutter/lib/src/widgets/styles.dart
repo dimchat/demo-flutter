@@ -583,7 +583,9 @@ abstract class Styles {
   static const IconData  clearChatIcon = CupertinoIcons.delete;
   static const IconData     deleteIcon = CupertinoIcons.delete;
 
+  static const IconData  groupChatIcon = CupertinoIcons.group;
   static const IconData      plushIcon = CupertinoIcons.add;
+  static const IconData   selectedIcon = CupertinoIcons.checkmark;
 
   // Settings
   static const IconData exportAccountIcon = CupertinoIcons.lock_shield;

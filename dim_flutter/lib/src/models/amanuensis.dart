@@ -8,7 +8,8 @@ import '../client/messenger.dart';
 import '../client/shared.dart';
 
 import 'chat.dart';
-import 'contact.dart';
+import 'chat_contact.dart';
+import 'chat_group.dart';
 import 'shield.dart';
 import 'message.dart';
 
@@ -49,20 +50,16 @@ class Amanuensis implements lnc.Observer {
       return;
     } else if (entity.isUser) {
       // check user
-      if (await facebook.getPublicKeyForEncryption(entity) == null) {
+      User? user = await facebook.getUser(entity);
+      if (user == null) {
         Log.error('user not ready yet: $entity');
         return;
       }
     } else {
       assert(entity.isGroup, 'conversation ID error: $entity');
       // check group
-      Document? bulletin = await facebook.getDocument(entity, '*');
-      if (bulletin == null) {
-        Log.error('group not ready yet: $entity');
-        return;
-      }
-      List<ID> members = await facebook.getMembers(entity);
-      if (members.isEmpty) {
+      Group? group = await facebook.getGroup(entity);
+      if (group == null) {
         Log.error('group not ready yet: $entity');
         return;
       }
@@ -141,8 +138,12 @@ class Amanuensis implements lnc.Observer {
     }
     List<Conversation> array = [];
     for (Conversation chat in all) {
-      if (chat is ContactInfo && chat.isFriend) {
+      if (chat is GroupInfo) {
         array.add(chat);
+      } else if (chat is ContactInfo) {
+        if (chat.isFriend) {
+          array.add(chat);
+        }
       }
     }
     return array;
@@ -155,7 +156,9 @@ class Amanuensis implements lnc.Observer {
     }
     List<Conversation> array = [];
     for (Conversation chat in all) {
-      if (chat is ContactInfo) {
+      if (chat is GroupInfo) {
+        array.add(chat);
+      } else if (chat is ContactInfo) {
         if (chat.isNewFriend) {
           array.add(chat);
         }
@@ -232,24 +235,25 @@ class Amanuensis implements lnc.Observer {
   }
 
   /// get conversation ID for message envelope
-  Future<ID> _cid(Envelope env) async {
-    // check receiver
-    ID receiver = env.receiver;
-    if (receiver.isGroup) {
-      // group chat, get chat box with group ID
-      return receiver;
-    }
+  Future<ID> _cid(Envelope head, Content? body) async {
     // check group
-    ID? group = env.group;
+    ID? group = body?.group;
+    group ??= head.group;
     if (group != null) {
       // group chat, get chat box with group ID
       return group;
+    }
+    // check receiver
+    ID receiver = head.receiver;
+    if (receiver.isGroup) {
+      // group chat, get chat box with group ID
+      return receiver;
     }
     // personal chat, get chat box with contact ID
     GlobalVariable shared = GlobalVariable();
     User? user = await shared.facebook.currentUser;
     assert(user != null, 'current user should not be empty here');
-    ID sender = env.sender;
+    ID sender = head.sender;
     if (sender == user?.identifier) {
       return receiver;
     } else {
@@ -303,10 +307,9 @@ class Amanuensis implements lnc.Observer {
     Conversation? chatBox = _conversationMap[cid];
     if (chatBox == null) {
       // new conversation
-      if (cid.isUser) {
-        chatBox = ContactInfo(cid, unread: 1, lastMessage: last, lastTime: time);
+      if (cid.isGroup) {
+        chatBox = GroupInfo(cid, unread: 1, lastMessage: last, lastTime: time);
       } else {
-        // TODO: group info
         chatBox = ContactInfo(cid, unread: 1, lastMessage: last, lastTime: time);
       }
       if (await shared.database.addConversation(chatBox)) {
@@ -400,7 +403,7 @@ class Amanuensis implements lnc.Observer {
       return true;
     }
 
-    ID cid = await _cid(iMsg.envelope);
+    ID cid = await _cid(iMsg.envelope, iMsg.content);
     bool ok = await shared.database.saveInstantMessage(cid, iMsg);
     if (ok) {
       // TODO: save traces
@@ -426,7 +429,7 @@ class Amanuensis implements lnc.Observer {
     Map mta = {'ID': iMsg.sender.toString(), 'time': content['time']};
     // trace info
     String trace = JSON.encode(mta);
-    ID cid = await _cid(env);
+    ID cid = await _cid(env, null);
     ID sender = env.sender;  // original sender
     int? sn = content.originalSerialNumber;
     String? signature = content.originalSignature;

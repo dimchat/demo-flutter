@@ -120,6 +120,8 @@ class ContactInfo extends Conversation implements lnc.Observer {
 
   @override
   Future<void> reloadData() async {
+    await super.reloadData();
+    // check current user
     GlobalVariable shared = GlobalVariable();
     User? user = await shared.facebook.currentUser;
     if (user == null) {
@@ -147,7 +149,6 @@ class ContactInfo extends Conversation implements lnc.Observer {
       List<ID> contacts = await shared.facebook.getContacts(user.identifier);
       _friend = contacts.contains(identifier);
     }
-    await super.reloadData();
   }
 
   void setRemark({required BuildContext context, String? alias, String? description}) {

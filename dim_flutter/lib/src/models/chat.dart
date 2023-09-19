@@ -7,7 +7,8 @@ import '../client/shared.dart';
 import '../widgets/alert.dart';
 
 import 'amanuensis.dart';
-import 'contact.dart';
+import 'chat_contact.dart';
+import 'chat_group.dart';
 import 'shield.dart';
 
 /// Chat Info
@@ -174,7 +175,13 @@ abstract class Conversation {
     });
   }
 
-  static Conversation fromID(ID identifier) => ContactInfo.fromID(identifier);
+  static Conversation fromID(ID identifier) {
+    if (identifier.isGroup) {
+      return GroupInfo.fromID(identifier);
+    } else {
+      return ContactInfo.fromID(identifier);
+    }
+  }
 
   static List<Conversation> fromList(List<ID> chats) {
     List<Conversation> array = [];

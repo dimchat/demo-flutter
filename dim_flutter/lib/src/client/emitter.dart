@@ -7,7 +7,9 @@ import '../channels/manager.dart';
 import '../channels/transfer.dart';
 import '../models/amanuensis.dart';
 import '../network/ftp.dart';
+
 import 'constants.dart';
+import 'group.dart';
 import 'shared.dart';
 
 class Emitter implements Observer {
@@ -179,12 +181,20 @@ class Emitter implements Observer {
   }
 
   Future<void> sendContent(Content content, ID receiver) async {
-    GlobalVariable shared = GlobalVariable();
     Pair<InstantMessage, ReliableMessage?> result;
-    result = await shared.messenger!.sendContent(content, sender: null, receiver: receiver);
-    if (result.second == null) {
-      Log.warning('not send yet (type=${content.type}): $receiver');
-      return;
+    if (receiver.isGroup) {
+      // group message
+      content.group = receiver;
+      GroupManager man = GroupManager();
+      result = await man.sendContent(content, sender: null, receiver: receiver);
+    } else {
+      GlobalVariable shared = GlobalVariable();
+      ClientMessenger mess = shared.messenger!;
+      result = await mess.sendContent(content, sender: null, receiver: receiver);
+      if (result.second == null) {
+        Log.warning('not send yet (type=${content.type}): $receiver');
+        return;
+      }
     }
     // save instant message
     await _saveInstantMessage(result.first);

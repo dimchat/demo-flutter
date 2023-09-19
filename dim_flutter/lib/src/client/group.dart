@@ -31,15 +31,31 @@
 import 'package:dim_client/dim_client.dart';
 import 'package:lnc/lnc.dart' show Log;
 
+import '../models/chat_group.dart';
+import 'group_ds.dart';
+
 class GroupManager {
   factory GroupManager() => _instance;
   static final GroupManager _instance = GroupManager._internal();
   GroupManager._internal() {
-    messenger = null;
+    _delegate = null;
   }
 
-  // private
+  // getter/setter
   ClientMessenger? messenger;
+
+  // group data source
+  GroupDelegate? _delegate;
+
+  GroupDelegate get dataSource {
+    GroupDelegate? ds = _delegate;
+    if (ds == null) {
+      CommonFacebook? facebook = messenger?.facebook;
+      assert(facebook != null, 'facebook should not empty here');
+      _delegate = ds = GroupDelegate(facebook!, messenger!);
+    }
+    return ds;
+  }
 
   // private
   Future<User?> get currentUser async => await messenger?.facebook.currentUser;
@@ -69,19 +85,7 @@ class GroupManager {
       members.insert(0, me);
     }
     // 2. build group name
-    String groupName = await barrack.getName(me);
-    String nickname;
-    for (int i = 1; i < members.length; ++i) {
-      nickname = await barrack.getName(members[i]);
-      if (nickname.isEmpty) {
-        continue;
-      }
-      groupName += ', $nickname';
-      if (groupName.length > 32) {
-        groupName = '${groupName.substring(0, 28)} ...';
-        break;
-      }
-    }
+    String groupName = await GroupInfo.buildGroupName(members);
     // 3. create group
     Register register = Register(db);
     ID group = await register.createGroup(me, name: groupName);
@@ -94,35 +98,24 @@ class GroupManager {
     return null;
   }
 
-  // private
-  Future<void> sendCommand(Command content, {required List<ID> members}) async {
-    ID? me = (await currentUser)?.identifier;
-    for (ID item in members) {
-      if (item == me) {
-        // skip cycled message
-        continue;
-      }
-      await messenger?.sendContent(content, sender: me, receiver: item);
-    }
-  }
-
   ///  Reset group members
   ///
   /// @param newMembers - new member ID list
   /// @return true on success
   Future<bool> resetGroupMembers(ID group, List<ID> newMembers) async {
     assert(group.isGroup && newMembers.isNotEmpty, 'params error: $group, $newMembers');
+    GroupDelegate delegate = dataSource;
 
     ID me = (await currentUser)!.identifier;
 
-    if (await isOwner(newMembers.first, group: group)) {
+    if (await delegate.isOwner(newMembers.first, group: group)) {
       // member list OK
     } else {
       throw Exception("Group owner must be the first member: $group");
     }
 
     // 0. check permission
-    if (me == newMembers.first || await isAdministrator(me, group: group)) {
+    if (me == newMembers.first || await delegate.isAdministrator(me, group: group)) {
       // only the owner or admin can reset group members
     } else {
       // not an admin/owner
@@ -130,36 +123,36 @@ class GroupManager {
     }
 
     // 1. update local members
-    List<ID> oldMembers = await getMembers(group: group);
+    List<ID> oldMembers = await delegate.getMembers(group);
     List<ID> expelList = [];
     for (ID item in oldMembers) {
       if (!newMembers.contains(item)) {
         expelList.add(item);
       }
     }
-    if (await saveMembers(newMembers, group: group)) {
+    if (await delegate.saveMembers(newMembers, group: group)) {
       // OK
     } else {
       throw Exception('Failed to update members of group: $group');
     }
 
-    List<ID> bots = await getAssistants(group: group);
-    Meta? meta = await getMeta(group);
+    List<ID> bots = await delegate.getAssistants(group);
+    Meta? meta = await delegate.getMeta(group);
     assert(meta != null, 'meta not found: $group');
-    Document? doc = await getDocument(group, "*");
+    Document? doc = await delegate.getDocument(group, "*");
     assert(doc != null, 'document not found: $group');
 
     // 2. send 'meta/document' command
     Command command = doc == null
         ? MetaCommand.response(group, meta!)
         : DocumentCommand.response(group, meta, doc);
-    await sendCommand(command, members: bots);              // to all assistants
+    await _sendCommand(command, members: bots);              // to all assistants
 
     // 3. send 'reset' command
     command = GroupCommand.reset(group, members: newMembers);
-    await sendCommand(command, members: bots);              // to all assistants
-    await sendCommand(command, members: newMembers);        // to new members
-    await sendCommand(command, members: expelList);         // to expelled members
+    await _sendCommand(command, members: bots);              // to all assistants
+    await _sendCommand(command, members: newMembers);        // to new members
+    await _sendCommand(command, members: expelList);         // to expelled members
 
     return true;
   }
@@ -170,12 +163,13 @@ class GroupManager {
   /// @return true on success
   Future<bool> inviteGroupMembers(ID group, List<ID> newMembers) async {
     assert(group.isGroup && newMembers.isNotEmpty, 'params error: $group, $newMembers');
+    GroupDelegate delegate = dataSource;
 
     ID me = (await currentUser)!.identifier;
-    List<ID> oldMembers = await getMembers(group: group);
+    List<ID> oldMembers = await delegate.getMembers(group);
 
-    if (await isAdministrator(me, group: group) ||
-        await isOwner(me, group: group)) {
+    if (await delegate.isAdministrator(me, group: group) ||
+        await delegate.isOwner(me, group: group)) {
       // You are the owner/admin, then
       // append new members and 'reset' the group
       for (ID item in newMembers) {
@@ -187,7 +181,7 @@ class GroupManager {
     }
 
     // 0. check permission
-    if (await isMember(me, group: group)) {
+    if (await delegate.isMember(me, group: group)) {
       // ordinary member
     } else {
       // not a member
@@ -195,27 +189,27 @@ class GroupManager {
     }
 
     // 1. update local members
-    List<ID> members = await addMembers(newMembers, group: group);
+    List<ID> members = await delegate.addMembers(newMembers, group: group);
 
-    List<ID> bots = await getAssistants(group: group);
-    Meta? meta = await getMeta(group);
+    List<ID> bots = await delegate.getAssistants(group);
+    Meta? meta = await delegate.getMeta(group);
     assert(meta != null, 'meta not found: $group');
-    Document? doc = await getDocument(group, "*");
+    Document? doc = await delegate.getDocument(group, "*");
     assert(doc != null, 'document not found: $group');
 
     // 2. send 'meta/document' command
     Command command = doc == null
         ? MetaCommand.response(group, meta!)
         : DocumentCommand.response(group, meta, doc);
-    await sendCommand(command, members: bots);              // to all assistants
-    await sendCommand(command, members: newMembers);        // to new members
+    await _sendCommand(command, members: bots);              // to all assistants
+    await _sendCommand(command, members: newMembers);        // to new members
 
     // 3. send 'invite' command
     command = GroupCommand.invite(group, members: newMembers);
-    await sendCommand(command, members: bots);              // to all assistants
-    await sendCommand(command, members: oldMembers);        // to old members
+    await _sendCommand(command, members: bots);              // to all assistants
+    await _sendCommand(command, members: oldMembers);        // to old members
     command = GroupCommand.invite(group, members: members);
-    await sendCommand(command, members: newMembers);        // to new members
+    await _sendCommand(command, members: newMembers);        // to new members
 
     return true;
   }
@@ -225,28 +219,29 @@ class GroupManager {
   /// @return true on success
   Future<bool> quitGroup(ID group) async {
     assert(group.isGroup, 'group ID error: $group');
+    GroupDelegate delegate = dataSource;
 
     ID me = (await currentUser)!.identifier;
 
     // 0. check permission
-    if (await isAdministrator(me, group: group)) {
+    if (await delegate.isAdministrator(me, group: group)) {
       throw Exception('Administrator cannot quit from group: $group');
-    } else if (await isOwner(me, group: group)) {
+    } else if (await delegate.isOwner(me, group: group)) {
       throw Exception('Owner cannot quit from group: $group');
-    } else if (await isMember(me, group: group)) {
+    } else if (await delegate.isMember(me, group: group)) {
       // ordinary member
     } else {
       // not a member
       assert(false, 'Not a member of group: $group');
     }
 
-    List<ID> bots = await getAssistants(group: group);
-    List<ID> members = await getMembers(group: group);
+    List<ID> bots = await delegate.getAssistants(group);
+    List<ID> members = await delegate.getMembers(group);
 
     // 1. update local storage
     bool ok = false;
     if (members.remove(me)) {
-      ok = await saveMembers(members, group: group);
+      ok = await delegate.saveMembers(members, group: group);
       //} else {
       //    // not a member now
       //    return false;
@@ -254,8 +249,8 @@ class GroupManager {
 
     // 2. send 'quit' command
     Command command = GroupCommand.quit(group);
-    await sendCommand(command, members: bots);     // to assistants
-    await sendCommand(command, members: members);  // to new members
+    await _sendCommand(command, members: bots);     // to assistants
+    await _sendCommand(command, members: members);  // to new members
 
     return ok;
   }
@@ -282,175 +277,137 @@ class GroupManager {
     return ok1 || ok2;
   }
 
-  //
-  //  EntityDataSource
-  //
-
   // private
-  Future<Meta?> getMeta(ID identifier) async =>
-      await messenger?.facebook.getMeta(identifier);
-
-  // private
-  Future<Document?> getDocument(ID identifier, String? docType) async =>
-      await messenger?.facebook.getDocument(identifier, docType);
-
-  //
-  //  Membership
-  //
-
-  // private
-  Future<bool> isFounder(ID user, {required ID group}) async {
-    CommonFacebook? facebook = messenger?.facebook;
-    ID? founder = await facebook?.getFounder(group);
-    if (founder != null) {
-      return founder == user;
-    }
-    // check member's public key with group's meta.key
-    Meta? gMeta = await facebook?.getMeta(group);
-    assert(gMeta != null, 'failed to get meta for group: $group');
-    Meta? mMeta = await facebook?.getMeta(user);
-    assert(mMeta != null, 'failed to get meta for member: $user');
-    return gMeta?.matchPublicKey(mMeta!.publicKey) ?? false;
-  }
-
-  // private
-  Future<bool> isOwner(ID user, {required ID group}) async {
-    ID? owner = await messenger?.facebook.getOwner(group);
-    if (owner != null) {
-      return owner == user;
-    }
-    if (group.type == EntityType.kGroup ) {
-      // this is a polylogue
-      return await isFounder(user, group: group);
-    }
-    throw Exception('only Polylogue so far');
-  }
-
-  // private
-  Future<bool> isMember(ID user, {required ID group}) async {
-    List<ID>? members = await messenger?.facebook.getMembers(group);
-    return members?.contains(user) ?? false;
-  }
-
-  // private
-  Future<bool> isAdministrator(ID user, {required ID group}) async {
-    AccountDBI? db = messenger?.facebook.database;
-    List<ID>? admins = await db?.getAdministrators(group: group);
-    return admins?.contains(user) ?? false;
-  }
-
-  // private
-  Future<bool> isAssistant(ID user, {required ID group}) async {
-    List<ID>? bots = await messenger?.facebook.getAssistants(group);
-    return bots?.contains(user) ?? false;
-  }
-
-  //
-  //  Group Bots
-  //
-
-  // private
-  Future<List<ID>> getAssistants({required ID group}) async {
-    return await messenger?.facebook.getAssistants(group) ?? [];
-  }
-
-  // private
-  Future<bool> saveAssistants(List<ID> bots, {required ID group}) async {
-    AccountDBI? db = messenger?.facebook.database;
-    return await db?.saveAssistants(bots, group: group) ?? false;
-  }
-
-  //
-  //  Administrators
-  //
-
-  // private
-  Future<List<ID>> getAdministrators({required ID group}) async {
-    AccountDBI? db = messenger?.facebook.database;
-    List<ID>? members = await db?.getAdministrators(group: group);
-    return members == null ? [] : [...members];  // clone
-  }
-
-  // private
-  Future<bool> saveAdministrators(List<ID> members, {required ID group}) async {
-    AccountDBI? db = messenger?.facebook.database;
-    return await db?.saveAdministrators(members, group: group) ?? false;
-  }
-
-  //
-  //  Members
-  //
-
-  // private
-  Future<List<ID>> getMembers({required ID group}) async {
-    List<ID>? members = await messenger?.facebook.getMembers(group);
-    return members == null ? [] : [...members];  // clone
-  }
-
-  // private
-  Future<bool> saveMembers(List<ID> members, {required ID group}) async {
-    AccountDBI? db = messenger?.facebook.database;
-    return await db?.saveMembers(members, group: group) ?? false;
-  }
-
-  // private
-  Future<bool> addMember(ID member, {required ID group}) async {
-    assert(member.isUser && group.isGroup, "ID error: $member, $group");
-    List<ID> allMembers = await getMembers(group: group);
-    int pos = allMembers.indexOf(member);
-    if (pos >= 0) {
-      // already exists
-      return false;
-    }
-    allMembers.add(member);
-    return await saveMembers(allMembers, group: group);
-  }
-
-  // private
-  Future<bool> removeMember(ID member, {required ID group}) async {
-    assert(member.isUser && group.isGroup, "ID error: $member, $group");
-    List<ID> allMembers = await getMembers(group: group);
-    int pos = allMembers.indexOf(member);
-    if (pos < 0) {
-      // not exists
-      return false;
-    }
-    allMembers.removeAt(pos);
-    return await saveMembers(allMembers, group: group);
-  }
-
-  // private
-  Future<List<ID>> addMembers(List<ID> newMembers, {required ID group}) async {
-    List<ID> members = await getMembers(group: group);
-    int count = 0;
-    for (ID member in newMembers) {
-      if (members.contains(member)) {
+  Future<void> _sendCommand(Command content, {required List<ID> members}) async {
+    ID? me = (await currentUser)?.identifier;
+    for (ID item in members) {
+      if (item == me) {
+        // skip cycled message
         continue;
       }
-      members.add(member);
-      ++count;
+      await messenger?.sendContent(content, sender: me, receiver: item);
     }
-    if (count > 0) {
-      await saveMembers(members, group: group);
-    }
-    return members;
   }
 
-  // private
-  Future<List<ID>> removeMembers(List<ID> outMembers, {required ID group}) async {
-    List<ID> members = await getMembers(group: group);
-    int count = 0;
-    for (ID member in outMembers) {
-      if (!members.contains(member)) {
+  //
+  //  Sending group message
+  //
+
+  ///  Send group message content
+  ///
+  /// @param content  - group message content
+  /// @param sender
+  /// @param receiver - group ID
+  /// @param priority
+  /// @return
+  Future<Pair<InstantMessage, ReliableMessage?>> sendContent(Content content,
+      {required ID? sender, required ID receiver, int priority = 0}) async {
+    // 0. check sender, receiver
+    if (sender == null) {
+      User? user = await currentUser;
+      assert(user != null, 'failed to get current user');
+      sender = user!.identifier;
+    }
+    assert(receiver == content.group, 'group ID error: $receiver, ${content.group}');
+    ID group = receiver;
+    // 1. create message
+    Envelope envelope = Envelope.create(sender: sender, receiver: group);
+    InstantMessage iMsg = InstantMessage.create(envelope, content);
+    // 2. check group bots
+    GroupDelegate delegate = dataSource;
+    List<ID> bots = await delegate.getAssistants(group);
+    if (bots.isEmpty) {
+      // no 'assistants' found in group's bulletin document?
+      // split group messages and send to all members one by one
+      int ok = await _splitGroupMessage(group, iMsg, priority: priority);
+      Log.info('split message for group: $group, $ok');
+      return Pair(iMsg, null);
+    } else {
+      // forward the group message to any bot
+      ID prime = bots[0];
+      ReliableMessage? rMsg = await _forwardGroupMessage(iMsg, bot: prime, priority: priority);
+      return Pair(iMsg, rMsg);
+    }
+  }
+
+  Future<ReliableMessage?> _forwardGroupMessage(InstantMessage iMsg, {required ID bot, required int priority}) async {
+    // NOTICE: because group assistant (bot) cannot be a member of the group, so
+    //         if you want to send a group command to any assistant, you must
+    //         set the bot ID as 'receiver' and set the group ID in content;
+    //         this means you must send it to the bot directly.
+    assert(iMsg.containsKey('group') == false, 'should not happen');
+    ID group = iMsg.receiver;
+    assert(group.isGroup, 'group ID error: $group');
+
+    // group bots designated, let group bot to split the message, so
+    // here must expose the group ID; this will cause the client to
+    // use a "user-to-group" encrypt key to encrypt the message content,
+    // this key will be encrypted by each member's public key, so
+    // all members will received a message split by the group bot,
+    // but the group bots cannot decrypt it.
+    iMsg.setString('group', group);
+
+    // 1. pack message
+    SecureMessage? sMsg = await messenger?.encryptMessage(iMsg);
+    if (sMsg == null) {
+      assert(false, 'failed to encrypt message for group: $group');
+      return null;
+    }
+    ReliableMessage? rMsg = await messenger?.signMessage(sMsg);
+    if (rMsg == null) {
+      assert(false, 'failed to sign message: ${iMsg.sender} => $group');
+      return null;
+    }
+
+    // 2. forward the group message to any bot
+    Content content = ForwardContent.create(forward: rMsg);
+    Pair? pair = await messenger?.sendContent(content, sender: null, receiver: bot, priority: priority);
+    if (pair?.second == null) {
+      assert(false, 'failed to forward message for group: $group');
+      return null;
+    }
+
+    // OK, return the forwarding message
+    return rMsg;
+  }
+
+  /// split group messages and send to all members one by one
+  Future<int> _splitGroupMessage(ID group, InstantMessage iMsg, {required int priority}) async {
+    GroupDelegate delegate = dataSource;
+    // get members
+    List<ID> allMembers = await delegate.getMembers(group);
+    if (allMembers.isEmpty) {
+      Log.warning('group empty: $group');
+      return -1;
+    }
+    ID sender = iMsg.sender;
+    int success = 0;
+    // split messages
+    InstantMessage? item;
+    ReliableMessage? res;
+    for (ID member in allMembers) {
+      if (member == sender) {
+        // ignore cycled message
         continue;
       }
-      members.remove(member);
-      ++count;
+      Log.info('split group message for member: $member, group: $group');
+      Map info = iMsg.copyMap(false);
+      // replace 'receiver' with member ID
+      info['receiver'] = member.toString();
+      item = InstantMessage.parse(info);
+      if (item == null) {
+        assert(false, 'failed to repack message: $member');
+        continue;
+      }
+      res = await messenger?.sendInstantMessage(item, priority: priority);
+      if (res == null) {
+        assert(false, 'failed to send message: $member');
+        continue;
+      }
+      success += 1;
     }
-    if (count > 0) {
-      await saveMembers(members, group: group);
-    }
-    return members;
+    // done!
+    return success;
   }
 
 }

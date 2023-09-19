@@ -3,9 +3,24 @@ import 'package:lnc/lnc.dart';
 
 import '../channels/manager.dart';
 import '../widgets/browser.dart';
+import 'group.dart';
 
 class SharedFacebook extends ClientFacebook {
   SharedFacebook(super.adb);
+
+  @override
+  Future<Group?> createGroup(ID identifier) async {
+    Group? group;
+    GroupManager man = GroupManager();
+    Document? bulletin = await man.dataSource.getDocument(identifier, '*');
+    if (bulletin != null) {
+      group = await super.createGroup(identifier);
+      if (group != null) {
+        group.dataSource = man.dataSource;
+      }
+    }
+    return group;
+  }
 
   Future<Pair<String?, Uri?>> getAvatar(ID user) async {
     String? urlString;

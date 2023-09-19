@@ -152,6 +152,7 @@ class _MemberCache extends _MemberTable {
       var nc = NotificationCenter();
       nc.postNotification(NotificationNames.kMembersUpdated, this, {
         'action': 'update',
+        'ID': group,
         'group': group,
         'members': members,
       });
@@ -175,6 +176,7 @@ class _MemberCache extends _MemberTable {
       var nc = NotificationCenter();
       nc.postNotification(NotificationNames.kContactsUpdated, this, {
         'action': 'add',
+        'ID': group,
         'group': group,
         'member': member,
         'members': newMembers,
@@ -200,6 +202,7 @@ class _MemberCache extends _MemberTable {
       var nc = NotificationCenter();
       nc.postNotification(NotificationNames.kContactsUpdated, this, {
         'action': 'remove',
+        'ID': group,
         'group': group,
         'member': member,
         'members': newMembers,

@@ -1,7 +1,7 @@
 import 'package:dim_client/dim_client.dart';
 import 'package:lnc/lnc.dart';
 
-import '../models/conversation.dart';
+import '../models/amanuensis.dart';
 import 'cpu/creator.dart';
 
 class SharedProcessor extends ClientMessageProcessor {

@@ -1,7 +1,8 @@
 import 'package:lnc/lnc.dart';
 
 import '../client/constants.dart';
-import '../models/conversation.dart';
+import '../models/chat.dart';
+import '../models/contact.dart';
 import 'helper/sqlite.dart';
 import 'message.dart';
 
@@ -39,7 +40,12 @@ Conversation _extractConversation(ResultSet resultSet, int index) {
   int? unread = resultSet.getInt('unread');
   String? last = resultSet.getString('last');
   DateTime? time = resultSet.getDateTime('time');
-  return Conversation(ID.parse(cid)!, unread: unread!, lastMessage: last, lastTime: time);
+  ID identifier = ID.parse(cid)!;
+  if (identifier.isUser) {
+    return ContactInfo(identifier, unread: unread!, lastMessage: last, lastTime: time);
+  }
+  // TODO: group info
+  return ContactInfo(identifier, unread: unread!, lastMessage: last, lastTime: time);
 }
 
 

@@ -8,7 +8,7 @@ import 'package:lnc/lnc.dart' show Log;
 
 import '../client/constants.dart';
 import '../client/shared.dart';
-import '../models/contact.dart';
+import '../models/chat.dart';
 import '../models/message.dart';
 import '../network/image_view.dart';
 
@@ -35,7 +35,7 @@ abstract class ContentViewUtils {
 
   /// return null if it's not a command
   ///        empty string ('') for ignored command
-  static String? getCommandText(Content content, ID sender, ContactInfo chat) {
+  static String? getCommandText(Content content, ID sender, Conversation chat) {
     String? text;
     DefaultMessageBuilder mb = DefaultMessageBuilder();
     if (mb.isCommand(content, sender)) {

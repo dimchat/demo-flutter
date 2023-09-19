@@ -7,30 +7,11 @@ import '../client/facebook.dart';
 import '../client/messenger.dart';
 import '../client/shared.dart';
 
+import 'chat.dart';
 import 'contact.dart';
 import 'shield.dart';
 import 'message.dart';
 
-
-class Conversation extends ContactInfo {
-  Conversation(super.identifier,
-      {this.unread = 0, this.lastMessage, this.lastTime});
-
-  int unread;           // count of unread messages
-
-  String? lastMessage;  // description of last message
-  DateTime? lastTime;   // time of last message
-
-  @override
-  String toString() {
-    Type clazz = runtimeType;
-    return '<$clazz id="$identifier" type=$type name="$name"'
-        ' isFriend=$isFriend blocked=$isBlocked muted=$isMuted>\n'
-        '\t<unread>$unread</unread>\n'
-        '\t<msg>$lastMessage</msg>\n\t<time>$lastTime</time>\n</$clazz>';
-  }
-
-}
 
 class Amanuensis implements lnc.Observer {
   factory Amanuensis() => _instance;
@@ -160,7 +141,7 @@ class Amanuensis implements lnc.Observer {
     }
     List<Conversation> array = [];
     for (Conversation chat in all) {
-      if (chat.isFriend) {
+      if (chat is ContactInfo && chat.isFriend) {
         array.add(chat);
       }
     }
@@ -174,8 +155,10 @@ class Amanuensis implements lnc.Observer {
     }
     List<Conversation> array = [];
     for (Conversation chat in all) {
-      if (chat.isNewFriend) {
-        array.add(chat);
+      if (chat is ContactInfo) {
+        if (chat.isNewFriend) {
+          array.add(chat);
+        }
       }
     }
     return array;
@@ -320,7 +303,12 @@ class Amanuensis implements lnc.Observer {
     Conversation? chatBox = _conversationMap[cid];
     if (chatBox == null) {
       // new conversation
-      chatBox = Conversation(cid, unread: 1, lastMessage: last, lastTime: time);
+      if (cid.isUser) {
+        chatBox = ContactInfo(cid, unread: 1, lastMessage: last, lastTime: time);
+      } else {
+        // TODO: group info
+        chatBox = ContactInfo(cid, unread: 1, lastMessage: last, lastTime: time);
+      }
       if (await shared.database.addConversation(chatBox)) {
         await chatBox.reloadData();
         // add to cache

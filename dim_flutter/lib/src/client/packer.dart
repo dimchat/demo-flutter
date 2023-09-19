@@ -2,7 +2,7 @@ import 'dart:typed_data';
 
 import 'package:dim_client/dim_client.dart';
 
-import '../models/conversation.dart';
+import '../models/amanuensis.dart';
 import 'compatible.dart';
 import 'shared.dart';
 

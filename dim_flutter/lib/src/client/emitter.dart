@@ -5,7 +5,7 @@ import 'package:lnc/lnc.dart';
 
 import '../channels/manager.dart';
 import '../channels/transfer.dart';
-import '../models/conversation.dart';
+import '../models/amanuensis.dart';
 import '../network/ftp.dart';
 import 'constants.dart';
 import 'shared.dart';

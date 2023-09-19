@@ -144,6 +144,6 @@ class DefaultMessageBuilder extends MessageBuilder {
   DefaultMessageBuilder._internal();
 
   @override
-  String getName(ID identifier) => ContactInfo.fromID(identifier).name;
+  String getName(ID identifier) => ContactInfo.fromID(identifier).title;
 
 }

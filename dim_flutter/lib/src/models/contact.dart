@@ -10,11 +10,10 @@ import '../client/shared.dart';
 import '../network/image_view.dart';
 import '../widgets/alert.dart';
 
-import 'conversation.dart';
-import 'shield.dart';
+import 'chat.dart';
 
-class ContactInfo implements lnc.Observer {
-  ContactInfo(this.identifier) {
+class ContactInfo extends Conversation implements lnc.Observer {
+  ContactInfo(super.identifier, {super.unread = 0, super.lastMessage, super.lastTime}) {
     var nc = lnc.NotificationCenter();
     nc.addObserver(this, NotificationNames.kDocumentUpdated);
     nc.addObserver(this, NotificationNames.kContactsUpdated);
@@ -55,29 +54,18 @@ class ContactInfo implements lnc.Observer {
     }
   }
 
-  final ID identifier;
-  String? _name;
   String? _avatar;
   ContactRemark? _remark;
 
   bool _friend = false;
-  bool _blocked = false;
-  bool _muted = false;
-
-  int get type => identifier.type;
-
-  bool get isUser  => identifier.isUser;
-  bool get isGroup => identifier.isGroup;
 
   bool get isFriend => _friend;
-  bool get isBlocked => _blocked;
-  bool get isMuted => _muted;
 
   bool get isNewFriend {
     if (_friend) {
       // already be friend
       return false;
-    } else if (_blocked) {
+    } else if (isBlocked) {
       // blocked user will not show in stranger list
       return false;
     } else if (identifier.type == EntityType.kStation) {
@@ -85,17 +73,6 @@ class ContactInfo implements lnc.Observer {
       return false;
     }
     return true;
-  }
-
-  String get name {
-    String? nickname = _name;
-    if (nickname == null) {
-      nickname = _name = '';
-      reloadData();
-    } else {
-      nickname = nickname.trim();
-    }
-    return nickname;
   }
 
   String? get avatar {
@@ -118,23 +95,16 @@ class ContactInfo implements lnc.Observer {
     return cr;
   }
 
+  @override
   String get title {
-    bool flag = false;
-    String? nickname = _name;
-    if (nickname == null) {
-      nickname = _name = '';
-      flag = true;
-    } else {
-      nickname = nickname.trim();
-    }
+    String nickname = super.title;
     ContactRemark? cr = _remark;
     if (cr == null) {
-      cr = _remark = ContactRemark.empty(identifier);
-      flag = true;
-    }
-    if (flag) {
+      // create an empty remark and reload again
+      _remark = cr = ContactRemark.empty(identifier);
       reloadData();
     }
+    // check alias in remark
     String alias = cr.alias;
     if (alias.isEmpty) {
       return nickname;
@@ -144,28 +114,17 @@ class ContactInfo implements lnc.Observer {
     return '$nickname ($alias)';
   }
 
+  @override
   Widget getImage({double? width, double? height, GestureTapCallback? onTap}) =>
       ImageViewFactory().fromID(identifier, width: width, height: height, onTap: onTap);
 
   @override
-  String toString() {
-    if (isUser) {
-      return '<User id="$identifier" type=$type name="$name"'
-          ' isFriend=$_friend blocked=$_blocked muted=$_muted />';
-    } else {
-      return '<Group id="$identifier" type=$type name="$name"'
-          ' isFriend=$_friend blocked=$_blocked muted=$_muted />';
-    }
-  }
-
   Future<void> reloadData() async {
     GlobalVariable shared = GlobalVariable();
     User? user = await shared.facebook.currentUser;
     if (user == null) {
       Log.error('current user not found');
     }
-    // get name
-    _name = await shared.facebook.getName(identifier);
     // get avatar
     Document? visa = await shared.facebook.getDocument(identifier, '*');
     if (visa is Visa) {
@@ -188,50 +147,7 @@ class ContactInfo implements lnc.Observer {
       List<ID> contacts = await shared.facebook.getContacts(user.identifier);
       _friend = contacts.contains(identifier);
     }
-    // get block status
-    Shield shield = Shield();
-    _blocked = await shield.isBlocked(identifier);
-    _muted = await shield.isMuted(identifier);
-  }
-
-  void addToUser(User user, {required BuildContext context}) {
-    Alert.confirm(context, 'Confirm', 'Do you want to add this friend?',
-      okAction: () => _doAdd(context, identifier, user.identifier),
-    );
-  }
-  void add({required BuildContext context}) {
-    // check current user
-    GlobalVariable shared = GlobalVariable();
-    shared.facebook.currentUser.then((user) {
-      if (user == null) {
-        Log.error('current user not found, failed to add contact: $identifier');
-        Alert.show(context, 'Error', 'Current user not found');
-      } else {
-        addToUser(user, context: context);
-      }
-    });
-  }
-
-  void delete({required BuildContext context}) {
-    GlobalVariable shared = GlobalVariable();
-    shared.facebook.currentUser.then((user) {
-      if (user == null) {
-        Log.error('current user not found, failed to add contact: $identifier');
-        Alert.show(context, 'Error', 'Current user not found');
-      } else {
-        String msg;
-        if (identifier.isUser) {
-          msg = 'Are you sure to remove this friend?\n'
-              'This action will clear chat history too.';
-        } else {
-          msg = 'Are you sure to remove this group?\n'
-              'This action will clear chat history too.';
-        }
-        Alert.confirm(context, 'Confirm', msg,
-          okAction: () => _doRemove(context, identifier, user.identifier),
-        );
-      }
-    });
+    await super.reloadData();
   }
 
   void setRemark({required BuildContext context, String? alias, String? description}) {
@@ -267,56 +183,6 @@ class ContactInfo implements lnc.Observer {
     });
   }
 
-  void block({required BuildContext context}) {
-    _blocked = true;
-    // update database and broadcast
-    Shield shield = Shield();
-    shield.addBlocked(identifier).then((ok) {
-      if (ok) {
-        shield.broadcastBlockList();
-        Alert.show(context, 'Blocked',
-            'You will never receive message from this contact again.');
-      }
-    });
-  }
-  void unblock({required BuildContext context}) {
-    _blocked = false;
-    // update database and broadcast
-    Shield shield = Shield();
-    shield.removeBlocked(identifier).then((ok) {
-      if (ok) {
-        shield.broadcastBlockList();
-        Alert.show(context, 'Unblocked',
-            'You can receive message from this contact now.');
-      }
-    });
-  }
-
-  void mute({required BuildContext context}) {
-    _muted = true;
-    // update database and broadcast
-    Shield shield = Shield();
-    shield.addMuted(identifier).then((ok) {
-      if (ok) {
-        shield.broadcastMuteList();
-        Alert.show(context, 'Muted',
-            'You will never receive notification from this contact again.');
-      }
-    });
-  }
-  void unmute({required BuildContext context}) {
-    _muted = false;
-    // update database and broadcast
-    Shield shield = Shield();
-    shield.removeMuted(identifier).then((ok) {
-      if (ok) {
-        shield.broadcastMuteList();
-        Alert.show(context, 'Unmuted',
-            'You can receive notification from this contact now.');
-      }
-    });
-  }
-
   static ContactInfo fromID(ID identifier) =>
       _ContactManager().getContact(identifier);
 
@@ -341,7 +207,7 @@ class ContactSorter {
     Set<String> set = {};
     Map<String, List<ContactInfo>> map = {};
     for (ContactInfo item in contacts) {
-      String name = item.name;
+      String name = item.title;
       String prefix = name.isEmpty ? '#' : name.substring(0, 1).toUpperCase();
       // TODO: convert for Pinyin
       Log.debug('[$prefix] contact: $item');
@@ -372,7 +238,7 @@ List<ContactInfo> _sortContacts(List<ContactInfo>? contacts) {
   if (contacts == null) {
     return [];
   }
-  contacts.sort((a, b) => a.name.compareTo(b.name));
+  contacts.sort((a, b) => a.title.compareTo(b.title));
   return contacts;
 }
 
@@ -393,32 +259,4 @@ class _ContactManager {
     return info;
   }
 
-}
-
-void _doAdd(BuildContext ctx, ID contact, ID user) {
-  GlobalVariable shared = GlobalVariable();
-  shared.database.addContact(contact, user: user)
-      .then((ok) {
-    if (ok) {
-      // Navigator.pop(context);
-    } else {
-      Alert.show(ctx, 'Error', 'Failed to add contact');
-    }
-  });
-}
-
-void _doRemove(BuildContext ctx, ID contact, ID user) {
-  Amanuensis clerk = Amanuensis();
-  clerk.removeConversation(contact).onError((error, stackTrace) {
-    Alert.show(ctx, 'Error', 'Failed to remove conversation');
-    return false;
-  });
-  GlobalVariable shared = GlobalVariable();
-  shared.database.removeContact(contact, user: user).then((ok) {
-    if (ok) {
-      Log.warning('contact removed: $contact, user: $user');
-    } else {
-      Alert.show(ctx, 'Error', 'Failed to remove contact');
-    }
-  });
 }

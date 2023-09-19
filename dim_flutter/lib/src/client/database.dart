@@ -4,7 +4,7 @@ import 'package:lnc/lnc.dart';
 import '../common/dbi/contact.dart';
 import '../common/dbi/message.dart';
 import '../common/dbi/network.dart';
-import '../models/conversation.dart';
+import '../models/chat.dart';
 import '../sqlite/contact.dart';
 import '../sqlite/conversation.dart';
 import '../sqlite/document.dart';

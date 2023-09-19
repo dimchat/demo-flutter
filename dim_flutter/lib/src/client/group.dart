@@ -44,7 +44,11 @@ class GroupManager {
   // private
   Future<User?> get currentUser async => await messenger?.facebook.currentUser;
 
-  Future<ID?> createGroup({required Set<ID> members}) async {
+  Future<ID?> createGroup({required List<ID> members}) async {
+    if (members.length < 2) {
+      assert(false, 'not enough members: $members');
+      return null;
+    }
     // 0. get current user
     ClientFacebook? barrack = messenger?.facebook as ClientFacebook?;
     User? user = await barrack?.currentUser;
@@ -52,17 +56,23 @@ class GroupManager {
       assert(false, 'failed to get current user');
       return null;
     }
-    // 1. get members
+    // 1. check founder/owner
     AccountDBI db = barrack!.database;
     ID me = user.identifier;
-    List<ID> allMembers = [me];
-    members.remove(me);
-    allMembers.addAll(members);
+    int pos = members.indexOf(me);
+    if (pos < 0) {
+      // put myself in the first position
+      members.insert(0, me);
+    } else if (pos > 0) {
+      // move me to the front
+      members.removeAt(pos);
+      members.insert(0, me);
+    }
     // 2. build group name
     String groupName = await barrack.getName(me);
     String nickname;
-    for (int i = 0; i < allMembers.length; ++i) {
-      nickname = await barrack.getName(allMembers[i]);
+    for (int i = 1; i < members.length; ++i) {
+      nickname = await barrack.getName(members[i]);
       if (nickname.isEmpty) {
         continue;
       }
@@ -76,11 +86,11 @@ class GroupManager {
     Register register = Register(db);
     ID group = await register.createGroup(me, name: groupName);
     Log.info('new group ID: $group');
-    if (await resetGroupMembers(group, allMembers)) {
-      Log.info('created group $group with ${allMembers.length} members');
+    if (await resetGroupMembers(group, members)) {
+      Log.info('created group $group with ${members.length} members');
       return group;
     }
-    Log.error('failed to created group $group with ${allMembers.length} members');
+    Log.error('failed to created group $group with ${members.length} members');
     return null;
   }
 

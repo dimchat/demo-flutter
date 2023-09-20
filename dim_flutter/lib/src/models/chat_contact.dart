@@ -89,7 +89,8 @@ class ContactInfo extends Conversation implements lnc.Observer {
   ContactRemark get remark {
     ContactRemark? cr = _remark;
     if (cr == null) {
-      cr = _remark = ContactRemark.empty(identifier);
+      // create an empty remark and reload again
+      _remark = cr = ContactRemark.empty(identifier);
       reloadData();
     }
     return cr;
@@ -98,13 +99,8 @@ class ContactInfo extends Conversation implements lnc.Observer {
   @override
   String get title {
     String nickname = super.title;
-    ContactRemark? cr = _remark;
-    if (cr == null) {
-      // create an empty remark and reload again
-      _remark = cr = ContactRemark.empty(identifier);
-      reloadData();
-    }
     // check alias in remark
+    ContactRemark cr = remark;
     String alias = cr.alias;
     if (alias.isEmpty) {
       return nickname;

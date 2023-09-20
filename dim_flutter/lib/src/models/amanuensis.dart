@@ -156,9 +156,7 @@ class Amanuensis implements lnc.Observer {
     }
     List<Conversation> array = [];
     for (Conversation chat in all) {
-      if (chat is GroupInfo) {
-        array.add(chat);
-      } else if (chat is ContactInfo) {
+      if (chat is ContactInfo) {
         if (chat.isNewFriend) {
           array.add(chat);
         }

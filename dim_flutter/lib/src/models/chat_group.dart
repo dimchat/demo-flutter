@@ -5,9 +5,12 @@ import 'package:lnc/lnc.dart' as lnc;
 import 'package:lnc/lnc.dart' show Log;
 
 import '../client/constants.dart';
+import '../client/group.dart';
 import '../client/shared.dart';
+import '../common/dbi/contact.dart';
 import '../network/image_view.dart';
 
+import '../widgets/alert.dart';
 import 'chat.dart';
 
 class GroupInfo extends Conversation implements lnc.Observer {
@@ -32,16 +35,35 @@ class GroupInfo extends Conversation implements lnc.Observer {
     }
   }
 
+  ContactRemark? _remark;
+
   String? _temporaryTitle;
+
+  ContactRemark get remark {
+    ContactRemark? cr = _remark;
+    if (cr == null) {
+      // create an empty remark and reload again
+      _remark = cr = ContactRemark.empty(identifier);
+      reloadData();
+    }
+    return cr;
+  }
 
   @override
   String get title {
     String name = super.title;
-    if (name.isNotEmpty) {
-      return name;
+    if (name.isEmpty) {
+      name = _temporaryTitle ?? '';
     }
-    reloadData();
-    return _temporaryTitle ?? '';
+    // check alias in remark
+    ContactRemark cr = remark;
+    String alias = cr.alias;
+    if (alias.isEmpty) {
+      return name;
+    } else if (name.length > 15) {
+      name = '${name.substring(0, 12)}...';
+    }
+    return '$name ($alias)';
   }
 
   @override
@@ -51,11 +73,24 @@ class GroupInfo extends Conversation implements lnc.Observer {
   @override
   Future<void> reloadData() async {
     await super.reloadData();
+    // check current user
+    GlobalVariable shared = GlobalVariable();
+    User? user = await shared.facebook.currentUser;
+    if (user == null) {
+      Log.error('current user not found');
+    }
+    // get remark
+    if (user == null) {
+      _remark = ContactRemark.empty(identifier);
+    } else {
+      var cr = await shared.database.getRemark(identifier, user: user.identifier);
+      cr ??= ContactRemark.empty(identifier);
+      _remark = cr;
+    }
     // check group name
     String name = super.title;
     if (name.isEmpty && _temporaryTitle == null) {
       _temporaryTitle = '';
-      GlobalVariable shared = GlobalVariable();
       Group? group = await shared.facebook.getGroup(identifier);
       if (group != null) {
         List<ID> members = await group.members;
@@ -82,6 +117,100 @@ class GroupInfo extends Conversation implements lnc.Observer {
       }
     }
     return name;
+  }
+
+  void setName({required BuildContext context, required String name}) {
+    // update memory
+    if (name.isEmpty || name == title) {
+      return;
+    } else {
+      title = name;
+    }
+    // save into document
+    _updateGroupName(identifier, name).then((message) {
+      if (message != null) {
+        Alert.show(context, 'Error', message);
+      }
+    });
+  }
+  static Future<String?> _updateGroupName(ID group, String name) async {
+    GlobalVariable shared = GlobalVariable();
+    // 0. get local user
+    User? user = await shared.facebook.currentUser;
+    if (user == null) {
+      assert(false, 'failed to get current user');
+      return 'Failed to get current user.';
+    }
+    ID me = user.identifier;
+    // 1. check permission
+    GroupManager man = GroupManager();
+    if (await man.dataSource.isOwner(me, group: group)) {
+      Log.info('updating group $group by owner $me');
+    } else {
+      Log.error('cannot update group name: $group, $name');
+      return 'Permission denied';
+    }
+    // 2. get old document
+    Document? bulletin = await man.dataSource.getDocument(group, '*');
+    if (bulletin == null) {
+      // TODO: create a new bulletin?
+      assert(false, 'failed to get group document: $group');
+      return 'Failed to get group document';
+    }
+    // 2.1. get sign key for local user
+    SignKey? sKey = await shared.facebook.getPrivateKeyForVisaSignature(me);
+    if (sKey == null) {
+      assert(false, 'failed to get sign key for user: $user');
+      return 'Failed to get sign key';
+    }
+    // 2.2. update group name and sign it
+    bulletin.name = name;
+    if (bulletin.sign(sKey) == null) {
+      assert(false, 'failed to sign group document: $group');
+      return 'Failed to sign group document';
+    }
+    // 3. save into local storage and broadcast it
+    if (await man.dataSource.updateDocument(bulletin)) {
+      Log.warning('group document updated: $group');
+    } else {
+      assert(false, 'failed to update group document: $group');
+      return 'Failed to update group document';
+    }
+    // OK
+    return null;
+  }
+
+  void setRemark({required BuildContext context, String? alias, String? description}) {
+    // update memory
+    ContactRemark? cr = _remark;
+    if (cr == null) {
+      cr = ContactRemark(identifier, alias: alias ?? '', description: description ?? '');
+      _remark = cr;
+    } else {
+      if (alias != null) {
+        cr.alias = alias;
+      }
+      if (description != null) {
+        cr.description = description;
+      }
+    }
+    // save into local database
+    GlobalVariable shared = GlobalVariable();
+    shared.facebook.currentUser.then((user) {
+      if (user == null) {
+        Log.error('current user not found, failed to add contact: $identifier');
+        Alert.show(context, 'Error', 'Current user not found');
+      } else {
+        shared.database.setRemark(cr!, user: user.identifier).then((ok) {
+          if (ok) {
+            Log.info('set remark: $cr, user: $user');
+          } else {
+            Log.error('failed to set remark: $cr, user: $user');
+            Alert.show(context, 'Error', 'Failed to set remark');
+          }
+        });
+      }
+    });
   }
 
   static GroupInfo fromID(ID identifier) =>

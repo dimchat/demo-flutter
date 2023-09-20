@@ -41,6 +41,18 @@ class GroupManager {
     _delegate = null;
   }
 
+  // NOTICE: group assistants (bots) can help the members to redirect messages
+  //
+  //      if members.length < kPolylogueLimit,
+  //          means it is a small polylogue group, let the members to split
+  //          and send group messages by themself, this can keep the group
+  //          more secretive because no one else can know the group ID even.
+  //      else,
+  //          set 'assistants' in the bulletin document to tell all members
+  //          that they can let the group bot to do the job for them.
+  //
+  int kPolylogueLimit = 16;
+
   // getter/setter
   ClientMessenger? messenger;
 
@@ -65,38 +77,73 @@ class GroupManager {
       assert(false, 'not enough members: $members');
       return null;
     }
-    // 0. get current user
+    //
+    //  0. get current user
+    //
     ClientFacebook? barrack = messenger?.facebook as ClientFacebook?;
     User? user = await barrack?.currentUser;
     if (user == null) {
       assert(false, 'failed to get current user');
       return null;
     }
-    // 1. check founder/owner
+    ID founder = user.identifier;
+    //
+    //  1. check founder/owner
+    //
     AccountDBI db = barrack!.database;
-    ID me = user.identifier;
-    int pos = members.indexOf(me);
+    int pos = members.indexOf(founder);
     if (pos < 0) {
       // put myself in the first position
-      members.insert(0, me);
+      members.insert(0, founder);
     } else if (pos > 0) {
       // move me to the front
       members.removeAt(pos);
-      members.insert(0, me);
+      members.insert(0, founder);
     }
-    // 2. build group name
-    String groupName = await GroupInfo.buildGroupName(members);
-    // 3. create group
+    //
+    //  2. create group with name
+    //
     Register register = Register(db);
-    ID group = await register.createGroup(me, name: groupName);
-    Log.info('new group ID: $group');
+    String groupName = await GroupInfo.buildGroupName(members);
+    ID group = await register.createGroup(founder, name: groupName);
+    Log.info('new group: $group ($groupName), founder: $founder');
+    //
+    //  3. upload meta+document to neighbor station(s)
+    //  DISCUSS: should we let the neighbor stations know the group info?
+    //
+    Meta? meta = await dataSource.getMeta(group);
+    Document? doc = await dataSource.getDocument(group, '*');
+    Command content;
+    if (doc != null) {
+      content = DocumentCommand.response(group, meta, doc);
+      _sendCommand(content, [Station.kAny]);            // to neighbor(s)
+    } else if (meta != null) {
+      content = MetaCommand.response(group, meta);
+      _sendCommand(content, [Station.kAny]);            // to neighbor(s)
+    } else {
+      assert(false, 'failed to get group info: $group');
+    }
+    //
+    //  4. create & broadcast 'reset' group command with new members
+    //
     if (await resetGroupMembers(group, members)) {
       Log.info('created group $group with ${members.length} members');
-      return group;
+    } else {
+      Log.error('failed to created group $group with ${members.length} members');
     }
-    Log.error('failed to created group $group with ${members.length} members');
-    return null;
+    return group;
   }
+
+  // DISCUSS: should we let the neighbor stations know the group info?
+  //      (A) if we do this, it can provide a convenience that,
+  //          when someone receive a message from an unknown group,
+  //          it can query the group info from the neighbor immediately;
+  //          and its potential risk is that anyone not in the group can also
+  //          know the group info (only the group ID, name, and admins, ...)
+  //      (B) but, if we don't let the station knows it,
+  //          then we must shared the group info with our members themself;
+  //          and if none of them is online, you cannot get the newest info
+  //          info immediately until someone online again.
 
   ///  Reset group members
   ///
@@ -142,29 +189,43 @@ class GroupManager {
     Document? doc = await delegate.getDocument(group, "*");
     assert(doc != null, 'document not found: $group');
 
-    // NOTICE: group assistants (bots) can help the members to redirect messages
-    //
-    //      if members.length < 16,
-    //          means it is a small polylogue group, let the members to split
-    //          and send group messages by themself, this can keep the group
-    //          more secretive because no one else can know the group ID even.
-    //      else,
-    //          set 'assistants' in the bulletin document to tell all members
-    //          that they can let the group bot to do the job for them.
-    //
-    // TODO: check for group assistants
-
-    // 2. send 'meta/document' command
-    Command command = doc == null
-        ? MetaCommand.response(group, meta!)
-        : DocumentCommand.response(group, meta, doc);
-    await _sendCommand(command, members: bots);              // to all assistants
+    // 2. build 'meta/document' command
+    Command? command;
+    if (doc != null) {
+      command = DocumentCommand.response(group, meta, doc);
+    } else if (meta != null) {
+      // TODO: check owner & create new group document?
+      command = MetaCommand.response(group, meta);
+    } else {
+      assert(false, 'failed to get group info: $group');
+      return false;
+    }
+    // 2.1. send 'meta/document' command
+    if (command == null) {
+      assert(false, 'should not happen');
+    } else if (bots.isEmpty) {
+      // group bots not exist, so we need to
+      // send the document to all new members directly.
+      _sendCommand(command, newMembers);                // to new members
+    } else {
+      // group bots exist, so we don't need to
+      // send the document to the members directly,
+      // just let the bots to do the job.
+      _sendCommand(command, bots);                      // to all assistants
+    }
 
     // 3. send 'reset' command
     command = GroupCommand.reset(group, members: newMembers);
-    await _sendCommand(command, members: bots);              // to all assistants
-    await _sendCommand(command, members: newMembers);        // to new members
-    await _sendCommand(command, members: expelList);         // to expelled members
+    if (bots.isEmpty) {
+      // group bots not exist,
+      // send the command to all members
+      _sendCommand(command, newMembers);                // to new members
+      _sendCommand(command, expelList);                 // to expelled members
+    } else {
+      // let the group bots know the newest member ID list,
+      // so they can split group message correctly for us.
+      _forwardCommand(command, bots);                   // to all assistants
+    }
 
     return true;
   }
@@ -184,12 +245,13 @@ class GroupManager {
         await delegate.isOwner(me, group: group)) {
       // You are the owner/admin, then
       // append new members and 'reset' the group
+      List<ID> members = [...oldMembers];
       for (ID item in newMembers) {
-        if (!oldMembers.contains(item)) {
-          oldMembers.add(item);
+        if (!members.contains(item)) {
+          members.add(item);
         }
       }
-      return await resetGroupMembers(group, oldMembers);
+      return await resetGroupMembers(group, members);
     }
 
     // 0. check permission
@@ -209,19 +271,44 @@ class GroupManager {
     Document? doc = await delegate.getDocument(group, "*");
     assert(doc != null, 'document not found: $group');
 
-    // 2. send 'meta/document' command
-    Command command = doc == null
-        ? MetaCommand.response(group, meta!)
-        : DocumentCommand.response(group, meta, doc);
-    await _sendCommand(command, members: bots);              // to all assistants
-    await _sendCommand(command, members: newMembers);        // to new members
+    // 2. build 'meta/document' command
+    Command? command;
+    if (doc != null) {
+      command = DocumentCommand.response(group, meta, doc);
+    } else if (meta != null) {
+      // TODO: check owner & create new group document?
+      command = MetaCommand.response(group, meta);
+    } else {
+      assert(false, 'failed to get group info: $group');
+      return false;
+    }
+    // 2.1. send 'meta/document' command
+    if (command == null) {
+      assert(false, 'should not happen');
+    } else if (bots.isEmpty) {
+      // group bots not exist, so we need to
+      // send the document to all new members directly.
+      _sendCommand(command, newMembers);                // to new members
+    } else {
+      // group bots exist, so we don't need to
+      // send the document to the members directly,
+      // just let the bots to do the job.
+      _sendCommand(command, bots);                      // to all assistants
+    }
 
     // 3. send 'invite' command
     command = GroupCommand.invite(group, members: newMembers);
-    await _sendCommand(command, members: bots);              // to all assistants
-    await _sendCommand(command, members: oldMembers);        // to old members
-    command = GroupCommand.invite(group, members: members);
-    await _sendCommand(command, members: newMembers);        // to new members
+    if (bots.isEmpty) {
+      // group bots not exist,
+      // send the command to all members
+      _sendCommand(command, oldMembers);                // to old members
+      command = GroupCommand.invite(group, members: members);
+      _sendCommand(command, newMembers);                // to new members
+    } else {
+      // let the group bots know the newest member ID list,
+      // so they can split group message correctly for us.
+      _forwardCommand(command, bots);                   // to all assistants
+    }
 
     return true;
   }
@@ -261,8 +348,15 @@ class GroupManager {
 
     // 2. send 'quit' command
     Command command = GroupCommand.quit(group);
-    await _sendCommand(command, members: bots);     // to assistants
-    await _sendCommand(command, members: members);  // to new members
+    if (bots.isEmpty) {
+      // group bots not exist,
+      // send the command to all members
+      _sendCommand(command, members);                   // to new members
+    } else {
+      // let the group bots know the newest member ID list,
+      // so they can split group message correctly for us.
+      _forwardCommand(command, bots);                   // to all assistants
+    }
 
     return ok;
   }
@@ -290,15 +384,57 @@ class GroupManager {
   }
 
   // private
-  Future<void> _sendCommand(Command content, {required List<ID> members}) async {
-    ID? me = (await currentUser)?.identifier;
+  Future<bool> _sendCommand(Command content, List<ID> members) async {
+    assert(content.group != null, 'group command error: $content');
+    User? user = await currentUser;
+    if (user == null) {
+      assert(false, 'failed to get current user');
+      return false;
+    }
+    ID me = user.identifier;
+    // send group command to members directly
     for (ID item in members) {
       if (item == me) {
         // skip cycled message
         continue;
       }
-      await messenger?.sendContent(content, sender: me, receiver: item);
+      messenger?.sendContent(content, sender: me, receiver: item);
     }
+    return true;
+  }
+
+  // private
+  Future<bool> _forwardCommand(Command content, List<ID> bots) async {
+    assert(content.group != null, 'group command error: $content');
+    User? user = await currentUser;
+    if (user == null) {
+      assert(false, 'failed to get current user');
+      return false;
+    }
+    ID me = user.identifier;
+    // forward command to the group bot to let it redirect to other members
+    Envelope env = Envelope.create(sender: me, receiver: ID.kAnyone);
+    InstantMessage iMsg = InstantMessage.create(env, content);
+    SecureMessage? sMsg = await messenger?.encryptMessage(iMsg);
+    if (sMsg == null) {
+      assert(false, 'failed to encrypt group message: $env');
+      return false;
+    }
+    ReliableMessage? rMsg = await messenger?.signMessage(sMsg);
+    if (rMsg == null) {
+      assert(false, 'failed to sign group message: $env');
+      return false;
+    }
+    ForwardContent forward = ForwardContent.create(forward: rMsg);
+    // forward group command to the bots
+    for (ID item in bots) {
+      if (item == me) {
+        assert(false, 'should not happen: $item');
+        continue;
+      }
+      messenger?.sendContent(forward, sender: me, receiver: item);
+    }
+    return true;
   }
 
   //

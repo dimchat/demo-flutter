@@ -63,6 +63,47 @@ class GroupDelegate implements GroupDataSource {
     return doc;
   }
 
+  Future<bool> updateDocument(Document doc) async {
+    ID group = doc.identifier;
+    // 1. save into local storage
+    bool ok = await facebook.saveDocument(doc);
+    if (!ok) {
+      assert(false, 'failed to save group document: $group');
+      return false;
+    }
+    User? user = await facebook.currentUser;
+    if (user == null) {
+      assert(false, 'failed to get current user');
+      return false;
+    }
+    ID me = user.identifier;
+    // 2. create 'document' command, and
+    //    send to current station
+    Meta? meta = await facebook.getMeta(group);
+    Command content = DocumentCommand.response(group, meta, doc);
+    messenger.sendContent(content, sender: me, receiver: Station.kAny, priority: 1);
+    // 3. check group bots
+    List<ID> bots = await getAssistants(group);
+    if (bots.isNotEmpty) {
+      // group bots exist, let them to deliver to all other members
+      for (ID item in bots) {
+        messenger.sendContent(content, sender: me, receiver: item, priority: 1);
+      }
+      return true;
+    }
+    // 4. broadcast to all members
+    List<ID> members = await getMembers(group);
+    if (members.isEmpty) {
+      assert(false, 'failed to get group members: $group');
+      return false;
+    } else {
+      for (ID item in members) {
+        messenger.sendContent(content, sender: me, receiver: item, priority: 1);
+      }
+      return true;
+    }
+  }
+
   //
   //  GroupDataSource
   //
@@ -140,8 +181,9 @@ class GroupDelegate implements GroupDataSource {
     if (doc == null) {
       return [];
     }
-    return await facebook.getAssistants(group);
+    List<ID> bots = await facebook.getAssistants(group);
     // TODO: check bots online
+    return bots;
   }
 
   // private
@@ -180,6 +222,19 @@ class GroupDelegate implements GroupDataSource {
       return [];
     }
     List<ID> members = await facebook.getMembers(group);
+    if (members.isEmpty) {
+      // members not found, query the owner (or group bots)
+      messenger.queryMembers(group);
+    } else {
+      var mc = doc.getProperty('members_checksum');
+      String? sum = Converter.getString(mc, null);
+      if (sum == null || GroupDelegate.verifyMembersChecksum(members, sum)) {
+        // members OK
+      } else {
+        // members updated, query the owner (or group bots)
+        messenger.queryMembers(group);
+      }
+    }
     return [...members];  // clone
   }
 
@@ -242,6 +297,56 @@ class GroupDelegate implements GroupDataSource {
       await saveMembers(members, group: group);
     }
     return members;
+  }
+
+  //
+  //  Members Checksum
+  //
+
+  ///  Generate checksum for members
+  ///
+  /// @param members  - member ID list
+  /// @param size     - digest length
+  /// @return 'AA,BB,CC...'
+  static String generateMembersChecksum(List<ID> members, [int size = 2]) {
+    if (members.isEmpty) {
+      return '';
+    }
+    members = [...members]..sort();
+    // get first member
+    Address address = members.first.address;
+    String digest = address.substring(address.length - size);
+    String checksum = digest;
+    // append other members
+    for (int i = 1; i < members.length; ++i) {
+      address = members[i].address;
+      digest = address.substring(address.length - size);
+      checksum += ',$digest';
+    }
+    return checksum;
+  }
+
+  ///  Verify members with checksum
+  ///
+  /// @param members  - member ID list
+  /// @param checksum - digest list, (e.g.: 'AA,BB,CC...')
+  /// @return true on matched
+  static bool verifyMembersChecksum(List<ID> members, String checksum) {
+    if (checksum.isEmpty) {
+      assert(false, 'should not happen');
+      return members.isEmpty;
+    }
+    int size = checksum.indexOf(',');
+    if (size < 0) {
+      // only one member?
+      assert(false, 'should not happen: $members, $checksum');
+      size = checksum.length;
+    } else if (size == 0) {
+      // first member empty?
+      assert(false, 'members error: $members, $checksum');
+      return false;
+    }
+    return generateMembersChecksum(members, size) == checksum;
   }
 
 }

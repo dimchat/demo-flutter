@@ -7,7 +7,7 @@ import 'cpu/creator.dart';
 class SharedProcessor extends ClientMessageProcessor {
   SharedProcessor(super.facebook, super.messenger);
 
-  final FrequencyChecker<ID> _groupQueries = FrequencyChecker(600);
+  final FrequencyChecker<Pair<ID, ID>> _groupQueries = FrequencyChecker(600);
 
   @override
   ContentProcessorCreator createCreator() {
@@ -44,12 +44,15 @@ class SharedProcessor extends ClientMessageProcessor {
     if (content is! Command) {
       ID? group = content.group;
       if (group != null) {
+        ID sender = rMsg.sender;
+        Pair<ID, ID> direction = Pair(sender, group);
         Document? bulletin = await facebook.getDocument(group, '*');
-        if (bulletin == null && _groupQueries.isExpired(group)) {
-          ID sender = rMsg.sender;
+        if (bulletin == null && _groupQueries.isExpired(direction)) {
           Log.info('querying group: $group, $sender');
           Content content = DocumentCommand.query(group, null);
           messenger.sendContent(content, sender: null, receiver: sender, priority: 1);
+          Command command = GroupCommand.query(group);
+          messenger.sendContent(command, sender: null, receiver: sender, priority: 1);
         }
       }
     }

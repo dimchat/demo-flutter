@@ -37,6 +37,8 @@ abstract class Conversation {
   Widget getImage({double? width, double? height, GestureTapCallback? onTap});
 
   String get title => _name?.trim() ?? '';
+  set title(String name) => _name = name;
+
   String get subtitle => lastMessage?.trim() ?? '';
   DateTime? get time => lastTime;
 

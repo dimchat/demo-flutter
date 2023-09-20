@@ -141,6 +141,7 @@ class GroupDelegate implements GroupDataSource {
       return [];
     }
     return await facebook.getAssistants(group);
+    // TODO: check bots online
   }
 
   // private

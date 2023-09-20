@@ -142,6 +142,18 @@ class GroupManager {
     Document? doc = await delegate.getDocument(group, "*");
     assert(doc != null, 'document not found: $group');
 
+    // NOTICE: group assistants (bots) can help the members to redirect messages
+    //
+    //      if members.length < 16,
+    //          means it is a small polylogue group, let the members to split
+    //          and send group messages by themself, this can keep the group
+    //          more secretive because no one else can know the group ID even.
+    //      else,
+    //          set 'assistants' in the bulletin document to tell all members
+    //          that they can let the group bot to do the job for them.
+    //
+    // TODO: check for group assistants
+
     // 2. send 'meta/document' command
     Command command = doc == null
         ? MetaCommand.response(group, meta!)
@@ -313,6 +325,8 @@ class GroupManager {
     // 1. create message
     Envelope envelope = Envelope.create(sender: sender, receiver: group);
     InstantMessage iMsg = InstantMessage.create(envelope, content);
+    // FIXME: expose 'sn' before 'respondReceipt()' upgraded
+    iMsg['sn'] = content.sn;
     // 2. check group bots
     GroupDelegate delegate = dataSource;
     List<ID> bots = await delegate.getAssistants(group);

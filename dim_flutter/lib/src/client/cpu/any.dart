@@ -1,5 +1,7 @@
 import 'package:dim_client/dim_client.dart';
 
+import '../group.dart';
+
 class AnyContentProcessor extends BaseContentProcessor {
   AnyContentProcessor(super.facebook, super.messenger);
 
@@ -34,9 +36,16 @@ class AnyContentProcessor extends BaseContentProcessor {
     }
 
     var group = content.group;
-    if (group != null) {
-      // DON'T response group message for disturb reason
-      return [];
+    if (group != null && rMsg.containsKey('group')) {
+      // the group ID is overt, normally it must be redirected by a group bot,
+      // and the bot should respond the sender after delivered to any member,
+      // so we don't need to response the sender here
+      GroupManager man = GroupManager();
+      List<ID> bots = await man.dataSource.getAssistants(group);
+      if (bots.isNotEmpty) {
+        // let the group bot to do the job
+        return [];
+      }
     }
 
     // response

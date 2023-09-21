@@ -11,6 +11,7 @@ import '../common/dbi/contact.dart';
 import '../network/image_view.dart';
 
 import '../widgets/alert.dart';
+import 'amanuensis.dart';
 import 'chat.dart';
 
 class GroupInfo extends Conversation implements lnc.Observer {
@@ -35,10 +36,54 @@ class GroupInfo extends Conversation implements lnc.Observer {
     }
   }
 
+  // -1: not owner/admin/member
+  //  1: is owner/admin/member
+  //  0: checking
+  int? _ownerFlag;
+  int? _adminFlag;
+  int? _memberFlag;
+
   ContactRemark? _remark;
 
   String? _temporaryTitle;
 
+  /// owner
+  int get ownerFlag {
+    int? flag = _ownerFlag;
+    if (flag == null) {
+      _ownerFlag = flag = 0;
+      reloadData();
+    }
+    return flag;
+  }
+  bool get isOwner => ownerFlag == 1;
+  bool get isNotOwner => ownerFlag == -1;
+
+  /// administrator
+  int get adminFlag {
+    int? flag = _adminFlag;
+    if (flag == null) {
+      _adminFlag = flag = 0;
+      reloadData();
+    }
+    return flag;
+  }
+  bool get isAdmin => adminFlag == 1;
+  bool get isNotAdmin => adminFlag == -1;
+
+  /// member
+  int get memberFlag {
+    int? flag = _memberFlag;
+    if (flag == null) {
+      _memberFlag = flag = 0;
+      reloadData();
+    }
+    return flag;
+  }
+  bool get isMember => memberFlag == 1;
+  bool get isNotMember => memberFlag == -1;
+
+  /// Remark
   ContactRemark get remark {
     ContactRemark? cr = _remark;
     if (cr == null) {
@@ -49,6 +94,7 @@ class GroupInfo extends Conversation implements lnc.Observer {
     return cr;
   }
 
+  /// Group Name
   @override
   String get title {
     String name = super.title;
@@ -77,7 +123,39 @@ class GroupInfo extends Conversation implements lnc.Observer {
     GlobalVariable shared = GlobalVariable();
     User? user = await shared.facebook.currentUser;
     if (user == null) {
-      Log.error('current user not found');
+      assert(false, 'current user not found');
+    }
+    // check membership
+    if (user != null) {
+      ID me = user.identifier;
+      // owner
+      ID? owner = await shared.facebook.getOwner(identifier);
+      if (owner == null) {
+        _ownerFlag = null;
+      } else if (owner == me) {
+        _ownerFlag = 1;
+      } else {
+        _ownerFlag = -1;
+      }
+      // admins
+      List<ID> admins = await shared.facebook.getAdministrators(identifier);
+      if (admins.contains(me)) {
+        _adminFlag = 1;
+      } else {
+        _adminFlag = -1;
+      }
+      // members
+      Document? doc = await shared.facebook.getDocument(identifier, '*');
+      if (doc == null) {
+        _memberFlag = null;
+      } else {
+        List<ID> members = await shared.facebook.getMembers(identifier);
+        if (members.contains(me)) {
+          _memberFlag = 1;
+        } else {
+          _memberFlag = -1;
+        }
+      }
     }
     // get remark
     if (user == null) {
@@ -209,6 +287,43 @@ class GroupInfo extends Conversation implements lnc.Observer {
             Alert.show(context, 'Error', 'Failed to set remark');
           }
         });
+      }
+    });
+  }
+
+  void quit({required BuildContext context}) {
+    // check current user
+    GlobalVariable shared = GlobalVariable();
+    shared.facebook.currentUser.then((user) {
+      if (user == null) {
+        Log.error('current user not found, failed to add contact: $identifier');
+        Alert.show(context, 'Error', 'Current user not found');
+      } else {
+        String msg = 'Are you sure to remove this group?\n'
+            'This action will clear chat history too.';
+        // confirm removing
+        Alert.confirm(context, 'Confirm', msg,
+          okAction: () => _doQuit(context, identifier, user.identifier),
+        );
+      }
+    });
+  }
+  void _doQuit(BuildContext ctx, ID group, ID user) {
+    // 1. quit group
+    GroupManager man = GroupManager();
+    man.quitGroup(group);
+    // 2. remove from contact list
+    Amanuensis clerk = Amanuensis();
+    clerk.removeConversation(group).onError((error, stackTrace) {
+      Alert.show(ctx, 'Error', 'Failed to remove conversation');
+      return false;
+    });
+    GlobalVariable shared = GlobalVariable();
+    shared.database.removeContact(group, user: user).then((ok) {
+      if (ok) {
+        Log.warning('group removed: $group, user: $user');
+      } else {
+        Alert.show(ctx, 'Error', 'Failed to remove group');
       }
     });
   }

@@ -50,16 +50,20 @@ class Amanuensis implements lnc.Observer {
       return;
     } else if (entity.isUser) {
       // check user
-      User? user = await facebook.getUser(entity);
-      if (user == null) {
+      if (await facebook.getPublicKeyForEncryption(entity) == null) {
         Log.error('user not ready yet: $entity');
         return;
       }
     } else {
       assert(entity.isGroup, 'conversation ID error: $entity');
       // check group
-      Group? group = await facebook.getGroup(entity);
-      if (group == null) {
+      Document? bulletin = await facebook.getDocument(entity, '*');
+      if (bulletin == null) {
+        Log.error('group not ready yet: $entity');
+        return;
+      }
+      List<ID> members = await facebook.getMembers(entity);
+      if (members.isEmpty) {
         Log.error('group not ready yet: $entity');
         return;
       }

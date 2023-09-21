@@ -44,8 +44,24 @@ class SharedPacker extends ClientMessagePacker {
 
   @override
   Future<InstantMessage?> decryptMessage(SecureMessage sMsg) async {
-    InstantMessage? iMsg = await super.decryptMessage(sMsg);
-    if (iMsg != null) {
+    InstantMessage? iMsg;
+    try {
+      iMsg = await super.decryptMessage(sMsg);
+    } catch (e) {
+      String errMsg = e.toString();
+      if (errMsg.contains('failed to decrypt message key')) {
+        // visa.key changed?
+      } else {
+        rethrow;
+      }
+    }
+    if (iMsg == null) {
+      // failed to decrypt message, visa.key changed?
+      // 1. push new visa document to this message sender
+      pushVisa(sMsg.sender);
+      // 2. build 'failed' message
+      iMsg = await getFailedMessage(sMsg);
+    } else {
       Content content = iMsg.content;
       if (content is FileContent) {
         if (content.password == null && content.url != null) {

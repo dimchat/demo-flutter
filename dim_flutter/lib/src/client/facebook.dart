@@ -60,4 +60,18 @@ class SharedFacebook extends ClientFacebook {
     return await database.saveDocument(doc);
   }
 
+  Future<List<ID>> getAdministrators(ID group) async {
+    List<ID> members = await database.getAdministrators(group: group);
+    if (members.isEmpty) {
+      Document? doc = await getDocument(group, '*');
+      if (doc != null) {
+        Object? administrators = doc.getProperty('administrators');
+        if (administrators is List) {
+          members = ID.convert(administrators);
+        }
+      }
+    }
+    return members;
+  }
+
 }

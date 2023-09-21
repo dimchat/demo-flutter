@@ -37,92 +37,46 @@ class GroupInfo extends Conversation implements lnc.Observer {
     }
   }
 
-  // -1: not owner/admin/member
-  //  1: is owner/admin/member
-  //  0: checking
-  int? _ownerFlag;
-  int? _adminFlag;
-  int? _memberFlag;
-
-  ContactRemark? _remark;
+  // null means checking
+  bool? _ownerFlag;
+  bool? _adminFlag;
+  bool? _memberFlag;
 
   String? _temporaryTitle;
 
   List<ContactInfo>? _members;
 
   /// owner
-  int get ownerFlag {
-    int? flag = _ownerFlag;
-    if (flag == null) {
-      _ownerFlag = flag = 0;
-      reloadData();
-    }
-    return flag;
-  }
-  bool get isOwner => ownerFlag == 1;
-  bool get isNotOwner => ownerFlag == -1;
+  bool get isOwner => _ownerFlag == true;
+  bool get isNotOwner => _ownerFlag == false;
 
   /// administrator
-  int get adminFlag {
-    int? flag = _adminFlag;
-    if (flag == null) {
-      _adminFlag = flag = 0;
-      reloadData();
-    }
-    return flag;
-  }
-  bool get isAdmin => adminFlag == 1;
-  bool get isNotAdmin => adminFlag == -1;
+  bool get isAdmin => _adminFlag == true;
+  bool get isNotAdmin => _adminFlag == false;
 
   /// member
-  int get memberFlag {
-    int? flag = _memberFlag;
-    if (flag == null) {
-      _memberFlag = flag = 0;
-      reloadData();
-    }
-    return flag;
-  }
-  bool get isMember => memberFlag == 1;
-  bool get isNotMember => memberFlag == -1;
-
-  /// Remark
-  ContactRemark get remark {
-    ContactRemark? cr = _remark;
-    if (cr == null) {
-      // create an empty remark and reload again
-      _remark = cr = ContactRemark.empty(identifier);
-      reloadData();
-    }
-    return cr;
-  }
+  bool get isMember => _memberFlag == true;
+  bool get isNotMember => _memberFlag == false;
 
   /// Group Name
   @override
   String get title {
-    String name = super.title;
-    if (name.isEmpty) {
-      name = _temporaryTitle ?? '';
+    String text = name;
+    if (text.isEmpty) {
+      text = _temporaryTitle ?? '';
     }
     // check alias in remark
     ContactRemark cr = remark;
     String alias = cr.alias;
     if (alias.isEmpty) {
-      return name;
-    } else if (name.length > 15) {
-      name = '${name.substring(0, 12)}...';
+      return text;
+    } else if (text.length > 15) {
+      text = '${text.substring(0, 12)}...';
     }
-    return '$name ($alias)';
+    return '$text ($alias)';
   }
 
-  List<ContactInfo> get members {
-    List<ContactInfo>? users = _members;
-    if (users == null) {
-      _members = users = [];
-      reloadData();
-    }
-    return users;
-  }
+  List<ContactInfo> get members => _members ?? [];
 
   @override
   Widget getImage({double? width, double? height, GestureTapCallback? onTap}) =>
@@ -138,41 +92,40 @@ class GroupInfo extends Conversation implements lnc.Observer {
       assert(false, 'current user not found');
     }
     // check membership
-    if (user != null) {
+    if (user == null) {
+      _ownerFlag = null;
+      _adminFlag = null;
+      _memberFlag = null;
+    } else {
       ID me = user.identifier;
-      // owner
+      /// owner
       ID? owner = await shared.facebook.getOwner(identifier);
       if (owner == null) {
         _ownerFlag = null;
-      } else if (owner == me) {
-        _ownerFlag = 1;
       } else {
-        _ownerFlag = -1;
+        _ownerFlag = owner == me;
       }
-      // admins
+      /// admins
       List<ID> admins = await shared.facebook.getAdministrators(identifier);
-      if (admins.contains(me)) {
-        _adminFlag = 1;
-      } else {
-        _adminFlag = -1;
-      }
-      // members
+      _adminFlag = admins.contains(me);
+      /// members
       Document? doc = await shared.facebook.getDocument(identifier, '*');
       if (doc == null) {
         _memberFlag = null;
         _members = null;
+        _temporaryTitle = null;
       } else {
         List<ID> members = await shared.facebook.getMembers(identifier);
-        if (members.contains(me)) {
-          _memberFlag = 1;
-        } else {
-          _memberFlag = -1;
-        }
+        _memberFlag = members.contains(me);
         List<ContactInfo> users = [];
         for (ID item in members) {
           users.add(ContactInfo.fromID(item));
         }
         _members = users;
+        // check group name
+        if (name.isEmpty && _temporaryTitle == null) {
+          _temporaryTitle = await buildGroupName(members);
+        }
         // post notification
         var nc = lnc.NotificationCenter();
         nc.postNotification(NotificationNames.kParticipantsUpdated, this, {
@@ -181,52 +134,34 @@ class GroupInfo extends Conversation implements lnc.Observer {
         });
       }
     }
-    // get remark
-    if (user == null) {
-      _remark = ContactRemark.empty(identifier);
-    } else {
-      var cr = await shared.database.getRemark(identifier, user: user.identifier);
-      cr ??= ContactRemark.empty(identifier);
-      _remark = cr;
-    }
-    // check group name
-    String name = super.title;
-    if (name.isEmpty && _temporaryTitle == null) {
-      _temporaryTitle = '';
-      Group? group = await shared.facebook.getGroup(identifier);
-      if (group != null) {
-        List<ID> members = await group.members;
-        _temporaryTitle = await buildGroupName(members);
-      }
-    }
   }
 
   static Future<String> buildGroupName(List<ID> members) async {
     assert(members.isNotEmpty, 'members should not be empty here');
     GlobalVariable shared = GlobalVariable();
     ClientFacebook facebook = shared.facebook;
-    String name = await facebook.getName(members.first);
+    String text = await facebook.getName(members.first);
     String nickname;
     for (int i = 1; i < members.length; ++i) {
       nickname = await facebook.getName(members[i]);
       if (nickname.isEmpty) {
         continue;
       }
-      name += ', $nickname';
-      if (name.length > 32) {
-        name = '${name.substring(0, 28)} ...';
+      text += ', $nickname';
+      if (text.length > 32) {
+        text = '${text.substring(0, 28)} ...';
         break;
       }
     }
-    return name;
+    return text;
   }
 
-  void setName({required BuildContext context, required String name}) {
+  void setGroupName({required BuildContext context, required String name}) {
     // update memory
-    if (name.isEmpty || name == title) {
+    if (name == this.name) {
       return;
     } else {
-      title = name;
+      this.name = name;
     }
     // save into document
     _updateGroupName(identifier, name).then((message) {
@@ -235,7 +170,7 @@ class GroupInfo extends Conversation implements lnc.Observer {
       }
     });
   }
-  static Future<String?> _updateGroupName(ID group, String name) async {
+  static Future<String?> _updateGroupName(ID group, String text) async {
     GlobalVariable shared = GlobalVariable();
     // 0. get local user
     User? user = await shared.facebook.currentUser;
@@ -249,7 +184,7 @@ class GroupInfo extends Conversation implements lnc.Observer {
     if (await man.dataSource.isOwner(me, group: group)) {
       Log.info('updating group $group by owner $me');
     } else {
-      Log.error('cannot update group name: $group, $name');
+      Log.error('cannot update group name: $group, $text');
       return 'Permission denied';
     }
     // 2. get old document
@@ -266,7 +201,7 @@ class GroupInfo extends Conversation implements lnc.Observer {
       return 'Failed to get sign key';
     }
     // 2.2. update group name and sign it
-    bulletin.name = name;
+    bulletin.name = text.trim();
     if (bulletin.sign(sKey) == null) {
       assert(false, 'failed to sign group document: $group');
       return 'Failed to sign group document';
@@ -280,39 +215,6 @@ class GroupInfo extends Conversation implements lnc.Observer {
     }
     // OK
     return null;
-  }
-
-  void setRemark({required BuildContext context, String? alias, String? description}) {
-    // update memory
-    ContactRemark? cr = _remark;
-    if (cr == null) {
-      cr = ContactRemark(identifier, alias: alias ?? '', description: description ?? '');
-      _remark = cr;
-    } else {
-      if (alias != null) {
-        cr.alias = alias;
-      }
-      if (description != null) {
-        cr.description = description;
-      }
-    }
-    // save into local database
-    GlobalVariable shared = GlobalVariable();
-    shared.facebook.currentUser.then((user) {
-      if (user == null) {
-        Log.error('current user not found, failed to add contact: $identifier');
-        Alert.show(context, 'Error', 'Current user not found');
-      } else {
-        shared.database.setRemark(cr!, user: user.identifier).then((ok) {
-          if (ok) {
-            Log.info('set remark: $cr, user: $user');
-          } else {
-            Log.error('failed to set remark: $cr, user: $user');
-            Alert.show(context, 'Error', 'Failed to set remark');
-          }
-        });
-      }
-    });
   }
 
   void quit({required BuildContext context}) {

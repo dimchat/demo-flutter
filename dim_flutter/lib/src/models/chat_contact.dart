@@ -56,7 +56,6 @@ class ContactInfo extends Conversation implements lnc.Observer {
   }
 
   String? _avatar;
-  ContactRemark? _remark;
 
   bool _friend = false;
 
@@ -78,28 +77,15 @@ class ContactInfo extends Conversation implements lnc.Observer {
 
   String? get avatar {
     String? url = _avatar;
-    if (url == null) {
-      _avatar = '';
-      reloadData();
-    } else if (url.isEmpty) {
+    if (url == null || url.isEmpty) {
       url = null;
     }
     return url;
   }
 
-  ContactRemark get remark {
-    ContactRemark? cr = _remark;
-    if (cr == null) {
-      // create an empty remark and reload again
-      _remark = cr = ContactRemark.empty(identifier);
-      reloadData();
-    }
-    return cr;
-  }
-
   @override
   String get title {
-    String nickname = super.title;
+    String nickname = name;
     // check alias in remark
     ContactRemark cr = remark;
     String alias = cr.alias;
@@ -131,14 +117,6 @@ class ContactInfo extends Conversation implements lnc.Observer {
     } else {
       _avatar = '';
     }
-    // get remark
-    if (user == null) {
-      _remark = ContactRemark.empty(identifier);
-    } else {
-      var cr = await shared.database.getRemark(identifier, user: user.identifier);
-      cr ??= ContactRemark.empty(identifier);
-      _remark = cr;
-    }
     // get friendship
     if (user == null) {
       _friend = false;
@@ -146,39 +124,6 @@ class ContactInfo extends Conversation implements lnc.Observer {
       List<ID> contacts = await shared.facebook.getContacts(user.identifier);
       _friend = contacts.contains(identifier);
     }
-  }
-
-  void setRemark({required BuildContext context, String? alias, String? description}) {
-    // update memory
-    ContactRemark? cr = _remark;
-    if (cr == null) {
-      cr = ContactRemark(identifier, alias: alias ?? '', description: description ?? '');
-      _remark = cr;
-    } else {
-      if (alias != null) {
-        cr.alias = alias;
-      }
-      if (description != null) {
-        cr.description = description;
-      }
-    }
-    // save into local database
-    GlobalVariable shared = GlobalVariable();
-    shared.facebook.currentUser.then((user) {
-      if (user == null) {
-        Log.error('current user not found, failed to add contact: $identifier');
-        Alert.show(context, 'Error', 'Current user not found');
-      } else {
-        shared.database.setRemark(cr!, user: user.identifier).then((ok) {
-          if (ok) {
-            Log.info('set remark: $cr, user: $user');
-          } else {
-            Log.error('failed to set remark: $cr, user: $user');
-            Alert.show(context, 'Error', 'Failed to set remark');
-          }
-        });
-      }
-    });
   }
 
   void add({required BuildContext context}) {
@@ -270,7 +215,7 @@ class ContactSorter {
     Set<String> set = {};
     Map<String, List<ContactInfo>> map = {};
     for (ContactInfo item in contacts) {
-      String name = item.title;
+      String name = item.name;
       String prefix = name.isEmpty ? '#' : name.substring(0, 1).toUpperCase();
       // TODO: convert for Pinyin
       Log.debug('[$prefix] contact: $item');
@@ -301,7 +246,7 @@ List<ContactInfo> _sortContacts(List<ContactInfo>? contacts) {
   if (contacts == null) {
     return [];
   }
-  contacts.sort((a, b) => a.title.compareTo(b.title));
+  contacts.sort((a, b) => a.name.compareTo(b.name));
   return contacts;
 }
 

@@ -1,8 +1,10 @@
 import 'package:flutter/cupertino.dart';
 
 import 'package:dim_client/dim_client.dart';
+import 'package:lnc/lnc.dart';
 
 import '../client/shared.dart';
+import '../common/dbi/contact.dart';
 import '../widgets/alert.dart';
 
 import 'chat_contact.dart';
@@ -22,38 +24,103 @@ abstract class Conversation {
   String? lastMessage;  // description of last message
   DateTime? lastTime;   // time of last message
 
-  bool _blocked = false;
-  bool _muted = false;
+  // null means checking
+  bool? _blocked;
+  bool? _muted;
 
   int get type => identifier.type;
   bool get isUser  => identifier.isUser;
   bool get isGroup => identifier.isGroup;
 
-  bool get isBlocked => _blocked;
-  bool get isMuted => _muted;
+  /// blocked
+  bool get isBlocked => _blocked == true;
+  bool get isNotBlocked => _blocked == false;
 
+  /// muted
+  bool get isMuted => _muted == true;
+  bool get isNotMuted => _muted == false;
+
+  /// icon
   Widget getImage({double? width, double? height, GestureTapCallback? onTap});
 
-  String get title => _name?.trim() ?? '';
-  set title(String name) => _name = name;
+  ContactRemark? _remark;
 
-  String get subtitle => lastMessage?.trim() ?? '';
+  /// name
+  String get name => _name ?? '';
+  set name(String text) => _name = text;
+
+  String get title => name;
+  String get subtitle => lastMessage ?? '';
   DateTime? get time => lastTime;
 
   @override
   String toString() {
     Type clazz = runtimeType;
-    return '<$clazz id="$identifier" type=$type name="$title" muted=$isMuted>\n'
+    return '<$clazz id="$identifier" type=$type name="$name" muted=$isMuted>\n'
         '\t<unread>$unread</unread>\n'
         '\t<msg>$subtitle</msg>\n'
         '\t<time>$time</time>\n'
         '</$clazz>';
   }
 
-  Future<void> reloadData() async {
-    // get name
+  /// Remark
+  ContactRemark get remark {
+    ContactRemark? cr = _remark;
+    if (cr == null) {
+      _remark = cr = ContactRemark.empty(identifier);
+    }
+    return cr;
+  }
+
+  void setRemark({required BuildContext context, String? alias, String? description}) {
+    // update memory
+    ContactRemark? cr = _remark;
+    if (cr == null) {
+      cr = ContactRemark(identifier, alias: alias ?? '', description: description ?? '');
+      _remark = cr;
+    } else {
+      if (alias != null) {
+        cr.alias = alias;
+      }
+      if (description != null) {
+        cr.description = description;
+      }
+    }
+    // save into local database
     GlobalVariable shared = GlobalVariable();
-    _name = await shared.facebook.getName(identifier);
+    shared.facebook.currentUser.then((user) {
+      if (user == null) {
+        Log.error('current user not found, failed to set remark: $cr => $identifier');
+        Alert.show(context, 'Error', 'Current user not found');
+      } else {
+        shared.database.setRemark(cr!, user: user.identifier).then((ok) {
+          if (ok) {
+            Log.info('set remark: $cr => $identifier, user: $user');
+          } else {
+            Log.error('failed to set remark: $cr => $identifier, user: $user');
+            Alert.show(context, 'Error', 'Failed to set remark');
+          }
+        });
+      }
+    });
+  }
+
+  Future<void> reloadData() async {
+    GlobalVariable shared = GlobalVariable();
+    User? user = await shared.facebook.currentUser;
+    if (user == null) {
+      Log.error('current user not found');
+    }
+    // get name
+    Document? doc = await shared.facebook.getDocument(identifier, '*');
+    _name = doc?.name;
+    // get remark
+    if (user != null) {
+      var cr = await shared.database.getRemark(identifier, user: user.identifier);
+      if (cr != null) {
+        _remark = cr;
+      }
+    }
     // get blocked & muted status
     Shield shield = Shield();
     _blocked = await shield.isBlocked(identifier);

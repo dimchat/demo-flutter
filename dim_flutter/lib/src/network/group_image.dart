@@ -227,26 +227,20 @@ class _GroupImageState extends State<GroupImage> implements lnc.Observer {
           ],
         ),
       );
-    } else if (count == 2) {
-      return Container(
-        decoration: decoration,
-        width: boxWidth,
-        height: boxHeight,
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            images[0],
-            images[1],
-          ],
-        ),
-      );
     }
-    // assert(count == 1, 'group members should not be empty: $members');
     return Container(
       decoration: decoration,
       width: boxWidth,
       height: boxHeight,
-      child: images.first,
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          if (count > 0)
+          images[0],
+          if (count > 1)
+          images[1],
+        ],
+      ),
     );
   }
 

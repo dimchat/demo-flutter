@@ -69,7 +69,7 @@ class GroupInfo extends Conversation implements lnc.Observer {
     ContactRemark cr = remark;
     String alias = cr.alias;
     if (alias.isEmpty) {
-      return text;
+      return text.isEmpty ? Anonymous.getName(identifier) : text;
     } else if (text.length > 15) {
       text = '${text.substring(0, 12)}...';
     }

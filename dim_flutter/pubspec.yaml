@@ -24,6 +24,10 @@ dependencies:
   flutter_inappwebview: ^5.7.2+3
   flutter_linkify: ^6.0.0
 
+  flutter_section_list: ^1.1.1
+  #  flutter_tableview: ^1.0.1
+  #  tableview: ^0.0.3
+
   permission_handler: ^10.1.0
   permission_handler_android: ^10.1.0
   path: ^1.8.3

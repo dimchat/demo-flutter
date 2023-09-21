@@ -313,6 +313,54 @@ class GroupManager {
     return true;
   }
 
+  ///  Expel members from this group
+  ///
+  /// @param expelMembers - members to be removed
+  /// @return true on success
+  Future<bool> expelGroupMembers(ID group, List<ID> expelMembers) async {
+    assert(group.isGroup && expelMembers.isNotEmpty, 'params error: $group, $expelMembers');
+    GroupDelegate delegate = dataSource;
+
+    ID me = (await currentUser)!.identifier;
+
+    // 0. check permission
+    if (await delegate.isOwner(me, group: group) ||
+        await delegate.isAdministrator(me, group: group)) {
+      // only the owner or admin can reset group members
+    } else {
+      // not an admin/owner
+      throw Exception('Cannot expel members from group: $group');
+    }
+
+    // 1. update local members
+    List<ID> members = await delegate.getMembers(group);
+    for (ID item in expelMembers) {
+      members.remove(item);
+    }
+    if (await delegate.saveMembers(members, group: group)) {
+      // OK
+    } else {
+      throw Exception('Failed to update members of group: $group');
+    }
+
+    List<ID> bots = await delegate.getAssistants(group);
+    Command? command;
+    // 2. send 'reset' command
+    command = GroupCommand.reset(group, members: members);
+    if (bots.isEmpty) {
+      // group bots not exist,
+      // send the command to all members
+      _sendCommand(command, members);                   // to new members
+      _sendCommand(command, expelMembers);              // to expelled members
+    } else {
+      // let the group bots know the newest member ID list,
+      // so they can split group message correctly for us.
+      _forwardCommand(command, bots);                   // to all assistants
+    }
+
+    return true;
+  }
+
   ///  Quit from this group
   ///
   /// @return true on success

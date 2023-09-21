@@ -585,7 +585,8 @@ abstract class Styles {
 
   static const IconData       quitIcon = CupertinoIcons.escape;
   static const IconData  groupChatIcon = CupertinoIcons.group;
-  static const IconData      plushIcon = CupertinoIcons.add;
+  static const IconData       plusIcon = CupertinoIcons.add;
+  static const IconData      minusIcon = CupertinoIcons.minus;
   static const IconData   selectedIcon = CupertinoIcons.checkmark;
 
   // Settings

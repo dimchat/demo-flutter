@@ -551,7 +551,7 @@ class GroupManager {
       }
       res = await messenger?.sendInstantMessage(item, priority: priority);
       if (res == null) {
-        assert(false, 'failed to send message: $member');
+        Log.error('failed to send message: $member in group $group');
         continue;
       }
       success += 1;

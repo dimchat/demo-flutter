@@ -8,7 +8,7 @@ import '../client/constants.dart';
 import '../client/group.dart';
 import '../client/shared.dart';
 import '../common/dbi/contact.dart';
-import '../network/image_view.dart';
+import '../network/group_image.dart';
 
 import '../widgets/alert.dart';
 import 'amanuensis.dart';
@@ -80,7 +80,7 @@ class GroupInfo extends Conversation implements lnc.Observer {
 
   @override
   Widget getImage({double? width, double? height, GestureTapCallback? onTap}) =>
-      ImageViewFactory().fromID(identifier, width: width, height: height, onTap: onTap);
+      GroupImage(this, width: width, height: height, onTap: onTap);
 
   @override
   Future<void> reloadData() async {

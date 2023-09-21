@@ -247,7 +247,7 @@ class SharedDatabase implements AccountDBI, SessionDBI, MessageDBI,
   Future<bool> saveResetCommandMessage(ID identifier, ResetCommand content, ReliableMessage rMsg) async {
     // TODO: implement saveResetCommandMessage
     Log.error('implement saveResetCommandMessage: $identifier');
-    return false;
+    return true;
   }
 
   Future<bool> removeGroup({required ID group}) async =>
@@ -357,7 +357,7 @@ class SharedDatabase implements AccountDBI, SessionDBI, MessageDBI,
   bool saveGroupKeys({required ID group, required ID sender, required Map keys}) {
     // TODO: implement saveGroupKeys
     Log.error('implement saveGroupKeys: $group');
-    return false;
+    return true;
   }
 
   //

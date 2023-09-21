@@ -13,6 +13,7 @@ import '../network/image_view.dart';
 import '../widgets/alert.dart';
 import 'amanuensis.dart';
 import 'chat.dart';
+import 'chat_contact.dart';
 
 class GroupInfo extends Conversation implements lnc.Observer {
   GroupInfo(super.identifier, {super.unread = 0, super.lastMessage, super.lastTime}) {
@@ -46,6 +47,8 @@ class GroupInfo extends Conversation implements lnc.Observer {
   ContactRemark? _remark;
 
   String? _temporaryTitle;
+
+  List<ContactInfo>? _members;
 
   /// owner
   int get ownerFlag {
@@ -112,6 +115,15 @@ class GroupInfo extends Conversation implements lnc.Observer {
     return '$name ($alias)';
   }
 
+  List<ContactInfo> get members {
+    List<ContactInfo>? users = _members;
+    if (users == null) {
+      _members = users = [];
+      reloadData();
+    }
+    return users;
+  }
+
   @override
   Widget getImage({double? width, double? height, GestureTapCallback? onTap}) =>
       ImageViewFactory().fromID(identifier, width: width, height: height, onTap: onTap);
@@ -148,6 +160,7 @@ class GroupInfo extends Conversation implements lnc.Observer {
       Document? doc = await shared.facebook.getDocument(identifier, '*');
       if (doc == null) {
         _memberFlag = null;
+        _members = null;
       } else {
         List<ID> members = await shared.facebook.getMembers(identifier);
         if (members.contains(me)) {
@@ -155,6 +168,17 @@ class GroupInfo extends Conversation implements lnc.Observer {
         } else {
           _memberFlag = -1;
         }
+        List<ContactInfo> users = [];
+        for (ID item in members) {
+          users.add(ContactInfo.fromID(item));
+        }
+        _members = users;
+        // post notification
+        var nc = lnc.NotificationCenter();
+        nc.postNotification(NotificationNames.kParticipantsUpdated, this, {
+          'ID': identifier,
+          'members': members,
+        });
       }
     }
     // get remark

@@ -385,7 +385,7 @@ class GroupManager {
 
   // private
   Future<bool> _sendCommand(Command content, List<ID> members) async {
-    assert(content.group != null, 'group command error: $content');
+    // assert(content.group != null, 'group command error: $content');
     User? user = await currentUser;
     if (user == null) {
       assert(false, 'failed to get current user');

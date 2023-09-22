@@ -104,8 +104,8 @@ class ImageViewFactory {
 
 }
 
-const String kFacadeRefresh = 'FacadeRefresh';
-const String kImageContentRefresh = 'ImageContentRefresh';
+const String _kFacadeRefresh = 'FacadeRefresh';
+const String _kImageContentRefresh = 'ImageContentRefresh';
 
 class _FacadeInfo {
   _FacadeInfo(this.identifier);
@@ -144,7 +144,7 @@ class _FacadeView extends StatefulWidget {
     }
     ImageFactory factory = ImageFactory();
     await factory.downloadDocument(doc);
-    await lnc.NotificationCenter().postNotification(kFacadeRefresh, this, {
+    await lnc.NotificationCenter().postNotification(_kFacadeRefresh, this, {
       'ID': info.identifier,
     });
   }
@@ -157,7 +157,7 @@ class _FacadeView extends StatefulWidget {
 class _FacadeState extends State<_FacadeView> implements lnc.Observer {
   _FacadeState() {
     var nc = lnc.NotificationCenter();
-    nc.addObserver(this, kFacadeRefresh);
+    nc.addObserver(this, _kFacadeRefresh);
     nc.addObserver(this, NotificationNames.kDocumentUpdated);
     nc.addObserver(this, NotificationNames.kFileDownloadSuccess);
   }
@@ -167,7 +167,7 @@ class _FacadeState extends State<_FacadeView> implements lnc.Observer {
     var nc = lnc.NotificationCenter();
     nc.removeObserver(this, NotificationNames.kFileDownloadSuccess);
     nc.removeObserver(this, NotificationNames.kDocumentUpdated);
-    nc.removeObserver(this, kFacadeRefresh);
+    nc.removeObserver(this, _kFacadeRefresh);
     super.dispose();
   }
 
@@ -175,7 +175,7 @@ class _FacadeState extends State<_FacadeView> implements lnc.Observer {
   Future<void> onReceiveNotification(lnc.Notification notification) async {
     String name = notification.name;
     Map? userInfo = notification.userInfo;
-    if (name == kFacadeRefresh) {
+    if (name == _kFacadeRefresh) {
       ID? identifier = userInfo?['ID'];
       if (identifier == widget.info.identifier) {
         if (mounted) {
@@ -269,7 +269,7 @@ class _AutoImageView extends StatefulWidget {
   Future<void> refresh() async {
     ImageFactory factory = ImageFactory();
     await factory.downloadContent(content);
-    await lnc.NotificationCenter().postNotification(kImageContentRefresh, this, {
+    await lnc.NotificationCenter().postNotification(_kImageContentRefresh, this, {
       'content': content,
     });
   }
@@ -282,13 +282,13 @@ class _AutoImageView extends StatefulWidget {
 class _AutoImageState extends State<_AutoImageView> implements lnc.Observer {
   _AutoImageState() {
     var nc = lnc.NotificationCenter();
-    nc.addObserver(this, kImageContentRefresh);
+    nc.addObserver(this, _kImageContentRefresh);
   }
 
   @override
   void dispose() {
     var nc = lnc.NotificationCenter();
-    nc.removeObserver(this, kImageContentRefresh);
+    nc.removeObserver(this, _kImageContentRefresh);
     super.dispose();
   }
 
@@ -296,7 +296,7 @@ class _AutoImageState extends State<_AutoImageView> implements lnc.Observer {
   Future<void> onReceiveNotification(lnc.Notification notification) async {
     String name = notification.name;
     Map? userInfo = notification.userInfo;
-    if (name == kImageContentRefresh) {
+    if (name == _kImageContentRefresh) {
       ImageContent? content = userInfo?['content'];
       if (content == widget.content) {
         if (mounted) {

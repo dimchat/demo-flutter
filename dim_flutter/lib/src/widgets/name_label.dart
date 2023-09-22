@@ -3,14 +3,15 @@ import 'package:flutter/material.dart';
 
 import 'package:dim_client/dim_client.dart';
 import 'package:lnc/lnc.dart' as lnc;
-import 'package:lnc/lnc.dart' show Log;
 
 import '../client/constants.dart';
-import '../client/shared.dart';
+import '../models/chat.dart';
+
+const String _kNameViewRefresh = 'NameViewRefresh';
 
 /// NameView
 class NameLabel extends StatefulWidget {
-  const NameLabel(this.identifier, {super.key,
+  const NameLabel(this.info, {super.key,
     this.style,
     this.strutStyle,
     this.textAlign,
@@ -26,7 +27,7 @@ class NameLabel extends StatefulWidget {
     this.selectionColor,
   });
 
-  final ID identifier;
+  final Conversation info;
 
   final TextStyle? style;
   final StrutStyle? strutStyle;
@@ -42,6 +43,19 @@ class NameLabel extends StatefulWidget {
   final TextHeightBehavior? textHeightBehavior;
   final Color? selectionColor;
 
+  /// reload info
+  Future<void> reload() async {
+    await info.reloadData();
+    await refresh();
+  }
+
+  /// refresh label
+  Future<void> refresh() async {
+    await lnc.NotificationCenter().postNotification(_kNameViewRefresh, this, {
+      'ID': info.identifier,
+    });
+  }
+
   @override
   State<StatefulWidget> createState() => _NameState();
 
@@ -50,15 +64,15 @@ class NameLabel extends StatefulWidget {
 class _NameState extends State<NameLabel> implements lnc.Observer {
   _NameState() {
     var nc = lnc.NotificationCenter();
+    nc.addObserver(this, _kNameViewRefresh);
     nc.addObserver(this, NotificationNames.kDocumentUpdated);
   }
-
-  String? _name;
 
   @override
   void dispose() {
     var nc = lnc.NotificationCenter();
     nc.removeObserver(this, NotificationNames.kDocumentUpdated);
+    nc.removeObserver(this, _kNameViewRefresh);
     super.dispose();
   }
 
@@ -66,48 +80,42 @@ class _NameState extends State<NameLabel> implements lnc.Observer {
   Future<void> onReceiveNotification(lnc.Notification notification) async {
     String name = notification.name;
     Map? info = notification.userInfo;
-    assert(name == NotificationNames.kDocumentUpdated, 'notification error: $notification');
-    ID? identifier = info?['ID'];
-    if (identifier == null) {
-      Log.error('notification error: $notification');
-    } else if (identifier == widget.identifier) {
-      _reload();
+    if (name == _kNameViewRefresh) {
+      ID? identifier = info?['ID'];
+      if (identifier == widget.info.identifier) {
+        if (mounted) {
+          setState(() {
+            // refresh
+          });
+        }
+      }
+    } else if (name == NotificationNames.kDocumentUpdated) {
+      ID? identifier = info?['ID'];
+      if (identifier == widget.info.identifier) {
+        if (mounted) {
+          setState(() {
+            // refresh
+          });
+        }
+      }
     }
   }
 
-  void _reload() {
-    GlobalVariable shared = GlobalVariable();
-    shared.facebook.getName(widget.identifier).then((name) {
-      if (mounted) {
-        setState(() {
-          _name = name;
-        });
-      }
-    });
-  }
-
   @override
-  void initState() {
-    super.initState();
-    _name = widget.identifier.toString();
-    _reload();
-  }
-
-  @override
-  Widget build(BuildContext context) => Text('$_name',
-    style: widget.style,
-    strutStyle: widget.strutStyle,
-    textAlign: widget.textAlign,
-    textDirection: widget.textDirection,
-    locale: widget.locale,
-    softWrap: widget.softWrap,
-    overflow: widget.overflow,
-    textScaleFactor: widget.textScaleFactor,
-    maxLines: widget.maxLines,
-    semanticsLabel: widget.semanticsLabel,
-    textWidthBasis: widget.textWidthBasis,
+  Widget build(BuildContext context) => Text(widget.info.name,
+    style:              widget.style,
+    strutStyle:         widget.strutStyle,
+    textAlign:          widget.textAlign,
+    textDirection:      widget.textDirection,
+    locale:             widget.locale,
+    softWrap:           widget.softWrap,
+    overflow:           widget.overflow,
+    textScaleFactor:    widget.textScaleFactor,
+    maxLines:           widget.maxLines,
+    semanticsLabel:     widget.semanticsLabel,
+    textWidthBasis:     widget.textWidthBasis,
     textHeightBehavior: widget.textHeightBehavior,
-    selectionColor: widget.selectionColor,
+    selectionColor:     widget.selectionColor,
   );
 
 }

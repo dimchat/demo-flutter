@@ -12,7 +12,6 @@ import '../network/image_view.dart';
 import 'audio.dart';
 import 'browser.dart';
 import 'name_card.dart';
-import 'name_label.dart';
 import 'preview.dart';
 import 'styles.dart';
 
@@ -68,7 +67,7 @@ abstract class ContentViewUtils {
   static Widget getNameLabel(BuildContext context, ID sender) => Container(
     margin: Styles.messageSenderNameMargin,
     constraints: const BoxConstraints(maxWidth: 256),
-    child: NameLabel(sender,
+    child: Conversation.fromID(sender).getNameLabel(
       style: Facade.of(context).styles.messageSenderNameTextStyle,
     ),
   );

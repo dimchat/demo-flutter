@@ -7,6 +7,7 @@ import '../client/shared.dart';
 import '../common/dbi/contact.dart';
 import '../widgets/alert.dart';
 
+import '../widgets/name_label.dart';
 import 'chat_contact.dart';
 import 'chat_group.dart';
 import 'shield.dart';
@@ -42,6 +43,36 @@ abstract class Conversation {
 
   /// icon
   Widget getImage({double? width, double? height, GestureTapCallback? onTap});
+
+  NameLabel getNameLabel({
+    TextStyle? style,
+    StrutStyle? strutStyle,
+    TextAlign? textAlign,
+    TextDirection? textDirection,
+    Locale? locale,
+    bool? softWrap,
+    TextOverflow? overflow,
+    double? textScaleFactor,
+    int? maxLines,
+    String? semanticsLabel,
+    TextWidthBasis? textWidthBasis,
+    TextHeightBehavior? textHeightBehavior,
+    Color? selectionColor,
+  }) => NameLabel(this,
+    style:              style,
+    strutStyle:         strutStyle,
+    textAlign:          textAlign,
+    textDirection:      textDirection,
+    locale:             locale,
+    softWrap:           softWrap,
+    overflow:           overflow,
+    textScaleFactor:    textScaleFactor,
+    maxLines:           maxLines,
+    semanticsLabel:     semanticsLabel,
+    textWidthBasis:     textWidthBasis,
+    textHeightBehavior: textHeightBehavior,
+    selectionColor:     selectionColor,
+  )..reload();
 
   ContactRemark? _remark;
 

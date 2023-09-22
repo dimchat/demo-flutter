@@ -27,7 +27,7 @@ class IconView extends StatelessWidget {
 class IconSpot extends StatelessWidget {
   const IconSpot({super.key});
 
-  static const AlignmentGeometry alignment = AlignmentDirectional(1.3, -1.3);
+  static const AlignmentGeometry alignment = AlignmentDirectional(1.2, -1.2);
 
   static IconSpot? fromInt(int number) {
     if (number <= 0) {
@@ -52,7 +52,7 @@ class IconBadge extends StatelessWidget {
 
   final String text;
 
-  static const AlignmentGeometry alignment = AlignmentDirectional(1.6, -1.6);
+  static const AlignmentGeometry alignment = AlignmentDirectional(1.4, -1.4);
 
   static IconBadge? fromInt(int number) {
     if (number <= 0) {

@@ -8,7 +8,6 @@ import 'package:dim_client/dim_client.dart';
 import 'package:lnc/lnc.dart' show Log;
 
 import '../models/chat_contact.dart';
-import 'name_label.dart';
 import 'styles.dart';
 import 'table.dart';
 import 'title.dart';
@@ -177,7 +176,7 @@ class _PickContactState extends State<_PickContactCell> {
   @override
   Widget build(BuildContext context) => CupertinoTableCell(
     leading: widget.info.getImage(),
-    title: NameLabel(widget.info.identifier),
+    title: widget.info.getNameLabel(),
     trailing: widget.isSelected ? const Icon(Styles.selectedIcon) : null,
     onTap: () => setState(() {
       GestureTapCallback? callback = widget.onTap;

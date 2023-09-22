@@ -1,5 +1,6 @@
 import 'package:dim_client/dim_client.dart';
 
+import 'group/invite.dart';
 import 'any.dart';
 import 'search.dart';
 
@@ -22,6 +23,9 @@ class SharedContentProcessorCreator extends ClientContentProcessorCreator {
     if (cmd == SearchCommand.kOnlineUsers ||
         cmd == SearchCommand.kSearch) {
       return SearchCommandProcessor(facebook!, messenger!);
+    }
+    if (cmd == GroupCommand.kInvite) {
+      return LooseInviteCommandProcessor(facebook!, messenger!);
     }
     // others
     return super.createCommandProcessor(msgType, cmd);

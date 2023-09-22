@@ -84,7 +84,6 @@ class _ContactTable extends DataTableHandler<ID> implements ContactDBI {
     return await updateContacts(contacts, oldContacts, user) >= 0;
   }
 
-  @override
   Future<bool> addContact(ID contact, {required ID user}) async {
     List<ID> oldContacts = await getContacts(user: user);
     if (oldContacts.contains(contact)) {
@@ -95,7 +94,6 @@ class _ContactTable extends DataTableHandler<ID> implements ContactDBI {
     return await updateContacts(newContacts, oldContacts, user) >= 0;
   }
 
-  @override
   Future<bool> removeContact(ID contact, {required ID user}) async {
     List<ID> oldContacts = await getContacts(user: user);
     if (!oldContacts.contains(contact)) {

@@ -54,7 +54,7 @@ class _RemarkTable extends DataTableHandler<ContactRemark> implements RemarkDBI 
           'alias': item.alias,
           'description': item.description,
         };
-        return await update(_table, values: values, conditions: cond) == 1;
+        return await update(_table, values: values, conditions: cond) > 0;
       }
     }
     // add new record

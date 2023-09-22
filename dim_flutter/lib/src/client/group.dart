@@ -441,14 +441,36 @@ class GroupManager {
     }
     ID me = user.identifier;
     // send group command to members directly
+    ForwardContent? forward = await _packGroupCommand(content, me);
+    if (forward == null) {
+      assert(false, 'failed to pack group command: $content');
+      return false;
+    }
     for (ID item in members) {
       if (item == me) {
         // skip cycled message
         continue;
       }
-      messenger?.sendContent(content, sender: me, receiver: item);
+      messenger?.sendContent(forward, sender: me, receiver: item);
     }
     return true;
+  }
+
+  Future<ForwardContent?> _packGroupCommand(Command content, ID sender) async {
+    Envelope env = Envelope.create(sender: sender, receiver: ID.kAnyone);
+    InstantMessage iMsg = InstantMessage.create(env, content);
+    iMsg['group'] = content['group'];  // expose group ID
+    SecureMessage? sMsg = await messenger?.encryptMessage(iMsg);
+    if (sMsg == null) {
+      Log.error('failed to encrypt group message: $env');
+      return null;
+    }
+    ReliableMessage? rMsg = await messenger?.signMessage(sMsg);
+    if (rMsg == null) {
+      Log.error('failed to sign group message: $env');
+      return null;
+    }
+    return ForwardContent.create(forward: rMsg);
   }
 
   // private
@@ -461,19 +483,11 @@ class GroupManager {
     }
     ID me = user.identifier;
     // forward command to the group bot to let it redirect to other members
-    Envelope env = Envelope.create(sender: me, receiver: ID.kAnyone);
-    InstantMessage iMsg = InstantMessage.create(env, content);
-    SecureMessage? sMsg = await messenger?.encryptMessage(iMsg);
-    if (sMsg == null) {
-      assert(false, 'failed to encrypt group message: $env');
+    ForwardContent? forward = await _packGroupCommand(content, me);
+    if (forward == null) {
+      assert(false, 'failed to pack group command: $content');
       return false;
     }
-    ReliableMessage? rMsg = await messenger?.signMessage(sMsg);
-    if (rMsg == null) {
-      assert(false, 'failed to sign group message: $env');
-      return false;
-    }
-    ForwardContent forward = ForwardContent.create(forward: rMsg);
     // forward group command to the bots
     for (ID item in bots) {
       if (item == me) {

@@ -123,7 +123,6 @@ class _UserTable extends DataTableHandler<ID> implements UserDBI {
     return await updateUsers(users, oldUsers) >= 0;
   }
 
-  @override
   Future<bool> addUser(ID user) async {
     List<ID> oldUsers = await getLocalUsers();
     if (oldUsers.contains(user)) {
@@ -134,7 +133,6 @@ class _UserTable extends DataTableHandler<ID> implements UserDBI {
     return await updateUsers(newUsers, oldUsers) >= 0;
   }
 
-  @override
   Future<bool> removeUser(ID user) async {
     List<ID> oldUsers = await getLocalUsers();
     if (!oldUsers.contains(user)) {
@@ -146,7 +144,6 @@ class _UserTable extends DataTableHandler<ID> implements UserDBI {
     return await updateUsers(newUsers, oldUsers) >= 0;
   }
 
-  @override
   Future<bool> setCurrentUser(ID user) async {
     List<ID> oldUsers = await getLocalUsers();
     int pos = oldUsers.indexOf(user);
@@ -162,7 +159,6 @@ class _UserTable extends DataTableHandler<ID> implements UserDBI {
     return await updateUsers(newUsers, oldUsers) >= 0;
   }
 
-  @override
   Future<ID?> getCurrentUser() async {
     List<ID> localUsers = await getLocalUsers();
     return localUsers.isEmpty ? null : localUsers[0];

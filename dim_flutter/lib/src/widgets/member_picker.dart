@@ -72,9 +72,8 @@ class _MemberPickerState extends State<MemberPicker> {
     backgroundColor: Facade.of(context).colors.scaffoldBackgroundColor,
     appBar: CupertinoNavigationBar(
       backgroundColor: Facade.of(context).colors.appBardBackgroundColor,
-      middle: StatedTitleView.from(context, () => 'Select Contacts'),
-      trailing: IconButton(
-        icon: const Icon(Styles.groupChatIcon),
+      middle: StatedTitleView.from(context, () => 'Select Members'),
+      trailing: TextButton(child: const Text('OK'),
         onPressed: () {
           Navigator.pop(context);
           widget.onPicked(_selected);

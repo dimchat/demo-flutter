@@ -1,8 +1,9 @@
 import 'dart:typed_data';
 
 import 'package:dim_client/dim_client.dart';
+import 'package:lnc/lnc.dart';
 
-import '../models/amanuensis.dart';
+import '../models/vestibule.dart';
 import 'compatible.dart';
 import 'shared.dart';
 
@@ -81,14 +82,105 @@ class SharedPacker extends ClientMessagePacker {
 
   @override
   void suspendInstantMessage(InstantMessage iMsg, Map info) {
-    Amanuensis clerk = Amanuensis();
+    Vestibule clerk = Vestibule();
     clerk.suspendInstantMessage(iMsg);
   }
 
   @override
   void suspendReliableMessage(ReliableMessage rMsg, Map info) {
-    Amanuensis clerk = Amanuensis();
+    Vestibule clerk = Vestibule();
     clerk.suspendReliableMessage(rMsg);
+  }
+
+  /*  Situations:
+                      +-------------+-------------+-------------+-------------+
+                      |  receiver   |  receiver   |  receiver   |  receiver   |
+                      |     is      |     is      |     is      |     is      |
+                      |             |             |  broadcast  |  broadcast  |
+                      |    user     |    group    |    user     |    group    |
+        +-------------+-------------+-------------+-------------+-------------+
+        |             |      A      |             |             |             |
+        |             +-------------+-------------+-------------+-------------+
+        |    group    |             |      B      |             |             |
+        |     is      |-------------+-------------+-------------+-------------+
+        |    null     |             |             |      C      |             |
+        |             +-------------+-------------+-------------+-------------+
+        |             |             |             |             |      D      |
+        +-------------+-------------+-------------+-------------+-------------+
+        |             |      E      |             |             |             |
+        |             +-------------+-------------+-------------+-------------+
+        |    group    |             |             |             |             |
+        |     is      |-------------+-------------+-------------+-------------+
+        |  broadcast  |             |             |      F      |             |
+        |             +-------------+-------------+-------------+-------------+
+        |             |             |             |             |      G      |
+        +-------------+-------------+-------------+-------------+-------------+
+        |             |      H      |             |             |             |
+        |             +-------------+-------------+-------------+-------------+
+        |    group    |             |      J      |             |             |
+        |     is      |-------------+-------------+-------------+-------------+
+        |    normal   |             |             |      K      |             |
+        |             +-------------+-------------+-------------+-------------+
+        |             |             |             |             |             |
+        +-------------+-------------+-------------+-------------+-------------+
+   */
+  @override
+  Future<bool> checkReceiverInReliableMessage(ReliableMessage sMsg) async {
+    ID receiver = sMsg.receiver;
+    // check group
+    ID? group = ID.parse(sMsg['group']);
+    if (group == null && receiver.isGroup) {
+      /// Transform:
+      ///     (B) => (J)
+      ///     (D) => (G)
+      group = receiver;
+    }
+    if (group == null || group.isBroadcast) {
+      /// A, C - personal message (or hidden group message)
+      //      the packer will call the facebook to select a user from local
+      //      for this receiver, if no user matched (private key not found),
+      //      this message will be ignored;
+      /// E, F, G - broadcast group message
+      //      broadcast message is not encrypted, so it can be read by anyone.
+      return true;
+    }
+    /// H, J, K - group message
+    //      check for received group message
+    List<ID> members = await getMembers(group);
+    if (members.isNotEmpty) {
+      // group is ready
+      return true;
+    }
+    Log.error('group not ready: $group');
+    // group not ready, suspend message for waiting members
+    Map<String, String> error = {
+      'message': 'group not ready',
+      'group': group.toString(),
+    };
+    suspendReliableMessage(sMsg, error);  // rMsg.put("error", error);
+    return false;
+  }
+
+  @override
+  Future<List<ID>> getMembers(ID group) async {
+    Facebook barrack = facebook!;
+    CommonMessenger transceiver = messenger as CommonMessenger;
+    Document? doc = await barrack.getDocument(group, '*');
+    if (doc == null) {
+      // group not ready, try to query document for it
+      if (await transceiver.queryDocument(group)) {
+        Log.info('querying document for group: $group');
+      }
+      return [];
+    }
+    List<ID> members = await barrack.getMembers(group);
+    if (members.isEmpty) {
+      // group not ready, try to query members for it
+      if (await transceiver.queryMembers(group)) {
+        Log.info('querying members for group: $group');
+      }
+    }
+    return members;
   }
 
 }

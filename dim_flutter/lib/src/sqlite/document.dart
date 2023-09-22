@@ -57,7 +57,7 @@ class _DocumentTable extends DataTableHandler<Document> implements DocumentDBI {
       'data': data,
       'signature': signature,
     };
-    return await update(_table, values: values, conditions: cond) == 1;
+    return await update(_table, values: values, conditions: cond) > 0;
   }
 
   @override

@@ -102,7 +102,7 @@ class _NameState extends State<NameLabel> implements lnc.Observer {
   }
 
   @override
-  Widget build(BuildContext context) => Text(widget.info.name,
+  Widget build(BuildContext context) => Text(widget.info.title,
     style:              widget.style,
     strutStyle:         widget.strutStyle,
     textAlign:          widget.textAlign,

@@ -279,7 +279,7 @@ class _ContactManager {
     GroupInfo? info = _contacts[identifier];
     if (info == null) {
       info = GroupInfo(identifier);
-      // info.reloadData();
+      info.reloadData();
       _contacts[identifier] = info;
     }
     return info;

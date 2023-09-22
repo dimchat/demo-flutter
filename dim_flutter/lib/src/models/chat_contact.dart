@@ -256,7 +256,7 @@ class _ContactManager {
     ContactInfo? info = _contacts[identifier];
     if (info == null) {
       info = ContactInfo(identifier);
-      // info.reloadData();
+      info.reloadData();
       _contacts[identifier] = info;
     }
     return info;

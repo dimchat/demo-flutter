@@ -88,14 +88,14 @@ class _ConversationTable extends DataTableHandler<Conversation> implements Conve
     };
     SQLConditions cond;
     cond = SQLConditions(left: 'cid', comparison: '=', right: chat.identifier.toString());
-    return await update(_table, values: values, conditions: cond) == 1;
+    return await update(_table, values: values, conditions: cond) > 0;
   }
 
   @override
   Future<bool> removeConversation(ID chat) async {
     SQLConditions cond;
     cond = SQLConditions(left: 'cid', comparison: '=', right: chat.toString());
-    return await delete(_table, conditions: cond) == 1;
+    return await delete(_table, conditions: cond) > 0;
   }
 
 }

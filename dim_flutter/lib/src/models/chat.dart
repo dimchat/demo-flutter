@@ -74,8 +74,6 @@ abstract class Conversation {
     selectionColor:     selectionColor,
   )..reload();
 
-  ContactRemark? _remark;
-
   /// name
   String get name => _name ?? '';
   set name(String text) => _name = text;
@@ -94,14 +92,11 @@ abstract class Conversation {
         '</$clazz>';
   }
 
+  ContactRemark? _remark;
+  late final ContactRemark _emptyRemark = ContactRemark.empty(identifier);
+
   /// Remark
-  ContactRemark get remark {
-    ContactRemark? cr = _remark;
-    if (cr == null) {
-      _remark = cr = ContactRemark.empty(identifier);
-    }
-    return cr;
-  }
+  ContactRemark get remark => _remark ?? _emptyRemark;
 
   void setRemark({required BuildContext context, String? alias, String? description}) {
     // update memory
@@ -146,7 +141,7 @@ abstract class Conversation {
     Document? doc = await shared.facebook.getDocument(identifier, '*');
     _name = doc?.name;
     // get remark
-    if (user != null) {
+    if (_remark == null && user != null) {
       var cr = await shared.database.getRemark(identifier, user: user.identifier);
       if (cr != null) {
         _remark = cr;

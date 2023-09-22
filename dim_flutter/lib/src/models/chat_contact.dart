@@ -55,7 +55,7 @@ class ContactInfo extends Conversation implements lnc.Observer {
     }
   }
 
-  String? _avatar;
+  PortableNetworkFile? _avatar;
 
   bool _friend = false;
 
@@ -75,13 +75,7 @@ class ContactInfo extends Conversation implements lnc.Observer {
     return true;
   }
 
-  String? get avatar {
-    String? url = _avatar;
-    if (url == null || url.isEmpty) {
-      url = null;
-    }
-    return url;
-  }
+  String? get avatar => _avatar?.url?.toString();
 
   @override
   String get title {
@@ -113,9 +107,10 @@ class ContactInfo extends Conversation implements lnc.Observer {
     // get avatar
     Document? visa = await shared.facebook.getDocument(identifier, '*');
     if (visa is Visa) {
-      _avatar = visa.avatar?.url.toString();
+      _avatar = visa.avatar;
     } else {
-      _avatar = '';
+      Object? pnf = visa?.getProperty('avatar');
+      _avatar = PortableNetworkFile.parse(pnf);
     }
     // get friendship
     if (user == null) {

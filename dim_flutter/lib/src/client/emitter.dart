@@ -100,25 +100,25 @@ class Emitter implements Observer {
     });
   }
 
-  ///  Send file content message with password
+  ///  Send file data encrypted with password
   ///
   /// @param iMsg     - outgoing message
   /// @param password - key for encrypt/decrypt file data
-  /// @throws IOException on failed to save message
-  Future<void> sendFileContentMessage(InstantMessage iMsg, SymmetricKey password) async {
+  Future<void> sendFileContent(InstantMessage iMsg, SymmetricKey password) async {
     FileContent content = iMsg.content as FileContent;
     // 1. save origin file data
     Uint8List? data = content.data;
+    if (data == null) {
+      Log.warning('already uploaded: ${content.url}');
+      return;
+    }
     String? filename = content.filename;
-    int len = await FileTransfer.cacheFileData(data!, filename!);
+    int len = await FileTransfer.cacheFileData(data, filename!);
     if (len != data.length) {
       Log.error('failed to save file data (len=${data.length}): $filename');
       return;
     }
-    // 2. save instant message without file data
-    content.data = null;
-    await _saveInstantMessage(iMsg);
-    // 3. add upload task with encrypted data
+    // 2. add upload task with encrypted data
     Uint8List encrypted = password.encrypt(data, iMsg);
     filename = FileTransfer.filenameFromData(encrypted, filename);
     ID sender = iMsg.sender;
@@ -131,8 +131,10 @@ class Emitter implements Observer {
     } else {
       // upload success
       Log.info('uploaded filename: ${content.filename} -> $filename => $url');
+      // 3. replace file data with URL & decrypt key
       content.url = url;
-      await _sendInstantMessage(iMsg);
+      content.password = password;
+      content.data = null;
     }
   }
 

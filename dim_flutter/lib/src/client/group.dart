@@ -33,6 +33,7 @@ import 'package:lnc/lnc.dart' show Log;
 
 import '../models/chat_group.dart';
 import 'group_ds.dart';
+import 'shared.dart';
 
 class GroupManager {
   factory GroupManager() => _instance;
@@ -523,8 +524,6 @@ class GroupManager {
     // 1. create message
     Envelope envelope = Envelope.create(sender: sender, receiver: group);
     InstantMessage iMsg = InstantMessage.create(envelope, content);
-    // FIXME: expose 'sn' before 'respondReceipt()' upgraded
-    iMsg['sn'] = content.sn;
     // 2. check group bots
     GroupDelegate delegate = dataSource;
     List<ID> bots = await delegate.getAssistants(group);
@@ -537,19 +536,17 @@ class GroupManager {
     } else {
       // forward the group message to any bot
       ID prime = bots[0];
-      ReliableMessage? rMsg = await _forwardGroupMessage(iMsg, bot: prime, priority: priority);
+      ReliableMessage? rMsg = await _forwardGroupMessage(group, iMsg, bot: prime, priority: priority);
       return Pair(iMsg, rMsg);
     }
   }
 
-  Future<ReliableMessage?> _forwardGroupMessage(InstantMessage iMsg, {required ID bot, required int priority}) async {
+  Future<ReliableMessage?> _forwardGroupMessage(ID group, InstantMessage iMsg, {required ID bot, required int priority}) async {
     // NOTICE: because group assistant (bot) cannot be a member of the group, so
     //         if you want to send a group command to any assistant, you must
     //         set the bot ID as 'receiver' and set the group ID in content;
     //         this means you must send it to the bot directly.
     assert(iMsg.containsKey('group') == false, 'should not happen');
-    ID group = iMsg.receiver;
-    assert(group.isGroup, 'group ID error: $group');
 
     // group bots designated, let group bot to split the message, so
     // here must expose the group ID; this will cause the client to
@@ -586,15 +583,35 @@ class GroupManager {
   /// split group messages and send to all members one by one
   Future<int> _splitGroupMessage(ID group, InstantMessage iMsg, {required int priority}) async {
     GroupDelegate delegate = dataSource;
-    // get members
+
+    // 0. get members
     List<ID> allMembers = await delegate.getMembers(group);
     if (allMembers.isEmpty) {
       Log.warning('group empty: $group');
       return -1;
     }
+
+    // 1. check file content
+    Content content = iMsg.content;
+    if (content is FileContent) {
+      if (content.data != null/* && content.url == null*/) {
+        SymmetricKey? key = await messenger?.getEncryptKey(iMsg);
+        assert(key != null, 'failed to get msg key: '
+            '${iMsg.sender} => ${iMsg.receiver}, ${iMsg['group']}');
+        // call emitter to encrypt & upload file data before send out
+        GlobalVariable shared = GlobalVariable();
+        await shared.emitter.sendFileContent(iMsg, key!);
+        // keep the password in content
+        content.password = key;
+      }
+    }
+    // expose 'sn' for receipts
+    iMsg['sn'] = content.sn;
+
     ID sender = iMsg.sender;
     int success = 0;
-    // split messages
+
+    // 2. split messages
     InstantMessage? item;
     ReliableMessage? res;
     for (ID member in allMembers) {
@@ -611,6 +628,8 @@ class GroupManager {
         assert(false, 'failed to repack message: $member');
         continue;
       }
+
+      // 3. send message
       res = await messenger?.sendInstantMessage(item, priority: priority);
       if (res == null) {
         Log.error('failed to send message: $member in group $group');

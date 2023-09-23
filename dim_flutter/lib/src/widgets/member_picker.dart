@@ -72,7 +72,7 @@ class _MemberPickerState extends State<MemberPicker> {
     backgroundColor: Facade.of(context).colors.scaffoldBackgroundColor,
     appBar: CupertinoNavigationBar(
       backgroundColor: Facade.of(context).colors.appBardBackgroundColor,
-      middle: StatedTitleView.from(context, () => 'Select Members'),
+      middle: StatedTitleView.from(context, () => 'Select Participants'),
       trailing: TextButton(child: const Text('OK'),
         onPressed: () {
           Navigator.pop(context);

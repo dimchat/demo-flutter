@@ -36,7 +36,7 @@ class SharedPacker extends ClientMessagePacker {
             '${iMsg.sender} => ${iMsg.receiver}, ${iMsg['group']}');
         // call emitter to encrypt & upload file data before send out
         GlobalVariable shared = GlobalVariable();
-        await shared.emitter.sendFileContentMessage(iMsg, key!);
+        await shared.emitter.sendFileContent(iMsg, key!);
       }
     }
     // check receiver & encrypt

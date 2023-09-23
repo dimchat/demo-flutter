@@ -85,8 +85,8 @@ class ImageFactory {
           Log.error('image file not found: $path');
           return null;
         }
+        image = FileImage(file);
       }
-      image ??= FileImage(File(path));
       // cache it
       _providers[path] = image;
       _providers[url] = image;
@@ -162,8 +162,8 @@ class ImageFactory {
           Log.error('image file not found: $path');
           return null;
         }
+        image = FileImage(file);
       }
-      image ??= FileImage(File(path));
       // cache it
       _providers[path] = image;
       if (filename != null) {

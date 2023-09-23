@@ -41,6 +41,20 @@ class Amanuensis {
     return array;
   }
 
+  List<Conversation> get groupChats {
+    List<Conversation>? all = _conversations;
+    if (all == null) {
+      return [];
+    }
+    List<Conversation> array = [];
+    for (Conversation chat in all) {
+      if (chat is GroupInfo) {
+        array.add(chat);
+      }
+    }
+    return array;
+  }
+
   List<Conversation> get strangers {
     List<Conversation>? all = _conversations;
     if (all == null) {

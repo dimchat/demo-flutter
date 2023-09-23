@@ -1,8 +1,9 @@
 library dim_flutter;
 
+export 'client/cpu/group/invite.dart';
+export 'client/cpu/search.dart';
 export 'client/cpu/any.dart';
 export 'client/cpu/creator.dart';
-export 'client/cpu/search.dart';
 
 export 'client/client.dart';
 export 'client/compatible.dart';

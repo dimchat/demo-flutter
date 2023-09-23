@@ -118,8 +118,14 @@ class GroupInfo extends Conversation implements lnc.Observer {
         List<ID> members = await shared.facebook.getMembers(identifier);
         _memberFlag = members.contains(me);
         List<ContactInfo> users = [];
+        ContactInfo? info;
         for (ID item in members) {
-          users.add(ContactInfo.fromID(item));
+          info = ContactInfo.fromID(item);
+          if (info == null) {
+            Log.warning('failed to get contact: $item');
+            continue;
+          }
+          users.add(info);
         }
         _members = users;
         // check group name
@@ -193,6 +199,11 @@ class GroupInfo extends Conversation implements lnc.Observer {
       // TODO: create a new bulletin?
       assert(false, 'failed to get group document: $group');
       return 'Failed to get group document';
+    } else {
+      // create new one for modifying
+      Document? doc = Document.parse(bulletin.copyMap(false));
+      assert(doc is Bulletin, 'failed to create bulletin document');
+      bulletin = doc!;
     }
     // 2.1. get sign key for local user
     SignKey? sKey = await shared.facebook.getPrivateKeyForVisaSignature(me);
@@ -254,13 +265,18 @@ class GroupInfo extends Conversation implements lnc.Observer {
     });
   }
 
-  static GroupInfo fromID(ID identifier) =>
+  static GroupInfo? fromID(ID identifier) =>
+      identifier.isUser ? null :
       _ContactManager().getContact(identifier);
 
   static List<GroupInfo> fromList(List<ID> contacts) {
     List<GroupInfo> array = [];
     _ContactManager man = _ContactManager();
     for (ID item in contacts) {
+      if (item.isUser) {
+        Log.warning('ignore user conversation: $item');
+        continue;
+      }
       array.add(man.getContact(item));
     }
     return array;

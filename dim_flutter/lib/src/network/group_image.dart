@@ -89,9 +89,12 @@ class _GroupImageState extends State<GroupImage> implements lnc.Observer {
       height = 15;
     }
     List<Widget> images = [];
+    ContactInfo info;
     Widget img;
     for (int i = 0; i < count; ++i) {
-      img = members[i].getImage(width: width, height: height);
+      info = members[i];
+      info.reloadData();
+      img = info.getImage(width: width, height: height);
       images.add(img);
     }
     double boxWidth = widget.width ?? 48;

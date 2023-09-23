@@ -56,6 +56,11 @@ class Vestibule implements lnc.Observer {
         Log.error('group not ready yet: $entity');
         return;
       }
+      ID? owner = await facebook.getOwner(entity);
+      if (owner == null) {
+        Log.error('group not ready yet: $entity');
+        return;
+      }
       List<ID> members = await facebook.getMembers(entity);
       if (members.isEmpty) {
         Log.error('group not ready yet: $entity');

@@ -34,20 +34,18 @@ class ContactInfo extends Conversation implements lnc.Observer {
       }
     } else if (name == NotificationNames.kContactsUpdated) {
       ID? contact = userInfo?['contact'];
-      Log.info('contact updated: $contact');
       if (contact == identifier) {
+        Log.info('contact updated: $contact');
         await reloadData();
       }
     } else if (name == NotificationNames.kBlockListUpdated) {
       ID? contact = userInfo?['blocked'];
       contact ??= userInfo?['unblocked'];
-      Log.info('blocked contact updated: $contact');
-      if (contact != null) {
-        if (contact == identifier) {
-          await reloadData();
-        }
-      } else {
-        // block-list updated
+      if (contact == identifier) {
+        Log.info('blocked contact updated: $contact');
+        await reloadData();
+      } else if (contact == null) {
+        Log.info('block-list updated');
         await reloadData();
       }
     } else {
@@ -84,7 +82,7 @@ class ContactInfo extends Conversation implements lnc.Observer {
     ContactRemark cr = remark;
     String alias = cr.alias;
     if (alias.isEmpty) {
-      return nickname;
+      return nickname.isEmpty ? Anonymous.getName(identifier) : nickname;
     } else if (nickname.length > 15) {
       nickname = '${nickname.substring(0, 12)}...';
     }
@@ -186,13 +184,18 @@ class ContactInfo extends Conversation implements lnc.Observer {
     });
   }
 
-  static ContactInfo fromID(ID identifier) =>
+  static ContactInfo? fromID(ID identifier) =>
+      identifier.isGroup ? null :
       _ContactManager().getContact(identifier);
 
   static List<ContactInfo> fromList(List<ID> contacts) {
     List<ContactInfo> array = [];
     _ContactManager man = _ContactManager();
     for (ID item in contacts) {
+      if (item.isGroup) {
+        Log.warning('ignore group conversation: $item');
+        continue;
+      }
       array.add(man.getContact(item));
     }
     return array;

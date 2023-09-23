@@ -203,7 +203,7 @@ abstract class Conversation {
     });
   }
 
-  static Conversation fromID(ID identifier) {
+  static Conversation? fromID(ID identifier) {
     if (identifier.isGroup) {
       return GroupInfo.fromID(identifier);
     }
@@ -212,8 +212,14 @@ abstract class Conversation {
 
   static List<Conversation> fromList(List<ID> chats) {
     List<Conversation> array = [];
+    Conversation? info;
     for (ID item in chats) {
-      array.add(fromID(item));
+      info = fromID(item);
+      if (info == null) {
+        Log.warning('ignore conversation: $item');
+        continue;
+      }
+      array.add(info);
     }
     return array;
   }

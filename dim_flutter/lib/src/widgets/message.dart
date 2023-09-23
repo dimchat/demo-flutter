@@ -6,6 +6,7 @@ import 'package:dim_client/dim_client.dart';
 import 'package:lnc/lnc.dart' show Log;
 
 import '../models/chat.dart';
+import '../models/chat_contact.dart';
 import '../models/message.dart';
 import '../network/image_view.dart';
 
@@ -67,7 +68,7 @@ abstract class ContentViewUtils {
   static Widget getNameLabel(BuildContext context, ID sender) => Container(
     margin: Styles.messageSenderNameMargin,
     constraints: const BoxConstraints(maxWidth: 256),
-    child: Conversation.fromID(sender).getNameLabel(
+    child: ContactInfo.fromID(sender)!.getNameLabel(
       style: Facade.of(context).styles.messageSenderNameTextStyle,
     ),
   );

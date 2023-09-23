@@ -2,8 +2,6 @@ import 'package:dim_client/dim_client.dart';
 import 'package:lnc/lnc.dart';
 
 import 'chat.dart';
-import 'chat_contact.dart';
-import 'chat_group.dart';
 
 abstract class MessageBuilder {
 
@@ -147,11 +145,10 @@ class DefaultMessageBuilder extends MessageBuilder {
 
   @override
   String getName(ID identifier) {
-    Conversation chat;
-    if (identifier.isGroup) {
-      chat = GroupInfo.fromID(identifier);
-    } else {
-      chat = ContactInfo.fromID(identifier);
+    Conversation? chat = Conversation.fromID(identifier);
+    if (chat == null) {
+      Log.warning('failed to get conversation: $identifier');
+      return Anonymous.getName(identifier);
     }
     return chat.title;
   }

@@ -203,7 +203,11 @@ class _FacadeState extends State<_FacadeView> implements lnc.Observer {
         Log.warning('avatar not found: ${widget.info.identifier}');
       } else if (url?.toString() == avatar.toString()) {
         Log.info('avatar downloaded, refreshing facade: $url, $avatar');
-        // widget.refresh();
+        if (mounted) {
+          setState(() {
+            // refresh
+          });
+        }
       }
     } else {
       assert(false, 'should not happen');

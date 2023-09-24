@@ -55,12 +55,14 @@ class ContactInfo extends Conversation implements lnc.Observer {
 
   PortableNetworkFile? _avatar;
 
-  bool _friend = false;
+  // null means checking
+  bool? _friendFlag;
 
-  bool get isFriend => _friend;
+  bool get isFriend => _friendFlag == true;
+  bool get isNotFriend => _friendFlag == false;
 
   bool get isNewFriend {
-    if (_friend) {
+    if (isFriend) {
       // already be friend
       return false;
     } else if (isBlocked) {
@@ -112,10 +114,10 @@ class ContactInfo extends Conversation implements lnc.Observer {
     }
     // get friendship
     if (user == null) {
-      _friend = false;
+      _friendFlag = null;
     } else {
       List<ID> contacts = await shared.facebook.getContacts(user.identifier);
-      _friend = contacts.contains(identifier);
+      _friendFlag = contacts.contains(identifier);
     }
   }
 

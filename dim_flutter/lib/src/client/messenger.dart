@@ -6,7 +6,6 @@ import 'package:lnc/lnc.dart';
 import '../models/shield.dart';
 import '../network/velocity.dart';
 
-import 'compatible.dart';
 import 'shared.dart';
 
 class SharedMessenger extends ClientMessenger {
@@ -15,20 +14,10 @@ class SharedMessenger extends ClientMessenger {
   dynamic _remoteAddress;  // Tuple[str, int]
 
   @override
-  Future<Uint8List> serializeContent(Content content,
-      SymmetricKey password, InstantMessage iMsg) async {
-    if (content is Command) {
-      content = Compatible.fixCommand(content);
-    }
-    return await super.serializeContent(content, password, iMsg);
-  }
-
-  @override
   Future<Content?> deserializeContent(Uint8List data, SymmetricKey password,
       SecureMessage sMsg) async {
     Content? content = await super.deserializeContent(data, password, sMsg);
     if (content is Command) {
-      content = Compatible.fixCommand(content);
       // get client IP from handshake response
       if (content is HandshakeCommand) {
         var remote = content['remote_address'];

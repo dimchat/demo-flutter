@@ -1,29 +1,11 @@
-import 'dart:typed_data';
-
 import 'package:dim_client/dim_client.dart';
 import 'package:lnc/lnc.dart';
 
 import '../models/vestibule.dart';
-import 'compatible.dart';
 import 'shared.dart';
 
 class SharedPacker extends ClientMessagePacker {
   SharedPacker(super.facebook, super.messenger);
-
-  @override
-  Future<Uint8List?> serializeMessage(ReliableMessage rMsg) async {
-    Compatible.fixMetaAttachment(rMsg);
-    return await super.serializeMessage(rMsg);
-  }
-
-  @override
-  Future<ReliableMessage?> deserializeMessage(Uint8List data) async {
-    ReliableMessage? rMsg = await super.deserializeMessage(data);
-    if (rMsg != null) {
-      Compatible.fixMetaAttachment(rMsg);
-    }
-    return rMsg;
-  }
 
   @override
   Future<SecureMessage?> encryptMessage(InstantMessage iMsg) async {
@@ -51,7 +33,16 @@ class SharedPacker extends ClientMessagePacker {
     } catch (e) {
       String errMsg = e.toString();
       if (errMsg.contains('failed to decrypt message key')) {
+        // Exception from 'SecureMessagePacker::decrypt(sMsg, receiver)'
+        Log.warning('decrypt message error: $e');
         // visa.key changed?
+        // push my newest visa to the sender
+      } else if (errMsg.contains('receiver error')) {
+        // Exception from 'MessagePacker::decryptMessage(sMsg)'
+        Log.error('decrypt message error: $e');
+        // not for you?
+        // just ignore it
+        return null;
       } else {
         rethrow;
       }
@@ -80,6 +71,58 @@ class SharedPacker extends ClientMessagePacker {
     return iMsg;
   }
 
+  // protected
+  Future<bool> pushVisa(ID contact) async {
+    QueryFrequencyChecker checker = QueryFrequencyChecker();
+    if (!checker.isDocumentResponseExpired(contact, force: false)) {
+      // response not expired yet
+      Log.debug('visa response not expired yet: $contact');
+      return false;
+    }
+    Log.info('push visa to: $contact');
+    User? user = await facebook?.currentUser;
+    Visa? visa = await user?.visa;
+    if (visa == null || !visa.isValid) {
+      // FIXME: user visa not found?
+      assert(false, 'user visa error: $user');
+      return false;
+    }
+    ID me = user!.identifier;
+    DocumentCommand command = DocumentCommand.response(me, null, visa);
+    CommonMessenger transceiver = messenger as CommonMessenger;
+    transceiver.sendContent(command, sender: me, receiver: contact, priority: 1);
+    return true;
+  }
+
+  // protected
+  Future<InstantMessage?> getFailedMessage(SecureMessage sMsg) async {
+    ID sender = sMsg.sender;
+    ID? group = sMsg.group;
+    int? type = sMsg.type;
+    if (type == ContentType.kCommand || type == ContentType.kHistory) {
+      Log.warning('ignore message unable to decrypt (type=$type) from "$sender"');
+      return null;
+    }
+    // create text content
+    Content content = TextContent.create('Failed to decrypt message.');
+    content.addAll({
+      'template': 'Failed to decrypt message (type=\$type) from "\$sender".',
+      'replacements': {
+        'type': type,
+        'sender': sender.toString(),
+        'group': group?.toString(),
+      }
+    });
+    if (group != null) {
+      content.group = group;
+    }
+    // pack instant message
+    Map info = sMsg.copyMap(false);
+    info.remove('data');
+    info['content'] = content.toMap();
+    return InstantMessage.parse(info);
+  }
+
   @override
   void suspendInstantMessage(InstantMessage iMsg, Map info) {
     Vestibule clerk = Vestibule();
@@ -92,95 +135,14 @@ class SharedPacker extends ClientMessagePacker {
     clerk.suspendReliableMessage(rMsg);
   }
 
-  /*  Situations:
-                      +-------------+-------------+-------------+-------------+
-                      |  receiver   |  receiver   |  receiver   |  receiver   |
-                      |     is      |     is      |     is      |     is      |
-                      |             |             |  broadcast  |  broadcast  |
-                      |    user     |    group    |    user     |    group    |
-        +-------------+-------------+-------------+-------------+-------------+
-        |             |      A      |             |             |             |
-        |             +-------------+-------------+-------------+-------------+
-        |    group    |             |      B      |             |             |
-        |     is      |-------------+-------------+-------------+-------------+
-        |    null     |             |             |      C      |             |
-        |             +-------------+-------------+-------------+-------------+
-        |             |             |             |             |      D      |
-        +-------------+-------------+-------------+-------------+-------------+
-        |             |      E      |             |             |             |
-        |             +-------------+-------------+-------------+-------------+
-        |    group    |             |             |             |             |
-        |     is      |-------------+-------------+-------------+-------------+
-        |  broadcast  |             |             |      F      |             |
-        |             +-------------+-------------+-------------+-------------+
-        |             |             |             |             |      G      |
-        +-------------+-------------+-------------+-------------+-------------+
-        |             |      H      |             |             |             |
-        |             +-------------+-------------+-------------+-------------+
-        |    group    |             |      J      |             |             |
-        |     is      |-------------+-------------+-------------+-------------+
-        |    normal   |             |             |      K      |             |
-        |             +-------------+-------------+-------------+-------------+
-        |             |             |             |             |             |
-        +-------------+-------------+-------------+-------------+-------------+
-   */
-  @override
-  Future<bool> checkReceiverInReliableMessage(ReliableMessage sMsg) async {
-    ID receiver = sMsg.receiver;
-    // check group
-    ID? group = ID.parse(sMsg['group']);
-    if (group == null && receiver.isGroup) {
-      /// Transform:
-      ///     (B) => (J)
-      ///     (D) => (G)
-      group = receiver;
-    }
-    if (group == null || group.isBroadcast) {
-      /// A, C - personal message (or hidden group message)
-      //      the packer will call the facebook to select a user from local
-      //      for this receiver, if no user matched (private key not found),
-      //      this message will be ignored;
-      /// E, F, G - broadcast group message
-      //      broadcast message is not encrypted, so it can be read by anyone.
-      return true;
-    }
-    /// H, J, K - group message
-    //      check for received group message
-    List<ID> members = await getMembers(group);
-    if (members.isNotEmpty) {
-      // group is ready
-      return true;
-    }
-    Log.error('group not ready: $group');
-    // group not ready, suspend message for waiting members
-    Map<String, String> error = {
-      'message': 'group not ready',
-      'group': group.toString(),
-    };
-    suspendReliableMessage(sMsg, error);  // rMsg.put("error", error);
-    return false;
-  }
-
-  @override
-  Future<List<ID>> getMembers(ID group) async {
-    Facebook barrack = facebook!;
-    CommonMessenger transceiver = messenger as CommonMessenger;
-    Document? doc = await barrack.getDocument(group, '*');
-    if (doc == null) {
-      // group not ready, try to query document for it
-      if (await transceiver.queryDocument(group)) {
-        Log.info('querying document for group: $group');
-      }
-      return [];
-    }
-    List<ID> members = await barrack.getMembers(group);
-    if (members.isEmpty) {
-      // group not ready, try to query members for it
-      if (await transceiver.queryMembers(group)) {
-        Log.info('querying members for group: $group');
-      }
-    }
-    return members;
-  }
+  // @override
+  // Future<List<ID>> getMembers(ID group) async {
+  //   ID? owner = await facebook?.getOwner(group);
+  //   if (owner == null) {
+  //     Log.warning('failed to get owner of group: $group');
+  //     return [];
+  //   }
+  //   return await super.getMembers(group);
+  // }
 
 }

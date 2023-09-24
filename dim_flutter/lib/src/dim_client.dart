@@ -6,7 +6,6 @@ export 'client/cpu/any.dart';
 export 'client/cpu/creator.dart';
 
 export 'client/client.dart';
-export 'client/compatible.dart';
 export 'client/constants.dart';
 export 'client/database.dart';
 export 'client/emitter.dart';

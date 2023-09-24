@@ -1,6 +1,6 @@
 name: dim_flutter
 description: DIM Flutter Client
-version: 0.1.0-dev.1
+version: 0.1.0
 homepage: https://github.com/dimchat/demo-flutter
 repository: https://github.com/dimchat/demo-flutter
 issue_tracker: https://github.com/dimchat/demo-flutter/issues
@@ -37,7 +37,7 @@ dependencies:
   bip39: ^1.0.6
 
   lnc: ^0.1.0
-  dim_client: ^0.2.2
+  dim_client: ^0.2.3
 
 dev_dependencies:
   flutter_test:

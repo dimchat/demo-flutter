@@ -50,9 +50,11 @@ class LooseInviteCommandProcessor extends ResetCommandProcessor {
       return [];
     }
     ID group = command.group!;
+    String text;
     List<ID> inviteList = getMembersFromCommand(command);
     if (inviteList.isEmpty) {
-      return respondReceipt('Command error.', rMsg, group: group, extra: {
+      text = 'Command error.';
+      return respondReceipt(text, content: content, envelope: rMsg.envelope, extra: {
         'template': 'Invite list is empty: \${ID}',
         'replacements': {
           'ID': group.toString(),
@@ -65,18 +67,22 @@ class LooseInviteCommandProcessor extends ResetCommandProcessor {
     List<ID> members = await getMembers(group);
     if (owner == null || members.isEmpty) {
       // TODO: query group members?
-      return respondReceipt('Group empty.', rMsg, group: group, extra: {
+      text = 'Group empty.';
+      return respondReceipt(text, content: content, envelope: rMsg.envelope, extra: {
         'template': 'Group empty: \${ID}',
         'replacements': {
           'ID': group.toString(),
         }
       });
     }
+    ID sender = rMsg.sender;
+    bool isOwner = owner == sender;
+    bool isMember = members.contains(sender);
 
     // 2. check permission
-    ID sender = rMsg.sender;
-    if (!members.contains(sender)) {
-      return respondReceipt('Permission denied.', rMsg, group: group, extra: {
+    if (!isMember) {
+      text = 'Permission denied.';
+      return respondReceipt(text, content: content, envelope: rMsg.envelope, extra: {
         'template': 'Not allowed to invite member into group: \${ID}',
         'replacements': {
           'ID': group.toString(),
@@ -88,7 +94,7 @@ class LooseInviteCommandProcessor extends ResetCommandProcessor {
     Pair<List<ID>, List<ID>> pair = _calculateInvited(members: members, inviteList: inviteList);
     List<ID> newMembers = pair.first;
     List<ID> addedList = pair.second;
-    if (addedList.isEmpty) {
+    if (addedList.isEmpty && !isOwner) {
       // maybe those users are already become members,
       // but if it can still receive an 'invite' command here,
       // we should respond the sender with the newest membership again.

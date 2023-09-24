@@ -49,7 +49,7 @@ class AnyContentProcessor extends BaseContentProcessor {
     }
 
     // response
-    return respondReceipt(text, rMsg);
+    return respondReceipt(text, content: content, envelope: rMsg.envelope);
   }
 
 }

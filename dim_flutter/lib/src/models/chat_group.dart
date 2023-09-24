@@ -248,20 +248,17 @@ class GroupInfo extends Conversation implements lnc.Observer {
   void _doQuit(BuildContext ctx, ID group, ID user) {
     // 1. quit group
     GroupManager man = GroupManager();
-    man.quitGroup(group);
-    // 2. remove from contact list
-    Amanuensis clerk = Amanuensis();
-    clerk.removeConversation(group).onError((error, stackTrace) {
-      Alert.show(ctx, 'Error', 'Failed to remove conversation');
-      return false;
-    });
-    GlobalVariable shared = GlobalVariable();
-    shared.database.removeContact(group, user: user).then((ok) {
-      if (ok) {
-        Log.warning('group removed: $group, user: $user');
-      } else {
-        Alert.show(ctx, 'Error', 'Failed to remove group');
-      }
+    man.quitGroup(group).then((out) {
+      // 2. remove conversation
+      Amanuensis clerk = Amanuensis();
+      clerk.removeConversation(group);
+      // 3. remove from contact list
+      GlobalVariable shared = GlobalVariable();
+      shared.database.removeContact(group, user: user);
+      // OK
+      Navigator.pop(ctx);
+    }).onError((error, stackTrace) {
+      Alert.show(ctx, 'Error', error.toString());
     });
   }
 

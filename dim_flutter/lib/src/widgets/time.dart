@@ -27,7 +27,11 @@ abstract class TimeUtils extends Time {
   static String getTimeString(DateTime time) {
     time = time.toLocal();
     int timestamp = time.millisecondsSinceEpoch;
-    int midnight = DateTime(time.year, time.month, time.day).millisecondsSinceEpoch;
+    // special time
+    DateTime now = currentTime;
+    int midnight = DateTime(now.year, now.month, now.day).millisecondsSinceEpoch;
+    int newYear = DateTime(now.year).millisecondsSinceEpoch;
+    // hh:mm
     String hh = _twoDigits(time.hour);
     String mm = _twoDigits(time.minute);
     if (timestamp >= midnight) {
@@ -45,7 +49,7 @@ abstract class TimeUtils extends Time {
       String weekday = _weakDayName(time.weekday);
       return '$weekday $hh:$mm';
     }
-    int newYear = DateTime(time.year).millisecondsSinceEpoch;
+    // m-d
     String m = _twoDigits(time.month);
     String d = _twoDigits(time.day);
     if (timestamp >= newYear) {

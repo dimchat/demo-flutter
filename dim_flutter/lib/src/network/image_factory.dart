@@ -81,7 +81,9 @@ class ImageFactory {
       image = _providers[path];
       if (image == null) {
         File file = File(path);
-        if (await file.length() == 0) {
+        if (await file.exists() && await file.length() > 0) {
+          // OK
+        } else {
           Log.error('image file not found: $path');
           return null;
         }
@@ -158,7 +160,9 @@ class ImageFactory {
       image = _providers[path];
       if (image == null) {
         File file = File(path);
-        if (await file.length() == 0) {
+        if (await file.exists() && await file.length() > 0) {
+          // OK
+        } else {
           Log.error('image file not found: $path');
           return null;
         }

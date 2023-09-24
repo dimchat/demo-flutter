@@ -149,7 +149,11 @@ class FileTransfer {
     if (data == null) {
       Log.error('failed to decrypt file: $tempPath, password: $password');
       // delete to download again
-      await Paths.delete(tempPath);
+      try {
+        await Paths.delete(tempPath);
+      } catch (e) {
+        Log.error('failed to delete file: $tempPath, error: $e');
+      }
       return null;
     }
     // save decrypted file data

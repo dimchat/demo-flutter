@@ -191,7 +191,7 @@ class GroupManager {
     assert(doc != null, 'document not found: $group');
 
     // 2. build 'meta/document' command
-    Command? command;
+    Command command;
     if (doc != null) {
       command = DocumentCommand.response(group, meta, doc);
     } else if (meta != null) {
@@ -202,9 +202,7 @@ class GroupManager {
       return false;
     }
     // 2.1. send 'meta/document' command
-    if (command == null) {
-      assert(false, 'should not happen');
-    } else if (bots.isEmpty) {
+    if (bots.isEmpty) {
       // group bots not exist, so we need to
       // send the document to all new members directly.
       _sendCommand(command, newMembers);                // to new members
@@ -273,7 +271,7 @@ class GroupManager {
     assert(doc != null, 'document not found: $group');
 
     // 2. build 'meta/document' command
-    Command? command;
+    Command command;
     if (doc != null) {
       command = DocumentCommand.response(group, meta, doc);
     } else if (meta != null) {
@@ -284,9 +282,7 @@ class GroupManager {
       return false;
     }
     // 2.1. send 'meta/document' command
-    if (command == null) {
-      assert(false, 'should not happen');
-    } else if (bots.isEmpty) {
+    if (bots.isEmpty) {
       // group bots not exist, so we need to
       // send the document to all new members directly.
       _sendCommand(command, newMembers);                // to new members

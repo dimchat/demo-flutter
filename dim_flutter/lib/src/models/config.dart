@@ -14,9 +14,9 @@ class Config {
   static final Config _instance = Config._internal();
   Config._internal();
 
-  // TODO: start a background thread to query 'https://dim.chat/sechat/gsp.js'
+  // TODO: start a bg-thread to query 'http://tarsier.dim.chat/config.json'
   //       for updating configurations
-  static String entrance = 'http://tarsier.dim.chat/config.json';
+  static String entrance = 'http://tarsier.dim.chat/v1/config.json';
 
   Map? _info;
 

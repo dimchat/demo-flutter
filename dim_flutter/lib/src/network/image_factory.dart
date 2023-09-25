@@ -55,6 +55,41 @@ class ImageFactory {
 
   ImageProvider? getImage(String url) => _providers[url];
 
+  static Future<ImageProvider<Object>?> getImageFromFile(String path) async {
+    // return FileImage(File(path));
+    try {
+      File file = File(path);
+      if (!await file.exists()) {
+        assert(false, 'image file not exists: $path');
+        return null;
+      }
+      int end = await file.length();
+      Uint8List bytes = file.readAsBytesSync();
+      if (end != bytes.length || end <= 32) {
+        Log.error('[IMG] file size error: $end(${bytes.length}');
+        file.delete();
+        return null;
+      }
+      end = 32;  // only check the head
+      int pos = 0;
+      for (; pos < end; ++pos) {
+        if (bytes[pos] != 0) {
+          break;
+        }
+      }
+      if (pos == end) {
+        // data error
+        Log.warning('[IMG] image file error, remove it: $path');
+        file.delete();
+        return null;
+      }
+      return MemoryImage(bytes);
+    } catch (e) {
+      Log.error('[IMG] failed to get image from file: $path, error: $e');
+      return null;
+    }
+  }
+
   /// Download avatar from remote URL
   Future<ImageProvider?> downloadImage(String url) async {
     if (!url.contains('://')) {
@@ -80,14 +115,11 @@ class ImageFactory {
     } else {
       image = _providers[path];
       if (image == null) {
-        File file = File(path);
-        if (await file.exists() && await file.length() > 0) {
-          // OK
-        } else {
-          Log.error('image file not found: $path');
+        image = await getImageFromFile(path);
+        if (image == null) {
+          Log.error('failed to get image from path: $path');
           return null;
         }
-        image = FileImage(file);
       }
       // cache it
       _providers[path] = image;
@@ -159,14 +191,11 @@ class ImageFactory {
     } else {
       image = _providers[path];
       if (image == null) {
-        File file = File(path);
-        if (await file.exists() && await file.length() > 0) {
-          // OK
-        } else {
-          Log.error('image file not found: $path');
+        image = await getImageFromFile(path);
+        if (image == null) {
+          Log.error('failed to get image from path: $path');
           return null;
         }
-        image = FileImage(file);
       }
       // cache it
       _providers[path] = image;

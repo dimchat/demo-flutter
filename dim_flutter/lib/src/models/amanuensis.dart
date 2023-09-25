@@ -342,7 +342,7 @@ class Amanuensis {
     String? signature = content.originalSignature;
     if (sn == null) {
       sn = 0;
-      Log.error('original sn not found: $content');
+      Log.error('original sn not found: $content, sender: ${iMsg.sender}');
     }
     // save trace
     GlobalVariable shared = GlobalVariable();

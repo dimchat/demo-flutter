@@ -72,7 +72,7 @@ class _LoginCommandTable extends DataTableHandler<Pair<LoginCommand, ReliableMes
     SQLConditions cond;
     cond = SQLConditions(left: 'uid', comparison: '=', right: identifier.toString());
     List<Pair<LoginCommand, ReliableMessage>> array = await select(_table, columns: _selectColumns,
-        conditions: cond, limit: 1);
+        conditions: cond, orderBy: 'id DESC', limit: 1);
     // first record only
     return array.isEmpty ? const Pair(null, null) : array[0];
   }
@@ -137,7 +137,7 @@ class LoginCommandCache extends _LoginCommandTable {
   Future<bool> saveLoginCommandMessage(ID identifier, LoginCommand content, ReliableMessage rMsg) async {
     // 1. check old record
     LoginCommand? old = (await getLoginCommandMessage(identifier)).first;
-    if (old != null && _isCommandExpired(content, old)) {
+    if (AccountDBI.isExpired(content.time, old?.time)) {
       Log.warning('expired command: $identifier');
       return false;
     }
@@ -145,6 +145,8 @@ class LoginCommandCache extends _LoginCommandTable {
     if (old != null) {
       if (await deleteLoginCommandMessage(identifier)) {
         Log.debug('old login command cleared: $identifier');
+        // clear to reload
+        _cache.erase(identifier);
       } else {
         Log.error('failed to clear login command: $identifier');
         return false;
@@ -152,7 +154,8 @@ class LoginCommandCache extends _LoginCommandTable {
     }
     // 3. add new record
     if (await super.saveLoginCommandMessage(identifier, content, rMsg)) {
-      //
+      // clear to reload
+      _cache.erase(identifier);
     } else {
       Log.error('failed to save login command: $identifier');
       return false;
@@ -167,18 +170,4 @@ class LoginCommandCache extends _LoginCommandTable {
     return true;
   }
 
-}
-
-bool _isCommandExpired(LoginCommand newOne, LoginCommand oldOne) {
-  DateTime? oldTime = oldOne.time;
-  if (oldTime == null) {
-    Log.warning('old time not found: ${oldOne.identifier}');
-    return false;
-  }
-  DateTime? newTime = newOne.time;
-  if (newTime == null) {
-    Log.warning('new time not found: ${newOne.identifier}');
-    return false;
-  }
-  return !newTime.isAfter(oldTime);
 }

@@ -87,7 +87,8 @@ class Emitter implements Observer {
     Log.info('send instant message (type=${iMsg.content.type}): ${iMsg.sender} -> ${iMsg.receiver}');
     // send by shared messenger
     GlobalVariable shared = GlobalVariable();
-    await shared.messenger!.sendInstantMessage(iMsg);
+    ClientMessenger? mess = shared.messenger;
+    await mess?.sendInstantMessage(iMsg);
     // save instant message
     await _saveInstantMessage(iMsg);
   }
@@ -191,8 +192,8 @@ class Emitter implements Observer {
       result = await man.sendContent(content, sender: null, receiver: receiver);
     } else {
       GlobalVariable shared = GlobalVariable();
-      ClientMessenger mess = shared.messenger!;
-      result = await mess.sendContent(content, sender: null, receiver: receiver);
+      ClientMessenger? mess = shared.messenger;
+      result = await mess!.sendContent(content, sender: null, receiver: receiver);
       if (result.second == null) {
         Log.warning('not send yet (type=${content.type}): $receiver');
         return;

@@ -9,6 +9,7 @@ import '../sqlite/contact.dart';
 import '../sqlite/conversation.dart';
 import '../sqlite/document.dart';
 import '../sqlite/group.dart';
+import '../sqlite/group_reset.dart';
 import '../sqlite/keys.dart';
 import '../sqlite/login.dart';
 import '../sqlite/message.dart';
@@ -35,6 +36,7 @@ class SharedDatabase implements AccountDBI, SessionDBI, MessageDBI,
   UserCache userTable = UserCache();
   ContactCache contactTable = ContactCache();
   GroupCache groupTable = GroupCache();
+  ResetGroupDBI resetTable = ResetCommandCache();
 
   RemarkDBI remarkTable = RemarkCache();
   BlockedDBI blockedTable = BlockedCache();
@@ -237,18 +239,12 @@ class SharedDatabase implements AccountDBI, SessionDBI, MessageDBI,
       await groupTable.saveAdministrators(members, group: group);
 
   @override
-  Future<Pair<ResetCommand?, ReliableMessage?>> getResetCommandMessage(ID identifier) async {
-    // TODO: implement getResetCommandMessage
-    Log.error('implement getResetCommandMessage: $identifier');
-    return const Pair(null, null);
-  }
+  Future<Pair<ResetCommand?, ReliableMessage?>> getResetCommandMessage({required ID group}) async =>
+      await resetTable.getResetCommandMessage(group: group);
 
   @override
-  Future<bool> saveResetCommandMessage(ID identifier, ResetCommand content, ReliableMessage rMsg) async {
-    // TODO: implement saveResetCommandMessage
-    Log.error('implement saveResetCommandMessage: $identifier');
-    return true;
-  }
+  Future<bool> saveResetCommandMessage(ResetCommand content, ReliableMessage rMsg, {required ID group}) async =>
+      await resetTable.saveResetCommandMessage(content, rMsg, group: group);
 
   Future<bool> removeGroup({required ID group}) async =>
       await groupTable.removeGroup(group: group);

@@ -12,7 +12,6 @@ import '../channels/session.dart';
 import '../models/station.dart';
 import '../network/neighbor.dart';
 import 'constants.dart';
-import 'group.dart';
 import 'messenger.dart';
 import 'packer.dart';
 import 'processor.dart';
@@ -59,8 +58,6 @@ class Client extends Terminal {
   ClientMessenger createMessenger(ClientSession session, CommonFacebook facebook) {
     GlobalVariable shared = GlobalVariable();
     SharedMessenger messenger = SharedMessenger(session, facebook, shared.mdb);
-    GroupManager manager = GroupManager();
-    manager.messenger = messenger;
     shared.messenger = messenger;
     return messenger;
   }

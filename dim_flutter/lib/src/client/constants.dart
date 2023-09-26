@@ -22,6 +22,7 @@ abstract class NotificationNames {
   static const String kMuteListUpdated = 'MuteListUpdated';
 
   static const String kLoginCommandUpdated = 'LoginCommandUpdated';
+  static const String kResetGroupCommandUpdated = 'ResetGroupCommandUpdated';
 
   static const String kGroupCreated = 'GroupCreated';
   static const String kGroupRemoved = 'GroupRemoved';

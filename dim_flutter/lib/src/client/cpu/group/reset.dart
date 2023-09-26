@@ -33,29 +33,29 @@ import 'package:lnc/lnc.dart';
 
 import 'ease.dart';
 
-///  Invite Group Command Processor
-///  ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+///  Reset Group Command Processor
+///  ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 ///
-///      1. add new member(s) to the group
-///      2. any member can invite new member
-class InviteGroupCommandProcessor extends EaseGroupCommandProcessor {
-  InviteGroupCommandProcessor(super.facebook, super.messenger);
+///      1. reset group members
+///      2. only group owner or assistant can reset group members
+class ResetGroupCommandProcessor extends EaseGroupCommandProcessor {
+  ResetGroupCommandProcessor(super.facebook, super.messenger);
 
   @override
   Future<List<Content>> process(Content content, ReliableMessage rMsg) async {
-    assert(content is InviteCommand, 'invite command error: $content');
-    GroupCommand command = content as GroupCommand;
+    assert(content is ResetCommand, 'reset command error: $content');
+    ResetCommand command = content as ResetCommand;
 
     // 0. check command
-    Pair<ID?, List<Content>?> expPair = await checkCommandExpired(command, rMsg);
-    ID? group = expPair.first;
+    Pair<ID?, List<Content>?> grpPair = await checkCommandExpired(command, rMsg);
+    ID? group = grpPair.first;
     if (group == null) {
       // ignore expired command
-      return expPair.second ?? [];
+      return grpPair.second ?? [];
     }
     Pair<List<ID>, List<Content>?> memPair = await checkCommandMembers(command, rMsg);
-    List<ID> inviteList = memPair.first;
-    if (inviteList.isEmpty) {
+    List<ID> newMembers = memPair.first;
+    if (newMembers.isEmpty) {
       // command error
       return memPair.second ?? [];
     }
@@ -70,13 +70,43 @@ class InviteGroupCommandProcessor extends EaseGroupCommandProcessor {
     String text;
 
     ID sender = rMsg.sender;
-    bool isMember = members.contains(sender);
+    List<ID> admins = await getAdministrators(group);
+    bool isOwner = owner == sender;
+    bool isAdmin = admins.contains(sender);
 
     // 2. check permission
-    if (!isMember) {
+    bool canReset = isOwner || isAdmin;
+    if (!canReset) {
       text = 'Permission denied.';
       return respondReceipt(text, content: command, envelope: rMsg.envelope, extra: {
-        'template': 'Not allowed to invite member into group: \${ID}',
+        'template': 'Not allowed to reset members of group: \${ID}',
+        'replacements': {
+          'ID': group.toString(),
+        }
+      });
+    }
+    // 2.1. check owner
+    if (newMembers[0] != owner) {
+      text = 'Permission denied.';
+      return respondReceipt(text, content: command, envelope: rMsg.envelope, extra: {
+        'template': 'Owner must be the first member of group: \${ID}',
+        'replacements': {
+          'ID': group.toString(),
+        }
+      });
+    }
+    // 2.2. check admins
+    bool expelAdmin = false;
+    for (ID item in admins) {
+      if (!newMembers.contains(item)) {
+        expelAdmin = true;
+        break;
+      }
+    }
+    if (expelAdmin) {
+      text = 'Permission denied.';
+      return respondReceipt(text, content: command, envelope: rMsg.envelope, extra: {
+        'template': 'Not allowed to expel administrator of group: \${ID}',
         'replacements': {
           'ID': group.toString(),
         }
@@ -84,7 +114,7 @@ class InviteGroupCommandProcessor extends EaseGroupCommandProcessor {
     }
 
     // 3. accept it
-    if (await acceptCommand(command, rMsg)) {
+    if (await acceptCommand(content, rMsg)) {
       Log.info('accepted "reset" command for group: $group');
     } else {
       Log.error('failed to accept "reset" command for group: $group');

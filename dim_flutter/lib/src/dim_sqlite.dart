@@ -9,6 +9,7 @@ export 'sqlite/conversation.dart';
 export 'sqlite/document.dart';
 export 'sqlite/entity.dart';
 export 'sqlite/group.dart';
+export 'sqlite/group_reset.dart';
 export 'sqlite/keys.dart';
 export 'sqlite/login.dart';
 export 'sqlite/message.dart';

@@ -54,24 +54,26 @@ class GroupManager {
   //
   int kPolylogueLimit = 16;
 
-  // getter/setter
-  ClientMessenger? messenger;
-
   // group data source
   GroupDelegate? _delegate;
 
   GroupDelegate get dataSource {
     GroupDelegate? ds = _delegate;
     if (ds == null) {
-      CommonFacebook? facebook = messenger?.facebook;
-      assert(facebook != null, 'facebook should not empty here');
-      _delegate = ds = GroupDelegate(facebook!, messenger!);
+      GlobalVariable shared = GlobalVariable();
+      CommonFacebook barrack = shared.facebook;
+      CommonMessenger? transceiver = shared.messenger;
+      _delegate = ds = GroupDelegate(barrack, transceiver!);
     }
     return ds;
   }
 
-  // private
-  Future<User?> get currentUser async => await messenger?.facebook.currentUser;
+  ClientFacebook get facebook => GlobalVariable().facebook;
+  ClientMessenger? get messenger => GlobalVariable().messenger;
+
+  AccountDBI get adb => facebook.database;
+
+  Future<User?> get currentUser async => await facebook.currentUser;
 
   Future<ID?> createGroup({required List<ID> members}) async {
     if (members.length < 2) {
@@ -81,8 +83,7 @@ class GroupManager {
     //
     //  0. get current user
     //
-    ClientFacebook? barrack = messenger?.facebook as ClientFacebook?;
-    User? user = await barrack?.currentUser;
+    User? user = await currentUser;
     if (user == null) {
       assert(false, 'failed to get current user');
       return null;
@@ -91,7 +92,6 @@ class GroupManager {
     //
     //  1. check founder/owner
     //
-    AccountDBI db = barrack!.database;
     int pos = members.indexOf(founder);
     if (pos < 0) {
       // put myself in the first position
@@ -104,7 +104,7 @@ class GroupManager {
     //
     //  2. create group with name
     //
-    Register register = Register(db);
+    Register register = Register(adb);
     String groupName = await GroupInfo.buildGroupName(members);
     ID group = await register.createGroup(founder, name: groupName);
     Log.info('new group: $group ($groupName), founder: $founder');
@@ -215,18 +215,48 @@ class GroupManager {
 
     // 3. send 'reset' command
     command = GroupCommand.reset(group, members: newMembers);
-    if (bots.isEmpty) {
-      // group bots not exist,
-      // send the command to all members
-      _sendCommand(command, newMembers);                // to new members
-      _sendCommand(command, expelList);                 // to expelled members
-    } else {
+    if (bots.isNotEmpty) {
       // let the group bots know the newest member ID list,
       // so they can split group message correctly for us.
       _forwardCommand(command, bots);                   // to all assistants
+      return true;
     }
 
+    // group bots not exist,
+    // send the command to all members
+    _sendCommand(command, newMembers);                  // to new members
+    _sendCommand(command, expelList);                   // to expelled members
     return true;
+  }
+
+  ///  Expel members from this group
+  ///
+  /// @param expelMembers - members to be removed
+  /// @return true on success
+  Future<bool> expelGroupMembers(ID group, List<ID> expelMembers) async {
+    assert(group.isGroup && expelMembers.isNotEmpty, 'params error: $group, $expelMembers');
+    GroupDelegate delegate = dataSource;
+
+    ID me = (await currentUser)!.identifier;
+    List<ID> oldMembers = await delegate.getMembers(group);
+
+    bool isOwner = await delegate.isOwner(me, group: group);
+    bool isAdmin = await delegate.isAdministrator(me, group: group);
+
+    // 0. check permission
+    bool canReset = isOwner || isAdmin;
+    if (canReset) {
+      // You are the owner/admin, then
+      // remove the members and 'reset' the group
+      List<ID> members = [...oldMembers];
+      for (ID item in expelMembers) {
+        members.remove(item);
+      }
+      return await resetGroupMembers(group, members);
+    }
+
+    // not an admin/owner
+    throw Exception('Cannot expel members from group: $group');
   }
 
   ///  Invite new members to this group
@@ -240,8 +270,12 @@ class GroupManager {
     ID me = (await currentUser)!.identifier;
     List<ID> oldMembers = await delegate.getMembers(group);
 
-    if (await delegate.isAdministrator(me, group: group) ||
-        await delegate.isOwner(me, group: group)) {
+    bool isOwner = await delegate.isOwner(me, group: group);
+    bool isAdmin = await delegate.isAdministrator(me, group: group);
+
+    // 0. check permission
+    bool canReset = isOwner || isAdmin;
+    if (canReset) {
       // You are the owner/admin, then
       // append new members and 'reset' the group
       List<ID> members = [...oldMembers];
@@ -253,8 +287,8 @@ class GroupManager {
       return await resetGroupMembers(group, members);
     }
 
-    // 0. check permission
-    if (await delegate.isMember(me, group: group)) {
+    bool isMember = await delegate.isMember(me, group: group);
+    if (isMember) {
       // ordinary member
     } else {
       // not a member
@@ -295,65 +329,47 @@ class GroupManager {
 
     // 3. send 'invite' command
     command = GroupCommand.invite(group, members: newMembers);
-    if (bots.isEmpty) {
-      // group bots not exist,
-      // send the command to all members
-      _sendCommand(command, oldMembers);                // to old members
+    if (bots.isNotEmpty) {
+      // let the group bots know the newest member ID list,
+      // so they can split group message correctly for us.
+      _forwardCommand(command, bots);                   // to all assistants
+      return true;
+    }
+
+    // // group bots not exist,
+    // // send the command to all members
+    // _sendCommand(command, oldMembers);               // to old members
+
+    // get 'reset' command message
+    Pair<ResetCommand?, ReliableMessage?> pair = await adb.getResetCommandMessage(group: group);
+    ResetCommand? cmd = pair.first;
+    ReliableMessage? msg = pair.second;
+    if (cmd == null || msg == null) {
+      // FIXME: 'reset' command not found?
+      //        query from the owner/admins
       command = GroupCommand.invite(group, members: members);
       _sendCommand(command, newMembers);                // to new members
-    } else {
-      // let the group bots know the newest member ID list,
-      // so they can split group message correctly for us.
-      _forwardCommand(command, bots);                   // to all assistants
+      return true;
     }
 
-    return true;
-  }
-
-  ///  Expel members from this group
-  ///
-  /// @param expelMembers - members to be removed
-  /// @return true on success
-  Future<bool> expelGroupMembers(ID group, List<ID> expelMembers) async {
-    assert(group.isGroup && expelMembers.isNotEmpty, 'params error: $group, $expelMembers');
-    GroupDelegate delegate = dataSource;
-
-    ID me = (await currentUser)!.identifier;
-
-    // 0. check permission
-    if (await delegate.isOwner(me, group: group) ||
-        await delegate.isAdministrator(me, group: group)) {
-      // only the owner or admin can reset group members
-    } else {
-      // not an admin/owner
-      throw Exception('Cannot expel members from group: $group');
+    ReliableMessage? rMsg = await _packGroupMessage(command, me);
+    if (rMsg == null) {
+      assert(false, 'should not happen');
+      command = GroupCommand.invite(group, members: members);
+      _sendCommand(command, newMembers);                // to new members
+      return true;
     }
 
-    // 1. update local members
-    List<ID> members = await delegate.getMembers(group);
-    for (ID item in expelMembers) {
-      members.remove(item);
-    }
-    if (await delegate.saveMembers(members, group: group)) {
-      // OK
-    } else {
-      throw Exception('Failed to update members of group: $group');
-    }
+    // old 'reset' command found, merge this command to the exist applications;
+    // and save the 'reset' command with new 'applications'.
+    List applications = msg['applications'] ?? [];
+    applications.add(rMsg.toMap());
+    msg['applications'] = applications;
+    await adb.saveResetCommandMessage(cmd, msg, group: group);
 
-    List<ID> bots = await delegate.getAssistants(group);
-    Command? command;
-    // 2. send 'reset' command
-    command = GroupCommand.reset(group, members: members);
-    if (bots.isEmpty) {
-      // group bots not exist,
-      // send the command to all members
-      _sendCommand(command, members);                   // to new members
-      _sendCommand(command, expelMembers);              // to expelled members
-    } else {
-      // let the group bots know the newest member ID list,
-      // so they can split group message correctly for us.
-      _forwardCommand(command, bots);                   // to all assistants
-    }
+    ForwardContent forward = ForwardContent.create(forward: msg);
+    // _sendCommand(forward, newMembers);               // to new members
+    _sendCommand(forward, members);                     // to all members
 
     return true;
   }
@@ -428,8 +444,7 @@ class GroupManager {
     return ok1 || ok2;
   }
 
-  // private
-  Future<bool> _sendCommand(Command content, List<ID> members) async {
+  Future<bool> _sendCommand(Content content, List<ID> members) async {
     // assert(content.group != null, 'group command error: $content');
     User? user = await currentUser;
     if (user == null) {
@@ -453,7 +468,7 @@ class GroupManager {
     return true;
   }
 
-  Future<ForwardContent?> _packGroupCommand(Command content, ID sender) async {
+  Future<ReliableMessage?> _packGroupMessage(Content content, ID sender) async {
     Envelope env = Envelope.create(sender: sender, receiver: ID.kAnyone);
     InstantMessage iMsg = InstantMessage.create(env, content);
     iMsg['group'] = content['group'];  // expose group ID
@@ -467,11 +482,18 @@ class GroupManager {
       Log.error('failed to sign group message: $env');
       return null;
     }
+    return rMsg;
+  }
+  Future<ForwardContent?> _packGroupCommand(Content content, ID sender) async {
+    ReliableMessage? rMsg = await _packGroupMessage(content, sender);
+    if (rMsg == null) {
+      Log.error('failed to sign group message: ${content.group}');
+      return null;
+    }
     return ForwardContent.create(forward: rMsg);
   }
 
-  // private
-  Future<bool> _forwardCommand(Command content, List<ID> bots) async {
+  Future<bool> _forwardCommand(Content content, List<ID> bots) async {
     assert(content.group != null, 'group command error: $content');
     User? user = await currentUser;
     if (user == null) {

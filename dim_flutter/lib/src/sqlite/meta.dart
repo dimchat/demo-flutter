@@ -34,7 +34,7 @@ class _MetaTable extends DataTableHandler<Meta> implements MetaDBI {
     SQLConditions cond;
     cond = SQLConditions(left: 'did', comparison: '=', right: entity.toString());
     List<Meta> array = await select(_table, columns: _selectColumns,
-        conditions: cond, limit: 1);
+        conditions: cond, orderBy: 'id DESC', limit: 1);
     // first record only
     return array.isEmpty ? null : array[0];
   }

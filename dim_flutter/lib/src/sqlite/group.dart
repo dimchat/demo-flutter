@@ -74,7 +74,7 @@ class _MemberTable extends DataTableHandler<ID> {
   Future<List<ID>> getMembers(ID group) async {
     SQLConditions cond;
     cond = SQLConditions(left: 'gid', comparison: '=', right: group.toString());
-    return await select(_table, columns: _selectColumns, conditions: cond);
+    return await select(_table, distinct: true, columns: _selectColumns, conditions: cond);
   }
 
   Future<bool> saveMembers(List<ID> members, ID group) async {

@@ -85,7 +85,7 @@ class _TitleState extends State<StatedTitleView> implements lnc.Observer {
 int _stateIndex(SessionState? state) =>
     state?.index ?? SessionStateOrder.kDefault;
 
-int _sessionState = SessionStateOrder.kDefault;
+int _sessionState = SessionStateOrder.kRunning;
 
 String _titleWithState(String title) {
   String? sub;

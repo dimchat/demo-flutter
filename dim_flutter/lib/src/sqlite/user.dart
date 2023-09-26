@@ -113,7 +113,7 @@ class _UserTable extends DataTableHandler<ID> implements UserDBI {
   @override
   Future<List<ID>> getLocalUsers() async {
     SQLConditions cond = SQLConditions.kTrue;
-    return await select(_table, columns: _selectColumns,
+    return await select(_table, distinct: true, columns: _selectColumns,
         conditions: cond, orderBy: 'chosen DESC');
   }
 

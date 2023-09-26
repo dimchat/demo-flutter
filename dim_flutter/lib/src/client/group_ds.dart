@@ -222,7 +222,7 @@ class GroupDelegate implements GroupDataSource {
       return [];
     }
     List<ID> members = await facebook.getMembers(group);
-    if (members.isEmpty) {
+    if (members.length < 2) {
       // members not found, query the owner (or group bots)
       messenger.queryMembers(group);
     } else {

@@ -75,6 +75,34 @@ class GroupManager {
 
   Future<User?> get currentUser async => await facebook.currentUser;
 
+  //
+  //  Group Command Delegates
+  //
+
+  GroupCommandHelper? _helper;
+  GroupHistoryBuilder? _builder;
+
+  GroupCommandHelper get helper {
+    GroupCommandHelper? delegate = _helper;
+    if (delegate == null) {
+      _helper = delegate = createGroupCommandHelper();
+    }
+    return delegate;
+  }
+  /// override for customized helper
+  GroupCommandHelper createGroupCommandHelper() => GroupCommandHelper(facebook, messenger!);
+
+  GroupHistoryBuilder get builder {
+    GroupHistoryBuilder? delegate = _builder;
+    if (delegate == null) {
+      _builder = delegate = createGroupHistoryBuilder();
+    }
+    return delegate;
+  }
+  /// override for customized builder
+  GroupHistoryBuilder createGroupHistoryBuilder() => GroupHistoryBuilder(helper);
+
+  /// Create new group with members
   Future<ID?> createGroup({required List<ID> members}) async {
     if (members.length < 2) {
       assert(false, 'not enough members: $members');
@@ -170,7 +198,7 @@ class GroupManager {
       throw Exception('Cannot reset members of group: $group');
     }
 
-    // 1. update local members
+    // check expelled members
     List<ID> oldMembers = await delegate.getMembers(group);
     List<ID> expelList = [];
     for (ID item in oldMembers) {
@@ -178,54 +206,40 @@ class GroupManager {
         expelList.add(item);
       }
     }
-    if (await delegate.saveMembers(newMembers, group: group)) {
-      // OK
-    } else {
-      throw Exception('Failed to update members of group: $group');
-    }
 
-    List<ID> bots = await delegate.getAssistants(group);
-    Meta? meta = await delegate.getMeta(group);
-    assert(meta != null, 'meta not found: $group');
-    Document? doc = await delegate.getDocument(group, "*");
-    assert(doc != null, 'document not found: $group');
-
-    // 2. build 'meta/document' command
-    Command command;
-    if (doc != null) {
-      command = DocumentCommand.response(group, meta, doc);
-    } else if (meta != null) {
-      // TODO: check owner & create new group document?
-      command = MetaCommand.response(group, meta);
-    } else {
-      assert(false, 'failed to get group info: $group');
+    // 1. build 'reset' command
+    Pair<ResetCommand?, ReliableMessage?> pair = await builder.buildResetCommand(group, newMembers);
+    ResetCommand? reset = pair.first;
+    ReliableMessage? message = pair.second;
+    if (reset == null || message == null) {
+      assert(false, 'failed to build "reset" command for group: $group');
       return false;
     }
-    // 2.1. send 'meta/document' command
-    if (bots.isEmpty) {
-      // group bots not exist, so we need to
-      // send the document to all new members directly.
-      _sendCommand(command, newMembers);                // to new members
+
+    // 2. save 'reset' command, and update new members
+    if (!await helper.saveGroupHistory(group, reset, message)) {
+      throw Exception('Failed to save "reset" command for group: $group');
+    } else if (!await delegate.saveMembers(newMembers, group: group)) {
+      throw Exception('Failed to update members of group: $group');
     } else {
-      // group bots exist, so we don't need to
-      // send the document to the members directly,
-      // just let the bots to do the job.
-      _sendCommand(command, bots);                      // to all assistants
+      Log.info('group members updated: $group, ${newMembers.length}');
     }
 
-    // 3. send 'reset' command
-    command = GroupCommand.reset(group, members: newMembers);
+    // 3. forward all group history
+    List<ReliableMessage> messages = await builder.buildGroupHistories(group);
+    ForwardContent forward = ForwardContent.create(secrets: messages);
+
+    List<ID> bots = await delegate.getAssistants(group);
     if (bots.isNotEmpty) {
       // let the group bots know the newest member ID list,
       // so they can split group message correctly for us.
-      _forwardCommand(command, bots);                   // to all assistants
+      _sendCommand(forward, bots);                      // to all assistants
       return true;
     }
-
     // group bots not exist,
     // send the command to all members
-    _sendCommand(command, newMembers);                  // to new members
-    _sendCommand(command, expelList);                   // to expelled members
+    _sendCommand(forward, newMembers);                  // to all assistants
+    _sendCommand(forward, expelList);                   // to all assistants
     return true;
   }
 
@@ -295,82 +309,34 @@ class GroupManager {
       throw Exception('Cannot invite member into group: $group');
     }
 
-    // 1. update local members
-    List<ID> members = await delegate.addMembers(newMembers, group: group);
-
-    List<ID> bots = await delegate.getAssistants(group);
-    Meta? meta = await delegate.getMeta(group);
-    assert(meta != null, 'meta not found: $group');
-    Document? doc = await delegate.getDocument(group, "*");
-    assert(doc != null, 'document not found: $group');
-
-    // 2. build 'meta/document' command
-    Command command;
-    if (doc != null) {
-      command = DocumentCommand.response(group, meta, doc);
-    } else if (meta != null) {
-      // TODO: check owner & create new group document?
-      command = MetaCommand.response(group, meta);
-    } else {
-      assert(false, 'failed to get group info: $group');
+    // 1. build 'invite' command
+    InviteCommand content = GroupCommand.invite(group, members: newMembers);
+    ReliableMessage? rMsg = await _packGroupMessage(content, me);
+    if (rMsg == null) {
+      assert(false, 'failed to sign message: $me => $group');
       return false;
     }
-    // 2.1. send 'meta/document' command
-    if (bots.isEmpty) {
-      // group bots not exist, so we need to
-      // send the document to all new members directly.
-      _sendCommand(command, newMembers);                // to new members
-    } else {
-      // group bots exist, so we don't need to
-      // send the document to the members directly,
-      // just let the bots to do the job.
-      _sendCommand(command, bots);                      // to all assistants
-    }
 
-    // 3. send 'invite' command
-    command = GroupCommand.invite(group, members: newMembers);
+    // 2. save 'invite' command
+    if (!await helper.saveGroupHistory(group, content, rMsg)) {
+      throw Exception('Failed to save "invite" command for group: $group');
+    }
+    ForwardContent forward = ForwardContent.create(forward: rMsg);
+
+    // 3. forward 'invite'
+    List<ID> bots = await delegate.getAssistants(group);
     if (bots.isNotEmpty) {
       // let the group bots know the newest member ID list,
       // so they can split group message correctly for us.
-      _forwardCommand(command, bots);                   // to all assistants
+      _sendCommand(forward, bots);                      // to all assistants
       return true;
     }
-
-    // // group bots not exist,
-    // // send the command to all members
-    // _sendCommand(command, oldMembers);               // to old members
-
-    // get 'reset' command message
-    Pair<ResetCommand?, ReliableMessage?> pair = await adb.getResetCommandMessage(group: group);
-    ResetCommand? cmd = pair.first;
-    ReliableMessage? msg = pair.second;
-    if (cmd == null || msg == null) {
-      // FIXME: 'reset' command not found?
-      //        query from the owner/admins
-      command = GroupCommand.invite(group, members: members);
-      _sendCommand(command, newMembers);                // to new members
-      return true;
-    }
-
-    ReliableMessage? rMsg = await _packGroupMessage(command, me);
-    if (rMsg == null) {
-      assert(false, 'should not happen');
-      command = GroupCommand.invite(group, members: members);
-      _sendCommand(command, newMembers);                // to new members
-      return true;
-    }
-
-    // old 'reset' command found, merge this command to the exist applications;
-    // and save the 'reset' command with new 'applications'.
-    List applications = msg['applications'] ?? [];
-    applications.add(rMsg.toMap());
-    msg['applications'] = applications;
-    await adb.saveResetCommandMessage(cmd, msg, group: group);
-
-    ForwardContent forward = ForwardContent.create(forward: msg);
-    // _sendCommand(forward, newMembers);               // to new members
-    _sendCommand(forward, members);                     // to all members
-
+    // forward 'invite' to old members
+    _sendCommand(forward, oldMembers);                  // to old members
+    // forward all group history to new members
+    List<ReliableMessage> messages = await builder.buildGroupHistories(group);
+    forward = ForwardContent.create(secrets: messages);
+    _sendCommand(forward, newMembers);                  // to new members
     return true;
   }
 
@@ -395,28 +361,28 @@ class GroupManager {
       assert(false, 'Not a member of group: $group');
     }
 
-    List<ID> bots = await delegate.getAssistants(group);
-    List<ID> members = await delegate.getMembers(group);
-
     // 1. update local storage
-    bool ok = false;
-    if (members.remove(me)) {
-      ok = await delegate.saveMembers(members, group: group);
-      //} else {
-      //    // not a member now
-      //    return false;
+    List<ID> members = await delegate.getMembers(group);
+    bool ok = members.remove(me) && await delegate.saveMembers(members, group: group);
+
+    // 2. build 'quit' command
+    Command content = GroupCommand.quit(group);
+    ForwardContent? forward = await _packGroupCommand(content, me);
+    if (forward == null) {
+      assert(false, 'failed to pack "quit" command for group: $group');
+      return false;
     }
 
-    // 2. send 'quit' command
-    Command command = GroupCommand.quit(group);
+    // 3. forward 'quit' command
+    List<ID> bots = await delegate.getAssistants(group);
     if (bots.isEmpty) {
       // group bots not exist,
       // send the command to all members
-      _sendCommand(command, members);                   // to new members
+      _sendCommand(forward, members);                   // to new members
     } else {
       // let the group bots know the newest member ID list,
       // so they can split group message correctly for us.
-      _forwardCommand(command, bots);                   // to all assistants
+      _sendCommand(forward, bots);                      // to new members
     }
 
     return ok;
@@ -474,12 +440,12 @@ class GroupManager {
     iMsg['group'] = content['group'];  // expose group ID
     SecureMessage? sMsg = await messenger?.encryptMessage(iMsg);
     if (sMsg == null) {
-      Log.error('failed to encrypt group message: $env');
+      assert(false, 'failed to encrypt group message: $env');
       return null;
     }
     ReliableMessage? rMsg = await messenger?.signMessage(sMsg);
     if (rMsg == null) {
-      Log.error('failed to sign group message: $env');
+      assert(false, 'failed to sign group message: $env');
       return null;
     }
     return rMsg;
@@ -487,35 +453,10 @@ class GroupManager {
   Future<ForwardContent?> _packGroupCommand(Content content, ID sender) async {
     ReliableMessage? rMsg = await _packGroupMessage(content, sender);
     if (rMsg == null) {
-      Log.error('failed to sign group message: ${content.group}');
+      assert(false, 'failed to sign group message: ${content.group}');
       return null;
     }
     return ForwardContent.create(forward: rMsg);
-  }
-
-  Future<bool> _forwardCommand(Content content, List<ID> bots) async {
-    assert(content.group != null, 'group command error: $content');
-    User? user = await currentUser;
-    if (user == null) {
-      assert(false, 'failed to get current user');
-      return false;
-    }
-    ID me = user.identifier;
-    // forward command to the group bot to let it redirect to other members
-    ForwardContent? forward = await _packGroupCommand(content, me);
-    if (forward == null) {
-      assert(false, 'failed to pack group command: $content');
-      return false;
-    }
-    // forward group command to the bots
-    for (ID item in bots) {
-      if (item == me) {
-        assert(false, 'should not happen: $item');
-        continue;
-      }
-      messenger?.sendContent(forward, sender: me, receiver: item);
-    }
-    return true;
   }
 
   //

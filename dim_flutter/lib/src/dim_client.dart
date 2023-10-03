@@ -1,8 +1,5 @@
 library dim_flutter;
 
-export 'client/cpu/group/ease.dart';
-export 'client/cpu/group/invite.dart';
-export 'client/cpu/group/reset.dart';
 export 'client/cpu/search.dart';
 export 'client/cpu/any.dart';
 export 'client/cpu/creator.dart';

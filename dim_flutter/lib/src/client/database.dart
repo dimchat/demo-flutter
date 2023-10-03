@@ -9,7 +9,7 @@ import '../sqlite/contact.dart';
 import '../sqlite/conversation.dart';
 import '../sqlite/document.dart';
 import '../sqlite/group.dart';
-import '../sqlite/group_reset.dart';
+import '../sqlite/group_history.dart';
 import '../sqlite/keys.dart';
 import '../sqlite/login.dart';
 import '../sqlite/message.dart';
@@ -36,7 +36,7 @@ class SharedDatabase implements AccountDBI, SessionDBI, MessageDBI,
   UserCache userTable = UserCache();
   ContactCache contactTable = ContactCache();
   GroupCache groupTable = GroupCache();
-  ResetGroupDBI resetTable = ResetCommandCache();
+  GroupHistoryDBI groupHistoryTable = GroupHistoryCache();
 
   RemarkDBI remarkTable = RemarkCache();
   BlockedDBI blockedTable = BlockedCache();
@@ -238,16 +238,32 @@ class SharedDatabase implements AccountDBI, SessionDBI, MessageDBI,
   Future<bool> saveAdministrators(List<ID> members, {required ID group}) async =>
       await groupTable.saveAdministrators(members, group: group);
 
-  @override
-  Future<Pair<ResetCommand?, ReliableMessage?>> getResetCommandMessage({required ID group}) async =>
-      await resetTable.getResetCommandMessage(group: group);
-
-  @override
-  Future<bool> saveResetCommandMessage(ResetCommand content, ReliableMessage rMsg, {required ID group}) async =>
-      await resetTable.saveResetCommandMessage(content, rMsg, group: group);
-
   Future<bool> removeGroup({required ID group}) async =>
       await groupTable.removeGroup(group: group);
+
+  //
+  //  Group History Table
+  //
+
+  @override
+  Future<bool> saveGroupHistory(GroupCommand content, ReliableMessage rMsg, {required ID group}) async =>
+      await groupHistoryTable.saveGroupHistory(content, rMsg, group: group);
+
+  @override
+  Future<List<Pair<GroupCommand, ReliableMessage>>> getGroupHistories({required ID group}) async =>
+      await groupHistoryTable.getGroupHistories(group: group);
+
+  @override
+  Future<Pair<ResetCommand?, ReliableMessage?>> getResetCommandMessage({required ID group}) async =>
+      await groupHistoryTable.getResetCommandMessage(group: group);
+
+  @override
+  Future<bool> clearGroupAdminHistories({required ID group}) async =>
+      await groupHistoryTable.clearGroupAdminHistories(group: group);
+
+  @override
+  Future<bool> clearGroupMemberHistories({required ID group}) async =>
+      await groupHistoryTable.clearGroupMemberHistories(group: group);
 
   //
   //  Login Table

@@ -7,13 +7,15 @@ class IconView extends StatelessWidget {
   final Widget badge;
   final AlignmentGeometry alignment;
 
-  static Widget fromNumber(Widget icon, int number) {
+  static Widget fromNumber(Widget icon, int number, {AlignmentGeometry? alignment}) {
     Widget? badge = IconBadge.fromInt(number);
-    return badge == null ? icon : IconView(icon, badge: badge, alignment: IconBadge.alignment,);
+    return badge == null ? icon
+        : IconView(icon, badge: badge, alignment: alignment ?? IconBadge.alignment,);
   }
-  static Widget fromSpot(Widget icon, int number) {
+  static Widget fromSpot(Widget icon, int number, {AlignmentGeometry? alignment}) {
     Widget? badge = IconSpot.fromInt(number);
-    return badge == null ? icon : IconView(icon, badge: badge, alignment: IconSpot.alignment,);
+    return badge == null ? icon
+        : IconView(icon, badge: badge, alignment: alignment ?? IconSpot.alignment,);
   }
 
   @override

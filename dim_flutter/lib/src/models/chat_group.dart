@@ -15,6 +15,18 @@ import 'amanuensis.dart';
 import 'chat.dart';
 import 'chat_contact.dart';
 
+
+class Invitation {
+  Invitation({required this.sender, required this.group, required this.member, required this.time});
+
+  final ID sender;
+  final ID group;
+  final ID member;
+
+  final DateTime? time;
+}
+
+
 class GroupInfo extends Conversation implements lnc.Observer {
   GroupInfo(super.identifier, {super.unread = 0, super.lastMessage, super.lastTime}) {
     var nc = lnc.NotificationCenter();
@@ -45,6 +57,8 @@ class GroupInfo extends Conversation implements lnc.Observer {
   String? _temporaryTitle;
 
   List<ContactInfo>? _members;
+
+  List<Invitation>? _invitations;
 
   /// owner
   bool get isOwner => _ownerFlag == true;
@@ -77,6 +91,8 @@ class GroupInfo extends Conversation implements lnc.Observer {
   }
 
   List<ContactInfo> get members => _members ?? [];
+
+  List<Invitation> get invitations => _invitations ?? [];
 
   @override
   Widget getImage({double? width, double? height, GestureTapCallback? onTap}) =>
@@ -139,6 +155,39 @@ class GroupInfo extends Conversation implements lnc.Observer {
           'members': members,
         });
       }
+    }
+    if (_ownerFlag == null || _memberFlag == null) {
+      _invitations = [];
+    } else {
+      AccountDBI db = shared.facebook.database;
+      List<Pair<GroupCommand, ReliableMessage>> histories = await db.getGroupHistories(group: identifier);
+      GroupCommand content;
+      ReliableMessage rMsg;
+      List<Invitation> array = [];
+      List<ID> members;
+      for (var item in histories) {
+        content = item.first;
+        rMsg = item.second;
+        assert(content.group == identifier, 'group ID not match: $identifier, $content');
+        if (content is InviteCommand) {
+          members = content.members ?? [];
+        } else if (content is JoinCommand) {
+          members = [rMsg.sender];
+        } else {
+          Log.warning('ignore group command: ${content.cmd}');
+          continue;
+        }
+        Log.info('${rMsg.sender} invites $members');
+        for (var user in members) {
+          array.add(Invitation(
+            sender: rMsg.sender,
+            group: identifier,
+            member: user,
+            time: content.time ?? rMsg.time,
+          ));
+        }
+      }
+      _invitations = array;
     }
   }
 

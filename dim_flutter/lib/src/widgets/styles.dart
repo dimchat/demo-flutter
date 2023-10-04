@@ -577,6 +577,9 @@ abstract class Styles {
   static const IconData   muteListIcon = CupertinoIcons.app_badge;
   static const IconData groupChatsIcon = CupertinoIcons.person_2;
 
+  static const IconData      adminIcon = Icons.admin_panel_settings_outlined;
+  static const IconData invitationIcon = Icons.contact_mail_outlined;
+
   static const IconData  addFriendIcon = CupertinoIcons.person_add;
   static const IconData    sendMsgIcon = CupertinoIcons.chat_bubble;
   static const IconData      shareIcon = CupertinoIcons.share;

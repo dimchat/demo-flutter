@@ -57,7 +57,7 @@ abstract class MessageBuilder {
     Log.info('template: $template');
     String text = template;
     info.forEach((key, value) {
-      if (key == 'ID') {
+      if (key == 'ID' || key == 'sender' || key == 'receiver' || key == 'group') {
         ID? identifier = ID.parse(value);
         if (identifier != null) {
           value = getName(identifier);

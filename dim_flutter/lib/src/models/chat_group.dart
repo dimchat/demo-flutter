@@ -32,6 +32,7 @@ class GroupInfo extends Conversation implements lnc.Observer {
     var nc = lnc.NotificationCenter();
     nc.addObserver(this, NotificationNames.kDocumentUpdated);
     nc.addObserver(this, NotificationNames.kGroupHistoryUpdated);
+    nc.addObserver(this, NotificationNames.kAdministratorsUpdated);
   }
 
   @override
@@ -50,6 +51,13 @@ class GroupInfo extends Conversation implements lnc.Observer {
       assert(did != null, 'notification error: $notification');
       if (did == identifier) {
         Log.info('group history updated: $did');
+        await reloadData();
+      }
+    } else  if (name == NotificationNames.kAdministratorsUpdated) {
+      ID? did = userInfo?['ID'];
+      assert(did != null, 'notification error: $notification');
+      if (did == identifier) {
+        Log.info('administrators updated: $did');
         await reloadData();
       }
     } else {

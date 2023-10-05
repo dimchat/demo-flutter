@@ -36,15 +36,25 @@ class Client extends Terminal {
 
   @override
   Future<ClientMessenger> connect(String host, int port) async {
+    ClientMessenger messenger = await super.connect(host, port);
+    // connect via session channel
     ChannelManager manager = ChannelManager();
     SessionChannel channel = manager.sessionChannel;
     await channel.connect(host, port).then((value) =>
         facebook.currentUser.then((user) {
           if (user != null) {
-            channel.login(user.identifier);
+            login(user.identifier);
           }
         }));
-    return await super.connect(host, port);
+    return messenger;
+  }
+
+  @override
+  bool login(ID current) {
+    ChannelManager manager = ChannelManager();
+    SessionChannel channel = manager.sessionChannel;
+    channel.login(current);
+    return super.login(current);
   }
 
   @override

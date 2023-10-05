@@ -585,6 +585,7 @@ abstract class Styles {
   static const IconData      shareIcon = CupertinoIcons.share;
   static const IconData  clearChatIcon = CupertinoIcons.delete;
   static const IconData     deleteIcon = CupertinoIcons.delete;
+  static const IconData     removeIcon = Icons.remove_circle_outline;
 
   static const IconData       quitIcon = CupertinoIcons.escape;
   static const IconData  groupChatIcon = CupertinoIcons.group;

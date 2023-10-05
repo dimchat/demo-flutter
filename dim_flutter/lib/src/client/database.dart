@@ -33,8 +33,10 @@ class SharedDatabase implements AccountDBI, SessionDBI, MessageDBI,
   PrivateKeyDBI privateKeyTable = PrivateKeyCache();
   MetaDBI metaTable = MetaCache();
   DocumentDBI documentTable = DocumentCache();
+
   UserCache userTable = UserCache();
   ContactCache contactTable = ContactCache();
+
   GroupCache groupTable = GroupCache();
   GroupHistoryDBI groupHistoryTable = GroupHistoryCache();
 

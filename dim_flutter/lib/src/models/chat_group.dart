@@ -49,28 +49,52 @@ class GroupInfo extends Conversation implements lnc.Observer {
     }
   }
 
-  // null means checking
-  bool? _ownerFlag;
-  bool? _adminFlag;
-  bool? _memberFlag;
+  ID? _current;
 
   String? _temporaryTitle;
 
-  List<ContactInfo>? _members;
+  ID? _owner;
+  List<ID>? _admins;
+  List<ID>? _members;
 
   List<Invitation>? _invitations;
+  Pair<ResetCommand?, ReliableMessage?>? _reset;
 
   /// owner
-  bool get isOwner => _ownerFlag == true;
-  bool get isNotOwner => _ownerFlag == false;
+  bool get isOwner {
+    ID? me = _current;
+    ID? owner = _owner;
+    return me != null && owner != null && me == owner;
+  }
+  bool get isNotOwner {
+    ID? me = _current;
+    ID? owner = _owner;
+    return me != null && owner != null && me != owner;
+  }
 
   /// administrator
-  bool get isAdmin => _adminFlag == true;
-  bool get isNotAdmin => _adminFlag == false;
+  bool get isAdmin {
+    ID? me = _current;
+    List<ID>? admins = _admins;
+    return me != null && admins != null && admins.contains(me);
+  }
+  bool get isNotAdmin {
+    ID? me = _current;
+    List<ID>? admins = _admins;
+    return me != null && admins != null && !admins.contains(me);
+  }
 
   /// member
-  bool get isMember => _memberFlag == true;
-  bool get isNotMember => _memberFlag == false;
+  bool get isMember {
+    ID? me = _current;
+    List<ID>? members = _members;
+    return me != null && members != null && members.contains(me);
+  }
+  bool get isNotMember {
+    ID? me = _current;
+    List<ID>? members = _members;
+    return me != null && members != null && !members.contains(me);
+  }
 
   /// Group Name
   @override
@@ -90,9 +114,12 @@ class GroupInfo extends Conversation implements lnc.Observer {
     return '$text ($alias)';
   }
 
-  List<ContactInfo> get members => _members ?? [];
+  ID? get owner => _owner;
+  List<ID> get admins => _admins ?? [];
+  List<ID> get members => _members ?? [];
 
   List<Invitation> get invitations => _invitations ?? [];
+  Pair<ResetCommand?, ReliableMessage?> get reset => _reset ?? const Pair(null, null);
 
   @override
   Widget getImage({double? width, double? height, GestureTapCallback? onTap}) =>
@@ -104,35 +131,25 @@ class GroupInfo extends Conversation implements lnc.Observer {
     // check current user
     GlobalVariable shared = GlobalVariable();
     User? user = await shared.facebook.currentUser;
-    if (user == null) {
-      assert(false, 'current user not found');
-    }
+    assert(user != null, 'current user not found');
+    ID? me = _current = user?.identifier;
     // check membership
-    if (user == null) {
-      _ownerFlag = null;
-      _adminFlag = null;
-      _memberFlag = null;
+    if (me == null) {
+      _owner = null;
+      _admins = null;
+      _members = null;
     } else {
-      ID me = user.identifier;
       /// owner
-      ID? owner = await shared.facebook.getOwner(identifier);
-      if (owner == null) {
-        _ownerFlag = null;
-      } else {
-        _ownerFlag = owner == me;
-      }
+      _owner = await shared.facebook.getOwner(identifier);
       /// admins
-      List<ID> admins = await shared.facebook.getAdministrators(identifier);
-      _adminFlag = admins.contains(me);
+      _admins = await shared.facebook.getAdministrators(identifier);
       /// members
       Document? doc = await shared.facebook.getDocument(identifier, '*');
       if (doc == null) {
-        _memberFlag = null;
         _members = null;
         _temporaryTitle = null;
       } else {
-        List<ID> members = await shared.facebook.getMembers(identifier);
-        _memberFlag = members.contains(me);
+        List<ID> members = _members = await shared.facebook.getMembers(identifier);
         List<ContactInfo> users = [];
         ContactInfo? info;
         for (ID item in members) {
@@ -143,7 +160,6 @@ class GroupInfo extends Conversation implements lnc.Observer {
           }
           users.add(info);
         }
-        _members = users;
         // check group name
         if (name.isEmpty && _temporaryTitle == null) {
           _temporaryTitle = await buildGroupName(members);
@@ -156,8 +172,9 @@ class GroupInfo extends Conversation implements lnc.Observer {
         });
       }
     }
-    if (_ownerFlag == null || _memberFlag == null) {
+    if (_owner == null || _members == null) {
       _invitations = [];
+      _reset = const Pair(null, null);
     } else {
       AccountDBI db = shared.facebook.database;
       List<Pair<GroupCommand, ReliableMessage>> histories = await db.getGroupHistories(group: identifier);
@@ -188,6 +205,7 @@ class GroupInfo extends Conversation implements lnc.Observer {
         }
       }
       _invitations = array;
+      _reset = await db.getResetCommandMessage(group: identifier);
     }
   }
 

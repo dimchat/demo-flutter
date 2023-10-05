@@ -48,8 +48,6 @@ class EntityDatabase extends DatabaseConnector {
         // mute-list
         _createMutedTable(db);
 
-        // group (founder, owner, members, assistants)
-        _createGroupTables(db);
       },
       onUpgrade: (db, oldVersion, newVersion) {
         if (oldVersion < 5) {
@@ -103,20 +101,6 @@ class EntityDatabase extends DatabaseConnector {
         name: 'user_id_index', fields: ['uid']);
   }
 
-  // group
-  static void _createGroupTables(Database db) {
-    // founder, owner
-    // members
-    DatabaseConnector.createTable(db, tMember, fields: [
-      "id INTEGER PRIMARY KEY AUTOINCREMENT",
-      "gid VARCHAR(64) NOT NULL",
-      "member VARCHAR(64) NOT NULL",
-    ]);
-    DatabaseConnector.createIndex(db, tMember,
-        name: 'group_id_index', fields: ['gid']);
-    // assistants
-  }
-
   static const String dbName = 'mkm.db';
   static const int dbVersion = 5;
 
@@ -130,7 +114,85 @@ class EntityDatabase extends DatabaseConnector {
   static const String tBlocked   = 't_blocked';
   static const String tMuted   = 't_muted';
 
-  // static const String tGroup    = 't_group';
-  static const String tMember   = 't_member';
+}
 
+
+///
+///  Store group info
+///
+///     file path: '/data/data/chat.dim.sechat/databases/group.db'
+///
+
+
+class GroupDatabase extends DatabaseConnector {
+  GroupDatabase() : super(name: dbName, version: dbVersion,
+      onCreate: (db, version) {
+        // // reset group command
+        // DatabaseConnector.createTable(db, tResetGroup, fields: [
+        //   "id INTEGER PRIMARY KEY AUTOINCREMENT",
+        //   "gid VARCHAR(64) NOT NULL",
+        //   "cmd TEXT NOT NULL",
+        //   "msg TEXT NOT NULL",
+        // ]);
+        // DatabaseConnector.createIndex(db, tResetGroup,
+        //     name: 'gid_index', fields: ['gid']);
+        // members
+        _createMemberTable(db);
+        // administrators
+        _createAdminTable(db);
+        // group history commands
+        _createHistoryTable(db);
+      }, onUpgrade: (db, oldVersion, newVersion) {
+        if (oldVersion < 2) {
+          _createMemberTable(db);
+          _createAdminTable(db);
+          _createHistoryTable(db);
+        }
+      });
+
+  // members
+  static void _createMemberTable(Database db) {
+    DatabaseConnector.createTable(db, tMember, fields: [
+      "id INTEGER PRIMARY KEY AUTOINCREMENT",
+      "gid VARCHAR(64) NOT NULL",
+      "member VARCHAR(64) NOT NULL",
+    ]);
+    DatabaseConnector.createIndex(db, tMember,
+        name: 'group_id_index', fields: ['gid']);
+  }
+
+  // administrators
+  static void _createAdminTable(Database db) {
+    DatabaseConnector.createTable(db, tAdmin, fields: [
+      "id INTEGER PRIMARY KEY AUTOINCREMENT",
+      "gid VARCHAR(64) NOT NULL",
+      "admin VARCHAR(64) NOT NULL",
+    ]);
+    DatabaseConnector.createIndex(db, tAdmin,
+        name: 'group_id_index', fields: ['gid']);
+  }
+
+  // group history commands
+  static void _createHistoryTable(Database db) {
+    DatabaseConnector.createTable(db, tHistory, fields: [
+      "id INTEGER PRIMARY KEY AUTOINCREMENT",
+      "gid VARCHAR(64) NOT NULL",  // group id
+      "cmd VARCHAR(32) NOT NULL",  // command name
+      "time INTEGER NOT NULL",     // command time (seconds)
+      "content TEXT NOT NULL",     // command info
+      "message TEXT NOT NULL",     // message info
+    ]);
+    DatabaseConnector.createIndex(db, tHistory,
+        name: 'gid_index', fields: ['gid']);
+  }
+
+  static const String dbName = 'group.db';
+  static const int dbVersion = 2;
+
+  static const String tAdmin         = 't_admin';
+  static const String tMember        = 't_member';
+
+  static const String tHistory       = 't_history';
+
+  // static const String tResetGroup = 't_reset_group';
 }

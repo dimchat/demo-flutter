@@ -1,47 +1,8 @@
 import 'package:lnc/lnc.dart';
 
 import '../client/constants.dart';
+import 'entity.dart';
 import 'helper/sqlite.dart';
-
-
-///
-///  Store group history command messages
-///
-///     file path: '/data/data/chat.dim.sechat/databases/group.db'
-///
-
-
-class GroupDatabase extends DatabaseConnector {
-  GroupDatabase() : super(name: dbName, version: dbVersion,
-      onCreate: (db, version) {
-        // group history command
-        _createHistoryTable(db);
-      }, onUpgrade: (db, oldVersion, newVersion) {
-        if (oldVersion < 2) {
-          _createHistoryTable(db);
-        }
-      });
-
-  // group history history
-  static void _createHistoryTable(Database db) {
-    DatabaseConnector.createTable(db, tGroupHistory, fields: [
-      "id INTEGER PRIMARY KEY AUTOINCREMENT",
-      "gid VARCHAR(64) NOT NULL",  // group id
-      "cmd VARCHAR(32) NOT NULL",  // command name
-      "time INTEGER NOT NULL",     // command time (seconds)
-      "content TEXT NOT NULL",     // command info
-      "message TEXT NOT NULL",     // message info
-    ]);
-    DatabaseConnector.createIndex(db, tGroupHistory,
-        name: 'gid_index', fields: ['gid']);
-  }
-
-  static const String dbName = 'group.db';
-  static const int dbVersion = 2;
-
-  static const String tGroupHistory  = 't_group_history';
-
-}
 
 
 Pair<GroupCommand, ReliableMessage> _extractCommandMessage(ResultSet resultSet, int index) {
@@ -54,7 +15,7 @@ Pair<GroupCommand, ReliableMessage> _extractCommandMessage(ResultSet resultSet, 
 class _GroupHistoryTable extends DataTableHandler<Pair<GroupCommand, ReliableMessage>> implements GroupHistoryDBI {
   _GroupHistoryTable() : super(GroupDatabase(), _extractCommandMessage);
 
-  static const String _table = GroupDatabase.tGroupHistory;
+  static const String _table = GroupDatabase.tHistory;
   static const List<String> _selectColumns = ["content", "message"];
   static const List<String> _insertColumns = ["gid", "cmd", "time", "content", "message"];
 

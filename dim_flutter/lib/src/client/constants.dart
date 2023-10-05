@@ -27,6 +27,7 @@ abstract class NotificationNames {
   static const String kGroupCreated = 'GroupCreated';
   static const String kGroupRemoved = 'GroupRemoved';
   static const String kMembersUpdated = 'MembersUpdated';
+  static const String kAdministratorsUpdated = 'AdministratorsUpdated';
   static const String kParticipantsUpdated = 'ParticipantsUpdated';
 
   static const String kHistoryUpdated = 'HistoryUpdated';

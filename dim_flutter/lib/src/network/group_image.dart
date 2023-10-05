@@ -77,7 +77,7 @@ class _GroupImageState extends State<GroupImage> implements lnc.Observer {
 
   @override
   Widget build(BuildContext context) {
-    List<ContactInfo> members = widget.info.members;
+    List<ContactInfo> members = ContactInfo.fromList(widget.info.members);
     int count = members.length;
     double width;
     double height;

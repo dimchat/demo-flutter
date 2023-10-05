@@ -57,8 +57,27 @@ class SharedFacebook extends ClientFacebook {
         return false;
       }
     }
-    return await database.saveDocument(doc);
+    bool ok = await database.saveDocument(doc);
+    if (ok && doc is Bulletin) {
+      ID group = doc.identifier;
+      assert(group.isGroup, 'group ID error: $group');
+      var array = doc.getProperty('administrators');
+      if (array is List) {
+        List<ID> admins = ID.convert(array);
+        ok = await saveAdministrators(admins, group);
+      }
+    }
+    return ok;
   }
+
+  Future<bool> saveMembers(List<ID> members, ID group) async =>
+      await database.saveMembers(members, group: group);
+
+  Future<bool> saveAssistants(List<ID> bots, ID group) async =>
+      await database.saveAssistants(bots, group: group);
+
+  Future<bool> saveAdministrators(List<ID> admins, ID group) async =>
+      await database.saveAdministrators(admins, group: group);
 
   Future<List<ID>> getAdministrators(ID group) async {
     List<ID> members = await database.getAdministrators(group: group);

@@ -28,6 +28,8 @@
  * SOFTWARE.
  * =============================================================================
  */
+import 'dart:typed_data';
+
 import 'package:dim_client/dim_client.dart';
 import 'package:lnc/lnc.dart' show Log;
 
@@ -163,6 +165,66 @@ class GroupManager {
     return group;
   }
 
+  ///  Update 'administrators' in bulletin document
+  ///
+  /// @param newAdmins - new administrator ID list
+  /// @return true on success
+  Future<bool> updateAdministrators(ID group, List<ID> newAdmins) async {
+    assert(group.isGroup, 'group ID error: $group');
+    GroupDelegate delegate = dataSource;
+
+    // check current user
+    User? user = await currentUser;
+    if (user == null) {
+      assert(false, 'failed to get current user');
+      return false;
+    }
+    ID me = user.identifier;
+    ID? owner = await delegate.getOwner(group);
+    if (owner != me) {
+      Log.error('cannot update administrators for group: $group, $me');
+      return false;
+    }
+    // get sign key
+    SignKey? sKey = await facebook.getPrivateKeyForVisaSignature(me);
+    if (sKey == null) {
+      assert(false, 'failed to get sign key for group owner: $me');
+      return false;
+    }
+
+    // update document
+    Document? doc = await delegate.getDocument(group, '*');
+    if (doc == null) {
+      // TODO: create new one?
+      assert(false, 'failed to get group document: $group');
+      return false;
+    }
+    doc.setProperty('administrators', ID.revert(newAdmins));
+    Uint8List? signature = doc.sign(sKey);
+    if (signature == null) {
+      assert(false, 'failed to sign document for group: $group, owner: $me');
+      return false;
+    }
+
+    // pack 'document' command
+    Meta? meta = await delegate.getMeta(group);
+    Command content = DocumentCommand.response(group, meta, doc);
+
+    // upload to current station
+    _sendCommand(content, [Station.kAny]);              // to neighbor(s)
+
+    List<ID> bots = await delegate.getAssistants(group);
+    if (bots.isNotEmpty) {
+      // let the group bots to redirect for us.
+      _sendCommand(content, bots);                      // to all assistants
+      return true;
+    }
+    // send to all members directly
+    List<ID> members = await delegate.getMembers(group);
+    _sendCommand(content, members);                     // to all assistants
+    return true;
+  }
+
   // DISCUSS: should we let the neighbor stations know the group info?
   //      (A) if we do this, it can provide a convenience that,
   //          when someone receive a message from an unknown group,
@@ -182,7 +244,12 @@ class GroupManager {
     assert(group.isGroup && newMembers.isNotEmpty, 'params error: $group, $newMembers');
     GroupDelegate delegate = dataSource;
 
-    ID me = (await currentUser)!.identifier;
+    User? user = await currentUser;
+    if (user == null) {
+      assert(false, 'failed to get current user');
+      return false;
+    }
+    ID me = user.identifier;
 
     if (await delegate.isOwner(newMembers.first, group: group)) {
       // member list OK
@@ -251,7 +318,12 @@ class GroupManager {
     assert(group.isGroup && expelMembers.isNotEmpty, 'params error: $group, $expelMembers');
     GroupDelegate delegate = dataSource;
 
-    ID me = (await currentUser)!.identifier;
+    User? user = await currentUser;
+    if (user == null) {
+      assert(false, 'failed to get current user');
+      return false;
+    }
+    ID me = user.identifier;
     List<ID> oldMembers = await delegate.getMembers(group);
 
     bool isOwner = await delegate.isOwner(me, group: group);
@@ -281,7 +353,12 @@ class GroupManager {
     assert(group.isGroup && newMembers.isNotEmpty, 'params error: $group, $newMembers');
     GroupDelegate delegate = dataSource;
 
-    ID me = (await currentUser)!.identifier;
+    User? user = await currentUser;
+    if (user == null) {
+      assert(false, 'failed to get current user');
+      return false;
+    }
+    ID me = user.identifier;
     List<ID> oldMembers = await delegate.getMembers(group);
 
     bool isOwner = await delegate.isOwner(me, group: group);
@@ -347,7 +424,12 @@ class GroupManager {
     assert(group.isGroup, 'group ID error: $group');
     GroupDelegate delegate = dataSource;
 
-    ID me = (await currentUser)!.identifier;
+    User? user = await currentUser;
+    if (user == null) {
+      assert(false, 'failed to get current user');
+      return false;
+    }
+    ID me = user.identifier;
 
     // 0. check permission
     if (await delegate.isAdministrator(me, group: group)) {
@@ -367,11 +449,12 @@ class GroupManager {
 
     // 2. build 'quit' command
     Command content = GroupCommand.quit(group);
-    ForwardContent? forward = await _packGroupCommand(content, me);
-    if (forward == null) {
-      assert(false, 'failed to pack "quit" command for group: $group');
+    ReliableMessage? rMsg = await _packGroupMessage(content, me);
+    if (rMsg == null) {
+      assert(false, 'failed to sign group message: ${content.group}');
       return false;
     }
+    ForwardContent forward = ForwardContent.create(forward: rMsg);
 
     // 3. forward 'quit' command
     List<ID> bots = await delegate.getAssistants(group);
@@ -418,18 +501,13 @@ class GroupManager {
       return false;
     }
     ID me = user.identifier;
-    // send group command to members directly
-    ForwardContent? forward = await _packGroupCommand(content, me);
-    if (forward == null) {
-      assert(false, 'failed to pack group command: $content');
-      return false;
-    }
+    // send to all members one by one
     for (ID item in members) {
       if (item == me) {
-        // skip cycled message
+        Log.info('skip cycled message: $me => $item');
         continue;
       }
-      messenger?.sendContent(forward, sender: me, receiver: item);
+      messenger?.sendContent(content, sender: me, receiver: item);
     }
     return true;
   }
@@ -449,14 +527,6 @@ class GroupManager {
       return null;
     }
     return rMsg;
-  }
-  Future<ForwardContent?> _packGroupCommand(Content content, ID sender) async {
-    ReliableMessage? rMsg = await _packGroupMessage(content, sender);
-    if (rMsg == null) {
-      assert(false, 'failed to sign group message: ${content.group}');
-      return null;
-    }
-    return ForwardContent.create(forward: rMsg);
   }
 
   //

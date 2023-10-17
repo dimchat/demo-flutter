@@ -28,14 +28,8 @@
  * SOFTWARE.
  * =============================================================================
  */
-import 'dart:typed_data';
-
 import 'package:dim_client/dim_client.dart';
-import 'package:lnc/lnc.dart';
 
-import '../channels/manager.dart';
-import '../channels/transfer.dart';
-import '../network/ftp.dart';
 import 'shared.dart';
 
 class SharedGroupManager implements GroupDataSource {
@@ -184,37 +178,8 @@ class _GroupEmitter extends GroupEmitter {
 
   @override
   Future<bool> uploadFileData(FileContent content, EncryptKey password, InstantMessage iMsg) async {
-    // 1. save origin file data
-    Uint8List? data = content.data;
-    if (data == null) {
-      Log.warning('already uploaded: ${content.url}');
-      return false;
-    }
-    String? filename = content.filename;
-    int len = await FileTransfer.cacheFileData(data, filename!);
-    if (len != data.length) {
-      Log.error('failed to save file data (len=${data.length}): $filename');
-      return false;
-    }
-    // 2. add upload task with encrypted data
-    Uint8List encrypted = password.encrypt(data, content);
-    filename = FileTransfer.filenameFromData(encrypted, filename);
-    ID sender = iMsg.sender;
-    ChannelManager man = ChannelManager();
-    FileTransferChannel ftp = man.ftpChannel;
-    Uri? url = await ftp.uploadEncryptData(encrypted, filename, sender);
-    if (url == null) {
-      Log.error('failed to upload: ${content.filename} -> $filename');
-      // TODO: mark message failed
-    } else {
-      // upload success
-      Log.info('uploaded filename: ${content.filename} -> $filename => $url');
-      // 3. replace file data with URL & decrypt key
-      content.url = url;
-      content.password = password as DecryptKey;
-      content.data = null;
-    }
-    return true;
+    GlobalVariable shared = GlobalVariable();
+    return shared.emitter.uploadFileData(content, password: password as SymmetricKey, sender: iMsg.sender);
   }
 
 }

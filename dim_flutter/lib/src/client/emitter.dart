@@ -105,41 +105,39 @@ class Emitter implements Observer {
   ///
   /// @param content  - file content
   /// @param iMsg     - outgoing message with file content
-  Future<void> uploadFileData(FileContent content, InstantMessage iMsg) async {
+  Future<bool> uploadFileData(FileContent content,
+      {required SymmetricKey password, required ID sender}) async {
     // 1. save origin file data
     Uint8List? data = content.data;
     if (data == null) {
       Log.warning('already uploaded: ${content.url}');
-      return;
+      return false;
     }
     String? filename = content.filename;
     int len = await FileTransfer.cacheFileData(data, filename!);
     if (len != data.length) {
       Log.error('failed to save file data (len=${data.length}): $filename');
-      return;
+      return false;
     }
-    GlobalVariable shared = GlobalVariable();
-    SymmetricKey? password = await shared.messenger?.getEncryptKey(iMsg);
-    assert(password != null, 'failed to get msg key: '
-        '${iMsg.sender} => ${iMsg.receiver}, ${iMsg['group']}');
     // 2. add upload task with encrypted data
-    Uint8List encrypted = password!.encrypt(data, content);
+    Uint8List encrypted = password.encrypt(data, content);
     filename = FileTransfer.filenameFromData(encrypted, filename);
-    ID sender = iMsg.sender;
     ChannelManager man = ChannelManager();
     FileTransferChannel ftp = man.ftpChannel;
     Uri? url = await ftp.uploadEncryptData(encrypted, filename, sender);
     if (url == null) {
       Log.error('failed to upload: ${content.filename} -> $filename');
       // TODO: mark message failed
+      return false;
     } else {
       // upload success
       Log.info('uploaded filename: ${content.filename} -> $filename => $url');
-      // 3. replace file data with URL & decrypt key
-      content.url = url;
-      content.password = password;
-      content.data = null;
     }
+    // 3. replace file data with URL & decrypt key
+    content.url = url;
+    content.password = password;
+    content.data = null;
+    return true;
   }
 
   ///  Send text message to receiver

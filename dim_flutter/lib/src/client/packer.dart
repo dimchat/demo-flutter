@@ -15,7 +15,13 @@ class SharedPacker extends ClientMessagePacker {
       if (content.data != null/* && content.url == null*/) {
         // call emitter to encrypt & upload file data before send out
         GlobalVariable shared = GlobalVariable();
-        await shared.emitter.uploadFileData(content, iMsg);
+        SymmetricKey? password = await shared.messenger?.getEncryptKey(iMsg);
+        if (password == null) {
+          assert(false, 'failed to get encrypt key: '
+              '${iMsg.sender} => ${iMsg.receiver}, ${iMsg['group']}');
+        } else {
+          await shared.emitter.uploadFileData(content, password: password, sender: iMsg.sender);
+        }
       }
     }
     // check receiver & encrypt

@@ -103,10 +103,9 @@ class Emitter implements Observer {
 
   ///  Send file data encrypted with password
   ///
-  /// @param iMsg     - outgoing message
-  /// @param password - key for encrypt/decrypt file data
-  Future<void> sendFileContent(InstantMessage iMsg, SymmetricKey password) async {
-    FileContent content = iMsg.content as FileContent;
+  /// @param content  - file content
+  /// @param iMsg     - outgoing message with file content
+  Future<void> uploadFileData(FileContent content, InstantMessage iMsg) async {
     // 1. save origin file data
     Uint8List? data = content.data;
     if (data == null) {
@@ -119,8 +118,12 @@ class Emitter implements Observer {
       Log.error('failed to save file data (len=${data.length}): $filename');
       return;
     }
+    GlobalVariable shared = GlobalVariable();
+    SymmetricKey? password = await shared.messenger?.getEncryptKey(iMsg);
+    assert(password != null, 'failed to get msg key: '
+        '${iMsg.sender} => ${iMsg.receiver}, ${iMsg['group']}');
     // 2. add upload task with encrypted data
-    Uint8List encrypted = password.encrypt(data, iMsg);
+    Uint8List encrypted = password!.encrypt(data, content);
     filename = FileTransfer.filenameFromData(encrypted, filename);
     ID sender = iMsg.sender;
     ChannelManager man = ChannelManager();
@@ -159,7 +162,8 @@ class Emitter implements Observer {
     assert(jpeg.isNotEmpty, 'image data should not empty');
     String filename = Hex.encode(MD5.digest(jpeg));
     filename += ".jpeg";
-    ImageContent content = FileContent.image(filename: filename, data: jpeg);
+    TransportableData ted = TransportableData.create(jpeg);
+    ImageContent content = FileContent.image(filename: filename, data: ted);
     // add image data length & thumbnail into message content
     content['length'] = jpeg.length;
     content.thumbnail = thumbnail;
@@ -176,7 +180,8 @@ class Emitter implements Observer {
     assert(mp4.isNotEmpty, 'voice data should not empty');
     String filename = Hex.encode(MD5.digest(mp4));
     filename += ".mp4";
-    AudioContent content = FileContent.audio(filename: filename, data: mp4);
+    TransportableData ted = TransportableData.create(mp4);
+    AudioContent content = FileContent.audio(filename: filename, data: ted);
     // add voice data length & duration into message content
     content['length'] = mp4.length;
     content['duration'] = duration;
@@ -188,8 +193,8 @@ class Emitter implements Observer {
     if (receiver.isGroup) {
       // group message
       content.group = receiver;
-      GroupManager man = GroupManager();
-      result = await man.sendContent(content, sender: null, receiver: receiver);
+      SharedGroupManager man = SharedGroupManager();
+      result = await man.sendContent(content, group: receiver);
     } else {
       GlobalVariable shared = GlobalVariable();
       ClientMessenger? mess = shared.messenger;

@@ -269,15 +269,15 @@ class GroupInfo extends Conversation implements lnc.Observer {
     }
     ID me = user.identifier;
     // 1. check permission
-    GroupManager man = GroupManager();
-    if (await man.dataSource.isOwner(me, group: group)) {
+    SharedGroupManager man = SharedGroupManager();
+    if (await man.isOwner(me, group: group)) {
       Log.info('updating group $group by owner $me');
     } else {
       Log.error('cannot update group name: $group, $text');
       return 'Permission denied';
     }
     // 2. get old document
-    Document? bulletin = await man.dataSource.getDocument(group, '*');
+    Document? bulletin = await man.getDocument(group, '*');
     if (bulletin == null) {
       // TODO: create a new bulletin?
       assert(false, 'failed to get group document: $group');
@@ -301,7 +301,13 @@ class GroupInfo extends Conversation implements lnc.Observer {
       return 'Failed to sign group document';
     }
     // 3. save into local storage and broadcast it
-    if (await man.dataSource.updateDocument(bulletin)) {
+    if (await shared.facebook.saveDocument(bulletin)) {
+      Log.warning('group document saved: $group');
+    } else {
+      assert(false, 'failed to save group document: $group');
+      return 'failed to save group document';
+    }
+    if (await man.broadcastDocument(bulletin)) {
       Log.warning('group document updated: $group');
     } else {
       assert(false, 'failed to update group document: $group');
@@ -330,7 +336,7 @@ class GroupInfo extends Conversation implements lnc.Observer {
   }
   void _doQuit(BuildContext ctx, ID group, ID user) {
     // 1. quit group
-    GroupManager man = GroupManager();
+    SharedGroupManager man = SharedGroupManager();
     man.quitGroup(group).then((out) {
       // 2. remove conversation
       Amanuensis clerk = Amanuensis();

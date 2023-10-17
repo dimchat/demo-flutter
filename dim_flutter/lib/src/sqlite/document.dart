@@ -16,7 +16,8 @@ Document _extractDocument(ResultSet resultSet, int index) {
   if (type == null || type.isEmpty) {
     type = '*';
   }
-  Document doc = Document.create(type, identifier!, data: data, signature: signature);
+  TransportableData? ted = TransportableData.parse(signature);
+  Document doc = Document.create(type, identifier!, data: data, signature: ted);
   if (type == '*') {
     if (identifier.isUser) {
       type = Document.kVisa;

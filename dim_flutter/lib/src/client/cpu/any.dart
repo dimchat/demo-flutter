@@ -40,8 +40,8 @@ class AnyContentProcessor extends BaseContentProcessor {
       // the group ID is overt, normally it must be redirected by a group bot,
       // and the bot should respond the sender after delivered to any member,
       // so we don't need to response the sender here
-      GroupManager man = GroupManager();
-      List<ID> bots = await man.dataSource.getAssistants(group);
+      SharedGroupManager man = SharedGroupManager();
+      List<ID> bots = await man.getAssistants(group);
       if (bots.isNotEmpty) {
         // let the group bot to do the job
         return [];

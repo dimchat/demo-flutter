@@ -48,6 +48,9 @@ class SharedGroupManager implements GroupDataSource {
   late final AdminManager _adminManager = AdminManager(_delegate);
   late final GroupEmitter _emitter = _GroupEmitter(_delegate);
 
+  Future<String> buildGroupName(List<ID> members) async =>
+      await _delegate.buildGroupName(members);
+
   //
   //  Entity DataSource
   //
@@ -86,7 +89,7 @@ class SharedGroupManager implements GroupDataSource {
       await _adminManager.broadcastDocument(doc as Bulletin);
 
   //
-  //
+  //  Group Manage
   //
 
   /// Create new group with members
@@ -177,9 +180,10 @@ class _GroupEmitter extends GroupEmitter {
   _GroupEmitter(super.delegate);
 
   @override
-  Future<bool> uploadFileData(FileContent content, EncryptKey password, InstantMessage iMsg) async {
+  Future<bool> uploadFileData(FileContent content,
+      {required SymmetricKey password, required ID sender}) async {
     GlobalVariable shared = GlobalVariable();
-    return shared.emitter.uploadFileData(content, password: password as SymmetricKey, sender: iMsg.sender);
+    return shared.emitter.uploadFileData(content, password: password, sender: sender);
   }
 
 }

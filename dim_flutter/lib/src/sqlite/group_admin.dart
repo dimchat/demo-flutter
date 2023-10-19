@@ -24,7 +24,7 @@ class _AdminTable extends DataTableHandler<ID> {
 
     // 0. check new admins
     if (newAdmins.isEmpty) {
-      assert(oldAdmins.isNotEmpty, 'new administrators empty??');
+      // assert(oldAdmins.isNotEmpty, 'new administrators empty??');
       cond = SQLConditions(left: 'gid', comparison: '=', right: group.toString());
       if (await delete(_table, conditions: cond) < 0) {
         Log.error('failed to clear administrators for group: $group');

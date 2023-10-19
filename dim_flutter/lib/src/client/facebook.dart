@@ -21,6 +21,27 @@ class SharedFacebook extends ClientFacebook {
     return group;
   }
 
+  Future<List<ID>> getAdministrators(ID group) async {
+    assert(group.isGroup, 'ID error: $group');
+    Document? doc = await getDocument(group, '*');
+    if (doc == null) {
+      // group not ready
+      return [];
+    }
+    List<ID> admins = await database.getAdministrators(group: group);
+    if (admins.isNotEmpty) {
+      // got from database
+      return admins;
+    }
+    // var array = doc.getProperty('administrators');
+    // if (array is List) {
+    //   // got from bulletin document
+    //   return ID.convert(array);
+    // }
+    // administrators not found
+    return [];
+  }
+
   Future<Pair<String?, Uri?>> getAvatar(ID user) async {
     String? urlString;
     Document? doc = await getDocument(user, '*');

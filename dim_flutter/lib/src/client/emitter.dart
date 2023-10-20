@@ -107,12 +107,15 @@ class Emitter implements Observer {
   /// @param iMsg     - outgoing message with file content
   Future<bool> uploadFileData(FileContent content,
       {required SymmetricKey password, required ID sender}) async {
-    // 1. save origin file data
+    // 0. check file content
     Uint8List? data = content.data;
     if (data == null) {
       Log.warning('already uploaded: ${content.url}');
       return false;
     }
+    assert(content.password == null, 'file content error: $content');
+    assert(content.url == null, 'file content error: $content');
+    // 1. save origin file data
     String? filename = content.filename;
     int len = await FileTransfer.cacheFileData(data, filename!);
     if (len != data.length) {

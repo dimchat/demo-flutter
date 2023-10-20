@@ -24,6 +24,14 @@ class SharedPacker extends ClientMessagePacker {
         }
       }
     }
+
+    // the intermediate node(s) can only get the message's signature,
+    // but cannot know the 'sn' because it cannot decrypt the content,
+    // this is usually not a problem;
+    // but sometimes we want to respond a receipt with original sn,
+    // so I suggest to expose 'sn' here.
+    iMsg['sn'] = content.sn;
+
     // check receiver & encrypt
     return await super.encryptMessage(iMsg);
   }

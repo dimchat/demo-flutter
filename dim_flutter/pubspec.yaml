@@ -36,6 +36,9 @@ dependencies:
   bip32: ^2.0.0
   bip39: ^1.0.6
 
+  dio: ^5.3.3
+  mutex: ^3.1.0
+
   lnc: ^0.1.0
   dim_client: ^0.2.8
 

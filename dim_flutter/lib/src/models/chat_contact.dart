@@ -7,7 +7,7 @@ import 'package:lnc/lnc.dart' show Log;
 import '../common/dbi/contact.dart';
 import '../client/constants.dart';
 import '../client/shared.dart';
-import '../network/image_view.dart';
+import '../network/pni_avatar.dart';
 import '../widgets/alert.dart';
 
 import 'amanuensis.dart';
@@ -30,12 +30,14 @@ class ContactInfo extends Conversation implements lnc.Observer {
       assert(did != null, 'notification error: $notification');
       if (did == identifier) {
         Log.info('document updated: $did');
+        setNeedsReload();
         await reloadData();
       }
     } else if (name == NotificationNames.kContactsUpdated) {
       ID? contact = userInfo?['contact'];
       if (contact == identifier) {
         Log.info('contact updated: $contact');
+        setNeedsReload();
         await reloadData();
       }
     } else if (name == NotificationNames.kBlockListUpdated) {
@@ -43,9 +45,11 @@ class ContactInfo extends Conversation implements lnc.Observer {
       contact ??= userInfo?['unblocked'];
       if (contact == identifier) {
         Log.info('blocked contact updated: $contact');
+        setNeedsReload();
         await reloadData();
       } else if (contact == null) {
         Log.info('block-list updated');
+        setNeedsReload();
         await reloadData();
       }
     } else {
@@ -93,11 +97,11 @@ class ContactInfo extends Conversation implements lnc.Observer {
 
   @override
   Widget getImage({double? width, double? height, GestureTapCallback? onTap}) =>
-      ImageViewFactory().fromID(identifier, width: width, height: height, onTap: onTap);
+      AvatarFactory().getAvatarView(identifier, width: width, height: height, onTap: onTap);
 
   @override
-  Future<void> reloadData() async {
-    await super.reloadData();
+  Future<void> loadData() async {
+    await super.loadData();
     // check current user
     GlobalVariable shared = GlobalVariable();
     User? user = await shared.facebook.currentUser;

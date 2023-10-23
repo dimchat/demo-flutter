@@ -44,6 +44,7 @@ class GroupInfo extends Conversation implements lnc.Observer {
       assert(did != null, 'notification error: $notification');
       if (did == identifier) {
         Log.info('document updated: $did');
+        setNeedsReload();
         await reloadData();
       }
     } else if (name == NotificationNames.kGroupHistoryUpdated) {
@@ -51,6 +52,7 @@ class GroupInfo extends Conversation implements lnc.Observer {
       assert(did != null, 'notification error: $notification');
       if (did == identifier) {
         Log.info('group history updated: $did');
+        setNeedsReload();
         await reloadData();
       }
     } else  if (name == NotificationNames.kAdministratorsUpdated) {
@@ -58,6 +60,7 @@ class GroupInfo extends Conversation implements lnc.Observer {
       assert(did != null, 'notification error: $notification');
       if (did == identifier) {
         Log.info('administrators updated: $did');
+        setNeedsReload();
         await reloadData();
       }
     } else {
@@ -142,8 +145,8 @@ class GroupInfo extends Conversation implements lnc.Observer {
       GroupImage(this, width: width, height: height, onTap: onTap);
 
   @override
-  Future<void> reloadData() async {
-    await super.reloadData();
+  Future<void> loadData() async {
+    await super.loadData();
     // check current user
     GlobalVariable shared = GlobalVariable();
     User? user = await shared.facebook.currentUser;

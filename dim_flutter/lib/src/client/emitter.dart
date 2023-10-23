@@ -101,10 +101,12 @@ class Emitter implements Observer {
     });
   }
 
-  ///  Send file data encrypted with password
+  ///  Upload file data encrypted with password
   ///
   /// @param content  - file content
-  /// @param iMsg     - outgoing message with file content
+  /// @param password - encrypt/decrypt key
+  /// @param sender   - from where
+  /// @return false on error
   Future<bool> uploadFileData(FileContent content,
       {required SymmetricKey password, required ID sender}) async {
     // 0. check file content

@@ -34,7 +34,7 @@ import 'package:flutter/material.dart';
 import 'package:dim_client/dim_client.dart';
 
 import '../network/image_factory.dart';
-import '../network/image_view.dart';
+import '../network/pni_avatar.dart';
 import 'styles.dart';
 
 
@@ -56,11 +56,11 @@ class NameCardView extends StatelessWidget {
   Widget _widget(BuildContext context) {
     var colors = Facade.of(context).colors;
     var styles = Facade.of(context).styles;
-    ImageViewFactory factory = ImageViewFactory();
+    AvatarFactory factory = AvatarFactory();
     ID identifier = content.identifier;
     String? url = content.avatar?.toString();
     Widget image = url == null
-        ? factory.fromID(identifier, width: 32, height: 32)
+        ? factory.getAvatarView(identifier, width: 32, height: 32)
         : ImageView(url: url, width: 32, height: 32,);
     return Container(
       color: colors.pageMessageBackgroundColor,

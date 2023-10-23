@@ -18,6 +18,8 @@ abstract class Conversation {
 
   final ID identifier;
 
+  bool _loaded = false;
+
   String? _name;
 
   int unread;           // count of unread messages
@@ -131,7 +133,17 @@ abstract class Conversation {
     });
   }
 
+  void setNeedsReload() => _loaded = false;
+
   Future<void> reloadData() async {
+    if (_loaded) {
+    } else {
+      await loadData();
+      _loaded = true;
+    }
+  }
+
+  Future<void> loadData() async {
     GlobalVariable shared = GlobalVariable();
     User? user = await shared.facebook.currentUser;
     if (user == null) {

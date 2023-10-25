@@ -150,8 +150,8 @@ abstract class Conversation {
       Log.error('current user not found');
     }
     // get name
-    Document? doc = await shared.facebook.getDocument(identifier, '*');
-    _name = doc?.name;
+    String name = await shared.facebook.getName(identifier);
+    _name = name;
     // get remark
     if (_remark == null && user != null) {
       var cr = await shared.database.getRemark(identifier, user: user.identifier);

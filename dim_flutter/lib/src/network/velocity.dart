@@ -275,7 +275,7 @@ Future<InstantMessage?> _getMsg() async {
   ID sid = Station.kAny;
   // check current user's meta & visa document
   Meta? meta = await facebook.getMeta(uid);
-  Document? visa = await facebook.getDocument(uid, '*');
+  Visa? visa = await facebook.getVisa(uid);
   if (meta == null) {
     assert(false, 'meta should not empty here');
     return null;

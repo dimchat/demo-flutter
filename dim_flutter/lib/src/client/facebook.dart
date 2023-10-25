@@ -12,8 +12,8 @@ class SharedFacebook extends ClientFacebook {
     Group? group;
     if (!identifier.isBroadcast) {
       SharedGroupManager man = SharedGroupManager();
-      Document? bulletin = await man.getDocument(identifier, '*');
-      if (bulletin != null) {
+      Bulletin? doc = await getBulletin(identifier);
+      if (doc != null) {
         group = await super.createGroup(identifier);
         group?.dataSource = man;
       }
@@ -23,7 +23,7 @@ class SharedFacebook extends ClientFacebook {
 
   Future<List<ID>> getAdministrators(ID group) async {
     assert(group.isGroup, 'ID error: $group');
-    Document? doc = await getDocument(group, '*');
+    Bulletin? doc = await getBulletin(group);
     if (doc == null) {
       // group not ready
       return [];
@@ -43,16 +43,8 @@ class SharedFacebook extends ClientFacebook {
   }
 
   Future<Pair<String?, Uri?>> getAvatar(ID user) async {
-    String? urlString;
-    Document? doc = await getDocument(user, '*');
-    if (doc != null) {
-      if (doc is Visa) {
-        urlString = doc.avatar?.toString();
-      } else {
-        var avatar = PortableNetworkFile.parse(doc.getProperty('avatar'));
-        urlString = avatar?.toString();
-      }
-    }
+    Visa? doc = await getVisa(user);
+    String? urlString = doc?.avatar?.toString();
     String? path;
     Uri? url = Browser.parseUri(urlString);
     if (url == null) {} else {

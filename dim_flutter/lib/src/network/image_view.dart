@@ -126,7 +126,7 @@ class _FacadeView extends StatefulWidget {
   /// reload document
   Future<void> reload() async {
     GlobalVariable shared = GlobalVariable();
-    Document? doc = await shared.facebook.getDocument(info.identifier, '*');
+    Visa? doc = await shared.facebook.getVisa(info.identifier);
     if (doc == null) {
       Log.warning('visa document not found: ${info.identifier}');
     } else {

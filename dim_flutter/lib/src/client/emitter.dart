@@ -191,24 +191,50 @@ class Emitter implements Observer {
     await sendContent(content, receiver);
   }
 
-  Future<void> sendContent(Content content, ID receiver) async {
-    Pair<InstantMessage, ReliableMessage?> result;
+  Future<Pair<InstantMessage?, ReliableMessage?>> sendContent(Content content, ID receiver) async {
     if (receiver.isGroup) {
-      // group message
       content.group = receiver;
-      SharedGroupManager man = SharedGroupManager();
-      result = await man.sendContent(content, group: receiver);
-    } else {
-      GlobalVariable shared = GlobalVariable();
-      ClientMessenger? mess = shared.messenger;
-      result = await mess!.sendContent(content, sender: null, receiver: receiver);
-      if (result.second == null) {
-        Log.warning('not send yet (type=${content.type}): $receiver');
-        return;
+    }
+    GlobalVariable shared = GlobalVariable();
+    User? user = await shared.facebook.currentUser;
+    if (user == null) {
+      assert(false, 'failed to get current user');
+      return const Pair(null, null);
+    }
+    ID sender = user.identifier;
+    // 1. pack instant message
+    Envelope envelope = Envelope.create(sender: sender, receiver: receiver);
+    InstantMessage iMsg = InstantMessage.create(envelope, content);
+    // 2. check file content
+    if (content is FileContent) {
+      // encrypt & upload file data before send out
+      if (content.data != null/* && content.url == null*/) {
+        SymmetricKey? password = await shared.messenger?.getEncryptKey(iMsg);
+        if (password == null) {
+          assert(false, 'failed to get encrypt key: '
+              '${iMsg.sender} => ${iMsg.receiver}, ${iMsg['group']}');
+        } else {
+          await shared.emitter.uploadFileData(content, password: password, sender: iMsg.sender);
+        }
       }
     }
-    // save instant message
-    await _saveInstantMessage(result.first);
+    // 3. send
+    ReliableMessage? rMsg;
+    if (receiver.isGroup) {
+      // group message
+      SharedGroupManager manager = SharedGroupManager();
+      rMsg = await manager.sendInstantMessage(iMsg);
+    } else {
+      rMsg = await shared.messenger?.sendInstantMessage(iMsg);
+    }
+    if (rMsg == null) {
+      Log.warning('not send yet (type=${content.type}): $receiver');
+      return Pair(iMsg, null);
+    } else {
+      // save instant message
+      await _saveInstantMessage(iMsg);
+    }
+    return Pair(iMsg, rMsg);
   }
 
 }

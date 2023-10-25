@@ -51,7 +51,7 @@ class Vestibule implements lnc.Observer {
     } else {
       assert(entity.isGroup, 'conversation ID error: $entity');
       // check group
-      Document? bulletin = await facebook.getDocument(entity, '*');
+      Bulletin? bulletin = await facebook.getBulletin(entity);
       if (bulletin == null) {
         Log.error('group not ready yet: $entity');
         return;

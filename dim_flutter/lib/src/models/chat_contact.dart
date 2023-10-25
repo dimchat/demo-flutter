@@ -109,13 +109,8 @@ class ContactInfo extends Conversation implements lnc.Observer {
       Log.error('current user not found');
     }
     // get avatar
-    Document? visa = await shared.facebook.getDocument(identifier, '*');
-    if (visa is Visa) {
-      _avatar = visa.avatar;
-    } else {
-      Object? pnf = visa?.getProperty('avatar');
-      _avatar = PortableNetworkFile.parse(pnf);
-    }
+    Visa? visa = await shared.facebook.getVisa(identifier);
+    _avatar = visa?.avatar;
     // get friendship
     if (user == null) {
       _friendFlag = null;

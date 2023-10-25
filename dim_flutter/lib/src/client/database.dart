@@ -103,8 +103,12 @@ class SharedDatabase implements AccountDBI, SessionDBI, MessageDBI,
       await documentTable.saveDocument(doc);
 
   @override
-  Future<Document?> getDocument(ID entity, String? type) async =>
-      await documentTable.getDocument(entity, type);
+  Future<bool> clearDocuments(ID entity, String type) async =>
+      await documentTable.clearDocuments(entity, type);
+
+  @override
+  Future<List<Document>> getDocuments(ID entity) async =>
+      await documentTable.getDocuments(entity);
 
   //
   //  User Table

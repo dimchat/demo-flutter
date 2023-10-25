@@ -46,7 +46,7 @@ class SharedGroupManager implements GroupDataSource {
   late final GroupDelegate _delegate = GroupDelegate(facebook, messenger!);
   late final GroupManager _manager = GroupManager(_delegate);
   late final AdminManager _adminManager = AdminManager(_delegate);
-  late final GroupEmitter _emitter = _GroupEmitter(_delegate);
+  late final GroupEmitter _emitter = GroupEmitter(_delegate);
 
   Future<String> buildGroupName(List<ID> members) async =>
       await _delegate.buildGroupName(members);
@@ -59,8 +59,10 @@ class SharedGroupManager implements GroupDataSource {
   Future<Meta?> getMeta(ID group) async => await _delegate.getMeta(group);
 
   @override
-  Future<Document?> getDocument(ID group, String? docType) async =>
-      await _delegate.getDocument(group, docType);
+  Future<List<Document>> getDocuments(ID group) async =>
+      await _delegate.getDocuments(group);
+
+  Future<Bulletin?> getBulletin(ID group) async => await _delegate.getBulletin(group);
 
   //
   //  Group DataSource
@@ -167,23 +169,9 @@ class SharedGroupManager implements GroupDataSource {
   /// @param receiver - group ID
   /// @param priority
   /// @return
-  Future<Pair<InstantMessage, ReliableMessage?>> sendContent(Content content,
-      {required ID group, int priority = 0}) async {
-    content.group = group;
-    var pair = await _emitter.sendContent(content, priority: priority);
-    return Pair(pair.first!, pair.second);
-  }
-
-}
-
-class _GroupEmitter extends GroupEmitter {
-  _GroupEmitter(super.delegate);
-
-  @override
-  Future<bool> uploadFileData(FileContent content,
-      {required SymmetricKey password, required ID sender}) async {
-    GlobalVariable shared = GlobalVariable();
-    return shared.emitter.uploadFileData(content, password: password, sender: sender);
+  Future<ReliableMessage?> sendInstantMessage(InstantMessage iMsg, {int priority = 0}) async {
+    assert(iMsg.content.group != null, 'group message error: $iMsg');
+    return await _emitter.sendInstantMessage(iMsg, priority: priority);
   }
 
 }

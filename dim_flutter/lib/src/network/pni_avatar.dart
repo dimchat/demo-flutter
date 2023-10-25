@@ -180,23 +180,13 @@ class _AvatarLoader {
     }
     // get visa document
     GlobalVariable shared = GlobalVariable();
-    Document? doc = await shared.facebook.getDocument(identifier, '*');
+    Visa? doc = await shared.facebook.getVisa(identifier);
     if (doc == null) {
       Log.warning('visa document not found: $identifier');
       return;
     }
     // get visa.avatar
-    PortableNetworkFile? avatar;
-    if (doc is Visa) {
-      avatar = doc.avatar;
-    } else {
-      var url = doc.getProperty('avatar');
-      if (url is String && url.isEmpty) {
-        // empty URL?
-        url = null;
-      }
-      avatar = PortableNetworkFile.parse(url);
-    }
+    PortableNetworkFile? avatar = doc.avatar;
     if (avatar == null || avatar.isEmpty) {
       Log.warning('avatar not found: $doc');
       return;

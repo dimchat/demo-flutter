@@ -46,13 +46,13 @@ class SharedProcessor extends ClientMessageProcessor {
       if (group != null) {
         ID sender = rMsg.sender;
         Pair<ID, ID> direction = Pair(sender, group);
-        Document? bulletin = await facebook.getDocument(group, '*');
-        if (bulletin == null && _groupQueries.isExpired(direction)) {
+        Bulletin? doc = await facebook.getBulletin(group);
+        if (doc == null && _groupQueries.isExpired(direction)) {
           Log.info('querying group: $group, $sender');
-          Content content = DocumentCommand.query(group, null);
-          messenger.sendContent(content, sender: null, receiver: sender, priority: 1);
-          Command command = GroupCommand.query(group);
-          messenger.sendContent(command, sender: null, receiver: sender, priority: 1);
+          Command cmd1 = DocumentCommand.query(group, null);
+          messenger.sendContent(cmd1, sender: null, receiver: sender, priority: 1);
+          Command cmd2 = GroupCommand.query(group);
+          messenger.sendContent(cmd2, sender: null, receiver: sender, priority: 1);
         }
       }
     }

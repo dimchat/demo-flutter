@@ -163,7 +163,7 @@ class GroupInfo extends Conversation implements lnc.Observer {
       /// admins
       _admins = await shared.facebook.getAdministrators(identifier);
       /// members
-      Document? doc = await shared.facebook.getDocument(identifier, '*');
+      Bulletin? doc = await shared.facebook.getBulletin(identifier);
       if (doc == null) {
         _members = null;
         _temporaryTitle = null;
@@ -280,16 +280,16 @@ class GroupInfo extends Conversation implements lnc.Observer {
       return 'Permission denied';
     }
     // 2. get old document
-    Document? bulletin = await man.getDocument(group, '*');
+    Bulletin? bulletin = await man.getBulletin(group);
     if (bulletin == null) {
       // TODO: create a new bulletin?
       assert(false, 'failed to get group document: $group');
       return 'Failed to get group document';
     } else {
       // create new one for modifying
-      Document? doc = Document.parse(bulletin.copyMap(false));
-      assert(doc is Bulletin, 'failed to create bulletin document');
-      bulletin = doc!;
+      Document? clone = Document.parse(bulletin.copyMap(false));
+      assert(clone is Bulletin, 'failed to create bulletin document');
+      bulletin = clone as Bulletin;
     }
     // 2.1. get sign key for local user
     SignKey? sKey = await shared.facebook.getPrivateKeyForVisaSignature(me);

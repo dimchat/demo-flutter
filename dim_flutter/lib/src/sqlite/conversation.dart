@@ -124,12 +124,18 @@ class ConversationCache extends _ConversationTable {
 
   @override
   Future<List<Conversation>> getConversations() async {
-    List<Conversation>? conversations = _caches;
-    if (conversations == null) {
-      // cache not found, try to load from database
-      conversations = await super.getConversations();
-      // add to cache
-      _caches = conversations;
+    List<Conversation>? conversations;
+    await lock();
+    try {
+      conversations = _caches;
+      if (conversations == null) {
+        // cache not found, try to load from database
+        conversations = await super.getConversations();
+        // add to cache
+        _caches = conversations;
+      }
+    } finally {
+      unlock();
     }
     return conversations;
   }

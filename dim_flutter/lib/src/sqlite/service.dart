@@ -116,11 +116,17 @@ class ProviderCache extends _ProviderTable {
 
   @override
   Future<List<ProviderInfo>> allProviders() async {
-    List<ProviderInfo>? pairs = _caches;
-    if (pairs == null) {
-      // cache not found, try to load from database
-      pairs = await super.allProviders();
-      _caches = pairs;
+    List<ProviderInfo>? pairs;
+    await lock();
+    try {
+      pairs = _caches;
+      if (pairs == null) {
+        // cache not found, try to load from database
+        pairs = await super.allProviders();
+        _caches = pairs;
+      }
+    } finally {
+      unlock();
     }
     return pairs;
   }

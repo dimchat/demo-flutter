@@ -28,7 +28,7 @@
  * SOFTWARE.
  * =============================================================================
  */
-import 'dart:math';
+import 'package:mutex/mutex.dart';
 
 import 'package:dim_client/dim_client.dart';
 
@@ -139,6 +139,13 @@ class DatabaseHandler<T> {
 abstract class DataTableHandler<T> extends DatabaseHandler<T> {
   DataTableHandler(super.connector, this.onExtract);
 
+  final Mutex _lock = Mutex();
+
+  // protected
+  Future lock() async => await _lock.acquire();
+  // protected
+  unlock() => _lock.release();
+
   // protected
   final OnDataRowExtractFn<T> onExtract;
 
@@ -176,17 +183,6 @@ abstract class DataTableHandler<T> extends DatabaseHandler<T> {
   Future<int> delete(String table, {required SQLConditions conditions}) async {
     String sql = SQLBuilder.buildDelete(table, conditions: conditions);
     return await executeDelete(sql);
-  }
-
-  //
-  //  Conveniences
-  //
-
-  /// wait a while
-  Future<void> randomWait() async {
-    Random random = Random(DateTime.now().microsecondsSinceEpoch);
-    int mills = 128 + random.nextInt(128);
-    await Future.delayed(Duration(milliseconds: mills));
   }
 
 }

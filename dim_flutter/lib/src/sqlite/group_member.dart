@@ -111,31 +111,33 @@ class MemberCache extends _MemberTable {
 
   @override
   Future<List<ID>> getMembers(ID group) async {
+    CachePair<List<ID>>? pair;
+    CacheHolder<List<ID>>? holder;
+    List<ID>? value;
     double now = Time.currentTimeSeconds;
-    // 1. check memory cache
-    CachePair<List<ID>>? pair = _cache.fetch(group, now: now);
-    if (pair == null) {
-      // maybe another thread is trying to load data,
-      // so wait a while to check it again.
-      await randomWait();
+    await lock();
+    try {
+      // 1. check memory cache
       pair = _cache.fetch(group, now: now);
-    }
-    CacheHolder<List<ID>>? holder = pair?.holder;
-    List<ID>? value = pair?.value;
-    if (value == null) {
-      if (holder == null) {
-        // not load yet, wait to load
-      } else if (holder.isAlive(now: now)) {
-        // value not exists
-        return [];
-      } else {
-        // cache expired, wait to reload
-        holder.renewal(128, now: now);
+      holder = pair?.holder;
+      value = pair?.value;
+      if (value == null) {
+        if (holder == null) {
+          // not load yet, wait to load
+        } else if (holder.isAlive(now: now)) {
+          // value not exists
+          return [];
+        } else {
+          // cache expired, wait to reload
+          holder.renewal(128, now: now);
+        }
+        // 2. load from database
+        value = await super.getMembers(group);
+        // update cache
+        _cache.updateValue(group, value, 3600, now: now);
       }
-      // 2. load from database
-      value = await super.getMembers(group);
-      // update cache
-      _cache.updateValue(group, value, 3600, now: now);
+    } finally {
+      unlock();
     }
     // OK, return cache now
     return value;

@@ -46,12 +46,20 @@ class _DocumentTable extends DataTableHandler<Document> implements DocumentDBI {
   @override
   Future<bool> saveDocument(Document doc) async {
     ID identifier = doc.identifier;
-    String? type = doc.type;
+    String? type = doc.getString('type', '');
     // check old documents
     List<Document> documents = await getDocuments(identifier);
     for (Document item in documents) {
-      if (item.identifier == identifier && item.type == type) {
+      if (item.identifier != identifier) {
+        assert(false, 'document error: $identifier, $item');
+        continue;
+      }
+      if (item.getString('type', '') == type) {
         // old record found, update it
+        if (item == doc) {
+          Log.debug('same document, no need to update: $identifier');
+          return true;
+        }
         return await updateDocument(doc);
       }
     }
@@ -62,7 +70,7 @@ class _DocumentTable extends DataTableHandler<Document> implements DocumentDBI {
   // protected
   Future<bool> updateDocument(Document doc) async {
     ID identifier = doc.identifier;
-    String? type = doc.type;
+    String? type = doc.getString('type', '');
     String? data = doc.getString('data', null);
     String? signature = doc.getString('signature', null);
     SQLConditions cond;
@@ -78,7 +86,7 @@ class _DocumentTable extends DataTableHandler<Document> implements DocumentDBI {
   // protected
   Future<bool> insertDocument(Document doc) async {
     ID identifier = doc.identifier;
-    String? type = doc.type;
+    String? type = doc.getString('type', '');
     String? data = doc.getString('data', null);
     String? signature = doc.getString('signature', null);
     List values = [identifier.toString(), type, data, signature];
@@ -93,31 +101,33 @@ class DocumentCache extends _DocumentTable {
 
   @override
   Future<List<Document>> getDocuments(ID entity) async {
+    CachePair<List<Document>>? pair;
+    CacheHolder<List<Document>>? holder;
+    List<Document>? value;
     double now = Time.currentTimeSeconds;
-    // 1. check memory cache
-    CachePair<List<Document>>? pair = _cache.fetch(entity, now: now);
-    if (pair == null) {
-      // maybe another thread is trying to load data,
-      // so wait a while to check it again.
-      await randomWait();
+    await lock();
+    try {
+      // 1. check memory cache
       pair = _cache.fetch(entity, now: now);
-    }
-    CacheHolder<List<Document>>? holder = pair?.holder;
-    List<Document>? value = pair?.value;
-    if (value == null) {
-      if (holder == null) {
-        // not load yet, wait to load
-      } else if (holder.isAlive(now: now)) {
-        // value not exists
-        return [];
-      } else {
-        // cache expired, wait to reload
-        holder.renewal(128, now: now);
+      holder = pair?.holder;
+      value = pair?.value;
+      if (value == null) {
+        if (holder == null) {
+          // not load yet, wait to load
+        } else if (holder.isAlive(now: now)) {
+          // value not exists
+          return [];
+        } else {
+          // cache expired, wait to reload
+          holder.renewal(128, now: now);
+        }
+        // 2. load from database
+        value = await super.getDocuments(entity);
+        // update cache
+        _cache.updateValue(entity, value, 3600, now: now);
       }
-      // 2. load from database
-      value = await super.getDocuments(entity);
-      // update cache
-      _cache.updateValue(entity, value, 3600, now: now);
+    } finally {
+      unlock();
     }
     // OK, return cache now
     return value;

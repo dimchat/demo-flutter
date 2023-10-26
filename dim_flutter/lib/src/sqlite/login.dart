@@ -102,32 +102,33 @@ class LoginCommandCache extends _LoginCommandTable {
 
   @override
   Future<Pair<LoginCommand?, ReliableMessage?>> getLoginCommandMessage(ID identifier) async {
-    double now = Time.currentTimeSeconds;
-    // 1. check memory cache
     CachePair<Pair<LoginCommand?, ReliableMessage?>>? pair;
-    pair = _cache.fetch(identifier, now: now);
-    if (pair == null) {
-      // maybe another thread is trying to load data,
-      // so wait a while to check it again.
-      await randomWait();
+    CacheHolder<Pair<LoginCommand?, ReliableMessage?>>? holder;
+    Pair<LoginCommand?, ReliableMessage?>? value;
+    double now = Time.currentTimeSeconds;
+    await lock();
+    try {
+      // 1. check memory cache
       pair = _cache.fetch(identifier, now: now);
-    }
-    CacheHolder<Pair<LoginCommand?, ReliableMessage?>>? holder = pair?.holder;
-    Pair<LoginCommand?, ReliableMessage?>? value = pair?.value;
-    if (value == null) {
-      if (holder == null) {
-        // not load yet, wait to load
-      } else if (holder.isAlive(now: now)) {
-        // value not exists
-        return const Pair(null, null);
-      } else {
-        // cache expired, wait to reload
-        holder.renewal(128, now: now);
+      holder = pair?.holder;
+      value = pair?.value;
+      if (value == null) {
+        if (holder == null) {
+          // not load yet, wait to load
+        } else if (holder.isAlive(now: now)) {
+          // value not exists
+          return const Pair(null, null);
+        } else {
+          // cache expired, wait to reload
+          holder.renewal(128, now: now);
+        }
+        // 2. load from database
+        value = await super.getLoginCommandMessage(identifier);
+        // update cache
+        _cache.updateValue(identifier, value, 3600, now: now);
       }
-      // 2. load from database
-      value = await super.getLoginCommandMessage(identifier);
-      // update cache
-      _cache.updateValue(identifier, value, 3600, now: now);
+    } finally {
+      unlock();
     }
     // OK, return cache now
     return value;

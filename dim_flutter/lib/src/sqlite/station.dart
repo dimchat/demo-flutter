@@ -83,31 +83,33 @@ class StationCache extends _StationTable {
 
   @override
   Future<List<StationInfo>> allStations({required ID provider}) async {
+    CachePair<List<StationInfo>>? pair;
+    CacheHolder<List<StationInfo>>? holder;
+    List<StationInfo>? value;
     double now = Time.currentTimeSeconds;
-    // 1. check memory cache
-    CachePair<List<StationInfo>>? pair = _cache.fetch(provider, now: now);
-    if (pair == null) {
-      // maybe another thread is trying to load data,
-      // so wait a while to check it again.
-      await randomWait();
+    await lock();
+    try {
+      // 1. check memory cache
       pair = _cache.fetch(provider, now: now);
-    }
-    CacheHolder<List<StationInfo>>? holder = pair?.holder;
-    List<StationInfo>? value = pair?.value;
-    if (value == null) {
-      if (holder == null) {
-        // not load yet, wait to load
-      } else if (holder.isAlive(now: now)) {
-        // value not exists
-        return [];
-      } else {
-        // cache expired, wait to reload
-        holder.renewal(128, now: now);
+      holder = pair?.holder;
+      value = pair?.value;
+      if (value == null) {
+        if (holder == null) {
+          // not load yet, wait to load
+        } else if (holder.isAlive(now: now)) {
+          // value not exists
+          return [];
+        } else {
+          // cache expired, wait to reload
+          holder.renewal(128, now: now);
+        }
+        // 2. load from database
+        value = await super.allStations(provider: provider);
+        // update cache
+        _cache.updateValue(provider, value, 3600, now: now);
       }
-      // 2. load from database
-      value = await super.allStations(provider: provider);
-      // update cache
-      _cache.updateValue(provider, value, 3600, now: now);
+    } finally {
+      unlock();
     }
     // OK, return cache now
     return value;

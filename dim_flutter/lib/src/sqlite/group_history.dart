@@ -108,32 +108,33 @@ class GroupHistoryCache extends _GroupHistoryTable {
 
   @override
   Future<List<Pair<GroupCommand, ReliableMessage>>> getGroupHistories({required ID group}) async {
-    double now = Time.currentTimeSeconds;
-    // 1. check memory cache
     CachePair<List<Pair<GroupCommand, ReliableMessage>>>? pair;
-    pair = _historyCache.fetch(group, now: now);
-    if (pair == null) {
-      // maybe another thread is trying to load data,
-      // so wait a while to check it again.
-      await randomWait();
+    CacheHolder<List<Pair<GroupCommand, ReliableMessage>>>? holder;
+    List<Pair<GroupCommand, ReliableMessage>>? value;
+    double now = Time.currentTimeSeconds;
+    await lock();
+    try {
+      // 1. check memory cache
       pair = _historyCache.fetch(group, now: now);
-    }
-    CacheHolder<List<Pair<GroupCommand, ReliableMessage>>>? holder = pair?.holder;
-    List<Pair<GroupCommand, ReliableMessage>>? value = pair?.value;
-    if (value == null) {
-      if (holder == null) {
-        // not load yet, wait to load
-      } else if (holder.isAlive(now: now)) {
-        // value not exists
-        return [];
-      } else {
-        // cache expired, wait to reload
-        holder.renewal(128, now: now);
+      holder = pair?.holder;
+      value = pair?.value;
+      if (value == null) {
+        if (holder == null) {
+          // not load yet, wait to load
+        } else if (holder.isAlive(now: now)) {
+          // value not exists
+          return [];
+        } else {
+          // cache expired, wait to reload
+          holder.renewal(128, now: now);
+        }
+        // 2. load from database
+        value = await super.getGroupHistories(group: group);
+        // update cache
+        _historyCache.updateValue(group, value, 3600, now: now);
       }
-      // 2. load from database
-      value = await super.getGroupHistories(group: group);
-      // update cache
-      _historyCache.updateValue(group, value, 3600, now: now);
+    } finally {
+      unlock();
     }
     // OK, return cache now
     return value;
@@ -141,32 +142,33 @@ class GroupHistoryCache extends _GroupHistoryTable {
 
   @override
   Future<Pair<ResetCommand?, ReliableMessage?>> getResetCommandMessage({required ID group}) async {
-    double now = Time.currentTimeSeconds;
-    // 1. check memory cache
     CachePair<Pair<ResetCommand?, ReliableMessage?>>? pair;
-    pair = _resetCache.fetch(group, now: now);
-    if (pair == null) {
-      // maybe another thread is trying to load data,
-      // so wait a while to check it again.
-      await randomWait();
+    CacheHolder<Pair<ResetCommand?, ReliableMessage?>>? holder;
+    Pair<ResetCommand?, ReliableMessage?>? value;
+    double now = Time.currentTimeSeconds;
+    await lock();
+    try {
+      // 1. check memory cache
       pair = _resetCache.fetch(group, now: now);
-    }
-    CacheHolder<Pair<ResetCommand?, ReliableMessage?>>? holder = pair?.holder;
-    Pair<ResetCommand?, ReliableMessage?>? value = pair?.value;
-    if (value == null) {
-      if (holder == null) {
-        // not load yet, wait to load
-      } else if (holder.isAlive(now: now)) {
-        // value not exists
-        return const Pair(null, null);
-      } else {
-        // cache expired, wait to reload
-        holder.renewal(128, now: now);
+      holder = pair?.holder;
+      value = pair?.value;
+      if (value == null) {
+        if (holder == null) {
+          // not load yet, wait to load
+        } else if (holder.isAlive(now: now)) {
+          // value not exists
+          return const Pair(null, null);
+        } else {
+          // cache expired, wait to reload
+          holder.renewal(128, now: now);
+        }
+        // 2. load from database
+        value = await super.getResetCommandMessage(group: group);
+        // update cache
+        _resetCache.updateValue(group, value, 3600, now: now);
       }
-      // 2. load from database
-      value = await super.getResetCommandMessage(group: group);
-      // update cache
-      _resetCache.updateValue(group, value, 3600, now: now);
+    } finally {
+      unlock();
     }
     // OK, return cache now
     return value;

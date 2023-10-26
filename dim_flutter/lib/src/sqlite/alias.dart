@@ -71,12 +71,18 @@ class RemarkCache extends _RemarkTable {
 
   @override
   Future<List<ContactRemark>> allRemarks({required ID user}) async {
-    List<ContactRemark>? array = _caches[user];
-    if (array == null) {
-      // cache not found, try to load from database
-      array = await super.allRemarks(user: user);
-      // add to cache
-      _caches[user] = array;
+    List<ContactRemark>? array;
+    await lock();
+    try {
+      array = _caches[user];
+      if (array == null) {
+        // cache not found, try to load from database
+        array = await super.allRemarks(user: user);
+        // add to cache
+        _caches[user] = array;
+      }
+    } finally {
+      unlock();
     }
     return array;
   }

@@ -172,12 +172,18 @@ class UserCache extends _UserTable {
 
   @override
   Future<List<ID>> getLocalUsers() async {
-    List<ID>? users = _caches;
-    if (users == null) {
-      // cache not found, try to load from database
-      users = await super.getLocalUsers();
-      // add to cache
-      _caches = users;
+    List<ID>? users;
+    await lock();
+    try {
+      users = _caches;
+      if (users == null) {
+        // cache not found, try to load from database
+        users = await super.getLocalUsers();
+        // add to cache
+        _caches = users;
+      }
+    } finally {
+      unlock();
     }
     return users;
   }

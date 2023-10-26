@@ -116,12 +116,18 @@ class BlockedCache extends _BlockedTable {
 
   @override
   Future<List<ID>> getBlockList({required ID user}) async {
-    List<ID>? array = _caches[user];
-    if (array == null) {
-      // cache not found, try to load from database
-      array = await super.getBlockList(user: user);
-      // add to cache
-      _caches[user] = array;
+    List<ID>? array;
+    await lock();
+    try {
+      array = _caches[user];
+      if (array == null) {
+        // cache not found, try to load from database
+        array = await super.getBlockList(user: user);
+        // add to cache
+        _caches[user] = array;
+      }
+    } finally {
+      unlock();
     }
     return array;
   }

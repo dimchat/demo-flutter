@@ -130,31 +130,33 @@ class PrivateKeyCache extends _PrivateKeyTable {
 
   @override
   Future<List<DecryptKey>> getPrivateKeysForDecryption(ID user) async {
+    CachePair<List<DecryptKey>>? pair;
+    CacheHolder<List<DecryptKey>>? holder;
+    List<DecryptKey>? value;
     double now = Time.currentTimeSeconds;
-    // 1. check memory cache
-    CachePair<List<DecryptKey>>? pair = _decryptKeysCache.fetch(user, now: now);
-    if (pair == null) {
-      // maybe another thread is trying to load data,
-      // so wait a while to check it again.
-      await randomWait();
+    await lock();
+    try {
+      // 1. check memory cache
       pair = _decryptKeysCache.fetch(user, now: now);
-    }
-    CacheHolder<List<DecryptKey>>? holder = pair?.holder;
-    List<DecryptKey>? value = pair?.value;
-    if (value == null) {
-      if (holder == null) {
-        // not load yet, wait to load
-      } else if (holder.isAlive(now: now)) {
-        // value not exists
-        return [];
-      } else {
-        // cache expired, wait to reload
-        holder.renewal(128, now: now);
+      holder = pair?.holder;
+      value = pair?.value;
+      if (value == null) {
+        if (holder == null) {
+          // not load yet, wait to load
+        } else if (holder.isAlive(now: now)) {
+          // value not exists
+          return [];
+        } else {
+          // cache expired, wait to reload
+          holder.renewal(128, now: now);
+        }
+        // 2. load from database
+        value = await super.getPrivateKeysForDecryption(user);
+        // update cache
+        _decryptKeysCache.updateValue(user, value, 36000, now: now);
       }
-      // 2. load from database
-      value = await super.getPrivateKeysForDecryption(user);
-      // update cache
-      _decryptKeysCache.updateValue(user, value, 36000, now: now);
+    } finally {
+      unlock();
     }
     // OK, return cache now
     return value;
@@ -162,31 +164,33 @@ class PrivateKeyCache extends _PrivateKeyTable {
 
   @override
   Future<PrivateKey?> getPrivateKeyForVisaSignature(ID user) async {
+    CachePair<PrivateKey>? pair;
+    CacheHolder<PrivateKey>? holder;
+    PrivateKey? value;
     double now = Time.currentTimeSeconds;
-    // 1. check memory cache
-    CachePair<PrivateKey>? pair = _privateKeyCaches.fetch(user, now: now);
-    if (pair == null) {
-      // maybe another thread is trying to load data,
-      // so wait a while to check it again.
-      await randomWait();
+    await lock();
+    try {
+      // 1. check memory cache
       pair = _privateKeyCaches.fetch(user, now: now);
-    }
-    CacheHolder<PrivateKey>? holder = pair?.holder;
-    PrivateKey? value = pair?.value;
-    if (value == null) {
-      if (holder == null) {
-        // not load yet, wait to load
-      } else if (holder.isAlive(now: now)) {
-        // value not exists
-        return null;
-      } else {
-        // cache expired, wait to reload
-        holder.renewal(128, now: now);
+      holder = pair?.holder;
+      value = pair?.value;
+      if (value == null) {
+        if (holder == null) {
+          // not load yet, wait to load
+        } else if (holder.isAlive(now: now)) {
+          // value not exists
+          return null;
+        } else {
+          // cache expired, wait to reload
+          holder.renewal(128, now: now);
+        }
+        // 2. load from database
+        value = await super.getPrivateKeyForVisaSignature(user);
+        // update cache
+        _privateKeyCaches.updateValue(user, value, 36000, now: now);
       }
-      // 2. load from database
-      value = await super.getPrivateKeyForVisaSignature(user);
-      // update cache
-      _privateKeyCaches.updateValue(user, value, 36000, now: now);
+    } finally {
+      unlock();
     }
     // OK, return cache now
     return value;

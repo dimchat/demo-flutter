@@ -187,7 +187,7 @@ class _AvatarLoader {
     }
     // get visa.avatar
     PortableNetworkFile? avatar = doc.avatar;
-    if (avatar == null || avatar.isEmpty) {
+    if (avatar == null) {
       Log.warning('avatar not found: $doc');
       return;
     }

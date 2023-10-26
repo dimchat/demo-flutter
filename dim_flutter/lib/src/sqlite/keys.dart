@@ -100,7 +100,7 @@ class _PrivateKeyTable extends DataTableHandler<PrivateKey> implements PrivateKe
     List<PrivateKey> array = await select(_table, columns: _selectColumns,
         conditions: cond, orderBy: 'id DESC', limit: 1);
     // first record only
-    return array.isEmpty ? null : array[0];
+    return array.isEmpty ? null : array.first;
   }
 
   @override

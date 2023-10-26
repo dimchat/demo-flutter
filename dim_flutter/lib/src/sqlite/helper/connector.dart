@@ -131,7 +131,7 @@ abstract class DBLogger {
 
 
 
-class _Connection extends DBConnection {
+class _Connection implements DBConnection {
   _Connection(this.database);
 
   final Database database;
@@ -147,7 +147,7 @@ class _Connection extends DBConnection {
   Statement createStatement() => _Statement(database);
 }
 
-class _Statement extends Statement {
+class _Statement implements Statement {
   _Statement(this.database) : _sql = null, _resultSet = null;
 
   final Database database;
@@ -206,7 +206,7 @@ class _Statement extends Statement {
 
 }
 
-class _ResultSet extends ResultSet {
+class _ResultSet implements ResultSet {
   _ResultSet(this._results) : _cursor = 0;
 
   final List<Map<String,dynamic>> _results;
@@ -237,6 +237,21 @@ class _ResultSet extends ResultSet {
 
   @override
   dynamic getValue(String columnLabel) => _results[_cursor - 1][columnLabel];
+
+  @override
+  String? getString(String column) => Converter.getString(getValue(column), null);
+
+  @override
+  bool? getBool(String column) => Converter.getBool(getValue(column), null);
+
+  @override
+  int? getInt(String column) => Converter.getInt(getValue(column), null);
+
+  @override
+  double? getDouble(String column) => Converter.getDouble(getValue(column), null);
+
+  @override
+  DateTime? getDateTime(String column) => Converter.getDateTime(getValue(column), null);
 
   @override
   void close() {

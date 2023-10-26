@@ -161,7 +161,7 @@ class SessionChannel extends MethodChannel {
 
 }
 
-class _ArrivalShip extends Arrival {
+class _ArrivalShip implements Arrival {
   // TODO: implement Arrival Ship
 
   @override

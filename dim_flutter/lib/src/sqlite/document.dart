@@ -44,32 +44,39 @@ class _DocumentTable extends DataTableHandler<Document> implements DocumentDBI {
   }
 
   @override
-  Future<bool> clearDocuments(ID entity, String type) async {
-    SQLConditions cond;
-    cond = SQLConditions(left: 'did', comparison: '=', right: entity.toString());
-    if (type != '*') {
-      cond.addCondition(SQLConditions.kAnd, left: 'type', comparison: '=', right: type);
+  Future<bool> saveDocument(Document doc) async {
+    ID identifier = doc.identifier;
+    String? type = doc.type;
+    // check old documents
+    List<Document> documents = await getDocuments(identifier);
+    for (Document item in documents) {
+      if (item.identifier == identifier && item.type == type) {
+        // old record found, update it
+        return await updateDocument(doc);
+      }
     }
-    return await delete(_table, conditions: cond) > 0;
+    // add new record
+    return await insertDocument(doc);
   }
 
-  // Future<bool> updateDocument(Document doc) async {
-  //   ID identifier = doc.identifier;
-  //   String? type = doc.type;
-  //   String? data = doc.getString('data', null);
-  //   String? signature = doc.getString('signature', null);
-  //   SQLConditions cond;
-  //   cond = SQLConditions(left: 'did', comparison: '=', right: identifier.toString());
-  //   Map<String, dynamic> values = {
-  //     'type': type,
-  //     'data': data,
-  //     'signature': signature,
-  //   };
-  //   return await update(_table, values: values, conditions: cond) > 0;
-  // }
+  // protected
+  Future<bool> updateDocument(Document doc) async {
+    ID identifier = doc.identifier;
+    String? type = doc.type;
+    String? data = doc.getString('data', null);
+    String? signature = doc.getString('signature', null);
+    SQLConditions cond;
+    cond = SQLConditions(left: 'did', comparison: '=', right: identifier.toString());
+    cond.addCondition(SQLConditions.kAnd, left: 'type', comparison: '=', right: type);
+    Map<String, dynamic> values = {
+      'data': data,
+      'signature': signature,
+    };
+    return await update(_table, values: values, conditions: cond) > 0;
+  }
 
-  @override
-  Future<bool> saveDocument(Document doc) async {
+  // protected
+  Future<bool> insertDocument(Document doc) async {
     ID identifier = doc.identifier;
     String? type = doc.type;
     String? data = doc.getString('data', null);
@@ -117,16 +124,6 @@ class DocumentCache extends _DocumentTable {
   }
 
   @override
-  Future<bool> clearDocuments(ID entity, String type) async {
-    bool ok = await super.clearDocuments(entity, type);
-    if (ok) {
-      // clear to reload
-      _cache.erase(entity);
-    }
-    return ok;
-  }
-
-  @override
   Future<bool> saveDocument(Document doc) async {
     // 0. check valid
     if (!doc.isValid) {
@@ -134,7 +131,7 @@ class DocumentCache extends _DocumentTable {
       return false;
     }
     ID identifier = doc.identifier;
-    // 1. insert as new record
+    // 1. do save
     if (await super.saveDocument(doc)) {
       // clear to reload
       _cache.erase(identifier);

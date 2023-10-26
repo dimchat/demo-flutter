@@ -84,8 +84,6 @@ class _HTTPHelper {
 
   static final Mutex lock = Mutex();
 
-  static final Dio dio = Dio();
-
   static String get userAgent {
     // return 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/118.0.0.0 Safari/537.36';
     GlobalVariable shared = GlobalVariable();
@@ -95,13 +93,16 @@ class _HTTPHelper {
   static Future<Uint8List?> download(Uri url, {ProgressCallback? onReceiveProgress}) async {
     Response response;
     try {
-      response = await dio.getUri(url, onReceiveProgress: onReceiveProgress, options: Options(
+      response = await Dio().getUri(url, onReceiveProgress: onReceiveProgress, options: Options(
         responseType: ResponseType.bytes,
         headers: {
           'User-Agent': userAgent,
         }
-      ));
-    } on DioException catch (e) {
+      )).onError((error, stackTrace) {
+        Log.error('[DIO] failed to download $url: $error');
+        throw Exception(error);
+      });
+    } catch (e) {
       Log.error('failed to download $url: $e');
       return null;
     }
@@ -168,13 +169,9 @@ class _PNFHelper {
       assert(false, 'PNF error: $pnf');
       return null;
     }
+    assert(name.isNotEmpty, 'PNF error: $pnf');
     // 2. get file extension
-    String? ext = getExtension(pnf);
-    if (ext == null) {
-      assert(false, 'PNF error: $pnf');
-      ext = '';
-    }
-    assert(name.isNotEmpty && ext.isNotEmpty, 'PNF error: $pnf');
+    String ext = getExtension(pnf) ?? '';
     if (!name.endsWith('.$ext')) {
       Log.info('append file extension: $name + $ext');
       name += '.$ext';

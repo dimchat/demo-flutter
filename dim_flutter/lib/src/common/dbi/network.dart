@@ -30,13 +30,17 @@
  */
 import 'package:dim_client/dim_client.dart';
 
+/// Speed test result: ((host, port), sid, (test_time, response_time))
+typedef SpeedTableInfo = Triplet<Pair<String, int>, ID?, Triplet<DateTime, double, String>>;
+
+
 abstract class SpeedDBI {
 
-  Future<List<Triplet<Pair<String, int>, ID, Pair<DateTime, double>>>>
-  getSpeeds(String host, int port);
+  Future<List<SpeedTableInfo>> getSpeeds(String host, int port);
 
   Future<bool> addSpeed(String host, int port,
-      {required ID identifier, required DateTime time, required double duration});
+      {required ID identifier, required DateTime time, required double duration,
+        required String? socketAddress});
 
   Future<bool> removeExpiredSpeed(DateTime? expired);
 

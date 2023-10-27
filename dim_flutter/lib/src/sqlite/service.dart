@@ -31,23 +31,33 @@ class ServiceProviderDatabase extends DatabaseConnector {
         DatabaseConnector.createIndex(db, tStation,
             name: 'sp_id_index', fields: ['pid']);
         // access speed
-        DatabaseConnector.createTable(db, tSpeed, fields: [
-          "id INTEGER PRIMARY KEY AUTOINCREMENT",
-          "host VARCHAR(128) NOT NULL",  // station IP or domain name
-          "port INTEGER NOT NULL",       // station port
-          "sid VARCHAR(64) NOT NULL",    // station ID
-          "time INTEGER NOT NULL",       // last test time (seconds)
-          "duration REAL NOT NULL",      // respond time (seconds)
-        ]);
-        DatabaseConnector.createIndex(db, tSpeed,
-            name: 'ip_index', fields: ['host']);
+        _createSpeedTable(db);
       },
       onUpgrade: (db, oldVersion, newVersion) {
-        // TODO:
+        if (oldVersion < 3) {
+          // add column for speed
+          DatabaseConnector.addColumn(db, tSpeed, name: 'socket', type: 'VARCHAR(32)');
+        }
+        // ALTER TABLE t_speed ADD COLUMN socket VARCHAR(32),  // '255.255.255.255:65535'
       });
 
+  // speed
+  static void _createSpeedTable(Database db) {
+    DatabaseConnector.createTable(db, tSpeed, fields: [
+      "id INTEGER PRIMARY KEY AUTOINCREMENT",
+      "host VARCHAR(128) NOT NULL",  // station IP or domain name
+      "port INTEGER NOT NULL",       // station port
+      "sid VARCHAR(64) NOT NULL",    // station ID
+      "time INTEGER NOT NULL",       // last test time (seconds)
+      "duration REAL NOT NULL",      // respond time (seconds)
+      "socket VARCHAR(32)",          // socket address
+    ]);
+    DatabaseConnector.createIndex(db, tSpeed,
+        name: 'ip_index', fields: ['host']);
+  }
+
   static const String dbName = 'sp.db';
-  static const int dbVersion = 1;
+  static const int dbVersion = 3;
 
   static const String tProvider = 't_provider';
   static const String tStation  = 't_station';

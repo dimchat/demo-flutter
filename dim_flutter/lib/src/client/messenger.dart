@@ -10,8 +10,6 @@ import 'shared.dart';
 
 class SharedMessenger extends ClientMessenger {
   SharedMessenger(super.session, super.facebook, super.mdb);
-  
-  dynamic _remoteAddress;  // Tuple[str, int]
 
   @override
   Future<Content?> deserializeContent(Uint8List data, SymmetricKey password,
@@ -21,9 +19,7 @@ class SharedMessenger extends ClientMessenger {
       // get client IP from handshake response
       if (content is HandshakeCommand) {
         var remote = content['remote_address'];
-        if (remote != null) {
-          _remoteAddress = remote;
-        }
+        Log.warning('socket address: $remote');
       }
     }
     return content;
@@ -154,6 +150,8 @@ class SharedMessenger extends ClientMessenger {
         'host': item.host,
         'port': item.port,
         'response_time': item.responseTime,
+        'test_date': item.info.testTime?.toString(),
+        'socket_address': item.socketAddress,
       });
     }
     ID master = ID.parse('monitor@anywhere')!;
@@ -164,7 +162,6 @@ class SharedMessenger extends ClientMessenger {
     );
     content['provider'] = provider.toString();
     content['stations'] = stations;
-    content['remote_address'] = _remoteAddress;
     await sendContent(content, sender: null, receiver: master, priority: 1);
   }
 

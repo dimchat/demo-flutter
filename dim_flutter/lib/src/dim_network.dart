@@ -9,3 +9,4 @@ export 'network/image_factory.dart';
 export 'network/image_view.dart';
 export 'network/neighbor.dart';
 export 'network/velocity.dart';
+export 'network/station_speed.dart';

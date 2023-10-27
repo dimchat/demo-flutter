@@ -53,11 +53,10 @@ Future<NeighborInfo?> getNeighborStation() async {
 Future<bool> _updateStations(SessionDBI database) async {
   // 1. get stations from config
   Config config = Config();
-  Map info = await config.info;
-  ID? pid = ID.parse(info['ID']);
-  List? stations = info['stations'];
+  ID? pid = await config.provider;
+  List? stations = await config.stations;
   if (pid == null || stations == null || stations.isEmpty) {
-    assert(false, 'config error: $info');
+    assert(false, 'config error: ${await config.info}');
     return false;
   }
 

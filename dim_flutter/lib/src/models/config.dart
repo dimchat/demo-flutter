@@ -57,7 +57,9 @@ class Config {
     return array == null ? [] : ID.convert(array);
   }
 
-  Future<List> get stations async => (await info)['stations'];
+  Future<ID?> get provider async => ID.parse((await info)['ID']);
+
+  Future<List?> get stations async => (await info)['stations'];
 
   // 'http://106.52.25.169:8081/{ID}/upload?md5={MD5}&salt={SALT}'
   Future<List> get uploadAPI async => (await info)['uploads'];
@@ -83,8 +85,14 @@ Future<String> _path() async {
 /// load config info from caches path
 Future<Map?> _load(String path) async {
   if (await Paths.exists(path)) {
-    return await ExternalStorage.loadJsonMap(path);
+    // file exists, trying to load
   } else {
+    return null;
+  }
+  try {
+    return await ExternalStorage.loadJsonMap(path);
+  } catch (e) {
+    Log.error('failed to load config: $path, $e');
     return null;
   }
 }
@@ -106,7 +114,7 @@ Future<Map?> _init(String path) async {
 Future<Map?> _refresh(Uri url, String path) async {
   // 1. download from remote URL
   ChannelManager man = ChannelManager();
-  String? tmp = await man.ftpChannel.downloadFile(url);
+  String? tmp = await man.ftpChannel.downloadFile(url);  // FIXME: replace with dio
   if (tmp == null) {
     Log.error('failed to download config: $url');
     return null;

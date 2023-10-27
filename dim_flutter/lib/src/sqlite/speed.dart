@@ -5,28 +5,25 @@ import '../common/dbi/network.dart';
 import 'helper/handler.dart';
 import 'service.dart';
 
-/// Speed test result: ((host, port), sid, (test_time, response_time))
-typedef _SpeedInfo = Triplet<Pair<String, int>, ID, Pair<DateTime, double>>;
-
-_SpeedInfo _extractSpeed(ResultSet resultSet, int index) {
+SpeedTableInfo _extractSpeed(ResultSet resultSet, int index) {
   String? host = resultSet.getString('host');
   int? port = resultSet.getInt('port');
   String? sid = resultSet.getString('sid');
   DateTime? time = resultSet.getDateTime('time');
-  double? duration = resultSet.getDouble('duration');
-  return Triplet(Pair(host!, port!), ID.parse(sid)!, Pair(time!, duration!));
+  double duration = resultSet.getDouble('duration') ?? -1;
+  String socket = resultSet.getString('socket') ?? '';
+  return Triplet(Pair(host!, port!), ID.parse(sid), Triplet(time!, duration, socket));
 }
 
-class SpeedTable extends DataTableHandler<_SpeedInfo> implements SpeedDBI {
+class SpeedTable extends DataTableHandler<SpeedTableInfo> implements SpeedDBI {
   SpeedTable() : super(ServiceProviderDatabase(), _extractSpeed);
 
   static const String _table = ServiceProviderDatabase.tSpeed;
-  static const List<String> _selectColumns = ["host", "port", "sid", "time", "duration"];
-  static const List<String> _insertColumns = ["host", "port", "sid", "time", "duration"];
+  static const List<String> _selectColumns = ["host", "port", "sid", "time", "duration", "socket"];
+  static const List<String> _insertColumns = ["host", "port", "sid", "time", "duration", "socket"];
 
   @override
-  Future<List<Triplet<Pair<String, int>, ID, Pair<DateTime, double>>>>
-  getSpeeds(String host, int port) async {
+  Future<List<SpeedTableInfo>> getSpeeds(String host, int port) async {
     SQLConditions cond;
     cond = SQLConditions(left: 'host', comparison: '=', right: host);
     cond.addCondition(SQLConditions.kAnd,
@@ -37,9 +34,10 @@ class SpeedTable extends DataTableHandler<_SpeedInfo> implements SpeedDBI {
 
   @override
   Future<bool> addSpeed(String host, int port,
-      {required ID identifier, required DateTime time, required double duration}) async {
+      {required ID identifier, required DateTime time, required double duration,
+        required String? socketAddress}) async {
     int seconds = time.millisecondsSinceEpoch ~/ 1000;
-    List values = [host, port, identifier.toString(), seconds, duration];
+    List values = [host, port, identifier.toString(), seconds, duration, socketAddress];
     return await insert(_table, columns: _insertColumns, values: values) > 0;
   }
 

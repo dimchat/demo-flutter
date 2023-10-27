@@ -37,15 +37,17 @@ import 'package:lnc/lnc.dart';
 import '../channels/manager.dart';
 import '../channels/session.dart';
 import '../client/constants.dart';
-import '../client/facebook.dart';
-import '../client/messenger.dart';
 import '../client/shared.dart';
 import '../models/station.dart';
+
+import 'station_speed.dart';
 
 class VelocityMeter {
   VelocityMeter(this.info);
 
   final NeighborInfo info;
+
+  String? socketAddress;  // '255.255.255.255:65535'
 
   String get host => info.host;
   int get port => info.port;
@@ -99,10 +101,12 @@ class VelocityMeter {
     ID sid = meter.identifier ?? Station.kAny;
     DateTime now = DateTime.now();
     double rt = meter.responseTime ?? -1;
-    Log.info('station test result: $sid ($host:$port) - $rt');
+    String? socketAddress = meter.socketAddress;
+    Log.info('station test result: $sid ($host:$port) - $rt, $socketAddress');
     // save the record
     GlobalVariable shared = GlobalVariable();
-    await shared.database.addSpeed(host, port, identifier: sid, time: now, duration: rt);
+    await shared.database.addSpeed(host, port, identifier: sid,
+        time: now, duration: rt, socketAddress: socketAddress);
     return meter;
   }
 
@@ -180,8 +184,24 @@ class VelocityMeter {
     return info['payload'];
   }
 
+  bool _checkMessageData(Uint8List data) {
+    // {"sender":"","receiver":"","time":0,"data":"","signature":""}
+    if (data.length < 64) {
+      return false;
+    }
+    return data.first == _jsonStart && data.last == _jsonEnd;
+  }
+  final int _jsonStart = '{'.codeUnitAt(0);
+  final int _jsonEnd   = '}'.codeUnitAt(0);
+
   Future<bool> _process(Uint8List data) async {
-    ReliableMessage? rMsg = await _decodeMsg(data);
+    if (!_checkMessageData(data)) {
+      Log.warning('ignore pack: $data');
+      return false;
+    }
+    GlobalVariable shared = GlobalVariable();
+    ReliableMessage? rMsg = await shared.messenger?.deserializeMessage(data);
+    // ReliableMessage? rMsg = await _decodeMsg(data);
     if (rMsg == null) {
       return false;
     }
@@ -194,101 +214,41 @@ class VelocityMeter {
     // OK
     info.identifier = sender;
     info.responseTime = duration;
-    Log.warning('station ($host:$port) $sender responded within $duration seconds');
+    // fetch socket address
+    try {
+      socketAddress = await _decryptAddress(rMsg);
+    } catch (e) {
+      Log.error('socket address not found in message from $sender}, $e');
+    }
+    Log.warning('station ($host:$port) $sender responded within $duration seconds via socket: "$socketAddress"');
     return true;
   }
 
-}
+  Future<String?> _decryptAddress(SecureMessage sMsg) async {
+    GlobalVariable shared = GlobalVariable();
+    InstantMessage? iMsg = await shared.messenger?.decryptMessage(sMsg);
+    assert(iMsg != null, 'failed to decrypt message: ${sMsg.sender} => ${sMsg.receiver}');
+    Content? content = iMsg?.content;
+    var remote = content?['remote_address'];
+    if (remote is List && remote.length == 2) {
+      // 255.255.255.255:65535
+      return '${remote.first}:${remote.last}';
+    }
+    return remote?.toString();
+  }
 
-Future<ReliableMessage?> _decodeMsg(Uint8List data) async {
-  String? json = UTF8.decode(data);
-  if (json == null) {
-    Log.error('failed to decode data: ${data.length} byte(s)');
-    return null;
-  } else if (json.startsWith('{') && json.endsWith('}')) {} else {
-    Log.warning('ignore pack: $json');
-    return null;
-  }
-  Map? info = JSONMap.decode(json);
-  if (info == null) {
-    Log.error('failed to decode message info: $json');
-    return null;
-  }
-  ReliableMessage? rMsg = ReliableMessage.parse(info);
-  if (rMsg == null) {
-    Log.error('failed to parse message: $info');
-  }
-  return rMsg;
 }
 
 Future<Uint8List?> _getPack() async {
-  ReliableMessage? rMsg = await _packMsg();
-  if (rMsg == null) {
+  StationSpeeder speeder = StationSpeeder();
+  Uint8List? data = await speeder.handshakePackage;
+  if (data == null) {
     return null;
   }
-  String json = JSONMap.encode(rMsg.toMap());
-  Uint8List data = UTF8.encode(json);
   // MTP packing
   ChannelManager manager = ChannelManager();
   SessionChannel channel = manager.sessionChannel;
   Uint8List? pack = await channel.packData(data);
   Log.warning('packed ${data.length} bytes to ${pack.length} bytes');
   return pack;
-}
-
-Future<ReliableMessage?> _packMsg() async {
-  GlobalVariable shared = GlobalVariable();
-  SharedMessenger? messenger = shared.messenger;
-  if (messenger == null) {
-    assert(false, 'messenger not found');
-    return null;
-  }
-  InstantMessage? iMsg = await _getMsg();
-  if (iMsg == null) {
-    assert(false, 'failed to get message');
-    return null;
-  }
-  // encrypt message
-  SecureMessage? sMsg = await messenger.encryptMessage(iMsg);
-  if (sMsg == null) {
-    assert(false, 'failed to encrypt message: $iMsg');
-    return null;
-  }
-  // sign message
-  ReliableMessage? rMsg = await messenger.signMessage(sMsg);
-  if (rMsg == null) {
-    assert(false, 'failed to sign message: $rMsg');
-  }
-  return rMsg;
-}
-
-Future<InstantMessage?> _getMsg() async {
-  GlobalVariable shared = GlobalVariable();
-  SharedFacebook facebook = shared.facebook;
-  // get current user
-  User? user = await facebook.currentUser;
-  if (user == null) {
-    assert(false, 'current user not found');
-    return null;
-  }
-  ID uid = user.identifier;
-  ID sid = Station.kAny;
-  // check current user's meta & visa document
-  Meta? meta = await facebook.getMeta(uid);
-  Visa? visa = await facebook.getVisa(uid);
-  if (meta == null) {
-    assert(false, 'meta should not empty here');
-    return null;
-  } else if (visa == null) {
-    assert(false, 'visa should not empty here');
-  }
-  // create message envelope and handshake command
-  Envelope env = Envelope.create(sender: uid, receiver: sid);
-  Content content = HandshakeCommand.start();
-  content.group = Station.kEvery;
-  // create instant message with meta & visa
-  InstantMessage iMsg = InstantMessage.create(env, content);
-  iMsg.setMap('meta', meta);
-  iMsg.setMap('visa', visa);
-  return iMsg;
 }

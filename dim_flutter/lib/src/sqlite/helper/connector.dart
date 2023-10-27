@@ -109,10 +109,48 @@ class DatabaseConnector {
 
   static void createIndex(Database db, String table,
       {required String name, required List<String> fields}) {
-    String keys = fields.join(',');
-    String sql = 'CREATE INDEX IF NOT EXISTS $name ON $table ($keys)';
+    String sql = SQLBuilder.buildCreateIndex(table, name: name, fields: fields);
     DBLogger.output('createIndex: $sql');
     db.execute(sql);
+  }
+
+  static void addColumn(Database db, String table,
+      {required String name, required String type}) {
+    String sql = SQLBuilder2.buildAddColumn(table, name: name, type: type);
+    DBLogger.output('alterTable: $sql');
+    db.execute(sql);
+  }
+
+}
+
+class SQLBuilder2 {
+  SQLBuilder2(String command) : _sb = StringBuffer(command);
+
+  final StringBuffer _sb;
+
+  static const String alter = "ALTER";
+
+  @override
+  String toString() => _sb.toString();
+
+  void _append(String sub) {
+    _sb.write(sub);
+  }
+
+  ///
+  ///  ALTER TABLE table ADD COLUMN IF NOT EXISTS name type;
+  ///
+  static String buildAddColumn(String table,
+      {required String name, required String type}) {
+    SQLBuilder2 builder = SQLBuilder2(alter);
+    builder._append(' TABLE ');
+    builder._append(table);
+    // builder._append(' ADD COLUMN IF NOT EXISTS ');
+    builder._append(' ADD COLUMN ');
+    builder._append(name);
+    builder._append(' ');
+    builder._append(type);
+    return builder.toString();
   }
 
 }

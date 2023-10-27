@@ -332,15 +332,15 @@ class SharedDatabase implements AccountDBI, SessionDBI, MessageDBI,
   //
 
   @override
-  Future<List<Triplet<Pair<String, int>, ID, Pair<DateTime, double>>>>
-  getSpeeds(String host, int port) async =>
+  Future<List<SpeedTableInfo>> getSpeeds(String host, int port) async =>
       await speedTable.getSpeeds(host, port);
 
   @override
   Future<bool> addSpeed(String host, int port,
-      {required ID identifier, required DateTime time, required double duration}) async =>
+      {required ID identifier, required DateTime time, required double duration,
+        required String? socketAddress}) async =>
       await speedTable.addSpeed(host, port,
-          identifier: identifier, time: time, duration: duration);
+          identifier: identifier, time: time, duration: duration, socketAddress: socketAddress);
 
   @override
   Future<bool> removeExpiredSpeed(DateTime? expired) async =>

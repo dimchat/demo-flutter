@@ -8,6 +8,16 @@ class SharedFacebook extends ClientFacebook {
   SharedFacebook(super.adb);
 
   @override
+  Future<Document?> getDocumentByType(ID identifier, [String? type]) async {
+    Document? doc = await super.getDocumentByType(identifier, type);
+    // compatible for document type
+    if (doc == null && type == Document.kVisa) {
+      doc = await super.getDocumentByType(identifier, 'profile');
+    }
+    return doc;
+  }
+
+  @override
   Future<Group?> createGroup(ID identifier) async {
     Group? group;
     if (!identifier.isBroadcast) {

@@ -227,12 +227,11 @@ class Emitter implements Observer {
     } else {
       rMsg = await shared.messenger?.sendInstantMessage(iMsg);
     }
-    if (rMsg == null) {
+    // save instant message
+    await _saveInstantMessage(iMsg);
+    // check respond
+    if (rMsg == null && !iMsg.receiver.isGroup) {
       Log.warning('not send yet (type=${content.type}): $receiver');
-      return Pair(iMsg, null);
-    } else {
-      // save instant message
-      await _saveInstantMessage(iMsg);
     }
     return Pair(iMsg, rMsg);
   }

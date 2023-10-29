@@ -113,8 +113,14 @@ class FileTransfer {
   Future<String?> getFilePath(FileContent content) async {
     String? filename = content.filename;
     if (filename == null) {
-      Log.error('file content error: $content');
-      return null;
+      Uri? url = content.url;
+      if (url != null) {
+        filename = Paths.filename(url.toString());
+      }
+      if (filename == null) {
+        Log.error('file content error: $content');
+        return null;
+      }
     }
     // check decrypted file
     String cachePath = await _getCacheFilePath(filename);

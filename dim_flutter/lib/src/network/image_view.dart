@@ -83,9 +83,9 @@ class ImageViewFactory {
       );
     }
     // check content
-    String? filename = content.filename;
+    Uint8List? data = content.data;
     String? url = content.url?.toString();
-    if (filename == null || url == null) {
+    if (data == null && url == null) {
       return _imageNotFound(content);
     }
     // 1. create image view

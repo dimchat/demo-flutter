@@ -3,8 +3,9 @@ version '1.0'
 
 buildscript {
     repositories {
-        google()
+        mavenLocal()
         mavenCentral()
+        google()
     }
 
     dependencies {
@@ -14,8 +15,9 @@ buildscript {
 
 rootProject.allprojects {
     repositories {
-        google()
+        mavenLocal()
         mavenCentral()
+        google()
     }
 }
 
@@ -30,12 +32,12 @@ android {
     }
 
     defaultConfig {
-        minSdkVersion 17
+        minSdkVersion 19
     }
 
     dependencies {
 
-        implementation group: 'chat.dim', name: 'Client', version: '0.1.2'
+        implementation group: 'chat.dim', name: 'Client', version: '0.2.0'
 
         testImplementation 'junit:junit:4.13.2'
         testImplementation 'org.mockito:mockito-core:5.0.0'

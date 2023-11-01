@@ -358,6 +358,7 @@ class Amanuensis {
       'sn': sn,
       'signature': signature,
       'mta': mta,
+      'text': content.text
     });
     return true;
   }

@@ -563,6 +563,7 @@ abstract class Styles {
   static const IconData   msgDefaultIcon = CupertinoIcons.ellipsis;
   static const IconData   msgWaitingIcon = CupertinoIcons.ellipsis;
   static const IconData      msgSentIcon = Icons.done;
+  static const IconData   msgBlockedIcon = Icons.block;
   static const IconData  msgReceivedIcon = Icons.done_all;
   static const IconData   msgExpiredIcon = CupertinoIcons.refresh;
 

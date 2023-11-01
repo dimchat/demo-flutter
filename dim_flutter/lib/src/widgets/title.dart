@@ -39,13 +39,12 @@ class _TitleState extends State<StatedTitleView> implements lnc.Observer {
   @override
   Future<void> onReceiveNotification(lnc.Notification notification) async {
     String name = notification.name;
-    Map? info = notification.userInfo;
     if (name == NotificationNames.kServerStateChanged) {
-      int state = _stateIndex(info?['current']);
+      GlobalVariable shared = GlobalVariable();
+      int state = shared.terminal.sessionStateOrder;
       Log.debug('session state: $state');
       if (mounted) {
         setState(() {
-          _sessionState = state;
         });
       }
     }
@@ -53,17 +52,16 @@ class _TitleState extends State<StatedTitleView> implements lnc.Observer {
 
   Future<void> _reload() async {
     GlobalVariable shared = GlobalVariable();
-    int state = _stateIndex(shared.terminal.session?.state);
+    int state = shared.terminal.sessionStateOrder;
     Log.debug('session state: $state');
     if (mounted) {
       setState(() {
-        _sessionState = state;
       });
     }
     if (state == SessionStateOrder.kDefault) {
       // current user must be set before enter this page,
       // so just do connecting here.
-      _reconnect(false);
+      shared.terminal.reconnect();
     }
   }
 
@@ -81,51 +79,22 @@ class _TitleState extends State<StatedTitleView> implements lnc.Observer {
 
 }
 
-int _stateIndex(SessionState? state) =>
-    state?.index ?? SessionStateOrder.kDefault;
-
-int _sessionState = SessionStateOrder.kRunning;
-
 String _titleWithState(String title) {
-  String? sub;
-  switch (_sessionState) {
-    case SessionStateOrder.kDefault:
-      sub = 'Waiting';  // waiting to connect
-      break;
-    case SessionStateOrder.kConnecting:
-      sub = 'Connecting';
-      break;
-    case SessionStateOrder.kConnected:
-      sub = 'Connected';
-      break;
-    case SessionStateOrder.kHandshaking:
-      sub = 'Handshaking';
-      break;
-    case SessionStateOrder.kRunning:
-      sub = null;  // normal running
-      break;
-    default:
-      sub = 'Disconnected';
-      _reconnect(true);
-      break;
-  }
+  GlobalVariable shared = GlobalVariable();
+  String? sub = shared.terminal.sessionStateText;
   if (sub == null) {
     return title;
-  } else if (title.length > 15) {
+  } else if (sub == 'Disconnected') {
+    _testSpeed();
+  }
+  if (title.length > 15) {
     title = '${title.substring(0, 12)}...';
   }
   return '$title ($sub)';
 }
 
-void _reconnect(bool test) async {
-  GlobalVariable shared = GlobalVariable();
-  if (test) {
-    StationSpeeder speeder = StationSpeeder();
-    await speeder.reload();
-    await speeder.testAll();
-    await Future.delayed(const Duration(seconds: 3));
-  } else {
-    await Future.delayed(const Duration(seconds: 1));
-  }
-  await shared.terminal.reconnect();
+void _testSpeed() async {
+  StationSpeeder speeder = StationSpeeder();
+  await speeder.reload();
+  await speeder.testAll();
 }

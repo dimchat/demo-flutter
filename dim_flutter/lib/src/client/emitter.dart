@@ -119,6 +119,7 @@ class Emitter implements Observer {
     assert(content.url == null, 'file content error: $content');
     // 1. save origin file data
     String? filename = content.filename;
+    assert(filename != null, 'content filename should not empty: $content');
     int len = await FileTransfer.cacheFileData(data, filename!);
     if (len != data.length) {
       Log.error('failed to save file data (len=${data.length}): $filename');
@@ -211,10 +212,13 @@ class Emitter implements Observer {
       if (content.data != null/* && content.url == null*/) {
         SymmetricKey? password = await shared.messenger?.getEncryptKey(iMsg);
         if (password == null) {
-          assert(false, 'failed to get encrypt key: '
-              '${iMsg.sender} => ${iMsg.receiver}, ${iMsg['group']}');
+          assert(false, 'failed to get encrypt key: ''$sender => $receiver, ${iMsg['group']}');
+          return Pair(iMsg, null);
+        } else if (await uploadFileData(content, password: password, sender: sender)) {
+          Log.info('uploaded file data for sender: $sender, ${content.filename}');
         } else {
-          await shared.emitter.uploadFileData(content, password: password, sender: iMsg.sender);
+          Log.error('failed to upload file data for sender: $sender, ${content.filename}');
+          return Pair(iMsg, null);
         }
       }
     }

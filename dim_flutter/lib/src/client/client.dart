@@ -22,6 +22,30 @@ import 'shared.dart';
 class Client extends Terminal {
   Client(super.facebook, super.sdb);
 
+  SessionState? sessionState;
+
+  int get sessionStateOrder =>
+      sessionState?.index ?? SessionStateOrder.kDefault;
+
+  String? get sessionStateText {
+    int order = sessionStateOrder;
+    switch (order) {
+      case SessionStateOrder.kDefault:
+        return 'Waiting';  // waiting to connect
+      case SessionStateOrder.kConnecting:
+        return 'Connecting';
+      case SessionStateOrder.kConnected:
+        return 'Connected';
+      case SessionStateOrder.kHandshaking:
+        return 'Handshaking';
+      case SessionStateOrder.kRunning:
+        return null;  // normal running
+      default:
+        reconnect();
+        return 'Disconnected';  // error
+    }
+  }
+
   /// connect to the neighbor station
   Future<ClientMessenger?> reconnect() async {
     NeighborInfo? station = await getNeighborStation();
@@ -105,11 +129,11 @@ class Client extends Terminal {
   @override
   Future<void> exitState(SessionState previous, SessionStateMachine ctx, double now) async {
     await super.exitState(previous, ctx, now);
-    SessionState? current = ctx.currentState;
+    sessionState = ctx.currentState;
     var nc = NotificationCenter();
     nc.postNotification(NotificationNames.kServerStateChanged, this, {
       'previous': previous,
-      'current': current,
+      'current': sessionState,
     });
   }
 

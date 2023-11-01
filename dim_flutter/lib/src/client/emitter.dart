@@ -194,6 +194,7 @@ class Emitter implements Observer {
 
   Future<Pair<InstantMessage?, ReliableMessage?>> sendContent(Content content, ID receiver) async {
     if (receiver.isGroup) {
+      assert(!content.containsKey('group') || content.group == receiver, 'group ID error: $receiver, $content');
       content.group = receiver;
     }
     GlobalVariable shared = GlobalVariable();

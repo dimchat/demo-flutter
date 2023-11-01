@@ -168,9 +168,10 @@ class Amanuensis {
     }
   }
 
-  Future<bool> clearUnread(ID cid) async {
-    Conversation? chatBox = _conversationMap[cid];
-    if (chatBox == null) {
+  Future<bool> clearUnread(Conversation chatBox) async {
+    ID cid = chatBox.identifier;
+    if (_conversationMap[cid] == null) {
+      // conversation not found
       return false;
     }
     chatBox.unread = 0;
@@ -230,7 +231,12 @@ class Amanuensis {
       }
     } else {
       // conversation exists
-      chatBox.unread += 1;
+      if (chatBox.widget == null) {
+        chatBox.unread += 1;
+      } else {
+        Log.warning('chat box is opened for: $cid');
+        chatBox.unread = 0;
+      }
       chatBox.lastMessage = last;
       chatBox.lastTime = time;
       if (await shared.database.updateConversation(chatBox)) {} else {

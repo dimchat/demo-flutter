@@ -22,6 +22,12 @@ abstract class Conversation {
 
   String? _name;
 
+  // chat box reference
+  WeakReference<Widget>? _widget;
+  Widget? get widget => _widget?.target;
+  set widget(Widget? chatBox) =>
+      _widget = chatBox == null ? null : WeakReference(chatBox);
+
   int unread;           // count of unread messages
 
   String? lastMessage;  // description of last message

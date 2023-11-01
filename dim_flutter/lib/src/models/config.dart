@@ -63,8 +63,7 @@ class Config {
 
   // 'http://106.52.25.169:8081/{ID}/upload?md5={MD5}&salt={SALT}'
   Future<List> get uploadAPI async => (await info)['uploads'];
-  // TODO: update for secret key
-  Future<String> get uploadKey async => '12345678';
+  // Future<String> get uploadKey async => '12345678';
 
   /// Home Page
   Future<String> get aboutURL async => (await info)['about']
@@ -152,4 +151,44 @@ Future<Map?> _refresh(Uri url, String path) async {
   Log.warning('replace config file: $path, $conf');
   await ExternalStorage.saveJsonMap(conf, path);
   return conf;
+}
+
+
+/// Enigma for MD5 secrets
+class Enigma {
+  factory Enigma() => _instance;
+  static final Enigma _instance = Enigma._internal();
+  Enigma._internal();
+
+  Map? _info;
+
+  Future<Map?> get info async {
+    if (_info == null) {
+      String json = await rootBundle.loadString('assets/enigma.json');
+      _info = JSONMap.decode(json);
+    }
+    return _info;
+  }
+
+  Future<String?> getSecret(String enigma) async {
+    Map? conf = await info;
+    var secrets = conf?['secrets'];
+    if (secrets is! List) {
+      assert(false, 'enigma.json error: $conf');
+      return null;
+    }
+    if (enigma.isEmpty) {
+      // any secret?
+      return secrets.first;
+    }
+    for (String hex in secrets) {
+      if (hex.startsWith(enigma)) {
+        assert(hex.length > enigma.length, 'enigma error: $enigma');
+        return hex;
+      }
+    }
+    assert(false, 'secret not found: $enigma');
+    return null;
+  }
+
 }

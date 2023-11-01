@@ -54,11 +54,29 @@ class FileTransferChannel extends MethodChannel {
     // config for upload
     Config config = Config();
     List api = await config.uploadAPI;
-    String secret = await config.uploadKey;
-    Log.warning('setUploadConfig: $secret, $api');
-    assert(api.isNotEmpty, 'upload API not found');
+    String url;
+    String enigma;
     // TODO: pick up the fastest API for upload
-    await setUploadConfig(api: api[0], secret: secret);
+    var chosen = api[0];
+    if (chosen is Map) {
+      url = chosen['url'];
+      enigma = chosen['enigma'];
+    } else {
+      assert(chosen is String, 'API error: $api');
+      url = chosen;
+      enigma = '';
+    }
+    if (url.isEmpty) {
+      assert(false, 'config error: $api');
+      return;
+    }
+    String? secret = await Enigma().getSecret(enigma);
+    if (secret == null || secret.isEmpty) {
+      assert(false, 'failed to get MD5 secret: $enigma');
+      return;
+    }
+    Log.warning('setUploadConfig: $secret (enigma: $enigma), $url');
+    await setUploadConfig(api: url, secret: secret);
     _apiUpdated = true;
   }
 

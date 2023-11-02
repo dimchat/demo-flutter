@@ -40,6 +40,8 @@ import '../filesys/local.dart';
 import '../filesys/paths.dart';
 import '../widgets/browser.dart';
 
+import 'pnf.dart';
+
 class FileTransfer {
   factory FileTransfer() => _instance;
   static final FileTransfer _instance = FileTransfer._internal();
@@ -69,29 +71,6 @@ class FileTransfer {
     return await man.ftpChannel.uploadEncryptData(data, filename, sender);
   }
 
-  static bool _isEncoded(String filename, String? ext) {
-    if (ext != null && ext.isNotEmpty) {
-      filename = filename.substring(0, filename.length - ext.length - 1);
-    }
-    if (filename.length != 32) {
-      return false;
-    }
-    return filename.replaceAll('[0-9A-Fa-f]+', '').isEmpty;
-  }
-
-  static String filenameFromData(Uint8List data, String filename) {
-    // split file extension
-    String? ext = Paths.extension(filename);
-    if (_isEncoded(filename, ext)) {
-      // already encoded
-      return filename;
-    } else {
-      // get filename from data
-      filename = Hex.encode(MD5.digest(data));
-      return ext == null || ext.isEmpty ? filename : '$filename.$ext';
-    }
-  }
-
   //
   //  Decryption process
   //  ~~~~~~~~~~~~~~~~~~
@@ -111,16 +90,10 @@ class FileTransfer {
   //
 
   Future<String?> getFilePath(FileContent content) async {
-    String? filename = content.filename;
+    String? filename = PNFHelper.getCacheName(content);
     if (filename == null) {
-      Uri? url = content.url;
-      if (url != null) {
-        filename = Paths.filename(url.toString());
-      }
-      if (filename == null) {
-        Log.error('file content error: $content');
-        return null;
-      }
+      Log.error('file content error: $content');
+      return null;
     }
     // check decrypted file
     String cachePath = await _getCacheFilePath(filename);

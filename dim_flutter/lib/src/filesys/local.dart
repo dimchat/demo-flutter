@@ -42,6 +42,10 @@ class LocalStorage {
   /// @return "{caches}/avatar/{AA}/{BB}/{filename}"
   Future<String> getAvatarFilePath(String filename) async {
     String dir = await cachesDirectory;
+    if (filename.length < 4) {
+      assert(false, 'invalid filename: $filename');
+      return Paths.append(dir, filename);
+    }
     String aa = filename.substring(0, 2);
     String bb = filename.substring(2, 4);
     return Paths.append(dir, 'avatar', aa, bb, filename);
@@ -54,6 +58,10 @@ class LocalStorage {
   /// @return "{caches}/files/{AA}/{BB}/{filename}"
   Future<String> getCacheFilePath(String filename) async {
     String dir = await cachesDirectory;
+    if (filename.length < 4) {
+      assert(false, 'invalid filename: $filename');
+      return Paths.append(dir, filename);
+    }
     String aa = filename.substring(0, 2);
     String bb = filename.substring(2, 4);
     return Paths.append(dir, 'files', aa, bb, filename);

@@ -7,6 +7,7 @@ import '../channels/manager.dart';
 import '../channels/transfer.dart';
 import '../models/amanuensis.dart';
 import '../network/ftp.dart';
+import '../network/pnf.dart';
 
 import 'constants.dart';
 import 'group.dart';
@@ -62,10 +63,12 @@ class Emitter implements Observer {
     // file data uploaded to FTP server, replace it with download URL
     // and send the content to station
     FileContent content = iMsg.content as FileContent;
+    assert(content.data == null, 'file content error: $content');
     // content.data = null;
     content.url = url;
-    return await _sendInstantMessage(iMsg).onError((error, stackTrace) {
+    await _sendInstantMessage(iMsg).onError((error, stackTrace) {
       Log.error('failed to send message: $error');
+      return null;
     });
   }
 
@@ -83,14 +86,23 @@ class Emitter implements Observer {
     return await _saveInstantMessage(iMsg);
   }
 
-  static Future<void> _sendInstantMessage(InstantMessage iMsg) async {
+  static Future<ReliableMessage?> _sendInstantMessage(InstantMessage iMsg) async {
     Log.info('send instant message (type=${iMsg.content.type}): ${iMsg.sender} -> ${iMsg.receiver}');
-    // send by shared messenger
-    GlobalVariable shared = GlobalVariable();
-    ClientMessenger? mess = shared.messenger;
-    await mess?.sendInstantMessage(iMsg);
+    ReliableMessage? rMsg;
+    ID receiver = iMsg.receiver;
+    if (receiver.isGroup) {
+      // send by group manager
+      SharedGroupManager manager = SharedGroupManager();
+      rMsg = await manager.sendInstantMessage(iMsg);
+    } else {
+      // send by shared messenger
+      GlobalVariable shared = GlobalVariable();
+      ClientMessenger? mess = shared.messenger;
+      rMsg = await mess?.sendInstantMessage(iMsg);
+    }
     // save instant message
     await _saveInstantMessage(iMsg);
+    return rMsg;
   }
 
   static Future<void> _saveInstantMessage(InstantMessage iMsg) async {
@@ -127,7 +139,7 @@ class Emitter implements Observer {
     }
     // 2. add upload task with encrypted data
     Uint8List encrypted = password.encrypt(data, content);
-    filename = FileTransfer.filenameFromData(encrypted, filename);
+    filename = PNFHelper.filenameFromData(encrypted, filename);
     ChannelManager man = ChannelManager();
     FileTransferChannel ftp = man.ftpChannel;
     Uri? url = await ftp.uploadEncryptData(encrypted, filename, sender);
@@ -224,17 +236,7 @@ class Emitter implements Observer {
       }
     }
     // 3. send
-    ReliableMessage? rMsg;
-    if (receiver.isGroup) {
-      // group message
-      SharedGroupManager manager = SharedGroupManager();
-      rMsg = await manager.sendInstantMessage(iMsg);
-    } else {
-      rMsg = await shared.messenger?.sendInstantMessage(iMsg);
-    }
-    // save instant message
-    await _saveInstantMessage(iMsg);
-    // check respond
+    ReliableMessage? rMsg = await _sendInstantMessage(iMsg);
     if (rMsg == null && !iMsg.receiver.isGroup) {
       Log.warning('not send yet (type=${content.type}): $receiver');
     }

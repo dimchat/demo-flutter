@@ -22,9 +22,13 @@ class PNFLoader {
   // protected
   final PortableNetworkFile pnf;
 
-  String? get cacheName => _PNFHelper.getCacheName(pnf);
+  String? get cacheName => PNFHelper.getCacheName(pnf);
 
   String getCacheFilePath(String filename, String rootDirectory) {
+    if (filename.length < 4) {
+      assert(false, 'invalid filename: $filename');
+      return Paths.append(rootDirectory, filename);
+    }
     String aa = filename.substring(0, 2);
     String bb = filename.substring(2, 4);
     return Paths.append(rootDirectory, aa, bb, filename);
@@ -37,9 +41,9 @@ class PNFLoader {
       Log.debug('PNF data exists: $pnf');
       return data;
     }
+    String? path;
     // 1. check by 'filename'
     String? filename = pnf.filename;
-    String? path;
     if (filename != null) {
       path = getCacheFilePath(filename, rootDirectory);
       if (await Paths.exists(path)) {
@@ -48,16 +52,18 @@ class PNFLoader {
       }
     }
     // 2. check by 'URL'
-    filename = _PNFHelper.getCacheName(pnf);
-    if (filename != null && filename != pnf.filename) {
-      path = getCacheFilePath(filename, rootDirectory);
-      if (await Paths.exists(path)) {
-        Log.info('load cached image: $path for PNF: $pnf');
-        return ExternalStorage.loadBinary(path);
+    Uri? url = pnf.url;
+    if (url != null) {
+      filename = PNFHelper.filenameFromURL(url, filename);
+      if (filename != pnf.filename) {
+        path = getCacheFilePath(filename, rootDirectory);
+        if (await Paths.exists(path)) {
+          Log.info('load cached image: $path for PNF: $pnf');
+          return ExternalStorage.loadBinary(path);
+        }
       }
     }
     // 3. try to download
-    Uri? url = pnf.url;
     if (url == null || path == null) {
       assert(false, 'PNF error: $pnf');
       return null;
@@ -94,10 +100,10 @@ class _HTTPHelper {
     Response response;
     try {
       response = await Dio().getUri(url, onReceiveProgress: onReceiveProgress, options: Options(
-        responseType: ResponseType.bytes,
-        headers: {
-          'User-Agent': userAgent,
-        }
+          responseType: ResponseType.bytes,
+          headers: {
+            'User-Agent': userAgent,
+          }
       )).onError((error, stackTrace) {
         Log.error('[DIO] failed to download $url: $error');
         throw Exception(error);
@@ -132,63 +138,85 @@ class _HTTPHelper {
 
 }
 
-class _PNFHelper {
+class PNFHelper {
 
-  static String? getExtension(PortableNetworkFile pnf) {
-    // 1. check 'filename'
-    String? filename = pnf.filename;
-    if (filename == null) {
-      // 2. check 'URL'
-      Uri? url = pnf.url;
-      if (url == null) {
-        assert(false, 'PNF error: $pnf');
-        return null;
-      }
-      filename = Paths.filename(url.toString());
-      if (filename == null) {
-        assert(false, 'URL error: $url');
-        return null;
-      }
-    }
-    // 3. get last level
-    return Paths.extension(filename);
-  }
+  // static String? getExtension(PortableNetworkFile pnf) {
+  //   // 1. check 'filename'
+  //   String? filename = pnf.filename;
+  //   if (filename == null) {
+  //     // 2. check 'URL'
+  //     Uri? url = pnf.url;
+  //     if (url == null) {
+  //       assert(false, 'PNF error: $pnf');
+  //       return null;
+  //     }
+  //     filename = Paths.filename(url.toString());
+  //     if (filename == null) {
+  //       assert(false, 'URL error: $url');
+  //       return null;
+  //     }
+  //   }
+  //   // 3. get last level
+  //   return Paths.extension(filename);
+  // }
 
-  /// cache filename for URL
-  static String? getCacheName(PortableNetworkFile pnf) {
-    String? name;
-    // 1. get filename
-    Uri? url = pnf.url;
-    if (url != null) {
-      name = Paths.filename(url.toString());
-      name ??= pnf.filename;
-    } else {
-      name = pnf.filename;
-    }
-    if (name == null) {
-      assert(false, 'PNF error: $pnf');
+  /// cache filename for PNF
+  static String? getCacheName(Map info) {
+    PortableNetworkFile? pnf = PortableNetworkFile.parse(info);
+    if (pnf == null) {
+      assert(false, 'PNF error: $info');
       return null;
     }
-    assert(name.isNotEmpty, 'PNF error: $pnf');
-    // 2. get file extension
-    String ext = getExtension(pnf) ?? '';
-    if (!name.endsWith('.$ext')) {
-      Log.info('append file extension: $name + $ext');
-      name += '.$ext';
+    String? filename = pnf.filename;
+    Uri? url = pnf.url;
+    if (url == null) {
+      return filename;
+    } else {
+      return filenameFromURL(url, filename);
     }
-    // 3. check encode
-    if (_isEncoded(name, ext)) {
-      // already encoded
-      return name;
-    }
-    // filename from data
-    Uint8List data = UTF8.encode(url.toString());
-    name = Hex.encode(MD5.digest(data));
-    return ext.isEmpty ? name : '$name.$ext';
   }
 
-  static bool _isEncoded(String filename, String ext) {
-    if (ext.isNotEmpty) {
+  static String filenameFromURL(Uri url, String? filename) {
+    String? urlFilename = Paths.filename(url.toString());
+    // check URL extension
+    String? urlExt;
+    if (urlFilename != null) {
+      urlExt = Paths.extension(urlFilename);
+      if (_isEncoded(urlFilename, urlExt)) {
+        // URL filename already encoded
+        return urlFilename;
+      }
+    }
+    // check filename extension
+    String? ext;
+    if (filename != null) {
+      ext = Paths.extension(filename);
+      if (_isEncoded(filename, ext)) {
+        // filename already encoded
+        return filename;
+      }
+    }
+    ext ??= urlExt;
+    // get filename from URL
+    Uint8List data = UTF8.encode(url.toString());
+    filename = Hex.encode(MD5.digest(data));
+    return ext == null || ext.isEmpty ? filename : '$filename.$ext';
+  }
+
+  static String filenameFromData(Uint8List data, String filename) {
+    // split file extension
+    String? ext = Paths.extension(filename);
+    if (_isEncoded(filename, ext)) {
+      // already encoded
+      return filename;
+    }
+    // get filename from data
+    filename = Hex.encode(MD5.digest(data));
+    return ext == null || ext.isEmpty ? filename : '$filename.$ext';
+  }
+
+  static bool _isEncoded(String filename, String? ext) {
+    if (ext != null && ext.isNotEmpty) {
       filename = filename.substring(0, filename.length - ext.length - 1);
     }
     return filename.length == 32 && _hex.hasMatch(filename);

@@ -176,7 +176,9 @@ class _PickContactState extends State<_PickContactCell> {
   Widget build(BuildContext context) => CupertinoTableCell(
     leading: widget.info.getImage(),
     title: widget.info.getNameLabel(),
-    trailing: widget.isSelected ? const Icon(Styles.selectedIcon) : null,
+    trailing: !widget.isSelected ? null : Icon(Styles.selectedIcon,
+      color: Facade.of(context).colors.primaryTextColor,
+    ),
     onTap: () => setState(() {
       GestureTapCallback? callback = widget.onTap;
       if (callback != null) {

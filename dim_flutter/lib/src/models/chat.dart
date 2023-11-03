@@ -1,8 +1,10 @@
 import 'package:flutter/cupertino.dart';
 
 import 'package:dim_client/dim_client.dart';
-import 'package:lnc/lnc.dart';
+import 'package:lnc/lnc.dart' as lnc;
+import 'package:lnc/lnc.dart' show Log;
 
+import '../client/constants.dart';
 import '../client/shared.dart';
 import '../common/dbi/contact.dart';
 import '../widgets/alert.dart';
@@ -13,8 +15,61 @@ import 'chat_group.dart';
 import 'shield.dart';
 
 /// Chat Info
-abstract class Conversation {
-  Conversation(this.identifier, {this.unread = 0, this.lastMessage, this.lastTime});
+abstract class Conversation implements lnc.Observer {
+  Conversation(this.identifier, {this.unread = 0, this.lastMessage, this.lastTime}) {
+    var nc = lnc.NotificationCenter();
+    nc.addObserver(this, NotificationNames.kDocumentUpdated);
+    nc.addObserver(this, NotificationNames.kRemarkUpdated);
+    nc.addObserver(this, NotificationNames.kBlockListUpdated);
+    nc.addObserver(this, NotificationNames.kMuteListUpdated);
+  }
+
+  @override
+  Future<void> onReceiveNotification(lnc.Notification notification) async {
+    String name = notification.name;
+    Map? userInfo = notification.userInfo;
+    if (name == NotificationNames.kDocumentUpdated) {
+      ID? did = userInfo?['ID'];
+      assert(did != null, 'notification error: $notification');
+      if (did == identifier) {
+        Log.info('document updated: $did');
+        setNeedsReload();
+        await reloadData();
+      }
+    } else if (name == NotificationNames.kRemarkUpdated) {
+      ID? did = userInfo?['contact'];
+      assert(did != null, 'notification error: $notification');
+      if (did == identifier) {
+        Log.info('remark updated: $did');
+        setNeedsReload();
+        await reloadData();
+      }
+    } else if (name == NotificationNames.kBlockListUpdated) {
+      ID? did = userInfo?['blocked'];
+      did ??= userInfo?['unblocked'];
+      if (did == identifier) {
+        Log.info('blocked contact updated: $did');
+        setNeedsReload();
+        await reloadData();
+      } else if (did == null) {
+        Log.info('block-list updated');
+        setNeedsReload();
+        await reloadData();
+      }
+    } else if (name == NotificationNames.kMuteListUpdated) {
+      ID? did = userInfo?['muted'];
+      did ??= userInfo?['unmuted'];
+      if (did == identifier) {
+        Log.info('muted contact updated: $did');
+        setNeedsReload();
+        await reloadData();
+      } else if (did == null) {
+        Log.info('mute-list updated');
+        setNeedsReload();
+        await reloadData();
+      }
+    }
+  }
 
   final ID identifier;
 
@@ -80,7 +135,7 @@ abstract class Conversation {
     textWidthBasis:     textWidthBasis,
     textHeightBehavior: textHeightBehavior,
     selectionColor:     selectionColor,
-  )..reload();
+  );
 
   /// name
   String get name => _name ?? '';
@@ -156,14 +211,10 @@ abstract class Conversation {
       Log.error('current user not found');
     }
     // get name
-    String name = await shared.facebook.getName(identifier);
-    _name = name;
+    _name = await shared.facebook.getName(identifier);
     // get remark
-    if (_remark == null && user != null) {
-      var cr = await shared.database.getRemark(identifier, user: user.identifier);
-      if (cr != null) {
-        _remark = cr;
-      }
+    if (user != null) {
+      _remark = await shared.database.getRemark(identifier, user: user.identifier);
     }
     // get blocked & muted status
     Shield shield = Shield();

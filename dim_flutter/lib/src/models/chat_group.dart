@@ -27,10 +27,9 @@ class Invitation {
 }
 
 
-class GroupInfo extends Conversation implements lnc.Observer {
+class GroupInfo extends Conversation {
   GroupInfo(super.identifier, {super.unread = 0, super.lastMessage, super.lastTime}) {
     var nc = lnc.NotificationCenter();
-    nc.addObserver(this, NotificationNames.kDocumentUpdated);
     nc.addObserver(this, NotificationNames.kGroupHistoryUpdated);
     nc.addObserver(this, NotificationNames.kAdministratorsUpdated);
   }
@@ -39,32 +38,24 @@ class GroupInfo extends Conversation implements lnc.Observer {
   Future<void> onReceiveNotification(lnc.Notification notification) async {
     String name = notification.name;
     Map? userInfo = notification.userInfo;
-    if (name == NotificationNames.kDocumentUpdated) {
-      ID? did = userInfo?['ID'];
-      assert(did != null, 'notification error: $notification');
-      if (did == identifier) {
-        Log.info('document updated: $did');
-        setNeedsReload();
-        await reloadData();
-      }
-    } else if (name == NotificationNames.kGroupHistoryUpdated) {
-      ID? did = userInfo?['ID'];
-      assert(did != null, 'notification error: $notification');
-      if (did == identifier) {
-        Log.info('group history updated: $did');
+    if (name == NotificationNames.kGroupHistoryUpdated) {
+      ID? gid = userInfo?['ID'];
+      assert(gid != null, 'notification error: $notification');
+      if (gid == identifier) {
+        Log.info('group history updated: $gid');
         setNeedsReload();
         await reloadData();
       }
     } else  if (name == NotificationNames.kAdministratorsUpdated) {
-      ID? did = userInfo?['ID'];
-      assert(did != null, 'notification error: $notification');
-      if (did == identifier) {
-        Log.info('administrators updated: $did');
+      ID? gid = userInfo?['ID'];
+      assert(gid != null, 'notification error: $notification');
+      if (gid == identifier) {
+        Log.info('administrators updated: $gid');
         setNeedsReload();
         await reloadData();
       }
     } else {
-      Log.error('notification error: $notification');
+      await super.onReceiveNotification(notification);
     }
   }
 

@@ -7,8 +7,6 @@ import 'package:lnc/lnc.dart' as lnc;
 import '../client/constants.dart';
 import '../models/chat.dart';
 
-const String _kNameViewRefresh = 'NameViewRefresh';
-
 /// NameView
 class NameLabel extends StatefulWidget {
   const NameLabel(this.info, {super.key,
@@ -43,19 +41,6 @@ class NameLabel extends StatefulWidget {
   final TextHeightBehavior? textHeightBehavior;
   final Color? selectionColor;
 
-  /// reload info
-  Future<void> reload() async {
-    await info.reloadData();
-    await refresh();
-  }
-
-  /// refresh label
-  Future<void> refresh() async {
-    await lnc.NotificationCenter().postNotification(_kNameViewRefresh, this, {
-      'ID': info.identifier,
-    });
-  }
-
   @override
   State<StatefulWidget> createState() => _NameState();
 
@@ -64,15 +49,15 @@ class NameLabel extends StatefulWidget {
 class _NameState extends State<NameLabel> implements lnc.Observer {
   _NameState() {
     var nc = lnc.NotificationCenter();
-    nc.addObserver(this, _kNameViewRefresh);
     nc.addObserver(this, NotificationNames.kDocumentUpdated);
+    nc.addObserver(this, NotificationNames.kRemarkUpdated);
   }
 
   @override
   void dispose() {
     var nc = lnc.NotificationCenter();
+    nc.removeObserver(this, NotificationNames.kRemarkUpdated);
     nc.removeObserver(this, NotificationNames.kDocumentUpdated);
-    nc.removeObserver(this, _kNameViewRefresh);
     super.dispose();
   }
 
@@ -80,25 +65,32 @@ class _NameState extends State<NameLabel> implements lnc.Observer {
   Future<void> onReceiveNotification(lnc.Notification notification) async {
     String name = notification.name;
     Map? info = notification.userInfo;
-    if (name == _kNameViewRefresh) {
+    if (name == NotificationNames.kDocumentUpdated) {
       ID? identifier = info?['ID'];
       if (identifier == widget.info.identifier) {
-        if (mounted) {
-          setState(() {
-            // refresh
-          });
-        }
+        await _reload();
       }
-    } else if (name == NotificationNames.kDocumentUpdated) {
-      ID? identifier = info?['ID'];
+    } else if (name == NotificationNames.kRemarkUpdated) {
+      ID? identifier = info?['contact'];
       if (identifier == widget.info.identifier) {
-        if (mounted) {
-          setState(() {
-            // refresh
-          });
-        }
+        await _reload();
       }
     }
+  }
+
+  Future<void> _reload() async {
+    await widget.info.reloadData();
+    if (mounted) {
+      setState(() {
+        // refresh
+      });
+    }
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    _reload();
   }
 
   @override

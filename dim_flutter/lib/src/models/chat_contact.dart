@@ -13,47 +13,25 @@ import '../widgets/alert.dart';
 import 'amanuensis.dart';
 import 'chat.dart';
 
-class ContactInfo extends Conversation implements lnc.Observer {
+class ContactInfo extends Conversation {
   ContactInfo(super.identifier, {super.unread = 0, super.lastMessage, super.lastTime}) {
     var nc = lnc.NotificationCenter();
-    nc.addObserver(this, NotificationNames.kDocumentUpdated);
     nc.addObserver(this, NotificationNames.kContactsUpdated);
-    nc.addObserver(this, NotificationNames.kBlockListUpdated);
   }
 
   @override
   Future<void> onReceiveNotification(lnc.Notification notification) async {
     String name = notification.name;
     Map? userInfo = notification.userInfo;
-    if (name == NotificationNames.kDocumentUpdated) {
-      ID? did = userInfo?['ID'];
-      assert(did != null, 'notification error: $notification');
-      if (did == identifier) {
-        Log.info('document updated: $did');
-        setNeedsReload();
-        await reloadData();
-      }
-    } else if (name == NotificationNames.kContactsUpdated) {
+    if (name == NotificationNames.kContactsUpdated) {
       ID? contact = userInfo?['contact'];
       if (contact == identifier) {
         Log.info('contact updated: $contact');
         setNeedsReload();
         await reloadData();
       }
-    } else if (name == NotificationNames.kBlockListUpdated) {
-      ID? contact = userInfo?['blocked'];
-      contact ??= userInfo?['unblocked'];
-      if (contact == identifier) {
-        Log.info('blocked contact updated: $contact');
-        setNeedsReload();
-        await reloadData();
-      } else if (contact == null) {
-        Log.info('block-list updated');
-        setNeedsReload();
-        await reloadData();
-      }
     } else {
-      Log.error('notification error: $notification');
+      await super.onReceiveNotification(notification);
     }
   }
 

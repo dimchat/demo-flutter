@@ -1,7 +1,7 @@
 import 'package:dim_client/dim_client.dart';
 import 'package:lnc/lnc.dart';
 
-import '../constants.dart';
+import '../../common/constants.dart';
 import '../messenger.dart';
 import '../shared.dart';
 

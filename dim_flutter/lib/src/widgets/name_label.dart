@@ -4,8 +4,9 @@ import 'package:flutter/material.dart';
 import 'package:dim_client/dim_client.dart';
 import 'package:lnc/lnc.dart' as lnc;
 
-import '../client/constants.dart';
+import '../common/constants.dart';
 import '../models/chat.dart';
+
 
 /// NameView
 class NameLabel extends StatefulWidget {

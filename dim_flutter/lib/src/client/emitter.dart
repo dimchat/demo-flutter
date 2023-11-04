@@ -5,11 +5,11 @@ import 'package:lnc/lnc.dart';
 
 import '../channels/manager.dart';
 import '../channels/transfer.dart';
+import '../common/constants.dart';
 import '../models/amanuensis.dart';
 import '../network/ftp.dart';
 import '../network/pnf.dart';
 
-import 'constants.dart';
 import 'group.dart';
 import 'shared.dart';
 

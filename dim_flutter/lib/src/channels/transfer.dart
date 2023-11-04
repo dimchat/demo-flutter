@@ -3,7 +3,7 @@ import 'package:flutter/services.dart';
 import 'package:dim_client/dim_client.dart';
 import 'package:lnc/lnc.dart';
 
-import '../client/constants.dart';
+import '../common/constants.dart';
 import '../filesys/paths.dart';
 import '../models/config.dart';
 import '../widgets/browser.dart';

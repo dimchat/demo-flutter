@@ -1,10 +1,11 @@
 import 'package:lnc/lnc.dart';
 
-import '../client/constants.dart';
+import '../common/constants.dart';
 import '../models/chat.dart';
 import '../models/chat_contact.dart';
 import '../models/chat_group.dart';
 import 'helper/sqlite.dart';
+
 import 'message.dart';
 
 

@@ -1,8 +1,9 @@
 import 'package:lnc/lnc.dart';
 
-import '../client/constants.dart';
-import 'entity.dart';
+import '../common/constants.dart';
 import 'helper/sqlite.dart';
+
+import 'entity.dart';
 
 
 Meta _extractMeta(ResultSet resultSet, int index) {

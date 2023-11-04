@@ -4,9 +4,9 @@ import 'package:dim_client/dim_client.dart';
 import 'package:lnc/lnc.dart' as lnc;
 import 'package:lnc/lnc.dart' show Log;
 
-import '../client/constants.dart';
-import '../client/shared.dart';
+import '../common/constants.dart';
 import '../common/dbi/contact.dart';
+import '../client/shared.dart';
 import '../widgets/alert.dart';
 
 import '../widgets/name_label.dart';

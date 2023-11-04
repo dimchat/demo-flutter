@@ -34,11 +34,11 @@ import 'dart:typed_data';
 import 'package:dim_client/dim_client.dart';
 import 'package:lnc/lnc.dart';
 
+import '../common/constants.dart';
 import '../channels/manager.dart';
 import '../channels/session.dart';
-import '../client/constants.dart';
-import '../client/shared.dart';
 import '../models/station.dart';
+import '../client/shared.dart';
 
 import 'station_speed.dart';
 

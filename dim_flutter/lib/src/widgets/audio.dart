@@ -7,8 +7,9 @@ import 'package:lnc/lnc.dart' as lnc;
 import 'package:lnc/lnc.dart' show Log;
 
 import '../channels/manager.dart';
-import '../client/constants.dart';
+import '../common/constants.dart';
 import '../network/ftp.dart';
+
 import 'permissions.dart';
 import 'styles.dart';
 

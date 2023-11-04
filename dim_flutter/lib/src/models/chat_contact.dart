@@ -5,7 +5,7 @@ import 'package:lnc/lnc.dart' as lnc;
 import 'package:lnc/lnc.dart' show Log;
 
 import '../common/dbi/contact.dart';
-import '../client/constants.dart';
+import '../common/constants.dart';
 import '../client/shared.dart';
 import '../network/pni_avatar.dart';
 import '../widgets/alert.dart';

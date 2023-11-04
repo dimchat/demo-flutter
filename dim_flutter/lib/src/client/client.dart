@@ -9,9 +9,9 @@ import 'package:lnc/lnc.dart';
 
 import '../channels/manager.dart';
 import '../channels/session.dart';
+import '../common/constants.dart';
 import '../models/station.dart';
 import '../network/neighbor.dart';
-import 'constants.dart';
 import 'messenger.dart';
 import 'packer.dart';
 import 'processor.dart';

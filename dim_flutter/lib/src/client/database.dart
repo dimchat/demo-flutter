@@ -332,7 +332,7 @@ class SharedDatabase implements AccountDBI, SessionDBI, MessageDBI,
   //
 
   @override
-  Future<List<SpeedTableInfo>> getSpeeds(String host, int port) async =>
+  Future<List<SpeedRecord>> getSpeeds(String host, int port) async =>
       await speedTable.getSpeeds(host, port);
 
   @override

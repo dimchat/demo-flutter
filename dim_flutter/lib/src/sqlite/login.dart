@@ -1,6 +1,6 @@
 import 'package:lnc/lnc.dart';
 
-import '../client/constants.dart';
+import '../common/constants.dart';
 import '../filesys/local.dart';
 import '../filesys/paths.dart';
 import 'helper/sqlite.dart';

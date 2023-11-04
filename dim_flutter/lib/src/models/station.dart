@@ -1,5 +1,6 @@
 import 'package:dim_client/dim_client.dart';
 
+import '../common/dbi/network.dart';
 import '../client/shared.dart';
 
 class NeighborInfo {
@@ -27,7 +28,7 @@ class NeighborInfo {
   Future<void> reloadData() async {
     GlobalVariable shared = GlobalVariable();
     // TODO: get average speed
-    var records = await shared.database.getSpeeds(host, port);
+    List<SpeedRecord> records = await shared.database.getSpeeds(host, port);
     if (records.isEmpty) {
       // identifier = null;
       testTime = null;

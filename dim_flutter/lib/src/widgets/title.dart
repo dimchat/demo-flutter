@@ -4,10 +4,12 @@ import 'package:dim_client/dim_client.dart';
 import 'package:lnc/lnc.dart' as lnc;
 import 'package:lnc/lnc.dart' show Log;
 
-import '../client/constants.dart';
+import '../common/constants.dart';
 import '../client/shared.dart';
 import '../network/station_speed.dart';
+
 import 'styles.dart';
+
 
 class StatedTitleView extends StatefulWidget {
   const StatedTitleView(this.getTitle, {required this.style, super.key});

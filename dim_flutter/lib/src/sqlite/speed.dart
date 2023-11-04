@@ -5,7 +5,7 @@ import '../common/dbi/network.dart';
 import 'helper/handler.dart';
 import 'service.dart';
 
-SpeedTableInfo _extractSpeed(ResultSet resultSet, int index) {
+SpeedRecord _extractSpeed(ResultSet resultSet, int index) {
   String? host = resultSet.getString('host');
   int? port = resultSet.getInt('port');
   String? sid = resultSet.getString('sid');
@@ -15,7 +15,7 @@ SpeedTableInfo _extractSpeed(ResultSet resultSet, int index) {
   return Triplet(Pair(host!, port!), ID.parse(sid), Triplet(time!, duration, socket));
 }
 
-class SpeedTable extends DataTableHandler<SpeedTableInfo> implements SpeedDBI {
+class SpeedTable extends DataTableHandler<SpeedRecord> implements SpeedDBI {
   SpeedTable() : super(ServiceProviderDatabase(), _extractSpeed);
 
   static const String _table = ServiceProviderDatabase.tSpeed;
@@ -23,7 +23,7 @@ class SpeedTable extends DataTableHandler<SpeedTableInfo> implements SpeedDBI {
   static const List<String> _insertColumns = ["host", "port", "sid", "time", "duration", "socket"];
 
   @override
-  Future<List<SpeedTableInfo>> getSpeeds(String host, int port) async {
+  Future<List<SpeedRecord>> getSpeeds(String host, int port) async {
     SQLConditions cond;
     cond = SQLConditions(left: 'host', comparison: '=', right: host);
     cond.addCondition(SQLConditions.kAnd,

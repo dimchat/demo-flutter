@@ -87,7 +87,7 @@ class _LightThemeColors extends ThemeColors {
   Color get sectionItemBackgroundColor => CupertinoColors.systemBackground;
 
   @override
-  Color get sectionItemDividerColor => CupertinoColors.secondarySystemBackground;
+  Color get sectionItemDividerColor => const Color(0xFFEEEEEE);
 
   @override
   Color get primaryTextColor => CupertinoColors.black;
@@ -474,7 +474,12 @@ class Facade {
 
   static Facade of(BuildContext ctx) => Facade(ctx);
 
-  Brightness get brightness => Theme.of(context).brightness;
+  /// Brightness
+  static Brightness? _brightness;
+  static void setBrightness(Brightness? brt) => _brightness = brt;
+
+  Brightness get brightness => _brightness ?? Theme.of(context).brightness;
+  // Brightness get brightness => Theme.of(context).brightness;
   // Brightness get brightness => Brightness.dark;
 
   ThemeColors get colors =>
@@ -603,6 +608,12 @@ abstract class Styles {
   static const IconData setOpenSourceIcon = Icons.code;
   static const IconData      setTermsIcon = CupertinoIcons.doc_checkmark;
   static const IconData      setAboutIcon = CupertinoIcons.info;
+
+  static const IconData    brightnessIcon = CupertinoIcons.brightness;
+  static const IconData       sunriseIcon = CupertinoIcons.sunrise;
+  static const IconData        sunsetIcon = CupertinoIcons.sunset_fill;
+
+  static const IconData      languageIcon = Icons.language;
 
   // Relay Stations
   static const IconData refreshStationsIcon = Icons.forward_5;

@@ -30,15 +30,18 @@
  */
 import 'dart:typed_data';
 
-import 'package:dim_client/dim_client.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_inappwebview/flutter_inappwebview.dart';
 
+import 'package:dim_client/dim_client.dart';
 import 'package:lnc/lnc.dart' show Log;
 
+import '../ui/icons.dart';
+import '../ui/styles.dart';
+
 import 'alert.dart';
-import 'styles.dart';
+
 
 typedef OnWebShare = void Function(Uri url, {required String title, String? desc, Uint8List? icon});
 
@@ -104,13 +107,13 @@ class _BrowserState extends State<Browser> {
 
   @override
   Widget build(BuildContext context) => Scaffold(
-    backgroundColor: Facade.of(context).colors.scaffoldBackgroundColor,
+    backgroundColor: Styles.colors.scaffoldBackgroundColor,
     appBar: CupertinoNavigationBar(
-      backgroundColor: Facade.of(context).colors.appBardBackgroundColor,
+      backgroundColor: Styles.colors.appBardBackgroundColor,
       middle: Text(title,
         maxLines: 1,
         overflow: TextOverflow.ellipsis,
-        style: Facade.of(context).styles.titleTextStyle,
+        style: Styles.titleTextStyle,
       ),
       trailing: _naviItem(),
     ),
@@ -136,7 +139,7 @@ class _BrowserState extends State<Browser> {
     }
     return IconButton(
       icon: const Icon(
-        Styles.shareIcon,
+        AppIcons.shareIcon,
         size: Styles.navigationBarIconSize,
         // color: Styles.avatarColor,
       ),
@@ -203,12 +206,11 @@ class PageContentView extends StatelessWidget {
   );
 
   Widget _widget(BuildContext context) {
-    var colors = Facade.of(context).colors;
-    var styles = Facade.of(context).styles;
+    var colors = Styles.colors;
     String url = content.url.toString();
     String title = content.title;
     String desc = content.desc ?? '';
-    Widget image = icon ?? Icon(Styles.webpageIcon, color: colors.pageMessageColor,);
+    Widget image = icon ?? Icon(AppIcons.webpageIcon, color: colors.pageMessageColor,);
     if (title.isEmpty) {
       title = url;
       url = '';
@@ -225,14 +227,14 @@ class PageContentView extends StatelessWidget {
         children: [
           Text(title,
             maxLines: 2,
-            style: styles.pageTitleTextStyle,
+            style: Styles.pageTitleTextStyle,
           ),
           Row(
             children: [
               Expanded(
                 child: Text(desc,
                   maxLines: 3,
-                  style: styles.pageDescTextStyle,
+                  style: Styles.pageDescTextStyle,
                 ),
               ),
               ClipRRect(
@@ -249,7 +251,7 @@ class PageContentView extends StatelessWidget {
           ),
           if (url.isNotEmpty)
             Text(url,
-              style: styles.pageDescTextStyle,
+              style: Styles.pageDescTextStyle,
             ),
         ],
       ),

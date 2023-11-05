@@ -35,7 +35,8 @@ import 'package:dim_client/dim_client.dart';
 
 import '../network/image_factory.dart';
 import '../network/pni_avatar.dart';
-import 'styles.dart';
+import '../ui/icons.dart';
+import '../ui/styles.dart';
 
 
 /// NameCardView
@@ -54,8 +55,7 @@ class NameCardView extends StatelessWidget {
   );
 
   Widget _widget(BuildContext context) {
-    var colors = Facade.of(context).colors;
-    var styles = Facade.of(context).styles;
+    var colors = Styles.colors;
     AvatarFactory factory = AvatarFactory();
     ID identifier = content.identifier;
     String? url = content.avatar?.toString();
@@ -84,7 +84,7 @@ class NameCardView extends StatelessWidget {
           Expanded(
             child: Text(content.name,
               maxLines: 2,
-              style: styles.pageTitleTextStyle,
+              style: Styles.pageTitleTextStyle,
             ),
           ),
           const SizedBox(
@@ -131,9 +131,9 @@ class _ImageViewState extends State<ImageView> {
   Widget build(BuildContext context) {
     ImageProvider? img = image;
     if (img == null) {
-      return Icon(Styles.noImageIcon,
+      return Icon(AppIcons.noImageIcon,
         size: widget.width,
-        color: Styles.avatarDefaultColor,
+        color: Styles.colors.avatarDefaultColor,
       );
     }
     return Image(image: img,

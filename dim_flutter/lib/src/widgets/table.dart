@@ -30,7 +30,8 @@
  */
 import 'package:flutter/cupertino.dart';
 
-import 'styles.dart';
+import '../ui/styles.dart';
+
 
 class CupertinoTableCell extends StatelessWidget {
   const CupertinoTableCell({super.key, this.leadingSize = 60, this.leading,
@@ -56,7 +57,7 @@ class CupertinoTableCell extends StatelessWidget {
       children: [
         Container(
           padding: Styles.sectionItemPadding,
-          color: Facade.of(context).colors.sectionItemBackgroundColor,
+          color: Styles.colors.sectionItemBackgroundColor,
           child: Row(
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
@@ -87,7 +88,7 @@ class CupertinoTableCell extends StatelessWidget {
       DefaultTextStyle(
         maxLines: 1,
         softWrap: false,
-        style: Facade.of(context).styles.sectionItemTitleTextStyle,
+        style: Styles.sectionItemTitleTextStyle,
         child: title,
       ),
       if (subtitle != null)
@@ -96,7 +97,7 @@ class CupertinoTableCell extends StatelessWidget {
           child: DefaultTextStyle(
             maxLines: 1,
             softWrap: false,
-            style: Facade.of(context).styles.sectionItemSubtitleTextStyle,
+            style: Styles.sectionItemSubtitleTextStyle,
             child: subtitle!,
           ),
         ),
@@ -106,7 +107,7 @@ class CupertinoTableCell extends StatelessWidget {
   Widget _additional(BuildContext context) => Container(
     padding: const EdgeInsets.fromLTRB(8, 8, 2, 8),
     child: DefaultTextStyle(
-      style: Facade.of(context).styles.sectionItemAdditionalTextStyle,
+      style: Styles.sectionItemAdditionalTextStyle,
       child: additionalInfo ?? Container(),
     ),
   );
@@ -117,10 +118,10 @@ class CupertinoTableCell extends StatelessWidget {
   );
 
   Widget _divider(BuildContext context) => Container(
-    color: Facade.of(context).colors.sectionItemBackgroundColor,
+    color: Styles.colors.sectionItemBackgroundColor,
     child: Container(
       margin: leading == null ? null : EdgeInsetsDirectional.only(start: leadingSize),
-      color: Facade.of(context).colors.sectionItemDividerColor,
+      color: Styles.colors.sectionItemDividerColor,
       height: 1,
     ),
   );

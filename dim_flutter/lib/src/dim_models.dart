@@ -1,7 +1,6 @@
 library dim_flutter;
 
 export 'models/config.dart';
-export 'models/settings.dart';
 export 'models/chat.dart';
 export 'models/chat_contact.dart';
 export 'models/chat_group.dart';

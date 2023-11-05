@@ -12,7 +12,6 @@ export 'widgets/name_label.dart';
 export 'widgets/permissions.dart';
 export 'widgets/picker.dart';
 export 'widgets/preview.dart';
-export 'widgets/styles.dart';
 export 'widgets/table.dart';
 export 'widgets/time.dart';
 export 'widgets/title.dart';

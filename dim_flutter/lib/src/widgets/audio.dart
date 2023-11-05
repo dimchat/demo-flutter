@@ -9,9 +9,11 @@ import 'package:lnc/lnc.dart' show Log;
 import '../channels/manager.dart';
 import '../common/constants.dart';
 import '../network/ftp.dart';
+import '../ui/icons.dart';
+import '../ui/styles.dart';
 
 import 'permissions.dart';
-import 'styles.dart';
+
 
 typedef OnVoiceRecordComplected = void Function(Uint8List mp4, double duration);
 
@@ -61,11 +63,11 @@ class _RecordState extends State<RecordButton> implements lnc.Observer {
 
   Color? _color(BuildContext context) {
     if (!_recording) {
-      return Facade.of(context).colors.recorderBackgroundColor;
+      return Styles.colors.recorderBackgroundColor;
     } else if (_position.dy > 0.0) {
-      return Facade.of(context).colors.recordingBackgroundColor;
+      return Styles.colors.recordingBackgroundColor;
     } else {
-      return Facade.of(context).colors.cancelRecordingBackgroundColor;
+      return Styles.colors.cancelRecordingBackgroundColor;
     }
   }
   String get _text {
@@ -86,7 +88,7 @@ class _RecordState extends State<RecordButton> implements lnc.Observer {
     alignment: Alignment.center,
     child: Text(_text, textAlign: TextAlign.center,
       style: TextStyle(
-        color: Facade.of(context).colors.recorderTextColor,
+        color: Styles.colors.recorderTextColor,
       ),
     ),
   );
@@ -288,9 +290,9 @@ class _AudioContentState extends State<AudioContentView> implements lnc.Observer
   }
 
   Widget _button() => widget._info.path == null
-      ? Icon(Styles.waitAudioIcon, color: _color(), ) : widget._info.playing
-      ? Icon(Styles.playingAudioIcon, color: _color())
-      : Icon(Styles.playAudioIcon, color: _color());
+      ? Icon(AppIcons.waitAudioIcon, color: _color(), ) : widget._info.playing
+      ? Icon(AppIcons.playingAudioIcon, color: _color())
+      : Icon(AppIcons.playAudioIcon, color: _color());
 
   Color? _color() => widget._info.path == null ? Colors.grey : widget.textColor;
 

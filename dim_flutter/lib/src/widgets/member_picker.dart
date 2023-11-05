@@ -8,9 +8,12 @@ import 'package:dim_client/dim_client.dart';
 import 'package:lnc/lnc.dart' show Log;
 
 import '../models/chat_contact.dart';
-import 'styles.dart';
+import '../ui/icons.dart';
+import '../ui/styles.dart';
+
 import 'table.dart';
 import 'title.dart';
+
 
 typedef MemberPickerCallback = void Function(Set<ID> members);
 
@@ -69,9 +72,9 @@ class _MemberPickerState extends State<MemberPicker> {
 
   @override
   Widget build(BuildContext context) => Scaffold(
-    backgroundColor: Facade.of(context).colors.scaffoldBackgroundColor,
+    backgroundColor: Styles.colors.scaffoldBackgroundColor,
     appBar: CupertinoNavigationBar(
-      backgroundColor: Facade.of(context).colors.appBardBackgroundColor,
+      backgroundColor: Styles.colors.appBardBackgroundColor,
       middle: StatedTitleView.from(context, () => 'Select Participants'),
       trailing: TextButton(child: const Text('OK'),
         onPressed: () {
@@ -103,10 +106,10 @@ class _ContactListAdapter with SectionAdapterMixin {
 
   @override
   Widget getSectionHeader(BuildContext context, int section) => Container(
-    color: Facade.of(context).colors.sectionHeaderBackgroundColor,
+    color: Styles.colors.sectionHeaderBackgroundColor,
     padding: Styles.sectionHeaderPadding,
     child: Text(_parent.dataSource.getSection(section),
-      style: Facade.of(context).styles.sectionHeaderTextStyle,
+      style: Styles.sectionHeaderTextStyle,
     ),
   );
 
@@ -176,8 +179,8 @@ class _PickContactState extends State<_PickContactCell> {
   Widget build(BuildContext context) => CupertinoTableCell(
     leading: widget.info.getImage(),
     title: widget.info.getNameLabel(),
-    trailing: !widget.isSelected ? null : Icon(Styles.selectedIcon,
-      color: Facade.of(context).colors.primaryTextColor,
+    trailing: !widget.isSelected ? null : Icon(AppIcons.selectedIcon,
+      color: Styles.colors.primaryTextColor,
     ),
     onTap: () => setState(() {
       GestureTapCallback? callback = widget.onTap;

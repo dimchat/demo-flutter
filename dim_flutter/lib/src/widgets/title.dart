@@ -7,8 +7,7 @@ import 'package:lnc/lnc.dart' show Log;
 import '../common/constants.dart';
 import '../client/shared.dart';
 import '../network/station_speed.dart';
-
-import 'styles.dart';
+import '../ui/styles.dart';
 
 
 class StatedTitleView extends StatefulWidget {
@@ -18,7 +17,7 @@ class StatedTitleView extends StatefulWidget {
   final TextStyle style;
 
   static StatedTitleView from(BuildContext context, String Function() getTitle) =>
-      StatedTitleView(getTitle, style: Facade.of(context).styles.titleTextStyle);
+      StatedTitleView(getTitle, style: Styles.titleTextStyle);
 
   @override
   State<StatefulWidget> createState() => _TitleState();

@@ -9,12 +9,12 @@ import '../models/chat.dart';
 import '../models/chat_contact.dart';
 import '../models/message.dart';
 import '../network/image_view.dart';
+import '../ui/styles.dart';
 
 import 'audio.dart';
 import 'browser.dart';
 import 'name_card.dart';
 import 'preview.dart';
-import 'styles.dart';
 
 
 abstract class ContentViewUtils {
@@ -23,13 +23,13 @@ abstract class ContentViewUtils {
 
   static Color getBackgroundColor(BuildContext context, ID sender) =>
       sender == currentUser?.identifier
-          ? Styles.messageIsMineBackgroundColor
-          : Facade.of(context).colors.textMessageBackgroundColor;
+          ? Styles.colors.messageIsMineBackgroundColor
+          : Styles.colors.textMessageBackgroundColor;
 
   static Color getTextColor(BuildContext context, ID sender) =>
       sender == currentUser?.identifier
           ? CupertinoColors.black
-          : Facade.of(context).colors.textMessageColor;
+          : Styles.colors.textMessageColor;
 
   /// return null if it's not a command
   ///        empty string ('') for ignored command
@@ -58,8 +58,8 @@ abstract class ContentViewUtils {
         borderRadius: const BorderRadius.all(Radius.circular(4)),
         child: Container(
           padding: Styles.commandPadding,
-          color: Facade.of(context).colors.commandBackgroundColor,
-          child: Text(text, style: Facade.of(context).styles.commandTextStyle),
+          color: Styles.colors.commandBackgroundColor,
+          child: Text(text, style: Styles.commandTextStyle),
         ),
       )
     ],
@@ -69,7 +69,7 @@ abstract class ContentViewUtils {
     margin: Styles.messageSenderNameMargin,
     constraints: const BoxConstraints(maxWidth: 256),
     child: ContactInfo.fromID(sender)!.getNameLabel(
-      style: Facade.of(context).styles.messageSenderNameTextStyle,
+      style: Styles.messageSenderNameTextStyle,
     ),
   );
 

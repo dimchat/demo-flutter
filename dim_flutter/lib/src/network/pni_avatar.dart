@@ -9,7 +9,8 @@ import '../common/constants.dart';
 import '../client/shared.dart';
 import '../filesys/local.dart';
 import '../filesys/paths.dart';
-import '../widgets/styles.dart';
+import '../ui/icons.dart';
+import '../ui/styles.dart';
 
 import 'png.dart';
 
@@ -153,18 +154,18 @@ class _AvatarLoader {
   Widget getNoImage({double? width, double? height}) {
     double? size = width ?? height;
     if (identifier.type == EntityType.kStation) {
-      return Icon(Styles.stationIcon, size: size, color: Styles.avatarColor);
+      return Icon(AppIcons.stationIcon, size: size, color: Styles.colors.avatarColor);
     } else if (identifier.type == EntityType.kBot) {
-      return Icon(Styles.botIcon, size: size, color: Styles.avatarColor);
+      return Icon(AppIcons.botIcon, size: size, color: Styles.colors.avatarColor);
     } else if (identifier.type == EntityType.kISP) {
-      return Icon(Styles.ispIcon, size: size, color: Styles.avatarColor);
+      return Icon(AppIcons.ispIcon, size: size, color: Styles.colors.avatarColor);
     } else if (identifier.type == EntityType.kICP) {
-      return Icon(Styles.icpIcon, size: size, color: Styles.avatarColor);
+      return Icon(AppIcons.icpIcon, size: size, color: Styles.colors.avatarColor);
     }
     if (identifier.isUser) {
-      return Icon(Styles.userIcon, size: size, color: Styles.avatarDefaultColor);
+      return Icon(AppIcons.userIcon, size: size, color: Styles.colors.avatarDefaultColor);
     } else {
-      return Icon(Styles.groupIcon, size: size, color: Styles.avatarDefaultColor);
+      return Icon(AppIcons.groupIcon, size: size, color: Styles.colors.avatarDefaultColor);
     }
   }
 

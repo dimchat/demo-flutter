@@ -38,7 +38,8 @@ import 'package:lnc/lnc.dart' show Log;
 
 import '../common/constants.dart';
 import '../client/shared.dart';
-import '../widgets/styles.dart';
+import '../ui/icons.dart';
+import '../ui/styles.dart';
 
 import 'image_factory.dart';
 
@@ -245,18 +246,18 @@ class _FacadeState extends State<_FacadeView> implements lnc.Observer {
 
   static Widget _avatarNotFound(ID identifier, {double? size}) {
     if (identifier.type == EntityType.kStation) {
-      return Icon(Styles.stationIcon, size: size, color: Styles.avatarColor);
+      return Icon(AppIcons.stationIcon, size: size, color: Styles.colors.avatarColor);
     } else if (identifier.type == EntityType.kBot) {
-      return Icon(Styles.botIcon, size: size, color: Styles.avatarColor);
+      return Icon(AppIcons.botIcon, size: size, color: Styles.colors.avatarColor);
     } else if (identifier.type == EntityType.kISP) {
-      return Icon(Styles.ispIcon, size: size, color: Styles.avatarColor);
+      return Icon(AppIcons.ispIcon, size: size, color: Styles.colors.avatarColor);
     } else if (identifier.type == EntityType.kICP) {
-      return Icon(Styles.icpIcon, size: size, color: Styles.avatarColor);
+      return Icon(AppIcons.icpIcon, size: size, color: Styles.colors.avatarColor);
     }
     if (identifier.isUser) {
-      return Icon(Styles.userIcon, size: size, color: Styles.avatarDefaultColor);
+      return Icon(AppIcons.userIcon, size: size, color: Styles.colors.avatarDefaultColor);
     } else {
-      return Icon(Styles.groupIcon, size: size, color: Styles.avatarDefaultColor);
+      return Icon(AppIcons.groupIcon, size: size, color: Styles.colors.avatarDefaultColor);
     }
   }
 
@@ -343,8 +344,8 @@ Widget _imageNotFound(ImageContent content) {
   return Container(
     padding: const EdgeInsets.fromLTRB(16, 12, 16, 12),
     // child: const Text('Image not found'),
-    child: const Icon(Styles.noImageIcon,
-      color: Styles.avatarDefaultColor,
+    child: Icon(AppIcons.noImageIcon,
+      color: Styles.colors.avatarDefaultColor,
     ),
   );
 }

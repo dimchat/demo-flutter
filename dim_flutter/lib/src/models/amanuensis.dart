@@ -106,7 +106,7 @@ class Amanuensis {
     if (chat != null) {
       chat.unread = 0;
       chat.lastMessage = null;
-      chat.lastTime = null;
+      chat.lastMessageTime = null;
       // 3. update database
       if (await shared.database.updateConversation(chat)) {} else {
         Log.error('failed to update conversation: $chat');
@@ -216,9 +216,9 @@ class Amanuensis {
     if (chatBox == null) {
       // new conversation
       if (cid.isGroup) {
-        chatBox = GroupInfo(cid, unread: 1, lastMessage: last, lastTime: time);
+        chatBox = GroupInfo(cid, unread: 1, lastMessage: last, lastMessageTime: time);
       } else {
-        chatBox = ContactInfo(cid, unread: 1, lastMessage: last, lastTime: time);
+        chatBox = ContactInfo(cid, unread: 1, lastMessage: last, lastMessageTime: time);
       }
       if (await shared.database.addConversation(chatBox)) {
         await chatBox.reloadData();
@@ -238,7 +238,7 @@ class Amanuensis {
         chatBox.unread = 0;
       }
       chatBox.lastMessage = last;
-      chatBox.lastTime = time;
+      chatBox.lastMessageTime = time;
       if (await shared.database.updateConversation(chatBox)) {} else {
         Log.error('failed to update conversation: $chatBox');
         return;

@@ -28,7 +28,7 @@ class Invitation {
 
 
 class GroupInfo extends Conversation {
-  GroupInfo(super.identifier, {super.unread = 0, super.lastMessage, super.lastTime}) {
+  GroupInfo(super.identifier, {super.unread = 0, super.lastMessage, super.lastMessageTime}) {
     var nc = lnc.NotificationCenter();
     nc.addObserver(this, NotificationNames.kGroupHistoryUpdated);
     nc.addObserver(this, NotificationNames.kAdministratorsUpdated);

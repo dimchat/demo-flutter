@@ -44,9 +44,9 @@ Conversation _extractConversation(ResultSet resultSet, int index) {
   DateTime? time = resultSet.getDateTime('time');
   ID identifier = ID.parse(cid)!;
   if (identifier.isGroup) {
-    return GroupInfo(identifier, unread: unread!, lastMessage: last, lastTime: time);
+    return GroupInfo(identifier, unread: unread!, lastMessage: last, lastMessageTime: time);
   }
-  return ContactInfo(identifier, unread: unread!, lastMessage: last, lastTime: time);
+  return ContactInfo(identifier, unread: unread!, lastMessage: last, lastMessageTime: time);
 }
 
 
@@ -67,8 +67,8 @@ class _ConversationTable extends DataTableHandler<Conversation> implements Conve
   @override
   Future<bool> addConversation(Conversation chat) async {
     double? seconds;
-    if (chat.lastTime != null) {
-      seconds = chat.lastTime!.millisecondsSinceEpoch / 1000.0;
+    if (chat.lastMessageTime != null) {
+      seconds = chat.lastMessageTime!.millisecondsSinceEpoch / 1000.0;
     }
     List values = [chat.identifier.toString(), chat.unread, chat.lastMessage, seconds];
     return await insert(_table, columns: _insertColumns, values: values) > 0;
@@ -76,7 +76,7 @@ class _ConversationTable extends DataTableHandler<Conversation> implements Conve
 
   @override
   Future<bool> updateConversation(Conversation chat) async {
-    int? time = chat.lastTime?.millisecondsSinceEpoch;
+    int? time = chat.lastMessageTime?.millisecondsSinceEpoch;
     if (time == null) {
       time = 0;
     } else {
@@ -115,8 +115,8 @@ class ConversationCache extends _ConversationTable {
   }
   static void _sort(List<Conversation> array) {
     array.sort((a, b) {
-      DateTime? at = a.lastTime;
-      DateTime? bt = b.lastTime;
+      DateTime? at = a.lastMessageTime;
+      DateTime? bt = b.lastMessageTime;
       int ai = at == null ? 0 : at.millisecondsSinceEpoch;
       int bi = bt == null ? 0 : bt.millisecondsSinceEpoch;
       return bi - ai;
@@ -181,7 +181,7 @@ class ConversationCache extends _ConversationTable {
       // update cache
       if (!identical(old, chat)) {
         old.unread = chat.unread;
-        old.lastTime = chat.lastTime;
+        old.lastMessageTime = chat.lastMessageTime;
         old.lastMessage = chat.lastMessage;
       }
       _sort(array);

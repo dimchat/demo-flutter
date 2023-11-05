@@ -14,7 +14,7 @@ import 'amanuensis.dart';
 import 'chat.dart';
 
 class ContactInfo extends Conversation {
-  ContactInfo(super.identifier, {super.unread = 0, super.lastMessage, super.lastTime}) {
+  ContactInfo(super.identifier, {super.unread = 0, super.lastMessage, super.lastMessageTime}) {
     var nc = lnc.NotificationCenter();
     nc.addObserver(this, NotificationNames.kContactsUpdated);
   }
@@ -37,6 +37,8 @@ class ContactInfo extends Conversation {
 
   PortableNetworkFile? _avatar;
 
+  DateTime? _lastActiveTime;  // time of last login
+
   // null means checking
   bool? _friendFlag;
 
@@ -58,6 +60,8 @@ class ContactInfo extends Conversation {
   }
 
   String? get avatar => _avatar?.url?.toString();
+
+  DateTime? get lastActiveTime => _lastActiveTime;
 
   @override
   String get title {
@@ -89,6 +93,13 @@ class ContactInfo extends Conversation {
     // get avatar
     Visa? visa = await shared.facebook.getVisa(identifier);
     _avatar = visa?.avatar;
+    // get active time (visa time & login time)
+    _lastActiveTime = visa?.time;
+    var pair = await shared.database.getLoginCommandMessage(identifier);
+    DateTime? loginTime = pair.first?.time;
+    if (DocumentHelper.isBefore(loginTime, _lastActiveTime)) {
+      _lastActiveTime = loginTime;
+    }
     // get friendship
     if (user == null) {
       _friendFlag = null;

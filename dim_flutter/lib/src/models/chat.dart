@@ -16,7 +16,7 @@ import 'shield.dart';
 
 /// Chat Info
 abstract class Conversation implements lnc.Observer {
-  Conversation(this.identifier, {this.unread = 0, this.lastMessage, this.lastTime}) {
+  Conversation(this.identifier, {this.unread = 0, this.lastMessage, this.lastMessageTime}) {
     var nc = lnc.NotificationCenter();
     nc.addObserver(this, NotificationNames.kDocumentUpdated);
     nc.addObserver(this, NotificationNames.kRemarkUpdated);
@@ -86,7 +86,7 @@ abstract class Conversation implements lnc.Observer {
   int unread;           // count of unread messages
 
   String? lastMessage;  // description of last message
-  DateTime? lastTime;   // time of last message
+  DateTime? lastMessageTime;   // time of last message
 
   // null means checking
   bool? _blocked;
@@ -143,7 +143,7 @@ abstract class Conversation implements lnc.Observer {
 
   String get title => name;
   String get subtitle => lastMessage ?? '';
-  DateTime? get time => lastTime;
+  DateTime? get time => lastMessageTime;
 
   @override
   String toString() {

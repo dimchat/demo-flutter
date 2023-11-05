@@ -29,6 +29,7 @@
  * =============================================================================
  */
 import 'package:flutter/cupertino.dart';
+import 'package:get/get.dart';
 
 class Alert {
 
@@ -37,7 +38,7 @@ class Alert {
     showCupertinoModalPopup(
       context: context,
       builder: (BuildContext context) => CupertinoAlertDialog(
-        title: title == null || title.isEmpty ? null : Text(title),
+        title: title == null || title.isEmpty ? null : Text(title.tr),
         content: message == null || message.isEmpty ? null : Text(message),
         actions: [
           CupertinoDialogAction(
@@ -48,7 +49,7 @@ class Alert {
                 callback();
               }
             },
-            child: const Text('OK'),
+            child: Text('OK'.tr),
           ),
         ],
       ),
@@ -58,12 +59,12 @@ class Alert {
   static void confirm(BuildContext context, String? title, String? message,
       {String? okTitle, VoidCallback? okAction,
         String? cancelTitle, VoidCallback? cancelAction}) {
-    okTitle ??= 'OK';
-    cancelTitle ??= 'Cancel';
+    okTitle ??= 'OK'.tr;
+    cancelTitle ??= 'Cancel'.tr;
     showCupertinoDialog(
       context: context,
       builder: (context) => CupertinoAlertDialog(
-        title: title == null || title.isEmpty ? null : Text(title),
+        title: title == null || title.isEmpty ? null : Text(title.tr),
         content: message == null || message.isEmpty ? null : Text(message),
         actions: [
           CupertinoDialogAction(
@@ -96,7 +97,7 @@ class Alert {
         String? action3, VoidCallback? callback3,
       ]) => showCupertinoModalPopup(context: context,
     builder: (context) => CupertinoActionSheet(
-      title: title == null || title.isEmpty ? null : Text(title),
+      title: title == null || title.isEmpty ? null : Text(title.tr),
       message: message == null || message.isEmpty ? null : Text(message),
       actions: [
         CupertinoActionSheetAction(
@@ -129,7 +130,7 @@ class Alert {
         CupertinoActionSheetAction(
           onPressed: () => Navigator.pop(context),
           isDestructiveAction: true,
-          child: const Text('Cancel'),
+          child: Text('Cancel'.tr),
         ),
       ],
     ),

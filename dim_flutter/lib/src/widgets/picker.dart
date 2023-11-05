@@ -4,6 +4,7 @@ import 'dart:ui' as ui;
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter_image_compress/flutter_image_compress.dart';
+import 'package:get/get.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:lnc/lnc.dart';
 
@@ -16,10 +17,10 @@ typedef OnImageRead = void Function(String path, Uint8List data);
 
 void openImagePicker(BuildContext context, {OnImagePicked? onPicked, required OnImageRead onRead}) =>
     Alert.actionSheet(context, null, null,
-      'Camera', () => requestCameraPermissions(context,
+      'Camera'.tr, () => requestCameraPermissions(context,
         onGranted: (context) => _openImagePicker(context, true, onPicked, onRead),
       ),
-      'Album', () => requestPhotosPermissions(context,
+      'Album'.tr, () => requestPhotosPermissions(context,
         onGranted: (context) => _openImagePicker(context, false, onPicked, onRead),
       ),
     );

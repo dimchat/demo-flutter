@@ -74,6 +74,9 @@ void launchApp(Widget home) => runApp(GetMaterialApp(
   localizationsDelegates: const [
     GlobalMaterialLocalizations.delegate,
   ],
+  translations: LanguageDataSource.translations,
+  // locale: const Locale('zh', 'CN'),
+  fallbackLocale: const Locale('en', 'US'),
 ));
 
 Future<void> forceAppUpdate() async => await Get.forceAppUpdate();

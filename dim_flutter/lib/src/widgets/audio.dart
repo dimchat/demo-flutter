@@ -1,5 +1,6 @@
 import 'dart:typed_data';
 
+import 'package:get/get.dart';
 import 'package:flutter/material.dart';
 
 import 'package:dim_client/dim_client.dart';
@@ -72,11 +73,11 @@ class _RecordState extends State<RecordButton> implements lnc.Observer {
   }
   String get _text {
     if (!_recording) {
-      return 'Hold to talk';
+      return 'Hold to talk'.tr;
     } else if (_position.dy < 0) {
-      return 'Release to cancel';
+      return 'Release to cancel'.tr;
     } else {
-      return 'Release to send';
+      return 'Release to send'.tr;
     }
   }
 

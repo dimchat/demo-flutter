@@ -3,6 +3,7 @@ import 'dart:collection';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_section_list/flutter_section_list.dart';
+import 'package:get/get.dart';
 
 import 'package:dim_client/dim_client.dart';
 import 'package:lnc/lnc.dart' show Log;
@@ -75,8 +76,8 @@ class _MemberPickerState extends State<MemberPicker> {
     backgroundColor: Styles.colors.scaffoldBackgroundColor,
     appBar: CupertinoNavigationBar(
       backgroundColor: Styles.colors.appBardBackgroundColor,
-      middle: StatedTitleView.from(context, () => 'Select Participants'),
-      trailing: TextButton(child: const Text('OK'),
+      middle: StatedTitleView.from(context, () => 'Select Participants'.tr),
+      trailing: TextButton(child: Text('OK'.tr),
         onPressed: () {
           Navigator.pop(context);
           widget.onPicked(_selected);

@@ -33,13 +33,16 @@ import 'package:get/get.dart';
 
 class Alert {
 
-  static void show(BuildContext context, String? title, String? message,
+  static void show(BuildContext context, String? title, dynamic body,
       {VoidCallback? callback}) {
+    if (body is String) {
+      body = Text(body);
+    }
     showCupertinoModalPopup(
       context: context,
       builder: (BuildContext context) => CupertinoAlertDialog(
         title: title == null || title.isEmpty ? null : Text(title.tr),
-        content: message == null || message.isEmpty ? null : Text(message),
+        content: body,
         actions: [
           CupertinoDialogAction(
             isDefaultAction: true,
@@ -56,16 +59,19 @@ class Alert {
     );
   }
 
-  static void confirm(BuildContext context, String? title, String? message,
+  static void confirm(BuildContext context, String? title, dynamic body,
       {String? okTitle, VoidCallback? okAction,
         String? cancelTitle, VoidCallback? cancelAction}) {
     okTitle ??= 'OK'.tr;
     cancelTitle ??= 'Cancel'.tr;
+    if (body is String) {
+      body = Text(body);
+    }
     showCupertinoDialog(
       context: context,
       builder: (context) => CupertinoAlertDialog(
         title: title == null || title.isEmpty ? null : Text(title.tr),
-        content: message == null || message.isEmpty ? null : Text(message),
+        content: body,
         actions: [
           CupertinoDialogAction(
             onPressed: () {

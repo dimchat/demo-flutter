@@ -8,19 +8,25 @@ final Map<String, String> intlEnUs = {
   'Camera': 'Camera',
   'Album': 'Album',
   'Gallery': 'Gallery',
-  'Cancel': 'Cancel',
-  'Confirm': 'Confirm',
+  'Pick Image': 'Pick Image',
+  'Image File Error': 'Image File Error',
+  'Upload Failed': 'Upload Failed',
 
   'Show': 'Show',
   'Hide': 'Hide',
   'Accept': 'Accept',
 
+  //
+  //  Alerts
+  //
+  'Cancel': 'Cancel',
+  'Confirm': 'Confirm',
+  'Confirm Delete': 'Confirm Delete',
+
   'Success': 'Success',
   'Error': 'Error',
 
   'Fatal Error': 'Fatal Error',
-  'Image File Error': 'Image File Error',
-  'Upload Failed': 'Upload Failed',
 
   'Blocked': 'Blocked',
   'Unblocked': 'Unblocked',
@@ -29,7 +35,6 @@ final Map<String, String> intlEnUs = {
   'Permission denied': 'Permission denied',
 
   'Refresh Stations': 'Refresh Stations',
-  'Pick Image': 'Pick Image',
   'Shared': 'Shared',
   'Share error': 'Share error',
 

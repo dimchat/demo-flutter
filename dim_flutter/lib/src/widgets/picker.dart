@@ -8,7 +8,6 @@ import 'package:get/get.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:lnc/lnc.dart';
 
-import '../filesys/paths.dart';
 import 'alert.dart';
 import 'permissions.dart';
 
@@ -32,20 +31,20 @@ void _openImagePicker(BuildContext context, bool camera, OnImagePicked? onPicked
         return;
       }
       String path = file.path;
-      String? filename = Paths.filename(path);
-      Alert.confirm(context, 'Pick Image', '$filename',
-        okAction: () {
-          if (onPicked != null) {
-            onPicked(path);
-          }
-          file.readAsBytes().then((data) {
-            Log.debug('image file length: ${data.length}, path: $path');
+      file.readAsBytes().then((data) {
+        Log.debug('image file length: ${data.length}, path: $path');
+        Image body = Image.memory(data);
+        Alert.confirm(context, 'Pick Image', body,
+          okAction: () {
+            if (onPicked != null) {
+              onPicked(path);
+            }
             onRead(path, data);
-          }).onError((error, stackTrace) {
-            Alert.show(context, 'Image File Error', '$error');
-          });
-        }
-      );
+          },
+        );
+      }).onError((error, stackTrace) {
+        Alert.show(context, 'Image File Error', '$error');
+      });
     }).onError((error, stackTrace) {
       String name = camera ? 'Camera' : 'Gallery';
       Alert.show(context, '$name Error', '$error');

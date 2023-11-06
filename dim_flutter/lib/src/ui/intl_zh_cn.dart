@@ -7,20 +7,26 @@ final Map<String, String> intlZhCn = {
 
   'Camera': '相机',
   'Album': '相册',
-  'Gallery': '相册',
-  'Cancel': '取消',
-  'Confirm': '确认',
+  'Gallery': '图库',
+  'Pick Image': '选取图片',
+  'Image File Error': '图片文件错误',
+  'Upload Failed': '上传失败',
 
   'Show': '显示',
   'Hide': '隐藏',
   'Accept': '接受',
 
+  //
+  //  Alerts
+  //
+  'Cancel': '取消',
+  'Confirm': '确认',
+  'Confirm Delete': '确认删除',
+
   'Success': '成功',
   'Error': '错误',
 
   'Fatal Error': '严重错误',
-  'Image File Error': '图片文件错误',
-  'Upload Failed': '上传失败',
 
   'Blocked': '已拦截',
   'Unblocked': '拦截已取消',
@@ -29,7 +35,6 @@ final Map<String, String> intlZhCn = {
   'Permission denied': '权限被拒绝',
 
   'Refresh Stations': '刷新基站列表',
-  'Pick Image': '选取图片',
   'Shared': '已分享',
   'Share error': '分享错误',
 

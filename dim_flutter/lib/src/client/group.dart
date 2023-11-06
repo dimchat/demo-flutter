@@ -43,7 +43,7 @@ class SharedGroupManager implements GroupDataSource {
   //
   //  delegates
   //
-  late final GroupDelegate _delegate = GroupDelegate(facebook, messenger!);
+  late final GroupDelegate _delegate = _GroupDelegate(facebook, messenger!);
   late final GroupManager _manager = GroupManager(_delegate);
   late final AdminManager _adminManager = AdminManager(_delegate);
   late final GroupEmitter _emitter = GroupEmitter(_delegate);
@@ -172,6 +172,23 @@ class SharedGroupManager implements GroupDataSource {
   Future<ReliableMessage?> sendInstantMessage(InstantMessage iMsg, {int priority = 0}) async {
     assert(iMsg.content.group != null, 'group message error: $iMsg');
     return await _emitter.sendInstantMessage(iMsg, priority: priority);
+  }
+
+}
+
+// FIXME: cannot get 'administrators' from bulletin document here
+class _GroupDelegate extends GroupDelegate {
+  _GroupDelegate(super.facebook, super.messenger);
+
+  @override
+  Future<List<ID>> getAdministrators(ID group) async {
+    assert(group.isGroup, 'ID error: $group');
+    Bulletin? doc = await getBulletin(group);
+    if (doc == null) {
+      // group not ready
+      return [];
+    }
+    return await database!.getAdministrators(group: group);
   }
 
 }

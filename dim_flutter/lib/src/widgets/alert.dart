@@ -62,8 +62,8 @@ class Alert {
   static void confirm(BuildContext context, String? title, dynamic body,
       {String? okTitle, VoidCallback? okAction,
         String? cancelTitle, VoidCallback? cancelAction}) {
-    okTitle ??= 'OK'.tr;
-    cancelTitle ??= 'Cancel'.tr;
+    okTitle ??= 'OK';
+    cancelTitle ??= 'Cancel';
     if (body is String) {
       body = Text(body);
     }
@@ -80,7 +80,7 @@ class Alert {
                 okAction();
               }
             },
-            child: Text(okTitle!),
+            child: Text(okTitle!.tr),
           ),
           CupertinoDialogAction(
             onPressed: () {
@@ -90,7 +90,7 @@ class Alert {
               }
             },
             isDestructiveAction: true,
-            child: Text(cancelTitle!),
+            child: Text(cancelTitle!.tr),
           ),
         ],
       ),
@@ -111,7 +111,7 @@ class Alert {
             Navigator.pop(context);
             callback1();
           },
-          child: Text(action1),
+          child: Text(action1.tr),
         ),
         if (action2 != null)
           CupertinoActionSheetAction(
@@ -121,7 +121,7 @@ class Alert {
                 callback2();
               }
             },
-            child: Text(action2),
+            child: Text(action2.tr),
           ),
         if (action3 != null)
           CupertinoActionSheetAction(
@@ -131,7 +131,7 @@ class Alert {
                 callback3();
               }
             },
-            child: Text(action3),
+            child: Text(action3.tr),
           ),
         CupertinoActionSheetAction(
           onPressed: () => Navigator.pop(context),

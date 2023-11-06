@@ -1,8 +1,6 @@
 
 final Map<String, String> intlZhCn = {
 
-  'Secure Chat': '安全聊天',
-
   'Nickname': '昵称',
 
   'Camera': '相机',
@@ -15,15 +13,41 @@ final Map<String, String> intlZhCn = {
   'Show': '显示',
   'Hide': '隐藏',
   'Accept': '接受',
+  'OK': '好',
+
+  //
+  //  Time
+  //
+  'AM': '上午',
+  'PM': '下午',
+  'Yesterday': '昨天',
+
+  'Monday': '周一',
+  'Tuesday': '周二',
+  'Wednesday': '周三',
+  'Thursday': '周四',
+  'Friday': '周五',
+  'Saturday': '周六',
+  'Sunday': '周日',
+
+  //
+  //  Connection
+  //
+  'Waiting': '等待中',
+  'Connecting': '正在连接',
+  'Connected': '已连接',
+  'Handshaking': '验证中',
+  'Disconnected': '已断开连接',
 
   //
   //  Alerts
   //
   'Cancel': '取消',
   'Confirm': '确认',
-  'Conform Add': '确认添加',
+  'Confirm Add': '确认添加',
   'Confirm Delete': '确认删除',
   'Confirm Share': '确认分享',
+  'Confirm Forward': '确认转发',
 
   'Success': '成功',
   'Error': '错误',
@@ -38,9 +62,11 @@ final Map<String, String> intlZhCn = {
 
   'Refresh Stations': '刷新基站列表',
   'Shared': '已分享',
+  'Forwarded': '已转发',
 
-  'Input Name': '请输入名字',
   'Notice': '请注意',
+  'Input Name': '请输入名字',
+  'Input text message': '请输入文本消息',
 
   // Tabs
   'Chats': '聊天',
@@ -82,6 +108,13 @@ final Map<String, String> intlZhCn = {
   'Release to send': '松开发送',
   'Release to cancel': '松开取消',
 
+  'Non-Member': '非会员',
+  'Image Not Found': '图片不存在',
+
+  'Forward Image': '转发图片',
+  'Forward Web Page': '转发网页',
+  'Forward Name Card': '转发名片',
+
   'Chat Details': '聊天资料',
   'Group Chat Details': '群聊资料',
   'Group Name': '群名称',
@@ -90,6 +123,13 @@ final Map<String, String> intlZhCn = {
   'Invitations': '邀请函',
 
   'Select Participants': '选择与会人员',
+
+  'Waiting to send': '等待发送',
+  'Sent to relay station': '已送至中继站',
+  'Message is rejected': '消息被拒收',
+  'Your friend received': '已接收',
+  'No response': '无应答',
+  'Stranded': '未发送',
 
   //
   //  Profile
@@ -132,5 +172,18 @@ final Map<String, String> intlZhCn = {
 
   'Mnemonic::Description': '* 助记词是你的私钥，任何得到这些单词的人都可以拥有你的账户；\n'
       '* 你可以把它写在一张纸上，并保存在安全的地方，不建议将其截图保存在电脑中。',
+
+  'Administrators::Description': '规则：\n'
+      '  1、群主或管理员可以查看邀请；\n'
+      '  2、群主或管理员可以直接添加/删除成员；\n'
+      '  3、群主可以雇佣/解雇管理员，管理员可以自行辞职；\n'
+      '  4、群主可以编辑群组名称；\n'
+      '  5、群主不能离开该群组；\n'
+      '  6、管理员在辞职之前不能离开群组。',
+
+  'Invitations::Description': '规则：\n'
+      '  1、群主或管理员可以直接添加成员；\n'
+      '  2、其他成员可以创建邀请并等待管理员审核；\n'
+      '  3、任何管理员都可以确认邀请并刷新成员列表。',
 
 };

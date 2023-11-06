@@ -1,3 +1,5 @@
+import 'package:get/get.dart';
+
 import 'package:dim_client/dim_client.dart';
 
 abstract class TimeUtils extends Time {
@@ -37,13 +39,13 @@ abstract class TimeUtils extends Time {
     if (timestamp >= midnight) {
       // today
       if (time.hour < 12) {
-        return 'AM $hh:$mm';
+        return '${'AM'.tr} $hh:$mm';
       } else {
-        return 'PM $hh:$mm';
+        return '${'PM'.tr} $hh:$mm';
       }
     } else if (timestamp >= (midnight - 24 * 3600 * 1000)) {
       // yesterday
-      return 'Yesterday $hh:$mm';
+      return '${'Yesterday'.tr} $hh:$mm';
     } else if (timestamp >= (midnight - 72 * 3600 * 1000)) {
       // recently
       String weekday = _weakDayName(time.weekday);
@@ -79,19 +81,19 @@ abstract class TimeUtils extends Time {
   static String _weakDayName(int weekday) {
     switch (weekday) {
       case DateTime.monday:
-        return 'Mon';
+        return 'Monday'.tr;
       case DateTime.tuesday:
-        return 'Tue';
+        return 'Tuesday'.tr;
       case DateTime.wednesday:
-        return 'Wed';
+        return 'Wednesday'.tr;
       case DateTime.thursday:
-        return 'Thu';
+        return 'Thursday'.tr;
       case DateTime.friday:
-        return 'Fri';
+        return 'Friday'.tr;
       case DateTime.saturday:
-        return 'Sat';
+        return 'Saturday'.tr;
       case DateTime.sunday:
-        return 'Sun';
+        return 'Sunday'.tr;
       default:
         assert(false, 'weekday error: $weekday');
         return '';

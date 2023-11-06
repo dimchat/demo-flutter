@@ -38,18 +38,7 @@ class SharedFacebook extends ClientFacebook {
       // group not ready
       return [];
     }
-    List<ID> admins = await database.getAdministrators(group: group);
-    if (admins.isNotEmpty) {
-      // got from database
-      return admins;
-    }
-    // var array = doc.getProperty('administrators');
-    // if (array is List) {
-    //   // got from bulletin document
-    //   return ID.convert(array);
-    // }
-    // administrators not found
-    return [];
+    return await database.getAdministrators(group: group);
   }
 
   Future<Pair<String?, Uri?>> getAvatar(ID user) async {

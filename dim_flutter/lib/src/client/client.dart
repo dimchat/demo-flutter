@@ -2,6 +2,7 @@ import 'dart:io';
 import 'dart:ui';
 
 import 'package:device_info_plus/device_info_plus.dart';
+import 'package:get/get.dart';
 import 'package:package_info_plus/package_info_plus.dart';
 
 import 'package:dim_client/dim_client.dart';
@@ -31,18 +32,18 @@ class Client extends Terminal {
     int order = sessionStateOrder;
     switch (order) {
       case SessionStateOrder.kDefault:
-        return 'Waiting';  // waiting to connect
+        return 'Waiting'.tr;  // waiting to connect
       case SessionStateOrder.kConnecting:
-        return 'Connecting';
+        return 'Connecting'.tr;
       case SessionStateOrder.kConnected:
-        return 'Connected';
+        return 'Connected'.tr;
       case SessionStateOrder.kHandshaking:
-        return 'Handshaking';
+        return 'Handshaking'.tr;
       case SessionStateOrder.kRunning:
         return null;  // normal running
       default:
         reconnect();
-        return 'Disconnected';  // error
+        return 'Disconnected'.tr;  // error
     }
   }
 

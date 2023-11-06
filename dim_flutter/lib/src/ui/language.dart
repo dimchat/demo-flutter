@@ -52,13 +52,10 @@ class LanguageDataSource {
 
   Future<bool> setLanguage(String code) async {
     bool ok = await _settings!.setValue('language', code);
-    if (!ok) {
-      assert(false, 'failed to set language: $code');
-      return false;
-    }
+    assert(ok, 'failed to set language: $code');
     _updateLanguage(code);
     // await forceAppUpdate();
-    return true;
+    return ok;
   }
 
   String getCurrentCode() {

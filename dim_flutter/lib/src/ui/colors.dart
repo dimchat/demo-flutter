@@ -1,6 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:get/get.dart';
+
+import 'brightness.dart';
 
 const Color tarsierLogoBackgroundColor = Color(0xFF33C0F3);
 
@@ -95,18 +96,9 @@ abstract class ThemeColors {
   //  Colors based on Brightness
   //
 
-  /// Brightness
-  static Brightness? _brightness;
-  // static Brightness get brightness => _brightness ??
-  //     (Get.isDarkMode ? Brightness.dark : Brightness.light);
-  static void setBrightness(Brightness? brt) => _brightness = brt;
-
-  static bool get isDarkMode => _brightness == null
-      ? Get.isPlatformDarkMode
-      : _brightness == Brightness.dark;
-
   /// Current colors
-  static ThemeColors get current => isDarkMode ? _dark : _light;
+  static ThemeColors get current =>
+      BrightnessDataSource().isDarkMode ? _dark : _light;
 
   static final ThemeColors _light = _LightThemeColors();
   static final ThemeColors _dark = _DarkThemeColors();

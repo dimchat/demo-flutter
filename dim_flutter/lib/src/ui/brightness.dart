@@ -1,8 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
+import 'package:get/get.dart';
 
 import 'settings.dart';
-import 'colors.dart';
 
 
 class BrightnessItem {
@@ -23,6 +22,9 @@ class BrightnessDataSource {
   static const int kLight = 1;
   static const int kDark = 2;
 
+  static ThemeData get light => ThemeData.light(useMaterial3: true);
+  static ThemeData get dark => ThemeData.dark(useMaterial3: true);
+
   final List<String> _names = [
     'System',
     'Light',
@@ -31,30 +33,44 @@ class BrightnessDataSource {
 
   Future<void> init(AppSettings settings) async {
     _settings = settings;
-    // update brightness of facade
-    int order = getCurrentOrder();
-    _updateBrightness(order);
   }
 
   void _updateBrightness(int order) {
-    if (order == kLight) {
-      ThemeColors.setBrightness(Brightness.light);
-    } else if (order == kDark) {
-      ThemeColors.setBrightness(Brightness.dark);
+    if (isDarkMode) {
+      Get.changeTheme(dark);
     } else {
-      ThemeColors.setBrightness(null);
+      Get.changeTheme(light);
     }
   }
 
   Future<bool> setBrightness(int order) async {
     bool ok = await _settings!.setValue('brightness', order);
-    if (!ok) {
-      assert(false, 'failed to set brightness: $order');
-      return false;
-    }
+    assert(ok, 'failed to set brightness: $order');
     _updateBrightness(order);
     await forceAppUpdate();
-    return true;
+    return ok;
+  }
+
+  bool get isDarkMode {
+    int order = getCurrentOrder();
+    if (order == kLight) {
+      return false;
+    } else if (order == kDark) {
+      return true;
+    } else {
+      return Get.isPlatformDarkMode;
+    }
+  }
+
+  ThemeMode get themeMode {
+    int order = getCurrentOrder();
+    if (order == kLight) {
+      return ThemeMode.light;
+    } else if (order == kDark) {
+      return ThemeMode.dark;
+    } else {
+      return ThemeMode.system;
+    }
   }
 
   int getCurrentOrder() => _settings?.getValue('brightness') ?? kSystem;

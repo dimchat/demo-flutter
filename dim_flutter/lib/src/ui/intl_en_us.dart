@@ -21,7 +21,9 @@ final Map<String, String> intlEnUs = {
   //
   'Cancel': 'Cancel',
   'Confirm': 'Confirm',
+  'Conform Add': 'Conform Add',
   'Confirm Delete': 'Confirm Delete',
+  'Confirm Share': 'Confirm Share',
 
   'Success': 'Success',
   'Error': 'Error',
@@ -36,7 +38,6 @@ final Map<String, String> intlEnUs = {
 
   'Refresh Stations': 'Refresh Stations',
   'Shared': 'Shared',
-  'Share error': 'Share error',
 
   'Input Name': 'Input Name',
   'Notice': 'Notice',

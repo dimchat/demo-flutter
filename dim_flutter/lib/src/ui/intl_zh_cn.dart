@@ -21,7 +21,9 @@ final Map<String, String> intlZhCn = {
   //
   'Cancel': '取消',
   'Confirm': '确认',
+  'Conform Add': '确认添加',
   'Confirm Delete': '确认删除',
+  'Confirm Share': '确认分享',
 
   'Success': '成功',
   'Error': '错误',
@@ -36,7 +38,6 @@ final Map<String, String> intlZhCn = {
 
   'Refresh Stations': '刷新基站列表',
   'Shared': '已分享',
-  'Share error': '分享错误',
 
   'Input Name': '请输入名字',
   'Notice': '请注意',

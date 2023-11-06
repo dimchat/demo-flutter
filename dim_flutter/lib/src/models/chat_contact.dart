@@ -118,7 +118,7 @@ class ContactInfo extends Conversation {
         Alert.show(context, 'Error', 'Current user not found');
       } else {
         // confirm adding
-        Alert.confirm(context, 'Confirm', 'Do you want to add this friend?',
+        Alert.confirm(context, 'Confirm Add', 'Do you want to add this friend?',
           okAction: () => _doAdd(context, identifier, user.identifier),
         );
       }
@@ -152,7 +152,7 @@ class ContactInfo extends Conversation {
               'This action will clear chat history too.';
         }
         // confirm removing
-        Alert.confirm(context, 'Confirm', msg,
+        Alert.confirm(context, 'Confirm Delete', msg,
           okAction: () => _doRemove(context, identifier, user.identifier),
         );
       }

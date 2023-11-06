@@ -68,8 +68,9 @@ Future<void> initFacade() async {
 
 void launchApp(Widget home) => runApp(GetMaterialApp(
   // debugShowCheckedModeBanner: false,
-  theme: ThemeData.light(useMaterial3: true),
-  darkTheme: ThemeData.dark(useMaterial3: true),
+  theme: BrightnessDataSource.light,
+  darkTheme: BrightnessDataSource.dark,
+  themeMode: BrightnessDataSource().themeMode,
   home: home,
   localizationsDelegates: const [
     GlobalMaterialLocalizations.delegate,

@@ -54,46 +54,48 @@ class NameCardView extends StatelessWidget {
     child: _widget(context),
   );
 
-  Widget _widget(BuildContext context) {
-    var colors = Styles.colors;
+  static Widget avatarImage(NameCard content, {double? width, double? height}) {
+    width ??= 48;
+    height ??= 48;
     AvatarFactory factory = AvatarFactory();
     ID identifier = content.identifier;
+    // TODO: decrypt avatar when 'password' exists
     String? url = content.avatar?.toString();
     Widget image = url == null
         ? factory.getAvatarView(identifier, width: 32, height: 32)
         : ImageView(url: url, width: 32, height: 32,);
-    return Container(
-      color: colors.pageMessageBackgroundColor,
-      padding: Styles.pageMessagePadding,
-      width: 200,
-      child: Row(
-        children: [
-          ClipRRect(
-            borderRadius: const BorderRadius.all(
-                Radius.elliptical(8, 8)
-            ),
-            child: SizedBox(
-              width: 48, height: 48,
-              // color: CupertinoColors.systemIndigo,
-              child: image,
-            ),
-          ),
-          const SizedBox(
-            width: 8,
-          ),
-          Expanded(
-            child: Text(content.name,
-              maxLines: 2,
-              style: Styles.pageTitleTextStyle,
-            ),
-          ),
-          const SizedBox(
-            width: 16,
-          ),
-        ],
+    return ClipRRect(
+      borderRadius: const BorderRadius.all(
+          Radius.elliptical(8, 8)
+      ),
+      child: SizedBox(
+        width: width, height: height,
+        // color: CupertinoColors.systemIndigo,
+        child: image,
       ),
     );
   }
+
+  Widget _widget(BuildContext context) => Container(
+    color: Styles.colors.pageMessageBackgroundColor,
+    padding: Styles.pageMessagePadding,
+    width: 200,
+    child: Row(
+      children: [
+        avatarImage(content, width: 48, height: 48,),
+        const SizedBox(width: 8,),
+        Expanded(
+          child: Text(content.name,
+            maxLines: 2,
+            style: Styles.pageTitleTextStyle,
+          ),
+        ),
+        const SizedBox(
+          width: 16,
+        ),
+      ],
+    ),
+  );
 
 }
 

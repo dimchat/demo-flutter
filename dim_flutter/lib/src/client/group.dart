@@ -171,6 +171,7 @@ class SharedGroupManager implements GroupDataSource {
   /// @return
   Future<ReliableMessage?> sendInstantMessage(InstantMessage iMsg, {int priority = 0}) async {
     assert(iMsg.content.group != null, 'group message error: $iMsg');
+    iMsg['GF'] = true;  // group flag for notification
     return await _emitter.sendInstantMessage(iMsg, priority: priority);
   }
 

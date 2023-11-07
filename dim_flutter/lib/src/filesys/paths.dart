@@ -54,7 +54,7 @@ class Paths {
   ///  Get extension from a filename
   ///
   /// @param filename - file name
-  /// @return file extension
+  /// @return file extension without '.'
   static String? extension(String filename) {
     String ext = utils.extension(filename);
     if (ext.isEmpty) {

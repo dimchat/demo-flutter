@@ -6,6 +6,7 @@ import 'package:lnc/lnc.dart';
 import '../channels/manager.dart';
 import '../channels/transfer.dart';
 import '../common/constants.dart';
+import '../filesys/paths.dart';
 import '../models/amanuensis.dart';
 import '../network/ftp.dart';
 import '../network/pnf.dart';
@@ -174,15 +175,22 @@ class Emitter implements Observer {
   /// @param thumbnail - image thumbnail
   /// @param receiver  - receiver ID
   /// @throws IOException on failed to save message
-  Future<void> sendImage(Uint8List jpeg, Uint8List thumbnail, ID receiver) async {
+  Future<void> sendImage(Uint8List jpeg, String filename, Uint8List? thumbnail,
+      ID receiver, [Map<String, Object>? extra]) async {
     assert(jpeg.isNotEmpty, 'image data should not empty');
-    String filename = Hex.encode(MD5.digest(jpeg));
-    filename += ".jpeg";
+    // rebuild filename
+    String ext = Paths.extension(filename) ?? 'jpeg';
+    filename = Hex.encode(MD5.digest(jpeg));
+    filename = '$filename.$ext';
+    // create image content
     TransportableData ted = TransportableData.create(jpeg);
     ImageContent content = FileContent.image(filename: filename, data: ted);
     // add image data length & thumbnail into message content
     content['length'] = jpeg.length;
     content.thumbnail = thumbnail;
+    if (extra != null) {
+      content.addAll(extra);
+    }
     await sendContent(content, receiver);
   }
 
@@ -192,10 +200,13 @@ class Emitter implements Observer {
   /// @param duration - length
   /// @param receiver - receiver ID
   /// @throws IOException on failed to save message
-  Future<void> sendVoice(Uint8List mp4, double duration, ID receiver) async {
+  Future<void> sendVoice(Uint8List mp4, String filename, double duration, ID receiver) async {
     assert(mp4.isNotEmpty, 'voice data should not empty');
-    String filename = Hex.encode(MD5.digest(mp4));
-    filename += ".mp4";
+    // rebuild filename
+    String ext = Paths.extension(filename) ?? 'mp4';
+    filename = Hex.encode(MD5.digest(mp4));
+    filename = '$filename.$ext';
+    // create audio content
     TransportableData ted = TransportableData.create(mp4);
     AudioContent content = FileContent.audio(filename: filename, data: ted);
     // add voice data length & duration into message content

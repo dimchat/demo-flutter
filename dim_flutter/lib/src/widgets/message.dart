@@ -83,8 +83,8 @@ abstract class ContentViewUtils {
     child: SelectableLinkify(
       text: DefaultMessageBuilder().getText(content, sender),
       style: TextStyle(color: getTextColor(ctx, sender)),
-      linkStyle: const TextStyle(decoration: TextDecoration.none,),
-      // options: const LinkifyOptions(humanize: false),
+      linkStyle: const TextStyle(decoration: TextDecoration.none, color: CupertinoColors.link),
+      options: const LinkifyOptions(humanize: false),
       linkifiers: const [UrlLinkifier(),],
       contextMenuBuilder: (context, state) => AdaptiveTextSelectionToolbar.editableText(
         editableTextState: state,

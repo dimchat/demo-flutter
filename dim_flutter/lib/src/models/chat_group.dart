@@ -32,6 +32,7 @@ class GroupInfo extends Conversation {
     var nc = lnc.NotificationCenter();
     nc.addObserver(this, NotificationNames.kGroupHistoryUpdated);
     nc.addObserver(this, NotificationNames.kAdministratorsUpdated);
+    nc.addObserver(this, NotificationNames.kMembersUpdated);
   }
 
   @override
@@ -47,6 +48,14 @@ class GroupInfo extends Conversation {
         await reloadData();
       }
     } else  if (name == NotificationNames.kAdministratorsUpdated) {
+      ID? gid = userInfo?['ID'];
+      assert(gid != null, 'notification error: $notification');
+      if (gid == identifier) {
+        Log.info('administrators updated: $gid');
+        setNeedsReload();
+        await reloadData();
+      }
+    } else  if (name == NotificationNames.kMembersUpdated) {
       ID? gid = userInfo?['ID'];
       assert(gid != null, 'notification error: $notification');
       if (gid == identifier) {

@@ -67,7 +67,7 @@ class Emitter implements Observer {
     assert(content.data == null, 'file content error: $content');
     // content.data = null;
     content.url = url;
-    await _sendInstantMessage(iMsg).onError((error, stackTrace) {
+    await sendInstantMessage(iMsg, priority: 1).onError((error, stackTrace) {
       Log.error('failed to send message: $error');
       return null;
     });
@@ -87,19 +87,19 @@ class Emitter implements Observer {
     return await _saveInstantMessage(iMsg);
   }
 
-  static Future<ReliableMessage?> _sendInstantMessage(InstantMessage iMsg) async {
+  Future<ReliableMessage?> sendInstantMessage(InstantMessage iMsg, {int priority = 0}) async {
     Log.info('send instant message (type=${iMsg.content.type}): ${iMsg.sender} -> ${iMsg.receiver}');
     ReliableMessage? rMsg;
     ID receiver = iMsg.receiver;
     if (receiver.isGroup) {
       // send by group manager
       SharedGroupManager manager = SharedGroupManager();
-      rMsg = await manager.sendInstantMessage(iMsg);
+      rMsg = await manager.sendInstantMessage(iMsg, priority: priority);
     } else {
       // send by shared messenger
       GlobalVariable shared = GlobalVariable();
       ClientMessenger? mess = shared.messenger;
-      rMsg = await mess?.sendInstantMessage(iMsg);
+      rMsg = await mess?.sendInstantMessage(iMsg, priority: priority);
     }
     // save instant message
     await _saveInstantMessage(iMsg);
@@ -215,7 +215,7 @@ class Emitter implements Observer {
     await sendContent(content, receiver);
   }
 
-  Future<Pair<InstantMessage?, ReliableMessage?>> sendContent(Content content, ID receiver) async {
+  Future<Pair<InstantMessage?, ReliableMessage?>> sendContent(Content content, ID receiver, {int priority = 0}) async {
     if (receiver.isGroup) {
       assert(!content.containsKey('group') || content.group == receiver, 'group ID error: $receiver, $content');
       content.group = receiver;
@@ -247,7 +247,7 @@ class Emitter implements Observer {
       }
     }
     // 3. send
-    ReliableMessage? rMsg = await _sendInstantMessage(iMsg);
+    ReliableMessage? rMsg = await sendInstantMessage(iMsg, priority: priority);
     if (rMsg == null && !iMsg.receiver.isGroup) {
       Log.warning('not send yet (type=${content.type}): $receiver');
     }

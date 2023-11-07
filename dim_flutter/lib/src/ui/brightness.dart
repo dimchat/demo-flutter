@@ -52,7 +52,7 @@ class BrightnessDataSource {
   }
 
   bool get isDarkMode {
-    int order = getCurrentOrder();
+    int order = getCurrentBrightnessOrder();
     if (order == kLight) {
       return false;
     } else if (order == kDark) {
@@ -63,7 +63,7 @@ class BrightnessDataSource {
   }
 
   ThemeMode get themeMode {
-    int order = getCurrentOrder();
+    int order = getCurrentBrightnessOrder();
     if (order == kLight) {
       return ThemeMode.light;
     } else if (order == kDark) {
@@ -73,9 +73,9 @@ class BrightnessDataSource {
     }
   }
 
-  int getCurrentOrder() => _settings?.getValue('brightness') ?? kSystem;
+  int getCurrentBrightnessOrder() => _settings?.getValue('brightness') ?? kSystem;
 
-  String getCurrentName() => _names[getCurrentOrder()];
+  String getCurrentBrightnessName() => _names[getCurrentBrightnessOrder()];
 
   //
   //  Sections

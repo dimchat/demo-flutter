@@ -180,7 +180,9 @@ class _PickContactState extends State<_PickContactCell> {
   @override
   Widget build(BuildContext context) => CupertinoTableCell(
     leading: widget.info.getImage(),
-    title: widget.info.getNameLabel(),
+    title: widget.info.getNameLabel(
+      style: widget.isSelected ? const TextStyle(color: CupertinoColors.systemRed) : null,
+    ),
     trailing: !widget.isSelected ? null : Icon(AppIcons.selectedIcon,
       color: Styles.colors.primaryTextColor,
     ),

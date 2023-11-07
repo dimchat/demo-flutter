@@ -30,7 +30,7 @@ class LanguageDataSource {
   Future<void> init(AppSettings settings) async {
     _settings = settings;
     // update language
-    String code = getCurrentCode();
+    String code = getCurrentLanguageCode();
     _updateLanguage(code);
   }
 
@@ -58,7 +58,7 @@ class LanguageDataSource {
     return ok;
   }
 
-  String getCurrentCode() {
+  String getCurrentLanguageCode() {
     var code = _settings?.getValue('language');
     if (code is String) {
       return code;
@@ -67,8 +67,8 @@ class LanguageDataSource {
     return '';
   }
 
-  String getCurrentName() {
-    String code = getCurrentCode();
+  String getCurrentLanguageName() {
+    String code = getCurrentLanguageCode();
     for (var item in _items) {
       if (item.code == code) {
         return item.name;

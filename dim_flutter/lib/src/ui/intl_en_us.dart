@@ -44,7 +44,7 @@ final Map<String, String> intlEnUs = {
   //
   'Cancel': 'Cancel',
   'Confirm': 'Confirm',
-  'Confirm Add': 'Conform Add',
+  'Confirm Add': 'Confirm Add',
   'Confirm Delete': 'Confirm Delete',
   'Confirm Share': 'Confirm Share',
   'Confirm Forward': 'Confirm Forward',
@@ -148,6 +148,9 @@ final Map<String, String> intlEnUs = {
   //
   'Please input group name': 'Please input group name.',
   'Please input alias': 'Please input alias.',
+  'Please review invitations': 'Please review invitations first.',
+
+  'Invited by': 'Invited by',
 
   //
   //  Footers

@@ -8,6 +8,7 @@ import 'package:get/get.dart';
 import 'package:dim_client/dim_client.dart';
 import 'package:lnc/lnc.dart' show Log;
 
+import '../models/chat.dart';
 import '../models/chat_contact.dart';
 import '../ui/icons.dart';
 import '../ui/styles.dart';
@@ -192,3 +193,42 @@ class _PickContactState extends State<_PickContactCell> {
   );
 
 }
+
+Future<Widget> previewMembers(List<ID> members) async {
+  List<Widget> children = [];
+  Conversation? chat;
+  for (ID item in members) {
+    chat = Conversation.fromID(item);
+    if (chat == null) {
+      assert(false, 'failed to get conversation: $item');
+      continue;
+    }
+    children.add(Container(
+      padding: const EdgeInsets.all(4),
+      child: previewEntity(chat),
+    ));
+  }
+  return Center(
+    child: SingleChildScrollView(
+      scrollDirection: Axis.horizontal,
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: children,
+      ),
+    ),
+  );
+}
+
+Widget previewEntity(Conversation info, {double width = 48, double height = 48, TextStyle? textStyle}) => Column(
+  children: [
+    info.getImage(width: width, height: height,),
+    SizedBox(
+      width: width,
+      child: info.getNameLabel(
+        textAlign: TextAlign.center,
+        overflow: TextOverflow.ellipsis,
+        style: textStyle,
+      ),
+    ),
+  ],
+);

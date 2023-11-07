@@ -148,6 +148,9 @@ final Map<String, String> intlZhCn = {
   //
   'Please input group name': '请输入群名称',
   'Please input alias': '请输入别名',
+  'Please review invitations': '请先审查邀请函',
+
+  'Invited by': '邀请人',
 
   //
   //  Footers

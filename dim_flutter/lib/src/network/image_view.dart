@@ -195,7 +195,7 @@ class _FacadeState extends State<_FacadeView> implements lnc.Observer {
         Log.info('document updated, refreshing facade: $identifier');
         // update visa document and refresh
         widget.info.visa = visa;
-        widget.refresh();
+        await widget.refresh();
       }
     } else if (name == NotificationNames.kFileDownloadSuccess) {
       Uri? url = userInfo?['url'];

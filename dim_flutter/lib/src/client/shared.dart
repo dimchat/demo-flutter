@@ -4,15 +4,16 @@ import 'client.dart';
 import 'database.dart';
 import 'emitter.dart';
 import 'facebook.dart';
+import 'group.dart';
 import 'messenger.dart';
 
 class GlobalVariable {
   factory GlobalVariable() => _instance;
   static final GlobalVariable _instance = GlobalVariable._internal(SharedDatabase());
   GlobalVariable._internal(this.database)
-      : adb = database, mdb = database, sdb = database,
-        facebook = SharedFacebook(database), emitter = Emitter() {
+      : adb = database, mdb = database, sdb = database, emitter = Emitter() {
     _registerPlugins();
+    facebook = SharedFacebook(database);
     terminal = Client(facebook, database);
   }
 
@@ -21,11 +22,24 @@ class GlobalVariable {
   final SessionDBI sdb;
   final SharedDatabase database;
 
-  final SharedFacebook facebook;
-
   final Emitter emitter;
 
-  SharedMessenger? messenger;
+  SharedFacebook? _facebook;
+  SharedFacebook get facebook => _facebook!;
+  set facebook(SharedFacebook barrack) {
+    _facebook = barrack;
+    SharedGroupManager man = SharedGroupManager();
+    man.facebook = barrack;
+  }
+
+  SharedMessenger? _messenger;
+  SharedMessenger? get messenger => _messenger;
+  set messenger(SharedMessenger? transceiver) {
+    assert(transceiver != null, 'messenger should not empty');
+    _messenger = transceiver;
+    SharedGroupManager man = SharedGroupManager();
+    man.messenger = transceiver;
+  }
 
   late final Client terminal;
 

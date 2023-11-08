@@ -50,7 +50,7 @@ class Emitter implements Observer {
       await _onUploadSuccess(filename, url);
     } else if (name == NotificationNames.kFileUploadFailure) {
       String filename = info['filename'];
-      _onUploadFailed(filename);
+      await _onUploadFailed(filename);
     }
   }
 

@@ -48,20 +48,22 @@ class _GroupImageState extends State<GroupImage> implements lnc.Observer {
       if (identifier == null) {
         Log.error('notification error: $notification');
       } else if (identifier == widget.info.identifier) {
-        _reload();
+        await _reload();
       }
     } else if (name == NotificationNames.kParticipantsUpdated) {
       ID? identifier = info?['ID'];
       if (identifier == null) {
         Log.error('notification error: $notification');
       } else if (identifier == widget.info.identifier) {
-        setState(() {
-        });
+        if (mounted) {
+          setState(() {
+          });
+        }
       }
     }
   }
 
-  void _reload() async {
+  Future<void> _reload() async {
     await widget.info.reloadData();
     if (mounted) {
       setState(() {

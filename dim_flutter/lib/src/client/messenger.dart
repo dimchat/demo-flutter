@@ -7,10 +7,22 @@ import 'package:lnc/lnc.dart';
 import '../models/shield.dart';
 import '../network/velocity.dart';
 
+import '../ui/language.dart';
 import 'shared.dart';
 
 class SharedMessenger extends ClientMessenger {
   SharedMessenger(super.session, super.facebook, super.mdb);
+
+  @override
+  Future<Uint8List?> encryptKey(Uint8List key, ID receiver, InstantMessage iMsg) async {
+    try {
+      return await super.encryptKey(key, receiver, iMsg);
+    } catch (e) {
+      // FIXME:
+      Log.error('failed to encrypt key for receiver: $receiver, $e');
+      return null;
+    }
+  }
 
   @override
   Future<Content?> deserializeContent(Uint8List data, SymmetricKey password,
@@ -79,7 +91,7 @@ class SharedMessenger extends ClientMessenger {
 
   @override
   Future<void> handshake(String? sessionKey) async {
-    if (sessionKey == null) {
+    if (sessionKey == null || sessionKey.isEmpty) {
       // first handshake, update visa document first
       User? user = await facebook.currentUser;
       if (user == null) {
@@ -97,17 +109,20 @@ class SharedMessenger extends ClientMessenger {
         assert(false, 'user error: $user');
       } else {
         // set app id
-        var app = doc.getProperty('app');
-        app ??= 'chat.dim.tarsier';
-        doc.setProperty('app', app);
+        doc.setProperty('app_id', 'chat.dim.tarsier');
         // set locale for language
         String locale = Platform.localeName;
         doc.setProperty('locale', locale);
+        // set customized language
+        LanguageDataSource lds = LanguageDataSource();
+        String language = lds.getCurrentLanguageCode();
+        doc.setProperty('language', language);
         // sign it
         Uint8List? sig = doc.sign(sKey);
         assert(sig != null, 'failed to sign visa: $doc');
         bool ok = await facebook.saveDocument(doc);
         assert(ok, 'failed to save document: $doc');
+        Log.info('visa updated: $doc');
       }
     }
     await super.handshake(sessionKey);

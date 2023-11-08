@@ -73,7 +73,7 @@ class Vestibule implements lnc.Observer {
     List<InstantMessage>? outgoing = _outgoingMessages.remove(entity);
     if (outgoing != null) {
       for (InstantMessage item in outgoing) {
-        shared.emitter.sendInstantMessage(item, priority: 1);
+        await shared.emitter.sendInstantMessage(item, priority: 1);
       }
     }
 
@@ -87,7 +87,7 @@ class Vestibule implements lnc.Observer {
           continue;
         }
         for (ReliableMessage res in responses) {
-          messenger.sendReliableMessage(res, priority: 1);
+          await messenger.sendReliableMessage(res, priority: 1);
         }
       }
     }

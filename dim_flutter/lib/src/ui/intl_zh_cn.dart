@@ -139,7 +139,7 @@ final Map<String, String> intlZhCn = {
 
   'Chat Details': '聊天资料',
   'Group Chat Details': '群聊资料',
-  'Group Name': '群名称',
+  'Group Name': '群组名称',
   'Owner': '群主',
   'Administrators': '管理员',
   'Invitations': '邀请函',

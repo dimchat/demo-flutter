@@ -126,13 +126,11 @@ class _RecordState extends State<RecordButton> implements lnc.Observer {
           _position = details.localPosition;
         });
       },
-      onLongPressUp: () async {
+      onLongPressUp: () {
         Log.warning('tap up');
-        if (mounted) {
-          setState(() {
-            _recording = false;
-          });
-        }
+        setState(() {
+          _recording = false;
+        });
         ChannelManager man = ChannelManager();
         man.audioChannel.stopRecord();
         Log.debug('stop record, touch point: $_position');
@@ -218,7 +216,7 @@ class _AudioContentState extends State<AudioContentView> implements lnc.Observer
       assert(url != null, 'download URL not found: $userInfo');
       if (url == widget.content.url) {
         Log.info('audio file downloaded: $url => $path');
-        if (path != null && mounted) {
+        if (mounted && path != null) {
           setState(() {
             widget._info.path = path;
           });

@@ -86,14 +86,14 @@ class _FacadeState extends State<_FacadeView> implements lnc.Observer {
         Log.info('document updated, refreshing facade: $identifier');
         // update visa document and refresh
         widget.loader.setNeedsReload();
-        _reload();
+        await _reload();
       }
     } else {
       assert(false, 'should not happen');
     }
   }
 
-  void _reload() async {
+  Future<void> _reload() async {
     _AvatarLoader loader = widget.loader;
     await loader.load((count, total) {
       Log.info('received $count/$total bytes: $loader');

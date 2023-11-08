@@ -1,19 +1,39 @@
 
 final Map<String, String> intlZhCn = {
 
-  'Nickname': '昵称',
+  // 'OK': '好',
 
+  //
+  //  Register
+  //
+  'Register': '注册新账号',
+  'Import': '导入旧账号',
+  'Name': '名称',
+  'Nickname': '昵称',
+  'Your nickname': '怎么称呼',
+
+  'Please input your nickname': '请问怎么称呼？',
+  'Please agree the privacy policy': '请阅读并同意 DIM 隐私政策。',
+  'Failed to import account': '导入账号失败，请检查助记词是否正确。',
+  'Failed to generate ID': '无法生成 ID。',
+
+  'Mnemonic Codes': '助记词',
+  'MnemonicCodes::Description': '助记词是已有账号的私钥，'
+      '如果您尚未拥有账号，请点击右上角的"注册"按钮生成新的账号。',
+
+  'Show': '显示',
+  'Hide': '隐藏',
+  'Accept': '接受',
+
+  //
+  //  Photo
+  //
   'Camera': '相机',
   'Album': '相册',
   'Gallery': '图库',
   'Pick Image': '选取图片',
   'Image File Error': '图片文件错误',
   'Upload Failed': '上传失败',
-
-  'Show': '显示',
-  'Hide': '隐藏',
-  'Accept': '接受',
-  'OK': '好',
 
   //
   //  Time

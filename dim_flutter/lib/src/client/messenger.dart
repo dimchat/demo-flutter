@@ -1,3 +1,4 @@
+import 'dart:io';
 import 'dart:typed_data';
 
 import 'package:dim_client/dim_client.dart';
@@ -95,10 +96,14 @@ class SharedMessenger extends ClientMessenger {
         // FIXME: query from station?
         assert(false, 'user error: $user');
       } else {
-        // touch visa to update time
+        // set app id
         var app = doc.getProperty('app');
         app ??= 'chat.dim.tarsier';
         doc.setProperty('app', app);
+        // set locale for language
+        String locale = Platform.localeName;
+        doc.setProperty('locale', locale);
+        // sign it
         Uint8List? sig = doc.sign(sKey);
         assert(sig != null, 'failed to sign visa: $doc');
         bool ok = await facebook.saveDocument(doc);

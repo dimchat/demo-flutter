@@ -1,19 +1,40 @@
 
 final Map<String, String> intlEnUs = {
 
-  'Nickname': 'Nickname',
+  // 'OK': 'OK',
 
+  //
+  //  Register
+  //
+  'Register': 'Register',
+  'Import': 'Import',
+  'Name': 'Name',
+  'Nickname': 'Nickname',
+  'Your nickname': 'Your nickname',
+
+  'Please input your nickname': 'Please input your nickname.',
+  'Please agree the privacy policy': 'Please read and agree the privacy policy.',
+  'Failed to import account': 'Failed to import account, please check your mnemonic codes.',
+  'Failed to generate ID': 'Failed to generate ID.',
+
+  'Mnemonic Codes': 'Mnemonic Codes',
+  'MnemonicCodes::Description': 'Mnemonic is the private key for an existing account,'
+      ' if you don\'t have one, please click "Register" button'
+      ' on the top-right corner to generate a new one.',
+
+  'Show': 'Show',
+  'Hide': 'Hide',
+  'Accept': 'Accept',
+
+  //
+  //  Photo
+  //
   'Camera': 'Camera',
   'Album': 'Album',
   'Gallery': 'Gallery',
   'Pick Image': 'Pick Image',
   'Image File Error': 'Image File Error',
   'Upload Failed': 'Upload Failed',
-
-  'Show': 'Show',
-  'Hide': 'Hide',
-  'Accept': 'Accept',
-  'OK': 'OK',
 
   //
   //  Time

@@ -78,7 +78,7 @@ final Map<String, String> intlZhCn = {
   'Unblocked': '拦截已取消',
   'Muted': '已屏蔽',
   'Unmuted': '屏蔽已取消',
-  'Permission denied': '权限被拒绝',
+  'Permission Denied': '权限被拒绝',
 
   'Refresh Stations': '刷新基站列表',
   'Shared': '已分享',
@@ -124,10 +124,12 @@ final Map<String, String> intlZhCn = {
   //
   //  Chat Box
   //
-  'Hold to talk': '按住说话',
-  'Release to send': '松开发送',
-  'Release to cancel': '松开取消',
+  'Hold to Talk': '按住说话',
+  'Release to Send': '松开发送',
+  'Release to Cancel': '松开取消',
 
+  'View More Members': '查看更多群组成员',
+  'Group Members': '群组成员',
   'Non-Member': '非会员',
   'Image Not Found': '图片不存在',
 

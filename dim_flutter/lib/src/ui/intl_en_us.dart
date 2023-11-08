@@ -79,7 +79,7 @@ final Map<String, String> intlEnUs = {
   'Unblocked': 'Unblocked',
   'Muted': 'Muted',
   'Unmuted': 'Unmuted',
-  'Permission denied': 'Permission denied',
+  'Permission Denied': 'Permission Denied',
 
   'Refresh Stations': 'Refresh Stations',
   'Shared': 'Shared',
@@ -125,10 +125,12 @@ final Map<String, String> intlEnUs = {
   //
   //  Chat Box
   //
-  'Hold to talk': 'Hold to talk',
-  'Release to send': 'Release to send',
-  'Release to cancel': 'Release to cancel',
+  'Hold to Talk': 'Hold to Talk',
+  'Release to Send': 'Release to Send',
+  'Release to Cancel': 'Release to Cancel',
 
+  'View More Members': 'View More Members',
+  'Group Members': 'Group Members',
   'Non-Member': 'Non-Member',
   'Image Not Found': 'Image Not Found',
 

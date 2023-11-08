@@ -14,7 +14,7 @@ void requestStoragePermissions(BuildContext context,
     {required void Function(BuildContext context) onGranted}) =>
     _PermissionHandler.request(
       _PermissionHandler.storagePermissions,
-      onDenied: (permission) => Alert.show(context, 'Permission denied',
+      onDenied: (permission) => Alert.show(context, 'Permission Denied',
         'You should grant the permission to access external storage.',
         callback: () => openAppSettings(),
       ),
@@ -28,7 +28,7 @@ void requestPhotosPermissions(BuildContext context,
     {required void Function(BuildContext context) onGranted}) =>
     _PermissionHandler.request(
       _PermissionHandler.photosPermissions,
-      onDenied: (permission) => Alert.show(context, 'Permission denied',
+      onDenied: (permission) => Alert.show(context, 'Permission Denied',
         'You should grant the permission to access photo album.',
         callback: () => openAppSettings(),
       ),
@@ -42,7 +42,7 @@ void requestCameraPermissions(BuildContext context,
     {required void Function(BuildContext context) onGranted}) =>
     _PermissionHandler.request(
       _PermissionHandler.cameraPermissions,
-      onDenied: (permission) => Alert.show(context, 'Permission denied',
+      onDenied: (permission) => Alert.show(context, 'Permission Denied',
         'You should grant the permission to access camera.',
         callback: () => openAppSettings(),
       ),
@@ -56,7 +56,7 @@ void requestMicrophonePermissions(BuildContext context,
     {required void Function(BuildContext context) onGranted}) =>
     _PermissionHandler.request(
       _PermissionHandler.microphonePermissions,
-      onDenied: (permission) => Alert.show(context, 'Permission denied',
+      onDenied: (permission) => Alert.show(context, 'Permission Denied',
         'You should grant the permission to access microphone.',
         callback: () => openAppSettings(),
       ),

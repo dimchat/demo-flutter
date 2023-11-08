@@ -73,11 +73,11 @@ class _RecordState extends State<RecordButton> implements lnc.Observer {
   }
   String get _text {
     if (!_recording) {
-      return 'Hold to talk'.tr;
+      return 'Hold to Talk'.tr;
     } else if (_position.dy < 0) {
-      return 'Release to cancel'.tr;
+      return 'Release to Cancel'.tr;
     } else {
-      return 'Release to send'.tr;
+      return 'Release to Send'.tr;
     }
   }
 

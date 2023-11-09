@@ -1,3 +1,5 @@
+import 'dart:typed_data';
+
 import 'package:flutter/cupertino.dart';
 
 import 'package:dim_client/dim_client.dart';
@@ -286,10 +288,14 @@ class GroupInfo extends Conversation {
       assert(false, 'failed to get group document: $group');
       return 'Failed to get group document';
     } else {
-      // create new one for modifying
+      // clone for modifying
       Document? clone = Document.parse(bulletin.copyMap(false));
-      assert(clone is Bulletin, 'failed to create bulletin document');
-      bulletin = clone as Bulletin;
+      if (clone is Bulletin) {
+        bulletin = clone;
+      } else {
+        assert(false, 'bulletin error: $bulletin, $group');
+        return 'Group document error';
+      }
     }
     // 2.1. get sign key for local user
     SignKey? sKey = await shared.facebook.getPrivateKeyForVisaSignature(me);
@@ -299,22 +305,23 @@ class GroupInfo extends Conversation {
     }
     // 2.2. update group name and sign it
     bulletin.name = text.trim();
-    if (bulletin.sign(sKey) == null) {
-      assert(false, 'failed to sign group document: $group');
+    Uint8List? sig = bulletin.sign(sKey);
+    if (sig == null) {
+      assert(false, 'failed to sign group document: $bulletin, $me');
       return 'Failed to sign group document';
     }
     // 3. save into local storage and broadcast it
     if (await shared.facebook.saveDocument(bulletin)) {
       Log.warning('group document saved: $group');
     } else {
-      assert(false, 'failed to save group document: $group');
+      assert(false, 'failed to save group document: $bulletin');
       return 'failed to save group document';
     }
     if (await man.broadcastDocument(bulletin)) {
-      Log.warning('group document updated: $group');
+      Log.warning('group document broadcast: $group');
     } else {
-      assert(false, 'failed to update group document: $group');
-      return 'Failed to update group document';
+      assert(false, 'failed to broadcast group document: $bulletin');
+      return 'Failed to broadcast group document';
     }
     // OK
     return null;

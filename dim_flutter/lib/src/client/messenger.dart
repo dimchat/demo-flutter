@@ -93,39 +93,56 @@ class SharedMessenger extends ClientMessenger {
   Future<void> handshake(String? sessionKey) async {
     if (sessionKey == null || sessionKey.isEmpty) {
       // first handshake, update visa document first
-      User? user = await facebook.currentUser;
-      if (user == null) {
-        assert(false, 'current user not found');
-        return;
-      }
-      SignKey? sKey = await facebook.getPrivateKeyForVisaSignature(user.identifier);
-      if (sKey == null) {
-        assert(false, 'private key not found: $user');
-        return;
-      }
-      Visa? doc = await user.visa;
-      if (doc == null) {
-        // FIXME: query from station?
-        assert(false, 'user error: $user');
-      } else {
-        // set app id
-        doc.setProperty('app_id', 'chat.dim.tarsier');
-        // set locale for language
-        String locale = Platform.localeName;
-        doc.setProperty('locale', locale);
-        // set customized language
-        LanguageDataSource lds = LanguageDataSource();
-        String language = lds.getCurrentLanguageCode();
-        doc.setProperty('language', language);
-        // sign it
-        Uint8List? sig = doc.sign(sKey);
-        assert(sig != null, 'failed to sign visa: $doc');
-        bool ok = await facebook.saveDocument(doc);
-        assert(ok, 'failed to save document: $doc');
-        Log.info('visa updated: $doc');
-      }
+      await updateVisa();
     }
     await super.handshake(sessionKey);
+  }
+
+  Future<bool> updateVisa() async {
+    User? user = await facebook.currentUser;
+    if (user == null) {
+      assert(false, 'current user not found');
+      return false;
+    }
+    // 1. get sign key for current user
+    SignKey? sKey = await facebook.getPrivateKeyForVisaSignature(user.identifier);
+    if (sKey == null) {
+      assert(false, 'private key not found: $user');
+      return false;
+    }
+    // 2. get visa document for current user
+    Visa? visa = await user.visa;
+    if (visa == null) {
+      // FIXME: query from station or create a new one?
+      assert(false, 'user error: $user');
+      return false;
+    } else {
+      // clone for modifying
+      Document? doc = Document.parse(visa.copyMap(false));
+      if (doc is Visa) {
+        visa = doc;
+      } else {
+        assert(false, 'visa error: $visa');
+        return false;
+      }
+    }
+    // 3. update visa document
+    visa.setProperty('app_id', 'chat.dim.tarsier');
+    // set locale for language
+    String locale = Platform.localeName;
+    visa.setProperty('locale', locale);
+    // set customized language
+    LanguageDataSource lds = LanguageDataSource();
+    String language = lds.getCurrentLanguageCode();
+    visa.setProperty('language', language);
+    // 4. sign it
+    Uint8List? sig = visa.sign(sKey);
+    assert(sig != null, 'failed to sign visa: $visa, $user');
+    // 5. save it
+    bool ok = await facebook.saveDocument(visa);
+    assert(ok, 'failed to save document: $visa');
+    Log.info('visa updated: $ok, $visa');
+    return ok;
   }
 
   @override

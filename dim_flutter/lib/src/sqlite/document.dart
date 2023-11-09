@@ -58,7 +58,7 @@ class _DocumentTable extends DataTableHandler<Document> implements DocumentDBI {
       if (item.getString('type', '') == type) {
         // old record found, update it
         if (item == doc) {
-          Log.debug('same document, no need to update: $identifier');
+          Log.warning('same document, no need to update: $identifier');
           return true;
         }
         return await updateDocument(doc);

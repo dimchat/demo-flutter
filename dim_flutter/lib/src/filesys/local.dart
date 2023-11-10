@@ -28,13 +28,18 @@
  * SOFTWARE.
  * =============================================================================
  */
+import 'dart:io';
+
 import '../channels/manager.dart';
+import 'external.dart';
 import 'paths.dart';
 
 class LocalStorage {
   factory LocalStorage() => _instance;
   static final LocalStorage _instance = LocalStorage._internal();
   LocalStorage._internal();
+
+  DateTime? _lastBurn;
 
   ///  Avatar image file path
   ///
@@ -107,6 +112,25 @@ class LocalStorage {
   Future<String> get temporaryDirectory async {
     ChannelManager man = ChannelManager();
     return await man.ftpChannel.temporaryDirectory;
+  }
+
+  Future<int> burnAll(DateTime expired) async {
+    DateTime now = DateTime.now();
+    // check last time
+    DateTime? last = _lastBurn;
+    if (last != null) {
+      int elapsed = now.millisecondsSinceEpoch - last.millisecondsSinceEpoch;
+      if (elapsed < 15000) {
+        // too frequently
+        return 0;
+      }
+    }
+    _lastBurn = now;
+    // cleanup cached files
+    String path = await cachesDirectory;
+    path = Paths.append(path, 'files');
+    Directory dir = Directory(path);
+    return await ExternalStorage.cleanupDirectory(dir, expired);
   }
 
 }

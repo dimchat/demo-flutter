@@ -1,6 +1,7 @@
 import 'dart:typed_data';
 
 import 'package:flutter/cupertino.dart';
+import 'package:get/get.dart';
 
 import 'package:dim_client/dim_client.dart';
 import 'package:lnc/lnc.dart' as lnc;
@@ -335,10 +336,8 @@ class GroupInfo extends Conversation {
         Log.error('current user not found, failed to add contact: $identifier');
         Alert.show(context, 'Error', 'Current user not found');
       } else {
-        String msg = 'Are you sure to remove this group?\n'
-            'This action will clear chat history too.';
-        // confirm removing
-        Alert.confirm(context, 'Confirm', msg,
+        // confirm removing group
+        Alert.confirm(context, 'Confirm', 'Sure to remove this group?'.tr,
           okAction: () => _doQuit(context, identifier, user.identifier),
         );
       }
@@ -357,7 +356,7 @@ class GroupInfo extends Conversation {
       // OK
       Navigator.pop(ctx);
     }).onError((error, stackTrace) {
-      Alert.show(ctx, 'Error', error.toString());
+      Alert.show(ctx, 'Error', '$error');
     });
   }
 

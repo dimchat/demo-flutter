@@ -98,9 +98,9 @@ class Alert {
   }
 
   static void actionSheet(BuildContext context, String? title, String? message,
-      String action1, VoidCallback callback1, [
-        String? action2, VoidCallback? callback2,
-        String? action3, VoidCallback? callback3,
+      dynamic action1, VoidCallback callback1, [
+        dynamic action2, VoidCallback? callback2,
+        dynamic action3, VoidCallback? callback3,
       ]) => showCupertinoModalPopup(context: context,
     builder: (context) => CupertinoActionSheet(
       title: title == null || title.isEmpty ? null : Text(title.tr),
@@ -111,7 +111,7 @@ class Alert {
             Navigator.pop(context);
             callback1();
           },
-          child: Text(action1.tr),
+          child: action1 is String ? Text(action1.tr) : action1,
         ),
         if (action2 != null)
           CupertinoActionSheetAction(
@@ -121,7 +121,7 @@ class Alert {
                 callback2();
               }
             },
-            child: Text(action2.tr),
+            child: action2 is String ? Text(action2.tr) : action2,
           ),
         if (action3 != null)
           CupertinoActionSheetAction(
@@ -131,7 +131,7 @@ class Alert {
                 callback3();
               }
             },
-            child: Text(action3.tr),
+            child: action3 is String? Text(action3.tr) : action3,
           ),
         CupertinoActionSheetAction(
           onPressed: () => Navigator.pop(context),

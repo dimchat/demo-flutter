@@ -6,20 +6,38 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter_image_compress/flutter_image_compress.dart';
 import 'package:get/get.dart';
 import 'package:image_picker/image_picker.dart';
+
 import 'package:lnc/lnc.dart';
+
+import '../ui/icons.dart';
 
 import 'alert.dart';
 import 'permissions.dart';
+
 
 typedef OnImagePicked = void Function(String path);
 typedef OnImageRead = void Function(String path, Uint8List data);
 
 void openImagePicker(BuildContext context, {OnImagePicked? onPicked, required OnImageRead onRead}) =>
     Alert.actionSheet(context, null, null,
-      'Camera'.tr, () => requestCameraPermissions(context,
+      Row(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          const Icon(AppIcons.cameraIcon),
+          const SizedBox(width: 12,),
+          Text('Camera'.tr),
+        ],
+      ), () => requestCameraPermissions(context,
         onGranted: (context) => _openImagePicker(context, true, onPicked, onRead),
       ),
-      'Album'.tr, () => requestPhotosPermissions(context,
+      Row(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          const Icon(AppIcons.albumIcon),
+          const SizedBox(width: 12,),
+          Text('Album'.tr),
+        ],
+      ), () => requestPhotosPermissions(context,
         onGranted: (context) => _openImagePicker(context, false, onPicked, onRead),
       ),
     );
@@ -46,8 +64,8 @@ void _openImagePicker(BuildContext context, bool camera, OnImagePicked? onPicked
         Alert.show(context, 'Image File Error', '$error');
       });
     }).onError((error, stackTrace) {
-      String name = camera ? 'Camera' : 'Gallery';
-      Alert.show(context, '$name Error', '$error');
+      String title = camera ? 'Camera Error' : 'Gallery Error';
+      Alert.show(context, title, '$error');
     });
 
 

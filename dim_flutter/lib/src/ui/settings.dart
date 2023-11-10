@@ -5,6 +5,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 import 'brightness.dart';
 import 'language.dart';
+import 'burn_after_reading.dart';
 
 /// Shared Preferences
 class AppSettings {
@@ -64,6 +65,9 @@ Future<void> initFacade() async {
   // 2. init language
   var language = LanguageDataSource();
   await language.init(settings);
+  // 3. init 'burn after reading'
+  var burn = BurnAfterReadingDataSource();
+  await burn.init(settings);
 }
 
 void launchApp(Widget home) => runApp(GetMaterialApp(

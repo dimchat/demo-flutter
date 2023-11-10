@@ -30,6 +30,8 @@ abstract class AppIcons {
   static const IconData chatFunctionIcon = Icons.add_circle_outline;
   static const IconData     chatSendIcon = Icons.send;
   static const IconData      noImageIcon = CupertinoIcons.photo;
+  static const IconData       cameraIcon = CupertinoIcons.camera;
+  static const IconData        albumIcon = CupertinoIcons.photo;
   // Audio
   static const IconData    waitAudioIcon = CupertinoIcons.cloud_download;
   static const IconData    playAudioIcon = CupertinoIcons.play;
@@ -73,6 +75,8 @@ abstract class AppIcons {
   static const IconData exportAccountIcon = CupertinoIcons.lock_shield;
   // static const IconData exportAccountIcon = Icons.vpn_key_outlined;
   // static const IconData exportAccountIcon = Icons.account_balance_wallet_outlined;
+  static const IconData          burnIcon = CupertinoIcons.timer;
+
   static const IconData    setNetworkIcon = CupertinoIcons.cloud;
   static const IconData setWhitePaperIcon = CupertinoIcons.doc;
   static const IconData setOpenSourceIcon = Icons.code;

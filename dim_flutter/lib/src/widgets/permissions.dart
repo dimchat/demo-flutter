@@ -1,5 +1,7 @@
 import 'dart:io';
 
+import 'package:get/get.dart';
+
 import 'package:flutter/cupertino.dart';
 import 'package:lnc/lnc.dart';
 import 'package:permission_handler/permission_handler.dart';
@@ -15,7 +17,7 @@ void requestStoragePermissions(BuildContext context,
     _PermissionHandler.request(
       _PermissionHandler.storagePermissions,
       onDenied: (permission) => Alert.show(context, 'Permission Denied',
-        'You should grant the permission to access external storage.',
+        'Grant to access external storage'.tr,
         callback: () => openAppSettings(),
       ),
     ).then((granted) {
@@ -29,7 +31,7 @@ void requestPhotosPermissions(BuildContext context,
     _PermissionHandler.request(
       _PermissionHandler.photosPermissions,
       onDenied: (permission) => Alert.show(context, 'Permission Denied',
-        'You should grant the permission to access photo album.',
+        'Grant to access photo album'.tr,
         callback: () => openAppSettings(),
       ),
     ).then((granted) {
@@ -43,7 +45,7 @@ void requestCameraPermissions(BuildContext context,
     _PermissionHandler.request(
       _PermissionHandler.cameraPermissions,
       onDenied: (permission) => Alert.show(context, 'Permission Denied',
-        'You should grant the permission to access camera.',
+        'Grant to access camera'.tr,
         callback: () => openAppSettings(),
       ),
     ).then((granted) {
@@ -57,7 +59,7 @@ void requestMicrophonePermissions(BuildContext context,
     _PermissionHandler.request(
       _PermissionHandler.microphonePermissions,
       onDenied: (permission) => Alert.show(context, 'Permission Denied',
-        'You should grant the permission to access microphone.',
+        'Grant to access microphone'.tr,
         callback: () => openAppSettings(),
       ),
     ).then((granted) {

@@ -51,6 +51,19 @@ final Map<String, String> intlEnUs = {
   'Saturday': 'Saturday',
   'Sunday': 'Sunday',
 
+  '@several seconds': '@several seconds',
+  '@several minutes': '@several minutes',
+  '@several hours': '@several hours',
+  '@several days': '@several days',
+  '@several months': 'About @several months',
+
+  'Daily':   '24 hours', // 'Daily',
+  'Weakly':  '7 days',   // 'Weakly',
+  'Monthly': '30 days',  // 'Monthly',
+  'Manually': 'Manually',
+
+  'Burn After Reading': 'Burn After Reading',
+
   //
   //  Connection
   //
@@ -130,22 +143,33 @@ final Map<String, String> intlEnUs = {
   'Release to Cancel': 'Release to Cancel',
 
   'View More Members': 'View More Members',
-  'Group Members': 'Group Members',
+  'Group Members (@count)': 'Group Members (@count)',
   'Non-Member': 'Non-Member',
   'Image Not Found': 'Image Not Found',
+  'Failed to load image @filename': 'Failed to load image "@filename".',
 
   'Forward Image': 'Forward Image',
   'Forward Web Page': 'Forward Web Page',
   'Forward Name Card': 'Forward Name Card',
 
+  'Image message forwarded to @chat': 'Image message forwarded to "@chat".',
+  'Failed to share image with @chat': 'Failed to share image with "@chat".',
+
+  'Web Page @title forwarded to @chat': 'Web page "@title" forwarded to "@chat".',
+  'Failed to share Web Page @title with @chat': 'Failed to share web page "@title" with "@chat".',
+
+  'Name Card @name forwarded to @chat': 'Name Card "@name" forwarded to "@chat".',
+  'Failed to share Name Card @name with @chat': 'Failed to share Name Card "@name" with "@chat".',
+
   'Chat Details': 'Chat Details',
-  'Group Chat Details': 'Group Chat Details',
+  'Group Chat Details (@count)': 'Group Chat Details (@count)',
   'Group Name': 'Group Name',
   'Owner': 'Owner',
   'Administrators': 'Administrators',
   'Invitations': 'Invitations',
 
   'Select Participants': 'Select Participants',
+  'Select a Chat': 'Select a Chat',
 
   'Waiting to send': 'Waiting to send',
   'Sent to relay station': 'Sent to relay station',
@@ -162,9 +186,21 @@ final Map<String, String> intlEnUs = {
   'Mute Notifications': 'Mute Notifications',
 
   'Send Message': 'Send Message',
+  'Clear History': 'Clear History',
+  'Add Contact': 'Add Contact',
   'Share Contact': 'Share Contact',
   'Delete Contact': 'Delete Contact',
-  'Clear History': 'Clear History',
+  'Quit Group': 'Quit Group',
+
+  'Contact @name shared to @chat': 'Contact "@name" shared to "@chat".',
+  'Failed to share contact @name with @chat': 'Failed to share contact "@name" with "@chat".',
+
+  'Profile is updated': 'Your profile is updated and broadcast to all friends!',
+  'Failed to update profile': 'Failed to update visa document.',
+
+  'Failed to get private key': 'Failed to get private key.',
+  'Failed to get visa': 'Failed to get visa document.',
+  'Failed to save visa': 'Failed to save visa document.',
 
   //
   //  Prompts
@@ -174,6 +210,32 @@ final Map<String, String> intlEnUs = {
   'Please review invitations': 'Please review invitations first.',
 
   'Invited by': 'Invited by',
+  'Invitation sent': 'A new invitation is sent to all administrators, now is waiting for review.',
+
+  'Sure to add this friend?': 'Do you want to add this friend?',
+  'Sure to remove this friend?': 'Are you sure to remove this friend?\n'
+      'This action will clear chat history too.',
+  'Sure to remove this group?': 'Are you sure to remove this group?\n'
+      'This action will clear chat history too.',
+
+  'Sure to clear chat history of this friend?': 'Are you sure to clear chat history of this friend?'
+      ' This action cannot be restored.',
+  'Sure to clear chat history of this group?': 'Are you sure to clear chat history of this group?'
+      ' This action cannot be restored.',
+  'Failed to clear chat history': 'Failed to clear chat history.',
+
+  'Failed to set remark': 'Failed to set remark.',
+
+  'Never receive message from this contact': 'You will never receive message from this contact again.',
+  'Receive message from this contact': 'You can receive message from this contact now.',
+
+  'Never receive notification from this contact': 'You will never receive notification from this contact again.',
+  'Receive notification from this contact': 'You can receive notification from this contact now.',
+
+  'Grant to access external storage': 'You should grant the permission to access external storage.',
+  'Grant to access photo album': 'You should grant the permission to access photo album.',
+  'Grant to access camera': 'You should grant the permission to access camera.',
+  'Grant to access microphone': 'You should grant the permission to access microphone.',
 
   //
   //  Footers
@@ -215,5 +277,12 @@ final Map<String, String> intlEnUs = {
       '  1. Owner or administrators can add member directly;\n'
       '  2. Other members can create invitations and waiting reviewed by administrators;\n'
       '  3. Any administrator can confirm the invitations and refresh the member list.',
+
+  'BurnAfterReading::Description': 'Rules:\n'
+      '  1. Set a time period, and the app will automatically delete'
+      ' all messages and files before that time;\n'
+      '  2. Deleted messages and files cannot be recovered,'
+      ' so please use this feature with caution;\n'
+      '  3. Setting to manual mode will no longer automatically delete messages and files.',
 
 };

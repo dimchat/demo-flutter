@@ -1,4 +1,5 @@
 import 'package:flutter/cupertino.dart';
+import 'package:get/get.dart';
 
 import 'package:dim_client/dim_client.dart';
 import 'package:lnc/lnc.dart' as lnc;
@@ -118,7 +119,7 @@ class ContactInfo extends Conversation {
         Alert.show(context, 'Error', 'Current user not found');
       } else {
         // confirm adding
-        Alert.confirm(context, 'Confirm Add', 'Do you want to add this friend?',
+        Alert.confirm(context, 'Confirm Add', 'Sure to add this friend?'.tr,
           okAction: () => _doAdd(context, identifier, user.identifier),
         );
       }
@@ -145,11 +146,9 @@ class ContactInfo extends Conversation {
       } else {
         String msg;
         if (identifier.isUser) {
-          msg = 'Are you sure to remove this friend?\n'
-              'This action will clear chat history too.';
+          msg = 'Sure to remove this friend?'.tr;
         } else {
-          msg = 'Are you sure to remove this group?\n'
-              'This action will clear chat history too.';
+          msg = 'Sure to remove this group?'.tr;
         }
         // confirm removing
         Alert.confirm(context, 'Confirm Delete', msg,

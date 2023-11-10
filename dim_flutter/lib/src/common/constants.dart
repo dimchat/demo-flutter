@@ -32,6 +32,7 @@ abstract class NotificationNames {
 
   static const String kHistoryUpdated = 'HistoryUpdated';
   static const String kMessageUpdated = 'MessageUpdated';
+  static const String kMessageCleaned = 'MessageCleaned';
   static const String kMessageTraced = 'MessageTraced';
 
   static const String kConversationUpdated = 'ConversationUpdated';
@@ -46,5 +47,7 @@ abstract class NotificationNames {
 
   static const String kRecordFinished = 'RecordFinished';
   static const String kPlayFinished = 'PlayFinished';
+
+  static const String kSettingUpdated = 'SettingUpdated';
 
 }

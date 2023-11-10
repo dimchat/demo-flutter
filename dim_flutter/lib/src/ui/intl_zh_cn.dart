@@ -50,6 +50,19 @@ final Map<String, String> intlZhCn = {
   'Saturday': '周六',
   'Sunday': '周日',
 
+  '@several seconds': '@several 秒',
+  '@several minutes': '@several 分钟',
+  '@several hours': '@several 小时',
+  '@several days': '@several 天',
+  '@several months': '大约 @several 个月',
+
+  'Daily':   '24 小时', // '每天',
+  'Weakly':  '7 天',    // '每周',
+  'Monthly': '30 天',   // '每个月',
+  'Manually': '手动',
+
+  'Burn After Reading': '阅后即焚',
+
   //
   //  Connection
   //
@@ -129,22 +142,33 @@ final Map<String, String> intlZhCn = {
   'Release to Cancel': '松开取消',
 
   'View More Members': '查看更多群组成员',
-  'Group Members': '群组成员',
+  'Group Members (@count)': '群组成员 (@count)',
   'Non-Member': '非会员',
   'Image Not Found': '图片不存在',
+  'Failed to load image @filename': '无法读取图片"@filename"。',
 
   'Forward Image': '转发图片',
   'Forward Web Page': '转发网页',
   'Forward Name Card': '转发名片',
 
+  'Image message forwarded to @chat': '图片消息已转发给 "@chat"。',
+  'Failed to share image with @chat': '无法转发图片给 "@chat"。',
+
+  'Web Page @title forwarded to @chat': '网页 "@title" 已转发给 "@chat"。',
+  'Failed to share Web Page @title with @chat': '无法转发网页 "@title" 给 "@chat"。',
+
+  'Name Card @name forwarded to @chat': '名片 "@name" 已转发给 "@chat"。',
+  'Failed to share Name Card @name with @chat': '无法转发名片 "@name" 给 "@chat"。',
+
   'Chat Details': '聊天资料',
-  'Group Chat Details': '群聊资料',
+  'Group Chat Details (@count)': '群聊资料 (@count)',
   'Group Name': '群组名称',
   'Owner': '群主',
   'Administrators': '管理员',
   'Invitations': '邀请函',
 
   'Select Participants': '选择与会人员',
+  'Select a Chat': '选择一个会话',
 
   'Waiting to send': '等待发送',
   'Sent to relay station': '已送至中继站',
@@ -161,9 +185,21 @@ final Map<String, String> intlZhCn = {
   'Mute Notifications': '屏蔽通知',
 
   'Send Message': '发送消息',
+  'Clear History': '清空聊天记录',
+  'Add Contact': '加为好友',
   'Share Contact': '分享联系人',
   'Delete Contact': '删除联系人',
-  'Clear History': '清空聊天记录',
+  'Quit Group': '退出群组',
+
+  'Contact @name shared to @chat': '联系人 "@name" 已分享给 "@chat"。',
+  'Failed to share contact @name with @chat': '无法分享联系人 "@name" 给 "@chat"。',
+
+  'Profile is updated': '您的资料文件已更新并广播给所有朋友。',
+  'Failed to update profile': '无法更新个人资料文件。',
+
+  'Failed to get private key': '无法获取私钥。',
+  'Failed to get visa': '无法获取个人资料文件。',
+  'Failed to save visa': '我发保存个人资料文件。',
 
   //
   //  Prompts
@@ -173,6 +209,29 @@ final Map<String, String> intlZhCn = {
   'Please review invitations': '请先审查邀请函',
 
   'Invited by': '邀请人',
+  'Invitation sent': '新的邀请函已发送给所有管理员，请耐心等待审核。',
+
+  'Sure to add this friend?': '确定要添加这个朋友吗？',
+  'Sure to remove this friend?': '确定要删除这个朋友吗？该操作将同时清除聊天记录。',
+  'Sure to remove this group?': '确定要删除这个群组吗？该操作将同时清除聊天记录。',
+
+  'Sure to clear chat history of this friend?': '确定要清除该朋友的聊天记录吗？该操作无法撤销。',
+  'Sure to clear chat history of this group?': '确定要清除该群组的聊天记录吗？该操作无法撤销。',
+  'Failed to clear chat history': '无法清除聊天记录。',
+
+  'Failed to set remark': '设置备注失败。',
+
+  'Never receive message from this contact': '您将不再接收该联系人的消息。',
+  'Receive message from this contact': '现在开始可以接收该联系人的消息。',
+
+  'Never receive notification from this contact': '您将不再接收来自该联系人消息的通知。',
+  'Receive notification from this contact': '现在开始可以接收来自该联系人消息的通知。',
+
+  'Grant to access external storage': '您需要授权访问外部存储。',
+  'Grant to access photo album': '您需要授权访问相册。',
+  'Grant to access camera': '您需要授权访问摄像头。',
+  'Grant to access microphone': '您需要授权访问麦克风。',
+
 
   //
   //  Footers
@@ -210,5 +269,10 @@ final Map<String, String> intlZhCn = {
       '  1、群主或管理员可以直接添加成员；\n'
       '  2、其他成员可以创建邀请并等待管理员审核；\n'
       '  3、任何管理员都可以确认邀请并刷新成员列表。',
+
+  'BurnAfterReading::Description': '规则：\n'
+      '  1. 设置一个时间段，应用会自动删除该时间之前的所有消息和文件；\n'
+      '  2. 删除的消息和文件无法恢复，所以请谨慎使用此功能；\n'
+      '  3. 设置为手动模式将不再自动删除消息和文件。',
 
 };

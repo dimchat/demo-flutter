@@ -30,32 +30,32 @@ class SharedDatabase implements AccountDBI, SessionDBI, MessageDBI,
                                 SpeedDBI {
 
   /// Account
-  PrivateKeyDBI privateKeyTable = PrivateKeyCache();
-  MetaDBI metaTable = MetaCache();
-  DocumentDBI documentTable = DocumentCache();
+  final PrivateKeyDBI privateKeyTable = PrivateKeyCache();
+  final MetaDBI metaTable = MetaCache();
+  final DocumentDBI documentTable = DocumentCache();
 
-  UserCache userTable = UserCache();
-  ContactCache contactTable = ContactCache();
+  final UserCache userTable = UserCache();
+  final ContactCache contactTable = ContactCache();
 
-  GroupCache groupTable = GroupCache();
-  GroupHistoryDBI groupHistoryTable = GroupHistoryCache();
+  final GroupCache groupTable = GroupCache();
+  final GroupHistoryDBI groupHistoryTable = GroupHistoryCache();
 
-  RemarkDBI remarkTable = RemarkCache();
-  BlockedDBI blockedTable = BlockedCache();
-  MutedDBI mutedTable = MutedCache();
+  final RemarkDBI remarkTable = RemarkCache();
+  final BlockedDBI blockedTable = BlockedCache();
+  final MutedDBI mutedTable = MutedCache();
 
   /// Session
-  LoginDBI loginTable = LoginCommandCache();
-  ProviderDBI providerTable = ProviderCache();
-  StationDBI stationTable = StationCache();
-  SpeedDBI speedTable = SpeedTable();
+  final LoginDBI loginTable = LoginCommandCache();
+  final ProviderDBI providerTable = ProviderCache();
+  final StationDBI stationTable = StationCache();
+  final SpeedDBI speedTable = SpeedTable();
 
   /// Message
-  CipherKeyDBI msgKeyTable = MsgKeyCache();
-  ReliableMessageDBI reliableMessageTable = ReliableMessageTable();
-  InstantMessageDBI instantMessageTable = InstantMessageTable();
-  TraceDBI traceTable = TraceTable();
-  ConversationDBI conversationTable = ConversationCache();
+  final CipherKeyDBI msgKeyTable = MsgKeyCache();
+  final ReliableMessageDBI reliableMessageTable = ReliableMessageTable();
+  final InstantMessageTable instantMessageTable = InstantMessageTable();
+  final TraceDBI traceTable = TraceTable();
+  final ConversationDBI conversationTable = ConversationCache();
 
   final NotificationCenter _center = NotificationCenter();
   NotificationCenter get center => _center;
@@ -412,6 +412,9 @@ class SharedDatabase implements AccountDBI, SessionDBI, MessageDBI,
   @override
   Future<bool> removeInstantMessages(ID chat) async =>
       await instantMessageTable.removeInstantMessages(chat);
+
+  Future<bool> burnMessages(DateTime expired) async =>
+      await instantMessageTable.burnMessages(expired);
 
   //
   //  Conversation Table

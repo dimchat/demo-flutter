@@ -28,9 +28,11 @@
  * SOFTWARE.
  * =============================================================================
  */
+import 'dart:io';
 import 'dart:typed_data';
 
 import 'package:dim_client/dim_client.dart';
+import 'package:lnc/lnc.dart';
 
 import 'resource.dart';
 
@@ -133,5 +135,40 @@ abstract class ExternalStorage {
       await saveJson(container, path);
   static Future<int> saveJsonList(List container, String path) async =>
       await saveJson(container, path);
+
+  ///  Clean expired files recursively
+  ///
+  /// @param dir - root directory
+  /// @param expired - expired time
+  /// @return number of removed files
+  static Future<int> cleanupDirectory(Directory dir, DateTime expired) async {
+    int total = 0;
+    var files = dir.listSync();
+    for (var item in files) {
+      // directories, files, and links
+      // does not include the special entries `'.'` and `'..'`.
+      if (item is Directory) {
+        total += await cleanupDirectory(item, expired);
+      } else if (item is! File) {
+        Log.warning('ignore link: $item');
+      } else if (await cleanupFile(item, expired)) {
+        total += 1;
+      }
+    }
+    return total;
+  }
+  static Future<bool> cleanupFile(File file, DateTime expired) async {
+    DateTime last = file.lastModifiedSync();
+    if (last.isAfter(expired)) {
+      return false;
+    } else {
+      Log.warning('removing expired file: $file, $last < $expired');
+      file.delete().onError((error, stackTrace) {
+        Log.error('failed to delete file: $file, $error, $stackTrace');
+        return file;
+      });
+      return true;
+    }
+  }
 
 }

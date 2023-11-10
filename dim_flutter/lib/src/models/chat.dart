@@ -1,4 +1,5 @@
 import 'package:flutter/cupertino.dart';
+import 'package:get/get.dart';
 
 import 'package:dim_client/dim_client.dart';
 import 'package:lnc/lnc.dart' as lnc;
@@ -230,7 +231,8 @@ abstract class Conversation implements lnc.Observer {
       if (ok) {
         shield.broadcastBlockList();
         Alert.show(context, 'Blocked',
-            'You will never receive message from this contact again.');
+          'Never receive message from this contact'.tr,
+        );
       }
     });
   }
@@ -242,7 +244,8 @@ abstract class Conversation implements lnc.Observer {
       if (ok) {
         shield.broadcastBlockList();
         Alert.show(context, 'Unblocked',
-            'You can receive message from this contact now.');
+          'Receive message from this contact'.tr,
+        );
       }
     });
   }
@@ -255,7 +258,8 @@ abstract class Conversation implements lnc.Observer {
       if (ok) {
         shield.broadcastMuteList();
         Alert.show(context, 'Muted',
-            'You will never receive notification from this contact again.');
+          'Never receive notification from this contact'.tr,
+        );
       }
     });
   }
@@ -267,7 +271,8 @@ abstract class Conversation implements lnc.Observer {
       if (ok) {
         shield.broadcastMuteList();
         Alert.show(context, 'Unmuted',
-            'You can receive notification from this contact now.');
+          'Receive notification from this contact'.tr,
+        );
       }
     });
   }

@@ -7,7 +7,7 @@ import '../channels/manager.dart';
 import '../filesys/external.dart';
 import '../filesys/local.dart';
 import '../filesys/paths.dart';
-import '../widgets/browser.dart';
+import '../widgets/browse_html.dart';
 
 class Config {
   factory Config() => _instance;
@@ -27,7 +27,7 @@ class Config {
       conf = await _load(path);
       conf ??= await _init(path);
       // update for next reading
-      Uri? url = entrance.isEmpty ? null : Browser.parseUri(entrance);
+      Uri? url = entrance.isEmpty ? null : HtmlUri.parseUri(entrance);
       if (entrance.isEmpty) {
         Log.debug('config.json already downloaded');
       } else if (url == null) {

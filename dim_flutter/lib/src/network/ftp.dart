@@ -38,9 +38,10 @@ import '../common/constants.dart';
 import '../filesys/external.dart';
 import '../filesys/local.dart';
 import '../filesys/paths.dart';
-import '../widgets/browser.dart';
+import '../widgets/browse_html.dart';
 
 import 'pnf.dart';
+
 
 class FileTransfer {
   factory FileTransfer() => _instance;
@@ -106,7 +107,7 @@ class FileTransfer {
       Log.error('file URL not found: $content');
       return null;
     }
-    Uri? url = Browser.parseUri(urlString);
+    Uri? url = HtmlUri.parseUri(urlString);
     if (url == null) {
       Log.error('URL error: $urlString');
       return null;

@@ -4,6 +4,7 @@ export 'widgets/alert.dart';
 export 'widgets/audio.dart';
 export 'widgets/badge.dart';
 export 'widgets/browser.dart';
+export 'widgets/browse_html.dart';
 export 'widgets/gaussian.dart';
 export 'widgets/member_picker.dart';
 export 'widgets/message.dart';

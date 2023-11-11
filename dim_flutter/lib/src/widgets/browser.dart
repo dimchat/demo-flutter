@@ -41,6 +41,7 @@ import '../ui/icons.dart';
 import '../ui/styles.dart';
 
 import 'alert.dart';
+import 'browse_html.dart';
 
 
 typedef OnWebShare = void Function(Uri url, {required String title, String? desc, Uint8List? icon});
@@ -53,26 +54,14 @@ class Browser extends StatefulWidget {
   final OnWebShare? onShare;
 
   static void open(BuildContext context, {required String url, OnWebShare? onShare}) {
-    Uri? uri = parseUri(url);
+    Uri? uri = HtmlUri.parseUri(url);
+    Log.info('URL length: ${url.length}: $uri');
     if (uri == null) {
       Alert.show(context, 'Error', 'Failed to open URL: $url');
     } else {
       showCupertinoDialog(context: context,
         builder: (context) => Browser(uri: uri, onShare: onShare,),
       );
-    }
-  }
-
-  static Uri? parseUri(String? urlString) {
-    if (urlString == null || !urlString.contains('://')) {
-      Log.error('URL error: $urlString');
-      return null;
-    }
-    try {
-      return Uri.parse(urlString);
-    } on FormatException catch (e) {
-      Log.error('URL error: $e, $urlString');
-      return null;
     }
   }
 
@@ -90,20 +79,6 @@ class _BrowserState extends State<Browser> {
 
   Uri get url => _url ?? widget.uri;
   String get title => _title ?? '';
-
-  final InAppWebViewGroupOptions options = InAppWebViewGroupOptions(
-    crossPlatform: InAppWebViewOptions(
-      useShouldOverrideUrlLoading: true,
-      mediaPlaybackRequiresUserGesture: false,
-    ),
-    android: AndroidInAppWebViewOptions(
-      useHybridComposition: true,
-      forceDark: AndroidForceDark.FORCE_DARK_AUTO,
-    ),
-    ios: IOSInAppWebViewOptions(
-      allowsInlineMediaPlayback: true,
-    )
-  );
 
   @override
   Widget build(BuildContext context) => Scaffold(
@@ -137,21 +112,24 @@ class _BrowserState extends State<Browser> {
     if (onShare == null) {
       return null;
     }
+    Uri target = url;
+    if (target.toString() == 'about:blank') {
+      target = widget.uri;
+    }
     return IconButton(
       icon: const Icon(
         AppIcons.shareIcon,
         size: Styles.navigationBarIconSize,
         // color: Styles.avatarColor,
       ),
-      onPressed: () => onShare(url, title: title),
+      onPressed: () => onShare(target, title: title),
     );
   }
 
   Widget _webView() => InAppWebView(
-    initialUrlRequest: URLRequest(
-      url: widget.uri,
-    ),
-    initialOptions: options,
+    initialUrlRequest: HtmlUri.getURLRequest(widget.uri),
+    initialData: HtmlUri.getWebViewData(widget.uri),
+    initialOptions: HtmlUri.getWebViewOptions(),
     onProgressChanged: (controller, progress) => setState(() {
       _progress = progress;
     }),
@@ -200,7 +178,7 @@ class PageContentView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) => GestureDetector(
-    onTap: onTap ?? () => Browser.open(context, url: content.url.toString()),
+    onTap: onTap ?? () => HtmlUri.showWebPage(context, content: content),
     onLongPress: onLongPress,
     child: _widget(context),
   );

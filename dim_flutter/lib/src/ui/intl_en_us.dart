@@ -175,6 +175,7 @@ final Map<String, String> intlEnUs = {
   'Sent to relay station': 'Sent to relay station',
   'Message is rejected': 'Message is rejected',
   'Your friend received': 'Your friend received',
+  '@count members received': '@count member(s) received',
   'No response': 'No response',
   'Stranded': 'Stranded',
 

@@ -36,8 +36,10 @@ import 'package:flutter/cupertino.dart';
 import 'package:dim_client/dim_client.dart';
 import 'package:lnc/lnc.dart';
 
-import '../widgets/browser.dart';
+import '../widgets/browse_html.dart';
+
 import 'ftp.dart';
+
 
 class ImageFactory {
   factory ImageFactory() => _instance;
@@ -101,7 +103,7 @@ class ImageFactory {
     if (image != null) {
       return image;
     }
-    Uri? uri = Browser.parseUri(url);
+    Uri? uri = HtmlUri.parseUri(url);
     if (uri == null) {
       Log.error('image url error: $url');
       return null;

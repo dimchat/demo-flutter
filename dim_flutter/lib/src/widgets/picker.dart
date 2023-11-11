@@ -102,7 +102,7 @@ void adjustImage(Uint8List jpeg, int size, void Function(Uint8List small) onSank
       );
       Log.info('resized: ${image.width} * ${image.height} => $width * $height,'
           ' $fileSize => ${small.length} bytes');
-      onSank(jpeg);
+      onSank(small);
     });
   }
 }

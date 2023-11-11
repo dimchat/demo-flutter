@@ -174,6 +174,7 @@ final Map<String, String> intlZhCn = {
   'Sent to relay station': '已送至中继站',
   'Message is rejected': '消息被拒收',
   'Your friend received': '已接收',
+  '@count members received': '@count 位成员已接收',
   'No response': '无应答',
   'Stranded': '未发送',
 

@@ -6,7 +6,7 @@ import 'package:lnc/lnc.dart';
 import '../common/constants.dart';
 import '../filesys/paths.dart';
 import '../models/config.dart';
-import '../widgets/browser.dart';
+import '../widgets/browse_html.dart';
 import 'manager.dart';
 
 class FileTransferChannel extends MethodChannel {
@@ -87,7 +87,7 @@ class FileTransferChannel extends MethodChannel {
     if (method == ChannelMethods.onDownloadSuccess) {
       // onDownloadSuccess
       String urlString = arguments['url'];
-      Uri? url = Browser.parseUri(urlString);
+      Uri? url = HtmlUri.parseUri(urlString);
       String path = arguments['path'];
       Log.warning('download success: $url -> $path');
       if (url == null) {} else {
@@ -96,7 +96,7 @@ class FileTransferChannel extends MethodChannel {
     } else if (method == ChannelMethods.onDownloadFailure) {
       // onDownloadFailed
       String urlString = arguments['url'];
-      Uri? url = Browser.parseUri(urlString);
+      Uri? url = HtmlUri.parseUri(urlString);
       Log.error('download $url error: ${arguments['error']}');
       if (url == null) {} else {
         _downloads[url] = _downError;
@@ -106,7 +106,7 @@ class FileTransferChannel extends MethodChannel {
       String? filename = arguments['filename'];
       filename ??= Paths.filename(arguments['path']);
       Map res = arguments['response'];
-      Uri? url = Browser.parseUri(res['url']);
+      Uri? url = HtmlUri.parseUri(res['url']);
       Log.warning('upload success: $filename -> $url');
       if (url == null) {} else {
         _uploads[filename!] = url;

@@ -1,7 +1,7 @@
 import 'package:dim_client/dim_client.dart';
 
 import '../channels/manager.dart';
-import '../widgets/browser.dart';
+import '../widgets/browse_html.dart';
 import 'group.dart';
 
 class SharedFacebook extends ClientFacebook {
@@ -45,7 +45,7 @@ class SharedFacebook extends ClientFacebook {
     Visa? doc = await getVisa(user);
     String? urlString = doc?.avatar?.toString();
     String? path;
-    Uri? url = Browser.parseUri(urlString);
+    Uri? url = HtmlUri.parseUri(urlString);
     if (url == null) {} else {
       ChannelManager man = ChannelManager();
       path = await man.ftpChannel.downloadAvatar(url);

@@ -13,6 +13,7 @@ import '../ui/styles.dart';
 
 import 'audio.dart';
 import 'browser.dart';
+import 'browse_html.dart';
 import 'name_card.dart';
 import 'preview.dart';
 
@@ -114,7 +115,10 @@ abstract class ContentViewUtils {
   static Widget getPageContentView(BuildContext ctx, PageContent content, ID sender,
       {GestureTapCallback? onTap, GestureLongPressCallback? onLongPress, OnWebShare? onWebShare}) =>
       PageContentView(content: content,
-        onTap: onTap ?? () => Browser.open(ctx, url: content.url.toString(), onShare: onWebShare,),
+        onTap: onTap ?? () => Browser.open(ctx,
+          url: HtmlUri.getUriString(content),
+          onShare: onWebShare,
+        ),
         onLongPress: onLongPress,
       );
 

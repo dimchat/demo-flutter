@@ -6,6 +6,7 @@ import 'settings.dart';
 import 'intl_en_us.dart';
 import 'intl_es_es.dart';
 import 'intl_fr_fr.dart';
+import 'intl_ja_jp.dart';
 import 'intl_zh_cn.dart';
 import 'intl_zh_tw.dart';
 
@@ -29,6 +30,7 @@ class LanguageDataSource {
     LanguageItem('en_US', 'English'),
     LanguageItem('es_ES', 'Español'),
     LanguageItem('fr_FR', 'Français'),
+    LanguageItem('ja_JP', '日本語'),
     LanguageItem('zh_CN', '简体中文'),
     LanguageItem('zh_TW', '繁體中文'),
   ];
@@ -114,6 +116,9 @@ class _Translations extends Translations {
 
     'fr': intlFrFr,
     'fr_FR': intlFrFr,
+
+    'ja': intlJaJp,
+    'ja_JP': intlJaJp,
 
     'zh': intlZhCn,
     'zh_CN': intlZhCn,

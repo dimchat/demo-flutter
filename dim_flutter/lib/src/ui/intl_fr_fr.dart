@@ -51,11 +51,11 @@ final Map<String, String> intlFrFr = {
   'Saturday': 'Samedi',
   'Sunday': 'Dimanche',
 
-  '@several seconds': '@quelques secondes',
-  '@several minutes': '@quelques minutes',
-  '@several hours': '@quelques heures',
-  '@several days': '@quelques jours',
-  '@several months': 'Environ @quelques mois',
+  '@several seconds': '@several secondes',
+  '@several minutes': '@several minutes',
+  '@several hours': '@several heures',
+  '@several days': '@several jours',
+  '@several months': '@several mois',
 
   'Daily':   '24 heures', // 'Quotidien',
   'Weakly':  '7 jours',   // 'Hebdomadaire',

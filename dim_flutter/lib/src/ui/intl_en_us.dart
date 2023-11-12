@@ -121,7 +121,7 @@ final Map<String, String> intlEnUs = {
   'Brightness': 'Brightness',
   'Network': 'Network',
   'Relay Stations': 'Relay Stations',
-  'Source': 'Source',
+  'Source': 'Source Codes',
   'Terms': 'Terms',
   'Privacy Policy': 'Privacy Policy',
   'About': 'About',

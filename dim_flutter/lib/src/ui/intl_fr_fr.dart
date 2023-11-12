@@ -122,7 +122,7 @@ final Map<String, String> intlFrFr = {
   'Brightness': 'Luminosité',
   'Network': 'Réseau',
   'Relay Stations': 'Stations de relais',
-  'Source': 'Source',
+  'Source': 'Codes sources',
   'Terms': 'Conditions',
   'Privacy Policy': 'Politique de confidentialité',
   'About': 'À propos',

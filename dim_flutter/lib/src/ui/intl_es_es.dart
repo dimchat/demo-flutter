@@ -123,7 +123,7 @@ final Map<String, String> intlEsEs = {
   'Brightness': 'Brillo',
   'Network': 'Red',
   'Relay Stations': 'Estaciones de Relevo',
-  'Source': 'Fuente',
+  'Source': 'Códigos fuente',
   'Terms': 'Términos',
   'Privacy Policy': 'Política de Privacidad',
   'About': 'Acerca de',

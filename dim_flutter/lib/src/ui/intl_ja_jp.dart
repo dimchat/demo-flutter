@@ -122,7 +122,7 @@ final Map<String, String> intlJaJp = {
   'Brightness': '輝度',
   'Network': 'ネットワーク',
   'Relay Stations': 'リレーステーション',
-  'Source': 'ソース',
+  'Source': 'ソースコード',
   'Terms': '利用規約',
   'Privacy Policy': 'プライバシーポリシー',
   'About': 'About',

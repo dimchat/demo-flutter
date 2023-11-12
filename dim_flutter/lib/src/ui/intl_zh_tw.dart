@@ -69,7 +69,7 @@ final Map<String, String> intlZhTw = {
   'Waiting': '等待中',
   'Connecting': '連線中',
   'Connected': '已連線',
-  'Handshaking': '握手中',
+  'Handshaking': '驗證中',
   'Disconnected': '已斷線',
 
   //

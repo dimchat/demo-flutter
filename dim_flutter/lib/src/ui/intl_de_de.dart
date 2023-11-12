@@ -70,7 +70,7 @@ final Map<String, String> intlDeDe = {
   'Waiting': 'Warten',
   'Connecting': 'Verbinden',
   'Connected': 'Verbunden',
-  'Handshaking': 'Handshake',
+  'Handshaking': 'Verifizieren',
   'Disconnected': 'Getrennt',
 
   //

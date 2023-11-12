@@ -70,7 +70,7 @@ final Map<String, String> intlFrFr = {
   'Waiting': 'En attente',
   'Connecting': 'Connexion',
   'Connected': 'Connecté',
-  'Handshaking': 'Poignée de main',
+  'Handshaking': 'Vérification',
   'Disconnected': 'Déconnecté',
 
   //

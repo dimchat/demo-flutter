@@ -71,7 +71,7 @@ final Map<String, String> intlEsEs = {
   'Waiting': 'Esperando',
   'Connecting': 'Conectando',
   'Connected': 'Conectado',
-  'Handshaking': 'Handshaking',
+  'Handshaking': 'Verificando',
   'Disconnected': 'Desconectado',
 
   //

@@ -70,7 +70,7 @@ final Map<String, String> intlKoKr = {
   'Waiting': '대기 중',
   'Connecting': '연결 중',
   'Connected': '연결됨',
-  'Handshaking': '핸드셰이킹',
+  'Handshaking': '확인 중',
   'Disconnected': '연결 해제됨',
 
   //

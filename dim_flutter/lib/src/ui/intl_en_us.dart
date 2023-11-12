@@ -19,8 +19,7 @@ final Map<String, String> intlEnUs = {
 
   'Mnemonic Codes': 'Mnemonic Codes',
   'MnemonicCodes::Description': 'Mnemonic is the private key for an existing account,'
-      ' if you don\'t have one, please click "Register" button'
-      ' on the top-right corner to generate a new one.',
+      ' if you don\'t have one, please click "Register" button on the top-right corner to generate a new one.',
 
   'Show': 'Show',
   'Hide': 'Hide',
@@ -214,10 +213,10 @@ final Map<String, String> intlEnUs = {
   'Invitation sent': 'A new invitation is sent to all administrators, now is waiting for review.',
 
   'Sure to add this friend?': 'Do you want to add this friend?',
-  'Sure to remove this friend?': 'Are you sure to remove this friend?\n'
-      'This action will clear chat history too.',
-  'Sure to remove this group?': 'Are you sure to remove this group?\n'
-      'This action will clear chat history too.',
+  'Sure to remove this friend?': 'Are you sure to remove this friend?'
+      ' This action will clear chat history too.',
+  'Sure to remove this group?': 'Are you sure to remove this group?'
+      ' This action will clear chat history too.',
 
   'Sure to clear chat history of this friend?': 'Are you sure to clear chat history of this friend?'
       ' This action cannot be restored.',
@@ -243,8 +242,7 @@ final Map<String, String> intlEnUs = {
   //
 
   'ChatBox::Description': 'This app is powered by DIM, an E2EE (End-to-End Encrypted) technology.'
-      ' Your messages will be encrypted before sending out,'
-      ' no one can decrypt the contents except the receiver.',
+      ' Your messages will be encrypted before sending out, no one can decrypt the contents except the receiver.',
 
   'ChatList::Description': '* Here shows chat histories of your friends only;\n'
       '* Strangers will be placed in "Contacts -> New Friends".',
@@ -260,10 +258,8 @@ final Map<String, String> intlEnUs = {
   'MuteList::Description': '* Here shows noisy friends who you don\'t value very much;\n'
       '* You can still chat with them, but never receive notification from this list.',
 
-  'Mnemonic::Description': '* Mnemonic is your private key,'
-      ' anyone got these words can own your account;\n'
-      '* You could write it down on a piece of paper'
-      ' and keep it somewhere safety,'
+  'Mnemonic::Description': '* Mnemonic is your private key, anyone got these words can own your account;\n'
+      '* You could write it down on a piece of paper and keep it somewhere safety,'
       ' take a screenshot and store it in your computer is not recommended.',
 
   'Administrators::Description': 'Rules:\n'
@@ -280,10 +276,8 @@ final Map<String, String> intlEnUs = {
       '  3. Any administrator can confirm the invitations and refresh the member list.',
 
   'BurnAfterReading::Description': 'Rules:\n'
-      '  1. Set a time period, and the app will automatically delete'
-      ' all messages and files before that time;\n'
-      '  2. Deleted messages and files cannot be recovered,'
-      ' so please use this feature with caution;\n'
+      '  1. Set a time period, and the app will automatically delete all messages and files before that time;\n'
+      '  2. Deleted messages and files cannot be recovered, so please use this feature with caution;\n'
       '  3. Setting to manual mode will no longer automatically delete messages and files.',
 
 };

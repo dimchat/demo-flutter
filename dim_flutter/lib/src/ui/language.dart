@@ -5,6 +5,7 @@ import 'package:get/get.dart';
 import 'settings.dart';
 import 'intl_en_us.dart';
 import 'intl_es_es.dart';
+import 'intl_fr_fr.dart';
 import 'intl_zh_cn.dart';
 import 'intl_zh_tw.dart';
 
@@ -27,6 +28,7 @@ class LanguageDataSource {
     LanguageItem('', 'System'),
     LanguageItem('en_US', 'English'),
     LanguageItem('es_ES', 'Español'),
+    LanguageItem('fr_FR', 'Français'),
     LanguageItem('zh_CN', '简体中文'),
     LanguageItem('zh_TW', '繁體中文'),
   ];
@@ -107,12 +109,15 @@ class _Translations extends Translations {
     'en': intlEnUs,
     'en_US': intlEnUs,
 
+    'es': intlEsEs,
+    'es_ES': intlEsEs,
+
+    'fr': intlFrFr,
+    'fr_FR': intlFrFr,
+
     'zh': intlZhCn,
     'zh_CN': intlZhCn,
     'zh_TW': intlZhTw,
-
-    'es': intlEsEs,
-    'es_ES': intlEsEs,
 
   };
 

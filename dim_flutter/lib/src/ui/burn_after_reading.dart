@@ -31,9 +31,9 @@ class BurnAfterReadingDataSource {
 
   final List<BurnAfterReadingItem> _items = [
     BurnAfterReadingItem(kManually, 'Manually'),
-    BurnAfterReadingItem(kDaily, 'Daily'),
-    BurnAfterReadingItem(kWeekly, 'Weakly'),
     BurnAfterReadingItem(kMonthly, 'Monthly'),
+    BurnAfterReadingItem(kWeekly, 'Weakly'),
+    BurnAfterReadingItem(kDaily, 'Daily'),
   ];
 
   Future<void> init(AppSettings settings) async {

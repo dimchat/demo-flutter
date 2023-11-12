@@ -56,8 +56,8 @@ final Map<String, String> intlZhTw = {
   '@several days': '@several 天',
   '@several months': '@several 個月',
 
-  'Daily':   '24小時', // '每日',
-  'Weakly':  '7天',   // '每週',
+  'Daily': '24小時',  // '每日',
+  'Weakly': '7天',    // '每週',
   'Monthly': '30天',  // '每月',
   'Manually': '手動',
 

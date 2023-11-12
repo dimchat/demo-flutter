@@ -57,9 +57,9 @@ final Map<String, String> intlKoKr = {
   '@several days': '@several 일',
   '@several months': '@several 개월',
 
-  'Daily':   '매일',
-  'Weakly':  '매주',
-  'Monthly': '매월',
+  'Daily': '24 시간',  // '매일',
+  'Weakly': '7 일',   // '매주',
+  'Monthly': '30 일', // '매월',
   'Manually': '수동',
 
   'Burn After Reading': '읽은 후 소멸',
@@ -116,7 +116,7 @@ final Map<String, String> intlKoKr = {
   'Search User': '사용자 검색',
 
   // Settings
-  'Export': 'Export',
+  'Export': '내보내기',
   'Mnemonic': 'Mnemonic',
   'Language': '언어',
   'Brightness': '밝기',

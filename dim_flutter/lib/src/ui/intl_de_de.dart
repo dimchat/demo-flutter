@@ -58,6 +58,7 @@ final Map<String, String> intlDeDe = {
   '@several months': '@several Monate',
 
   'Daily': '24 Stunden',  // 'Daily',
+  'Anon': '3 Tage',
   'Weakly': '7 Tage',     // 'Weakly',
   'Monthly': '30 Tage',   // 'Monthly',
   'Manually': 'Manuell',

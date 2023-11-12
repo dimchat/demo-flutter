@@ -58,6 +58,7 @@ final Map<String, String> intlJaJp = {
   '@several months': '@several ヶ月',
 
   'Daily': '24 時間',   // '毎日'
+  'Anon': '3 日間',
   'Weakly': '7 日間',   // '毎週'
   'Monthly': '30 日間', // '毎月',
   'Manually': '手動',

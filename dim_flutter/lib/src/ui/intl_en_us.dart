@@ -57,6 +57,7 @@ final Map<String, String> intlEnUs = {
   '@several months': '@several months',
 
   'Daily': '24 hours',   // 'Daily',
+  'Anon': '3 days',
   'Weakly': '7 days',    // 'Weakly',
   'Monthly': '30 days',  // 'Monthly',
   'Manually': 'Manually',

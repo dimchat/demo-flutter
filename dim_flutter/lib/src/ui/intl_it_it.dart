@@ -58,6 +58,7 @@ final Map<String, String> intlItIt = {
   '@several months': '@several mesi',
 
   'Daily': '24 ore',   // 'Daily',
+  'Anon': '3 giorni',
   'Weakly': '7 giorni',    // 'Weakly',
   'Monthly': '30 giorni',  // 'Monthly',
   'Manually': 'Manualmente',

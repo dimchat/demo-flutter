@@ -58,6 +58,7 @@ final Map<String, String> intlKoKr = {
   '@several months': '@several 개월',
 
   'Daily': '24 시간',  // '매일',
+  'Anon': '3 일',
   'Weakly': '7 일',   // '매주',
   'Monthly': '30 일', // '매월',
   'Manually': '수동',

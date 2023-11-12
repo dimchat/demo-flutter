@@ -57,6 +57,7 @@ final Map<String, String> intlZhCn = {
   '@several months': '@several 个月',
 
   'Daily': '24 小时',   // '每天',
+  'Anon': '3 天',
   'Weakly': '7 天',     // '每周',
   'Monthly': '30 天',   // '每个月',
   'Manually': '手动',

@@ -26,6 +26,7 @@ class BurnAfterReadingDataSource {
 
   static const int kManually = 0;
   static const int kDaily = 3600 * 24;
+  static const int kAnon = 3600 * 24 * 3;
   static const int kWeekly = 3600 * 24 * 7;
   static const int kMonthly = 3600 * 24 * 30;
 
@@ -33,6 +34,7 @@ class BurnAfterReadingDataSource {
     BurnAfterReadingItem(kManually, 'Manually'),
     BurnAfterReadingItem(kMonthly, 'Monthly'),
     BurnAfterReadingItem(kWeekly, 'Weakly'),
+    BurnAfterReadingItem(kAnon, 'Anon'),
     BurnAfterReadingItem(kDaily, 'Daily'),
   ];
 

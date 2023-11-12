@@ -59,6 +59,7 @@ final Map<String, String> intlEsEs = {
   '@several months': '@several meses',
 
   'Daily': '24 horas',   // 'Diario',
+  'Anon': '3 días',
   'Weakly': '7 días',    // 'Semanal',
   'Monthly': '30 días',  // 'Mensual',
   'Manually': 'Manualmente',

@@ -58,6 +58,7 @@ final Map<String, String> intlFrFr = {
   '@several months': '@several mois',
 
   'Daily': '24 heures',   // 'Quotidien',
+  'Anon': '3 jours',
   'Weakly': '7 jours',    // 'Hebdomadaire',
   'Monthly': '30 jours',  // 'Mensuel',
   'Manually': 'Manuellement',

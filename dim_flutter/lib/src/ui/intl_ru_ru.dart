@@ -7,8 +7,8 @@ final Map<String, String> intlRuRu = {
   //
   //  Register
   //
-  'Register': 'Регистрация',
-  'Import': 'Импорт',
+  'Register': 'Регистрация аккаунта',
+  'Import': 'Импорт аккаунта',
   'Name': 'Имя',
   'Nickname': 'Никнейм',
   'Your nickname': 'Ваш никнейм',
@@ -117,7 +117,7 @@ final Map<String, String> intlRuRu = {
   'Search User': 'Поиск пользователя',
 
   // Settings
-  'Export': 'Экспорт',
+  'Export': 'Экспорт аккаунта',
   'Mnemonic': 'Мнемокод',
   'Language': 'Язык',
   'Brightness': 'Яркость',

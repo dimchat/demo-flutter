@@ -7,8 +7,8 @@ final Map<String, String> intlEsEs = {
   //
   //  Register
   //
-  'Register': 'Registrarse',
-  'Import': 'Importar',
+  'Register': 'Registrar cuenta',
+  'Import': 'Importar cuenta',
   'Name': 'Nombre',
   'Nickname': 'Apodo',
   'Your nickname': 'Tu apodo',
@@ -118,7 +118,7 @@ final Map<String, String> intlEsEs = {
   'Search User': 'Buscar Usuario',
 
   // Settings
-  'Export': 'Exportar',
+  'Export': 'Exportar cuenta',
   'Mnemonic': 'Mnemotécnico',
   'Language': 'Idioma',
   'Brightness': 'Brillo',

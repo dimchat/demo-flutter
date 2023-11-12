@@ -7,8 +7,8 @@ final Map<String, String> intlItIt = {
   //
   //  Register
   //
-  'Register': 'Registra',
-  'Import': 'Importa',
+  'Register': 'Registrare Account',
+  'Import': 'Importare Account',
   'Name': 'Nome',
   'Nickname': 'Soprannome',
   'Your nickname': 'Il tuo soprannome',
@@ -117,7 +117,7 @@ final Map<String, String> intlItIt = {
   'Search User': 'Cerca Utente',
 
   // Settings
-  'Export': 'Esporta',
+  'Export': 'Esportare Account',
   'Mnemonic': 'Mnemonico',
   'Language': 'Lingua',
   'Brightness': 'Luminosità',

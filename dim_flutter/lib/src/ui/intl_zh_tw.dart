@@ -116,7 +116,7 @@ final Map<String, String> intlZhTw = {
   'Search User': '搜尋使用者',
 
   // Settings
-  'Export': '匯出',
+  'Export': '導出帳戶',
   'Mnemonic': '助憶詞',
   'Language': '語言',
   'Brightness': '亮度',

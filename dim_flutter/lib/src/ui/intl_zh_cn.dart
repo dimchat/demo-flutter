@@ -116,7 +116,7 @@ final Map<String, String> intlZhCn = {
   'Search User': '搜索用户',
 
   // Settings
-  'Export': '导出',
+  'Export': '导出账号',
   'Mnemonic': '助记词',
   'Language': '语言',
   'Brightness': '亮度',

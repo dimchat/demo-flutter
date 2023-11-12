@@ -7,8 +7,8 @@ final Map<String, String> intlFrFr = {
   //
   //  Register
   //
-  'Register': 'S\'inscrire',
-  'Import': 'Importer',
+  'Register': 'Créer un compte',
+  'Import': 'Importer un compte',
   'Name': 'Nom',
   'Nickname': 'Pseudo',
   'Your nickname': 'Votre pseudo',
@@ -117,7 +117,7 @@ final Map<String, String> intlFrFr = {
   'Search User': 'Rechercher un utilisateur',
 
   // Settings
-  'Export': 'Exporter',
+  'Export': 'Exporter un compte',
   'Mnemonic': 'Mnémonique',
   'Language': 'Langue',
   'Brightness': 'Luminosité',

@@ -11,6 +11,7 @@ import 'intl_it_it.dart';
 import 'intl_ja_jp.dart';
 import 'intl_ko_kr.dart';
 import 'intl_ru_ru.dart';
+import 'intl_th_th.dart';
 import 'intl_zh_cn.dart';
 import 'intl_zh_tw.dart';
 
@@ -39,6 +40,7 @@ class LanguageDataSource {
     LanguageItem('ja_JP', '日本語'),
     LanguageItem('ko_KR', '한국인'),
     LanguageItem('ru_RU', 'Русский'),
+    LanguageItem('th_TH', 'ภาษาไทย'),
     LanguageItem('zh_CN', '简体中文'),
     LanguageItem('zh_TW', '繁體中文'),
   ];
@@ -139,6 +141,9 @@ class _Translations extends Translations {
 
     'ru': intlRuRu,
     'ru_RU': intlRuRu,
+
+    'th': intlThTh,
+    'th_TH': intlThTh,
 
     'zh': intlZhCn,
     'zh_CN': intlZhCn,

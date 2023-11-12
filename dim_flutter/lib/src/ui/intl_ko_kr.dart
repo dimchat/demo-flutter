@@ -7,8 +7,8 @@ final Map<String, String> intlKoKr = {
   //
   //  Register
   //
-  'Register': '등록',
-  'Import': '가져오기',
+  'Register': '계정 등록',
+  'Import': '계정 가져오기',
   'Name': '이름',
   'Nickname': '닉네임',
   'Your nickname': '당신의 닉네임',
@@ -117,7 +117,7 @@ final Map<String, String> intlKoKr = {
   'Search User': '사용자 검색',
 
   // Settings
-  'Export': '내보내기',
+  'Export': '계정 내보내기',
   'Mnemonic': 'Mnemonic',
   'Language': '언어',
   'Brightness': '밝기',

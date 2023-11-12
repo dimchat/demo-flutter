@@ -7,8 +7,8 @@ final Map<String, String> intlJaJp = {
   //
   //  Register
   //
-  'Register': '登録',
-  'Import': 'インポート',
+  'Register': 'アカウントを登録',
+  'Import': 'アカウントをインポート',
   'Name': '名前',
   'Nickname': 'ニックネーム',
   'Your nickname': 'あなたのニックネーム',
@@ -117,7 +117,7 @@ final Map<String, String> intlJaJp = {
   'Search User': 'ユーザーを検索',
 
   // Settings
-  'Export': 'エクスポート',
+  'Export': 'アカウントをエクスポート',
   'Mnemonic': '助記語',
   'Language': '言語',
   'Brightness': '輝度',

@@ -7,8 +7,8 @@ final Map<String, String> intlDeDe = {
   //
   //  Register
   //
-  'Register': 'Registrieren',
-  'Import': 'Importieren',
+  'Register': 'Konto registrieren',
+  'Import': 'Konto importieren',
   'Name': 'Name',
   'Nickname': 'Spitzname',
   'Your nickname': 'Dein Spitzname',
@@ -117,7 +117,7 @@ final Map<String, String> intlDeDe = {
   'Search User': 'Benutzer suchen',
 
   // Settings
-  'Export': 'Exportieren',
+  'Export': 'Konto exportieren',
   'Mnemonic': 'Mnemonic',
   'Language': 'Sprache',
   'Brightness': 'Helligkeit',

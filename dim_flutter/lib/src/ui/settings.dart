@@ -6,7 +6,6 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'burn_after_reading.dart';
 import 'brightness.dart';
 import 'language.dart';
-import 'styles.dart';
 
 
 /// Shared Preferences
@@ -77,7 +76,6 @@ void launchApp(Widget home) => runApp(GetMaterialApp(
   theme: BrightnessDataSource.light,
   darkTheme: BrightnessDataSource.dark,
   themeMode: BrightnessDataSource().themeMode,
-  textDirection: Styles.textDirection,
   home: home,
   localizationsDelegates: const [
     GlobalMaterialLocalizations.delegate,

@@ -3,6 +3,7 @@ import 'dart:ui';
 import 'package:get/get.dart';
 
 import 'settings.dart';
+import 'intl_af_za.dart';   // Afrikaans-South Africa
 import 'intl_ar_msa.dart';  // Arabic-Modern Standard Arabic
 import 'intl_bn_bd.dart';   // Bengali-Bangladesh
 import 'intl_de_de.dart';   // German-Germany
@@ -50,6 +51,7 @@ class LanguageDataSource {
     LanguageItem('pt_PT', langPortuguese),
     LanguageItem('ru_RU', langRussian),
     LanguageItem('ar', langArabic),
+    LanguageItem('af_ZA', langAfrikaans),
 
     LanguageItem('hi_IN', langHindi),
     LanguageItem('bn_BD', langBengali),
@@ -135,6 +137,9 @@ class _Translations extends Translations {
 
   @override
   Map<String, Map<String, String>> get keys => {
+
+    'af': intlAfZa,
+    'af_ZA': intlAfZa,  // Afrikaans-South Africa
 
     'ar': intlAr,  // Arabic-Modern Standard Arabic
 

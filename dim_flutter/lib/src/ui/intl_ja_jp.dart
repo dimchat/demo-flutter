@@ -81,10 +81,10 @@ final Map<String, String> intlJaJp = {
   //
   'Cancel': 'キャンセル',
   'Confirm': '確認',
-  'Confirm Add': '追加を確認',
-  'Confirm Delete': '削除を確認',
-  'Confirm Share': '共有を確認',
-  'Confirm Forward': '転送を確認',
+  'Confirm Add': '追加の確認',
+  'Confirm Delete': '削除の確認',
+  'Confirm Share': '共有の確認',
+  'Confirm Forward': '転送の確認',
 
   'Success': '成功',
   'Error': 'エラー',
@@ -97,9 +97,9 @@ final Map<String, String> intlJaJp = {
   'Unmuted': 'ミュート解除されました',
   'Permission Denied': '権限が拒否されました',
 
-  'Refresh Stations': 'リレーステーションを更新',
-  'Shared': '共有済み',
-  'Forwarded': '転送済み',
+  'Refresh Stations': 'リレー局を更新',
+  'Shared': '共有されました',
+  'Forwarded': '転送されました',
 
   'Notice': '注意',
   'Input Name': '名前を入力',
@@ -152,17 +152,17 @@ final Map<String, String> intlJaJp = {
   'Failed to load image @filename': '画像 "@filename" の読み込みに失敗しました。',
 
   'Forward Image': '画像を転送',
-  'Forward Web Page': 'Web ページを転送',
+  'Forward Web Page': 'ウェブページを転送',
   'Forward Name Card': '名刺を転送',
 
-  'Image message forwarded to @chat': '"@chat" に画像メッセージが転送されました。',
-  'Failed to share image with @chat': '"@chat" との画像の共有に失敗しました。',
+  'Image message forwarded to @chat': '画像メッセージを"@chat"に転送しました。',
+  'Failed to share image with @chat': '"@chat"との画像共有に失敗しました。',
 
-  'Web Page @title forwarded to @chat': 'Webページ "@title" が "@chat" に転送されました。',
-  'Failed to share Web Page @title with @chat': 'Webページ "@title" の "@chat" への共有に失敗しました。',
+  'Web Page @title forwarded to @chat': 'ウェブページ"@title"が"@chat"に転送されました。',
+  'Failed to share Web Page @title with @chat': '"@chat"とのウェブページ"@title"の共有に失敗しました。',
 
-  'Name Card @name forwarded to @chat': '名刺 "@name" が "@chat" に転送されました。',
-  'Failed to share Name Card @name with @chat': '名刺 "@name" の "@chat" への共有に失敗しました。',
+  'Name Card @name forwarded to @chat': '名刺"@name"が"@chat"に転送されました。',
+  'Failed to share Name Card @name with @chat': '"@chat"との名刺"@name"の共有に失敗しました。',
 
   'Chat Details': 'チャットの詳細',
   'Group Chat Details (@count)': 'グループチャットの詳細（@count）',

@@ -97,9 +97,9 @@ final Map<String, String> intlItIt = {
   'Unmuted': 'Non Silenzioso',
   'Permission Denied': 'Permesso Negato',
 
-  'Refresh Stations': 'Aggiorna Stazioni di Relè',
-  'Shared': 'Condiviso',
-  'Forwarded': 'Inoltrato',
+  'Refresh Stations': 'Aggiorna Stazioni di Rilancio',
+  'Shared': 'Condiviso con Successo',
+  'Forwarded': 'Inoltrato con Successo',
 
   'Notice': 'Avviso',
   'Input Name': 'Inserisci Nome',
@@ -155,14 +155,14 @@ final Map<String, String> intlItIt = {
   'Forward Web Page': 'Inoltra Pagina Web',
   'Forward Name Card': 'Inoltra Carta d\'Identità',
 
-  'Image message forwarded to @chat': 'Messaggio con immagine inoltrato a "@chat".',
+  'Image message forwarded to @chat': 'Messaggio immagine inoltrato a "@chat".',
   'Failed to share image with @chat': 'Impossibile condividere l\'immagine con "@chat".',
 
   'Web Page @title forwarded to @chat': 'Pagina web "@title" inoltrata a "@chat".',
   'Failed to share Web Page @title with @chat': 'Impossibile condividere la pagina web "@title" con "@chat".',
 
   'Name Card @name forwarded to @chat': 'Carta d\'identità "@name" inoltrata a "@chat".',
-  'Failed to share Name Card @name with @chat': 'Impossibile condividere la carta d\'identità "@name" con "@chat".',
+  'Failed to share Name Card @name with @chat': 'Impossibile condividere la Carta d\'identità "@name" con "@chat".',
 
   'Chat Details': 'Dettagli Chat',
   'Group Chat Details (@count)': 'Dettagli Chat di Gruppo (@count)',

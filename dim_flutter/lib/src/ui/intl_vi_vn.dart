@@ -97,9 +97,9 @@ final Map<String, String> intlViVN = {
   'Unmuted': 'Đã bật tiếng',
   'Permission Denied': 'Từ chối quyền',
 
-  'Refresh Stations': 'Làm mới trạm truyền tải',
-  'Shared': 'Đã chia sẻ',
-  'Forwarded': 'Đã chuyển tiếp',
+  'Refresh Stations': 'Làm mới Trạm Relay',
+  'Shared': 'Chia sẻ Thành công',
+  'Forwarded': 'Chuyển tiếp Thành công',
 
   'Notice': 'Thông báo',
   'Input Name': 'Nhập tên',
@@ -151,9 +151,9 @@ final Map<String, String> intlViVN = {
   'Image Not Found': 'Không tìm thấy ảnh',
   'Failed to load image @filename': 'Không thể tải ảnh "@filename".',
 
-  'Forward Image': 'Chuyển tiếp ảnh',
-  'Forward Web Page': 'Chuyển tiếp trang web',
-  'Forward Name Card': 'Chuyển tiếp thẻ tên',
+  'Forward Image': 'Chuyển tiếp Hình ảnh',
+  'Forward Web Page': 'Chuyển tiếp Trang web',
+  'Forward Name Card': 'Chuyển tiếp Danh thiếp',
 
   'Image message forwarded to @chat': 'Hình ảnh đã được chuyển tiếp đến "@chat".',
   'Failed to share image with @chat': 'Không thể chia sẻ hình ảnh với "@chat".',
@@ -161,8 +161,8 @@ final Map<String, String> intlViVN = {
   'Web Page @title forwarded to @chat': 'Trang web "@title" đã được chuyển tiếp đến "@chat".',
   'Failed to share Web Page @title with @chat': 'Không thể chia sẻ trang web "@title" với "@chat".',
 
-  'Name Card @name forwarded to @chat': 'Thẻ tên "@name" đã được chuyển tiếp đến "@chat".',
-  'Failed to share Name Card @name with @chat': 'Không thể chia sẻ thẻ tên "@name" với "@chat".',
+  'Name Card @name forwarded to @chat': 'Danh thiếp "@name" đã được chuyển tiếp đến "@chat".',
+  'Failed to share Name Card @name with @chat': 'Không thể chia sẻ Danh thiếp "@name" với "@chat".',
 
   'Chat Details': 'Chi tiết Cuộc trò chuyện',
   'Group Chat Details (@count)': 'Chi tiết Cuộc trò chuyện nhóm (@count)',

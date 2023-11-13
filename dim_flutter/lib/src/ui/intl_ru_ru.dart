@@ -81,10 +81,10 @@ final Map<String, String> intlRuRu = {
   //
   'Cancel': 'Отмена',
   'Confirm': 'Подтвердить',
-  'Confirm Add': 'Подтвердить добавление',
-  'Confirm Delete': 'Подтвердить удаление',
-  'Confirm Share': 'Подтвердить отправку',
-  'Confirm Forward': 'Подтвердить пересылку',
+  'Confirm Add': 'Подтвердить Добавление',
+  'Confirm Delete': 'Подтвердить Удаление',
+  'Confirm Share': 'Подтвердить Общий доступ',
+  'Confirm Forward': 'Подтвердить Пересылку',
 
   'Success': 'Успех',
   'Error': 'Ошибка',
@@ -97,9 +97,9 @@ final Map<String, String> intlRuRu = {
   'Unmuted': 'Со звуком',
   'Permission Denied': 'Доступ запрещен',
 
-  'Refresh Stations': 'Обновить ретрансляционные станции',
-  'Shared': 'Общие',
-  'Forwarded': 'Переслано',
+  'Refresh Stations': 'Обновить Ретрансляционные станции',
+  'Shared': 'Успешно общий доступ',
+  'Forwarded': 'Успешно переслано',
 
   'Notice': 'Уведомление',
   'Input Name': 'Введите имя',
@@ -153,7 +153,7 @@ final Map<String, String> intlRuRu = {
 
   'Forward Image': 'Переслать изображение',
   'Forward Web Page': 'Переслать веб-страницу',
-  'Forward Name Card': 'Переслать визитную карту',
+  'Forward Name Card': 'Переслать визитку',
 
   'Image message forwarded to @chat': 'Изображение переслано в "@chat".',
   'Failed to share image with @chat': 'Не удалось поделиться изображением с "@chat".',
@@ -161,8 +161,8 @@ final Map<String, String> intlRuRu = {
   'Web Page @title forwarded to @chat': 'Веб-страница "@title" переслана в "@chat".',
   'Failed to share Web Page @title with @chat': 'Не удалось поделиться веб-страницей "@title" с "@chat".',
 
-  'Name Card @name forwarded to @chat': 'Визитная карта "@name" переслана в "@chat".',
-  'Failed to share Name Card @name with @chat': 'Не удалось поделиться визитной картой "@name" с "@chat".',
+  'Name Card @name forwarded to @chat': 'Визитка "@name" переслана в "@chat".',
+  'Failed to share Name Card @name with @chat': 'Не удалось поделиться визиткой "@name" с "@chat".',
 
   'Chat Details': 'Сведения о чате',
   'Group Chat Details (@count)': 'Сведения о групповом чате (@count)',

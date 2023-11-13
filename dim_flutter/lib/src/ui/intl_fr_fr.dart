@@ -81,10 +81,10 @@ final Map<String, String> intlFrFr = {
   //
   'Cancel': 'Annuler',
   'Confirm': 'Confirmer',
-  'Confirm Add': 'Confirmer Ajouter',
-  'Confirm Delete': 'Confirmer Supprimer',
-  'Confirm Share': 'Confirmer Partager',
-  'Confirm Forward': 'Confirmer Transférer',
+  'Confirm Add': 'Confirmer l\'ajout',
+  'Confirm Delete': 'Confirmer la suppression',
+  'Confirm Share': 'Confirmer le partage',
+  'Confirm Forward': 'Confirmer la transmission',
 
   'Success': 'Succès',
   'Error': 'Erreur',
@@ -97,9 +97,9 @@ final Map<String, String> intlFrFr = {
   'Unmuted': 'Non muet',
   'Permission Denied': 'Autorisation refusée',
 
-  'Refresh Stations': 'Actualiser les stations de relais',
-  'Shared': 'Partagé',
-  'Forwarded': 'Transféré',
+  'Refresh Stations': 'Actualiser les Stations Relais',
+  'Shared': 'Partagé avec succès',
+  'Forwarded': 'Transmis avec succès',
 
   'Notice': 'Avis',
   'Input Name': 'Entrer le nom',
@@ -151,17 +151,17 @@ final Map<String, String> intlFrFr = {
   'Image Not Found': 'Image non trouvée',
   'Failed to load image @filename': 'Échec du chargement de l\'image "@filename".',
 
-  'Forward Image': 'Transférer l\'image',
-  'Forward Web Page': 'Transférer la page Web',
-  'Forward Name Card': 'Transférer la carte de visite',
+  'Forward Image': 'Transmettre l\'image',
+  'Forward Web Page': 'Transmettre la page Web',
+  'Forward Name Card': 'Transmettre la carte de visite',
 
-  'Image message forwarded to @chat': 'Message d\'image transféré à "@chat".',
+  'Image message forwarded to @chat': 'Message image transmis à "@chat".',
   'Failed to share image with @chat': 'Échec du partage de l\'image avec "@chat".',
 
-  'Web Page @title forwarded to @chat': 'Page Web "@title" transférée à "@chat".',
+  'Web Page @title forwarded to @chat': 'Page Web "@title" transmise à "@chat".',
   'Failed to share Web Page @title with @chat': 'Échec du partage de la page Web "@title" avec "@chat".',
 
-  'Name Card @name forwarded to @chat': 'Carte de visite "@name" transférée à "@chat".',
+  'Name Card @name forwarded to @chat': 'Carte de visite "@name" transmise à "@chat".',
   'Failed to share Name Card @name with @chat': 'Échec du partage de la carte de visite "@name" avec "@chat".',
 
   'Chat Details': 'Détails du chat',

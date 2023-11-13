@@ -81,10 +81,10 @@ final Map<String, String> intlDeDe = {
   //
   'Cancel': 'Abbrechen',
   'Confirm': 'Bestätigen',
-  'Confirm Add': 'Bestätigen Hinzufügen',
-  'Confirm Delete': 'Bestätigen Löschen',
-  'Confirm Share': 'Bestätigen Teilen',
-  'Confirm Forward': 'Bestätigen Weiterleiten',
+  'Confirm Add': 'Hinzufügen bestätigen',
+  'Confirm Delete': 'Löschen bestätigen',
+  'Confirm Share': 'Teilen bestätigen',
+  'Confirm Forward': 'Weiterleiten bestätigen',
 
   'Success': 'Erfolg',
   'Error': 'Fehler',
@@ -97,9 +97,9 @@ final Map<String, String> intlDeDe = {
   'Unmuted': 'Nicht stummgeschaltet',
   'Permission Denied': 'Zugriff verweigert',
 
-  'Refresh Stations': 'Relay-Stationen aktualisieren',
-  'Shared': 'Geteilt',
-  'Forwarded': 'Weitergeleitet',
+  'Refresh Stations': 'Relaisstationen aktualisieren',
+  'Shared': 'Erfolgreich geteilt',
+  'Forwarded': 'Erfolgreich weitergeleitet',
 
   'Notice': 'Hinweis',
   'Input Name': 'Name eingeben',

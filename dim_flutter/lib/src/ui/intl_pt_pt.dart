@@ -82,9 +82,9 @@ final Map<String, String> intlPtPt = {
   'Cancel': 'Cancelar',
   'Confirm': 'Confirmar',
   'Confirm Add': 'Confirmar Adição',
-  'Confirm Delete': 'Confirmar Eliminação',
-  'Confirm Share': 'Confirmar Partilha',
-  'Confirm Forward': 'Confirmar Reencaminhamento',
+  'Confirm Delete': 'Confirmar Exclusão',
+  'Confirm Share': 'Confirmar Compartilhamento',
+  'Confirm Forward': 'Confirmar Encaminhamento',
 
   'Success': 'Sucesso',
   'Error': 'Erro',
@@ -97,9 +97,9 @@ final Map<String, String> intlPtPt = {
   'Unmuted': 'Não Silenciado',
   'Permission Denied': 'Permissão Negada',
 
-  'Refresh Stations': 'Atualizar Estações de Reencaminhamento',
-  'Shared': 'Partilhado',
-  'Forwarded': 'Reencaminhado',
+  'Refresh Stations': 'Atualizar Estações de Relevo',
+  'Shared': 'Compartilhado com Sucesso',
+  'Forwarded': 'Encaminhado com Sucesso',
 
   'Notice': 'Aviso',
   'Input Name': 'Inserir Nome',
@@ -151,18 +151,18 @@ final Map<String, String> intlPtPt = {
   'Image Not Found': 'Imagem Não Encontrada',
   'Failed to load image @filename': 'Falha ao carregar a imagem "@filename".',
 
-  'Forward Image': 'Reencaminhar Imagem',
-  'Forward Web Page': 'Reencaminhar Página Web',
-  'Forward Name Card': 'Reencaminhar Cartão de Nome',
+  'Forward Image': 'Encaminhar Imagem',
+  'Forward Web Page': 'Encaminhar Página da Web',
+  'Forward Name Card': 'Encaminhar Cartão de Visita',
 
-  'Image message forwarded to @chat': 'Mensagem de imagem reencaminhada para "@chat".',
-  'Failed to share image with @chat': 'Falha ao partilhar imagem com "@chat".',
+  'Image message forwarded to @chat': 'Mensagem de imagem encaminhada para "@chat".',
+  'Failed to share image with @chat': 'Falha ao compartilhar imagem com "@chat".',
 
-  'Web Page @title forwarded to @chat': 'Página web "@title" reencaminhada para "@chat".',
-  'Failed to share Web Page @title with @chat': 'Falha ao partilhar a página web "@title" com "@chat".',
+  'Web Page @title forwarded to @chat': 'Página da web "@title" encaminhada para "@chat".',
+  'Failed to share Web Page @title with @chat': 'Falha ao compartilhar página da web "@title" com "@chat".',
 
-  'Name Card @name forwarded to @chat': 'Cartão de Nome "@name" reencaminhado para "@chat".',
-  'Failed to share Name Card @name with @chat': 'Falha ao partilhar o Cartão de Nome "@name" com "@chat".',
+  'Name Card @name forwarded to @chat': 'Cartão de visita "@name" encaminhado para "@chat".',
+  'Failed to share Name Card @name with @chat': 'Falha ao compartilhar Cartão de Visita "@name" com "@chat".',
 
   'Chat Details': 'Detalhes da Conversa',
   'Group Chat Details (@count)': 'Detalhes da Conversa de Grupo (@count)',

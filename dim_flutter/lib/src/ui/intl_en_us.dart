@@ -81,9 +81,9 @@ final Map<String, String> intlEnUs = {
   'Cancel': 'Cancel',
   'Confirm': 'Confirm',
   'Confirm Add': 'Confirm Add',
-  'Confirm Delete': 'Confirm Delete',
-  'Confirm Share': 'Confirm Share',
-  'Confirm Forward': 'Confirm Forward',
+  'Confirm Delete': 'Confirm Deletion',
+  'Confirm Share': 'Confirm Sharing',
+  'Confirm Forward': 'Confirm Forwarding',
 
   'Success': 'Success',
   'Error': 'Error',
@@ -97,8 +97,8 @@ final Map<String, String> intlEnUs = {
   'Permission Denied': 'Permission Denied',
 
   'Refresh Stations': 'Refresh Relay Stations',
-  'Shared': 'Shared',
-  'Forwarded': 'Forwarded',
+  'Shared': 'Shared Successfully',
+  'Forwarded': 'Forwarded Successfully',
 
   'Notice': 'Notice',
   'Input Name': 'Input Name',
@@ -154,13 +154,13 @@ final Map<String, String> intlEnUs = {
   'Forward Web Page': 'Forward Web Page',
   'Forward Name Card': 'Forward Name Card',
 
-  'Image message forwarded to @chat': 'Image message forwarded to "@chat".',
+  'Image message forwarded to @chat': 'Image message has been forwarded to "@chat".',
   'Failed to share image with @chat': 'Failed to share image with "@chat".',
 
-  'Web Page @title forwarded to @chat': 'Web page "@title" forwarded to "@chat".',
+  'Web Page @title forwarded to @chat': 'Web page "@title" has been forwarded to "@chat".',
   'Failed to share Web Page @title with @chat': 'Failed to share web page "@title" with "@chat".',
 
-  'Name Card @name forwarded to @chat': 'Name Card "@name" forwarded to "@chat".',
+  'Name Card @name forwarded to @chat': 'Name Card "@name" has been forwarded to "@chat".',
   'Failed to share Name Card @name with @chat': 'Failed to share Name Card "@name" with "@chat".',
 
   'Chat Details': 'Chat Details',

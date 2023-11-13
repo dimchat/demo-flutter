@@ -82,10 +82,10 @@ final Map<String, String> intlEsEs = {
   //
   'Cancel': 'Cancelar',
   'Confirm': 'Confirmar',
-  'Confirm Add': 'Confirmar Añadir',
-  'Confirm Delete': 'Confirmar Eliminar',
+  'Confirm Add': 'Confirmar Agregar',
+  'Confirm Delete': 'Confirmar Eliminación',
   'Confirm Share': 'Confirmar Compartir',
-  'Confirm Forward': 'Confirmar Reenviar',
+  'Confirm Forward': 'Confirmar Reenvío',
 
   'Success': 'Éxito',
   'Error': 'Error',
@@ -98,9 +98,9 @@ final Map<String, String> intlEsEs = {
   'Unmuted': 'Sin Silencio',
   'Permission Denied': 'Permiso Denegado',
 
-  'Refresh Stations': 'Actualizar estaciones de retransmisión',
-  'Shared': 'Compartido',
-  'Forwarded': 'Reenviado',
+  'Refresh Stations': 'Actualizar Estaciones de Relé',
+  'Shared': 'Compartido Exitosamente',
+  'Forwarded': 'Reenviado Exitosamente',
 
   'Notice': 'Aviso',
   'Input Name': 'Ingresar Nombre',
@@ -159,11 +159,11 @@ final Map<String, String> intlEsEs = {
   'Image message forwarded to @chat': 'Mensaje de imagen reenviado a "@chat".',
   'Failed to share image with @chat': 'Error al compartir imagen con "@chat".',
 
-  'Web Page @title forwarded to @chat': 'Página web "@title" reenviada a "@chat".',
+  'Web Page @title forwarded to @chat': 'Página web "@title" ha sido reenviada a "@chat".',
   'Failed to share Web Page @title with @chat': 'Error al compartir página web "@title" con "@chat".',
 
-  'Name Card @name forwarded to @chat': 'Tarjeta de nombre "@name" reenviada a "@chat".',
-  'Failed to share Name Card @name with @chat': 'Error al compartir tarjeta de nombre "@name" con "@chat".',
+  'Name Card @name forwarded to @chat': 'Tarjeta de nombre "@name" ha sido reenviada a "@chat".',
+  'Failed to share Name Card @name with @chat': 'Error al compartir Tarjeta de nombre "@name" con "@chat".',
 
   'Chat Details': 'Detalles del Chat',
   'Group Chat Details (@count)': 'Detalles del Chat de Grupo (@count)',

@@ -3,14 +3,17 @@ import 'dart:ui';
 import 'package:get/get.dart';
 
 import 'settings.dart';
+import 'intl_bn_bd.dart';  // Bengali-Bangladesh
 import 'intl_de_de.dart';  // German-Germany
 import 'intl_en_us.dart';
 import 'intl_es_es.dart';  // Spanish-Spain
 import 'intl_fr_fr.dart';  // French-France
+import 'intl_hi_in.dart';  // Hindi-North India
 import 'intl_id_id.dart';  // Indonesian-Indonesia
 import 'intl_it_it.dart';  // Italian-Italy
 import 'intl_ja_jp.dart';  // Japanese-Japan
 import 'intl_ko_kr.dart';  // Korean-Korea
+import 'intl_ms_my.dart';  // Malaysian-Malaysia
 import 'intl_nl_nl.dart';  // Dutch-Netherlands
 import 'intl_pt_pt.dart';  // Portuguese-Portugal
 import 'intl_ru_ru.dart';  // Russian-Russia
@@ -46,11 +49,14 @@ class LanguageDataSource {
     LanguageItem('pt_PT', langPortuguese),
     LanguageItem('ru_RU', langRussian),
 
+    LanguageItem('hi_IN', langHindi),
+    LanguageItem('bn_BD', langBengali),
     LanguageItem('ja_JP', langJapanese),
     LanguageItem('ko_KR', langKorean),
+    LanguageItem('ms_MY', langMalaysian),
     LanguageItem('th_TH', langThai),
-    LanguageItem('vi_VN', langVietnamese),
     LanguageItem('id_ID', langIndonesian),
+    LanguageItem('vi_VN', langVietnamese),
     LanguageItem('zh_CN', langChinese),
     LanguageItem('zh_TW', langChineseTraditional),
   ];
@@ -128,6 +134,9 @@ class _Translations extends Translations {
   @override
   Map<String, Map<String, String>> get keys => {
 
+    'bn': intlBnBd,
+    'bn_BD': intlBnBd,  // Bengali-Bangladesh
+
     'de': intlDeDe,
     'de_DE': intlDeDe,  // German-Germany
 
@@ -141,6 +150,9 @@ class _Translations extends Translations {
     'fr': intlFrFr,
     'fr_FR': intlFrFr,  // French-France
 
+    'hi': intlHiIn,
+    'hi_IN': intlHiIn,  // Hindi-North India
+
     'id': intlIdId,
     'id_ID': intlIdId,  // Indonesian-Indonesia
 
@@ -152,6 +164,9 @@ class _Translations extends Translations {
 
     'ko': intlKoKr,
     'ko_KR': intlKoKr,  // Korean-Korea
+
+    'ms': intlMsMy,
+    'ms_MY': intlMsMy,  // Malaysian-Malaysia
 
     'nl': intlNlNl,
     'nl_NL': intlNlNl,  // Dutch-Netherlands

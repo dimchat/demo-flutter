@@ -97,9 +97,9 @@ final Map<String, String> intlKoKr = {
   'Unmuted': '음소거 해제됨',
   'Permission Denied': '권한 거부됨',
 
-  'Refresh Stations': '릴레이 스테이션 새로고침',
-  'Shared': '공유됨',
-  'Forwarded': '전송됨',
+  'Refresh Stations': '릴레이 스테이션 새로 고침',
+  'Shared': '성공적으로 공유됨',
+  'Forwarded': '성공적으로 전송됨',
 
   'Notice': '알림',
   'Input Name': '이름 입력',
@@ -155,14 +155,14 @@ final Map<String, String> intlKoKr = {
   'Forward Web Page': '웹 페이지 전송',
   'Forward Name Card': '명함 전송',
 
-  'Image message forwarded to @chat': '이미지 메시지가 "@chat" 로 전송되었습니다',
-  'Failed to share image with @chat': '"@chat" 과 이미지를 공유하지 못했습니다',
+  'Image message forwarded to @chat': '이미지 메시지가 "@chat"로 전송되었습니다.',
+  'Failed to share image with @chat': '"@chat"과(와) 이미지 공유에 실패했습니다.',
 
-  'Web Page @title forwarded to @chat': '"@title" 웹 페이지가 "@chat" 로 전송되었습니다',
-  'Failed to share Web Page @title with @chat': '"@title" 웹 페이지를 "@chat" 과 공유하지 못했습니다',
+  'Web Page @title forwarded to @chat': '웹 페이지 "@title"이(가) "@chat"로 전송되었습니다.',
+  'Failed to share Web Page @title with @chat': '"@chat"과(와) 웹 페이지 "@title" 공유에 실패했습니다.',
 
-  'Name Card @name forwarded to @chat': '명함 "@name" 이(가) "@chat" 에 전달되었습니다.',
-  'Failed to share Name Card @name with @chat': '명함 "@name" 을(를) "@chat" 과(와) 공유하지 못했습니다.',
+  'Name Card @name forwarded to @chat': '명함 "@name"이(가) "@chat"로 전송되었습니다.',
+  'Failed to share Name Card @name with @chat': '"@chat"과(와) 명함 "@name" 공유에 실패했습니다.',
 
   'Chat Details': '채팅 세부 정보',
   'Group Chat Details (@count)': '그룹 채팅 세부 정보 (@count)',

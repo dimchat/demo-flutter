@@ -98,8 +98,8 @@ final Map<String, String> intlThTh = {
   'Permission Denied': 'การอนุญาตถูกปฏิเสธ',
 
   'Refresh Stations': 'รีเฟรชสถานีรีเลย์',
-  'Shared': 'แชร์',
-  'Forwarded': 'ส่งต่อ',
+  'Shared': 'แชร์สำเร็จ',
+  'Forwarded': 'ส่งต่อสำเร็จ',
 
   'Notice': 'แจ้งเตือน',
   'Input Name': 'กรอกชื่อ',
@@ -153,16 +153,16 @@ final Map<String, String> intlThTh = {
 
   'Forward Image': 'ส่งต่อรูปภาพ',
   'Forward Web Page': 'ส่งต่อหน้าเว็บ',
-  'Forward Name Card': 'ส่งต่อบัตรนาม',
+  'Forward Name Card': 'ส่งต่อบัตรชื่อ',
 
-  'Image message forwarded to @chat': 'ข้อความรูปถูกส่งต่อไปยัง "@chat"',
-  'Failed to share image with @chat': 'ไม่สามารถแชร์รูปภาพกับ "@chat" ได้',
+  'Image message forwarded to @chat': 'ข้อความรูปภาพถูกส่งต่อไปยัง "@chat"',
+  'Failed to share image with @chat': 'การแชร์รูปภาพกับ "@chat" ล้มเหลว',
 
   'Web Page @title forwarded to @chat': 'หน้าเว็บ "@title" ถูกส่งต่อไปยัง "@chat"',
-  'Failed to share Web Page @title with @chat': 'ไม่สามารถแชร์หน้าเว็บ "@title" กับ "@chat" ได้',
+  'Failed to share Web Page @title with @chat': 'การแชร์หน้าเว็บ "@title" กับ "@chat" ล้มเหลว',
 
-  'Name Card @name forwarded to @chat': 'บัตรนาม "@name" ถูกส่งต่อไปยัง "@chat"',
-  'Failed to share Name Card @name with @chat': 'ไม่สามารถแชร์บัตรนาม "@name" กับ "@chat" ได้',
+  'Name Card @name forwarded to @chat': 'บัตรชื่อ "@name" ถูกส่งต่อไปยัง "@chat"',
+  'Failed to share Name Card @name with @chat': 'การแชร์บัตรชื่อ "@name" กับ "@chat" ล้มเหลว',
 
   'Chat Details': 'รายละเอียดแชท',
   'Group Chat Details (@count)': 'รายละเอียดแชทกลุ่ม (@count)',

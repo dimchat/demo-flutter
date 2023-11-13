@@ -81,7 +81,7 @@ final Map<String, String> intlIdId = {
   //
   'Cancel': 'Batal',
   'Confirm': 'Konfirmasi',
-  'Confirm Add': 'Konfirmasi Tambah',
+  'Confirm Add': 'Konfirmasi Tambahkan',
   'Confirm Delete': 'Konfirmasi Hapus',
   'Confirm Share': 'Konfirmasi Bagikan',
   'Confirm Forward': 'Konfirmasi Teruskan',
@@ -97,9 +97,9 @@ final Map<String, String> intlIdId = {
   'Unmuted': 'Dinyalakan Kembali',
   'Permission Denied': 'Izin Ditolak',
 
-  'Refresh Stations': 'Segarkan Stasiun Relay',
-  'Shared': 'Dibagikan',
-  'Forwarded': 'Diteruskan',
+  'Refresh Stations': 'Segarkan Stasiun Rele',
+  'Shared': 'Berbagi Berhasil',
+  'Forwarded': 'Diteruskan dengan Sukses',
 
   'Notice': 'Pemberitahuan',
   'Input Name': 'Masukkan Nama',
@@ -155,13 +155,13 @@ final Map<String, String> intlIdId = {
   'Forward Web Page': 'Teruskan Halaman Web',
   'Forward Name Card': 'Teruskan Kartu Nama',
 
-  'Image message forwarded to @chat': 'Pesan gambar diteruskan ke "@chat".',
+  'Image message forwarded to @chat': 'Pesan gambar telah diteruskan ke "@chat".',
   'Failed to share image with @chat': 'Gagal membagikan gambar dengan "@chat".',
 
-  'Web Page @title forwarded to @chat': 'Halaman web "@title" diteruskan ke "@chat".',
+  'Web Page @title forwarded to @chat': 'Halaman web "@title" telah diteruskan ke "@chat".',
   'Failed to share Web Page @title with @chat': 'Gagal membagikan halaman web "@title" dengan "@chat".',
 
-  'Name Card @name forwarded to @chat': 'Kartu nama "@name" diteruskan ke "@chat".',
+  'Name Card @name forwarded to @chat': 'Kartu Nama "@name" telah diteruskan ke "@chat".',
   'Failed to share Name Card @name with @chat': 'Gagal membagikan Kartu Nama "@name" dengan "@chat".',
 
   'Chat Details': 'Detail Obrolan',

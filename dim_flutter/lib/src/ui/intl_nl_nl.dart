@@ -81,10 +81,10 @@ final Map<String, String> intlNlNl = {
   //
   'Cancel': 'Annuleren',
   'Confirm': 'Bevestigen',
-  'Confirm Add': 'Bevestigen Toevoegen',
-  'Confirm Delete': 'Bevestigen Verwijderen',
-  'Confirm Share': 'Bevestigen Delen',
-  'Confirm Forward': 'Bevestigen Doorsturen',
+  'Confirm Add': 'Toevoegen bevestigen',
+  'Confirm Delete': 'Verwijderen bevestigen',
+  'Confirm Share': 'Delen bevestigen',
+  'Confirm Forward': 'Doorsturen bevestigen',
 
   'Success': 'Succes',
   'Error': 'Fout',
@@ -98,8 +98,8 @@ final Map<String, String> intlNlNl = {
   'Permission Denied': 'Toestemming Geweigerd',
 
   'Refresh Stations': 'Vernieuw Relaisstations',
-  'Shared': 'Gedeeld',
-  'Forwarded': 'Doorgestuurd',
+  'Shared': 'Succesvol gedeeld',
+  'Forwarded': 'Succesvol doorgestuurd',
 
   'Notice': 'Mededeling',
   'Input Name': 'Naam Invoeren',
@@ -151,18 +151,18 @@ final Map<String, String> intlNlNl = {
   'Image Not Found': 'Afbeelding Niet Gevonden',
   'Failed to load image @filename': 'Laden van afbeelding "@filename" mislukt.',
 
-  'Forward Image': 'Afbeelding Doorsturen',
-  'Forward Web Page': 'Webpagina Doorsturen',
-  'Forward Name Card': 'Naamkaart Doorsturen',
+  'Forward Image': 'Afbeelding doorsturen',
+  'Forward Web Page': 'Webpagina doorsturen',
+  'Forward Name Card': 'Naamkaart doorsturen',
 
-  'Image message forwarded to @chat': 'Afbeelding bericht doorgestuurd naar "@chat".',
-  'Failed to share image with @chat': 'Mislukt om afbeelding te delen met "@chat".',
+  'Image message forwarded to @chat': 'Afbeeldingsbericht is doorgestuurd naar "@chat".',
+  'Failed to share image with @chat': 'Kan afbeelding niet delen met "@chat".',
 
-  'Web Page @title forwarded to @chat': 'Webpagina "@title" doorgestuurd naar "@chat".',
-  'Failed to share Web Page @title with @chat': 'Mislukt om webpagina "@title" te delen met "@chat".',
+  'Web Page @title forwarded to @chat': 'Webpagina "@title" is doorgestuurd naar "@chat".',
+  'Failed to share Web Page @title with @chat': 'Kan webpagina "@title" niet delen met "@chat".',
 
-  'Name Card @name forwarded to @chat': 'Naamkaart "@name" doorgestuurd naar "@chat".',
-  'Failed to share Name Card @name with @chat': 'Mislukt om Naamkaart "@name" te delen met "@chat".',
+  'Name Card @name forwarded to @chat': 'Naamkaart "@name" is doorgestuurd naar "@chat".',
+  'Failed to share Name Card @name with @chat': 'Kan naamkaart "@name" niet delen met "@chat".',
 
   'Chat Details': 'Chat Details',
   'Group Chat Details (@count)': 'Groepschat Details (@count)',

@@ -126,7 +126,7 @@ final Map<String, String> intlJaJp = {
   'Open Source': 'オープンソース',
   'Terms': '利用規約',
   'Privacy Policy': 'プライバシーポリシー',
-  'About': 'About',
+  'About': 'について',
 
   'Edit Profile': 'プロフィールを編集',
   'Change Avatar': 'アバターを変更',

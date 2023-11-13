@@ -122,12 +122,12 @@ final Map<String, String> intlZhCn = {
   'Brightness': '亮度',
   'Network': '网络',
   'Relay Stations': '中继站',
-  'Source': '源代码',
+  'Open Source': '开源代码',
   'Terms': '服务条款',
   'Privacy Policy': '隐私政策',
   'About': '关于',
 
-  'Edit Profile': '修改资料',
+  'Edit Profile': '修改个人资料',
   'Change Avatar': '更换头像',
   'Update & Broadcast': '更新并广播',
 

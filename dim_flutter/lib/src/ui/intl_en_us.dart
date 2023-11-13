@@ -70,7 +70,7 @@ final Map<String, String> intlEnUs = {
   'Waiting': 'Waiting',
   'Connecting': 'Connecting',
   'Connected': 'Connected',
-  'Handshaking': 'Handshaking',
+  'Handshaking': 'Authenticating',
   'Disconnected': 'Disconnected',
 
   //
@@ -94,7 +94,7 @@ final Map<String, String> intlEnUs = {
   'Unmuted': 'Unmuted',
   'Permission Denied': 'Permission Denied',
 
-  'Refresh Stations': 'Refresh Stations',
+  'Refresh Stations': 'Refresh Relay Stations',
   'Shared': 'Shared',
   'Forwarded': 'Forwarded',
 
@@ -122,7 +122,7 @@ final Map<String, String> intlEnUs = {
   'Brightness': 'Brightness',
   'Network': 'Network',
   'Relay Stations': 'Relay Stations',
-  'Source': 'Source Codes',
+  'Open Source': 'Open Source',
   'Terms': 'Terms',
   'Privacy Policy': 'Privacy Policy',
   'About': 'About',

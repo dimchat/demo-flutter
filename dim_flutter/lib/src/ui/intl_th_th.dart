@@ -71,7 +71,7 @@ final Map<String, String> intlThTh = {
   'Waiting': 'กำลังรอ',
   'Connecting': 'กำลังเชื่อมต่อ',
   'Connected': 'เชื่อมต่อแล้ว',
-  'Handshaking': 'กำลังแลกเปลี่ยนข้อมูล',
+  'Handshaking': 'การตรวจสอบสิทธิ์',
   'Disconnected': 'ตัดการเชื่อมต่อ',
 
   //
@@ -95,7 +95,7 @@ final Map<String, String> intlThTh = {
   'Unmuted': 'ไม่ถูกปิดเสียง',
   'Permission Denied': 'การอนุญาตถูกปฏิเสธ',
 
-  'Refresh Stations': 'รีเฟรชสถานี',
+  'Refresh Stations': 'รีเฟรชสถานีรีเลย์',
   'Shared': 'แชร์',
   'Forwarded': 'ส่งต่อ',
 
@@ -123,7 +123,7 @@ final Map<String, String> intlThTh = {
   'Brightness': 'ความสว่าง',
   'Network': 'เครือข่าย',
   'Relay Stations': 'สถานี Relay',
-  'Source': 'รหัสภายใน',
+  'Open Source': 'ซอร์สโอเพ่น',
   'Terms': 'ข้อกำหนด',
   'Privacy Policy': 'นโยบายความเป็นส่วนตัว',
   'About': 'เกี่ยวกับ',

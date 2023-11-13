@@ -71,7 +71,7 @@ final Map<String, String> intlDeDe = {
   'Waiting': 'Warten',
   'Connecting': 'Verbinden',
   'Connected': 'Verbunden',
-  'Handshaking': 'Verifizieren',
+  'Handshaking': 'Authentifizierung',
   'Disconnected': 'Getrennt',
 
   //
@@ -95,7 +95,7 @@ final Map<String, String> intlDeDe = {
   'Unmuted': 'Nicht stummgeschaltet',
   'Permission Denied': 'Zugriff verweigert',
 
-  'Refresh Stations': 'Stationen aktualisieren',
+  'Refresh Stations': 'Relay-Stationen aktualisieren',
   'Shared': 'Geteilt',
   'Forwarded': 'Weitergeleitet',
 
@@ -123,7 +123,7 @@ final Map<String, String> intlDeDe = {
   'Brightness': 'Helligkeit',
   'Network': 'Netzwerk',
   'Relay Stations': 'Relaisstationen',
-  'Source': 'Quellcodes',
+  'Open Source': 'Open Source',
   'Terms': 'Nutzungsbedingungen',
   'Privacy Policy': 'Datenschutzbestimmungen',
   'About': 'Über uns',

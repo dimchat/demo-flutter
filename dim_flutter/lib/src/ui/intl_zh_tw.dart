@@ -6,20 +6,20 @@ final Map<String, String> intlZhTw = {
   //
   //  Register
   //
-  'Register': '註冊帳戶',
-  'Import': '導入帳戶',
-  'Name': '姓名',
+  'Register': '註冊新帳戶',
+  'Import': '導入舊帳戶',
+  'Name': '名稱',
   'Nickname': '暱稱',
-  'Your nickname': '你的暱稱',
+  'Your nickname': '怎麼稱呼',
 
-  'Please input your nickname': '請輸入你的暱稱。',
+  'Please input your nickname': '請問怎麼稱呼？',
   'Please agree the privacy policy': '請閱讀並同意 DIM 隱私政策。',
-  'Failed to import account': '導入帳號失敗，請檢查你的助憶詞。',
-  'Failed to generate ID': '生成 ID 失敗。',
+  'Failed to import account': '導入帳號失敗，請檢查助憶詞是否正確。',
+  'Failed to generate ID': '無法生成 ID。',
 
   'Mnemonic Codes': '助憶詞',
-  'MnemonicCodes::Description': '助憶詞是現有帳戶的私鑰，'
-      '如果你沒有，請點擊右上角的"註冊"按鈕來生成一個新的。',
+  'MnemonicCodes::Description': '助憶詞是已有帳號的私鑰，'
+      '如果您尚未擁有帳號，請點擊右上角的"註冊"按鈕生成新的帳號。',
 
   'Show': '顯示',
   'Hide': '隱藏',
@@ -92,15 +92,15 @@ final Map<String, String> intlZhTw = {
   'Unblocked': '已解封',
   'Muted': '已靜音',
   'Unmuted': '已取消靜音',
-  'Permission Denied': '權限拒絕',
+  'Permission Denied': '權限被拒絕',
 
-  'Refresh Stations': '更新站點',
+  'Refresh Stations': '刷新基站列表',
   'Shared': '已分享',
   'Forwarded': '已轉發',
 
-  'Notice': '通知',
-  'Input Name': '輸入名稱',
-  'Input text message': '輸入文字訊息',
+  'Notice': '請注意',
+  'Input Name': '請輸入名稱',
+  'Input text message': '請輸入文字訊息',
 
   // Tabs
   'Chats': '聊天',
@@ -108,7 +108,7 @@ final Map<String, String> intlZhTw = {
   'Settings': '設定',
 
   // Contacts
-  'New Friends': '新朋友',
+  'New Friends': '新的朋友',
   'Group Chats': '群組聊天',
   'Blocked List': '封鎖清單',
   'Muted List': '靜音清單',
@@ -122,8 +122,8 @@ final Map<String, String> intlZhTw = {
   'Brightness': '亮度',
   'Network': '網路',
   'Relay Stations': '轉發站點',
-  'Source': '來源',
-  'Terms': '條款',
+  'Open Source': '開放原始碼',
+  'Terms': '服務條款',
   'Privacy Policy': '隱私政策',
   'About': '關於',
 
@@ -142,7 +142,7 @@ final Map<String, String> intlZhTw = {
   'Release to Send': '放開發送',
   'Release to Cancel': '放開取消',
 
-  'View More Members': '查看更多成員',
+  'View More Members': '查看更多群組成員',
   'Group Members (@count)': '群組成員 (@count)',
   'Non-Member': '非成員',
   'Image Not Found': '找不到圖片',
@@ -166,7 +166,7 @@ final Map<String, String> intlZhTw = {
   'Group Name': '群組名稱',
   'Owner': '擁有者',
   'Administrators': '管理員',
-  'Invitations': '邀請',
+  'Invitations': '邀請函',
 
   'Select Participants': '選擇參與者',
   'Select a Chat': '選擇一個聊天',
@@ -177,7 +177,7 @@ final Map<String, String> intlZhTw = {
   'Your friend received': '你的朋友已收到',
   '@count members received': '已有 @count 名成員收到',
   'No response': '無回應',
-  'Stranded': '滯留',
+  'Stranded': '未發送',
 
   //
   //  Profile
@@ -210,7 +210,7 @@ final Map<String, String> intlZhTw = {
   'Please input alias': '請輸入別名。',
   'Please review invitations': '請先檢閱邀請。',
 
-  'Invited by': '邀請人：',
+  'Invited by': '邀請人',
   'Invitation sent': '新的邀請已發送給所有管理員，現在等待審核。',
 
   'Sure to add this friend?': '確定要添加此朋友嗎？',

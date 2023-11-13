@@ -71,7 +71,7 @@ final Map<String, String> intlKoKr = {
   'Waiting': '대기 중',
   'Connecting': '연결 중',
   'Connected': '연결됨',
-  'Handshaking': '확인 중',
+  'Handshaking': '인증 중',
   'Disconnected': '연결 해제됨',
 
   //
@@ -95,7 +95,7 @@ final Map<String, String> intlKoKr = {
   'Unmuted': '음소거 해제됨',
   'Permission Denied': '권한 거부됨',
 
-  'Refresh Stations': '역 갱신',
+  'Refresh Stations': '릴레이 스테이션 새로고침',
   'Shared': '공유됨',
   'Forwarded': '전송됨',
 
@@ -123,7 +123,7 @@ final Map<String, String> intlKoKr = {
   'Brightness': '밝기',
   'Network': '네트워크',
   'Relay Stations': '릴레이 스테이션',
-  'Source': '소스 코드',
+  'Open Source': '오픈 소스',
   'Terms': '이용 약관',
   'Privacy Policy': '개인 정보 정책',
   'About': '소개',

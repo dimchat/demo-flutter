@@ -71,7 +71,7 @@ final Map<String, String> intlFrFr = {
   'Waiting': 'En attente',
   'Connecting': 'Connexion',
   'Connected': 'Connecté',
-  'Handshaking': 'Vérification',
+  'Handshaking': 'Authentification',
   'Disconnected': 'Déconnecté',
 
   //
@@ -95,7 +95,7 @@ final Map<String, String> intlFrFr = {
   'Unmuted': 'Non muet',
   'Permission Denied': 'Autorisation refusée',
 
-  'Refresh Stations': 'Actualiser les stations',
+  'Refresh Stations': 'Actualiser les stations de relais',
   'Shared': 'Partagé',
   'Forwarded': 'Transféré',
 
@@ -123,7 +123,7 @@ final Map<String, String> intlFrFr = {
   'Brightness': 'Luminosité',
   'Network': 'Réseau',
   'Relay Stations': 'Stations de relais',
-  'Source': 'Codes sources',
+  'Open Source': 'Code source ouvert',
   'Terms': 'Conditions',
   'Privacy Policy': 'Politique de confidentialité',
   'About': 'À propos',

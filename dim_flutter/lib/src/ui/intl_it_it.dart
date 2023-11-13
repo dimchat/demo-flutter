@@ -71,7 +71,7 @@ final Map<String, String> intlItIt = {
   'Waiting': 'In attesa',
   'Connecting': 'Connessione',
   'Connected': 'Connesso',
-  'Handshaking': 'Verifica',
+  'Handshaking': 'Autenticazione',
   'Disconnected': 'Disconnesso',
 
   //
@@ -95,7 +95,7 @@ final Map<String, String> intlItIt = {
   'Unmuted': 'Non Silenzioso',
   'Permission Denied': 'Permesso Negato',
 
-  'Refresh Stations': 'Aggiorna Stazioni',
+  'Refresh Stations': 'Aggiorna Stazioni di Relè',
   'Shared': 'Condiviso',
   'Forwarded': 'Inoltrato',
 
@@ -123,7 +123,7 @@ final Map<String, String> intlItIt = {
   'Brightness': 'Luminosità',
   'Network': 'Rete',
   'Relay Stations': 'Stazioni di Rilancio',
-  'Source': 'Codice Sorgente',
+  'Open Source': 'Codice Sorgente Aperto',
   'Terms': 'Termini',
   'Privacy Policy': 'Politica sulla Privacy',
   'About': 'Informazioni',

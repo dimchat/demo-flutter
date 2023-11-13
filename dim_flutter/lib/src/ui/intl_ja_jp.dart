@@ -71,7 +71,7 @@ final Map<String, String> intlJaJp = {
   'Waiting': '待機中',
   'Connecting': '接続中',
   'Connected': '接続済み',
-  'Handshaking': '検証中',
+  'Handshaking': '認証中',
   'Disconnected': '切断されました',
 
   //
@@ -123,7 +123,7 @@ final Map<String, String> intlJaJp = {
   'Brightness': '輝度',
   'Network': 'ネットワーク',
   'Relay Stations': 'リレーステーション',
-  'Source': 'ソースコード',
+  'Open Source': 'オープンソース',
   'Terms': '利用規約',
   'Privacy Policy': 'プライバシーポリシー',
   'About': 'About',

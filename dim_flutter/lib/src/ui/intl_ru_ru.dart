@@ -71,7 +71,7 @@ final Map<String, String> intlRuRu = {
   'Waiting': 'Ожидание',
   'Connecting': 'Подключение',
   'Connected': 'Подключено',
-  'Handshaking': 'Рукопожатие',
+  'Handshaking': 'Аутентификация',
   'Disconnected': 'Отключено',
 
   //
@@ -95,7 +95,7 @@ final Map<String, String> intlRuRu = {
   'Unmuted': 'Со звуком',
   'Permission Denied': 'Доступ запрещен',
 
-  'Refresh Stations': 'Обновить станции',
+  'Refresh Stations': 'Обновить ретрансляционные станции',
   'Shared': 'Общие',
   'Forwarded': 'Переслано',
 
@@ -123,7 +123,7 @@ final Map<String, String> intlRuRu = {
   'Brightness': 'Яркость',
   'Network': 'Сеть',
   'Relay Stations': 'Ретрансляционные станции',
-  'Source': 'Исходный код',
+  'Open Source': 'Открытый исходный код',
   'Terms': 'Условия',
   'Privacy Policy': 'Политика конфиденциальности',
   'About': 'О нас',

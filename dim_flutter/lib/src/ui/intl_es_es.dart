@@ -72,7 +72,7 @@ final Map<String, String> intlEsEs = {
   'Waiting': 'Esperando',
   'Connecting': 'Conectando',
   'Connected': 'Conectado',
-  'Handshaking': 'Verificando',
+  'Handshaking': 'Autenticación',
   'Disconnected': 'Desconectado',
 
   //
@@ -96,7 +96,7 @@ final Map<String, String> intlEsEs = {
   'Unmuted': 'Sin Silencio',
   'Permission Denied': 'Permiso Denegado',
 
-  'Refresh Stations': 'Actualizar Estaciones',
+  'Refresh Stations': 'Actualizar estaciones de retransmisión',
   'Shared': 'Compartido',
   'Forwarded': 'Reenviado',
 
@@ -124,7 +124,7 @@ final Map<String, String> intlEsEs = {
   'Brightness': 'Brillo',
   'Network': 'Red',
   'Relay Stations': 'Estaciones de Relevo',
-  'Source': 'Códigos fuente',
+  'Open Source': 'Código abierto',
   'Terms': 'Términos',
   'Privacy Policy': 'Política de Privacidad',
   'About': 'Acerca de',

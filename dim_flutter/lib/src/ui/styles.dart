@@ -2,9 +2,19 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
 import 'colors.dart';
+import 'language.dart';
 
 
 abstract class Styles {
+
+  static TextDirection? get textDirection {
+    LanguageDataSource lds = LanguageDataSource();
+    String code = lds.getCurrentLanguageCode();
+    if (code == 'ar' || code.startsWith('ar_')) {
+      return TextDirection.rtl;
+    }
+    return null;
+  }
 
   static ThemeColors get colors => ThemeColors.current;
 

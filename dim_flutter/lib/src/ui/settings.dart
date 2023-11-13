@@ -3,9 +3,11 @@ import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:get/get.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
+import 'burn_after_reading.dart';
 import 'brightness.dart';
 import 'language.dart';
-import 'burn_after_reading.dart';
+import 'styles.dart';
+
 
 /// Shared Preferences
 class AppSettings {
@@ -75,6 +77,7 @@ void launchApp(Widget home) => runApp(GetMaterialApp(
   theme: BrightnessDataSource.light,
   darkTheme: BrightnessDataSource.dark,
   themeMode: BrightnessDataSource().themeMode,
+  textDirection: Styles.textDirection,
   home: home,
   localizationsDelegates: const [
     GlobalMaterialLocalizations.delegate,

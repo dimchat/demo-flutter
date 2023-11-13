@@ -3,22 +3,23 @@ import 'dart:ui';
 import 'package:get/get.dart';
 
 import 'settings.dart';
-import 'intl_bn_bd.dart';  // Bengali-Bangladesh
-import 'intl_de_de.dart';  // German-Germany
+import 'intl_ar_msa.dart';  // Arabic-Modern Standard Arabic
+import 'intl_bn_bd.dart';   // Bengali-Bangladesh
+import 'intl_de_de.dart';   // German-Germany
 import 'intl_en_us.dart';
-import 'intl_es_es.dart';  // Spanish-Spain
-import 'intl_fr_fr.dart';  // French-France
-import 'intl_hi_in.dart';  // Hindi-North India
-import 'intl_id_id.dart';  // Indonesian-Indonesia
-import 'intl_it_it.dart';  // Italian-Italy
-import 'intl_ja_jp.dart';  // Japanese-Japan
-import 'intl_ko_kr.dart';  // Korean-Korea
-import 'intl_ms_my.dart';  // Malaysian-Malaysia
-import 'intl_nl_nl.dart';  // Dutch-Netherlands
-import 'intl_pt_pt.dart';  // Portuguese-Portugal
-import 'intl_ru_ru.dart';  // Russian-Russia
-import 'intl_th_th.dart';  // Thai-Thailand
-import 'intl_vi_vn.dart';  // Vietnamese-Vietnam
+import 'intl_es_es.dart';   // Spanish-Spain
+import 'intl_fr_fr.dart';   // French-France
+import 'intl_hi_in.dart';   // Hindi-North India
+import 'intl_id_id.dart';   // Indonesian-Indonesia
+import 'intl_it_it.dart';   // Italian-Italy
+import 'intl_ja_jp.dart';   // Japanese-Japan
+import 'intl_ko_kr.dart';   // Korean-Korea
+import 'intl_ms_my.dart';   // Malaysian-Malaysia
+import 'intl_nl_nl.dart';   // Dutch-Netherlands
+import 'intl_pt_pt.dart';   // Portuguese-Portugal
+import 'intl_ru_ru.dart';   // Russian-Russia
+import 'intl_th_th.dart';   // Thai-Thailand
+import 'intl_vi_vn.dart';   // Vietnamese-Vietnam
 import 'intl_zh_cn.dart';
 import 'intl_zh_tw.dart';
 
@@ -48,6 +49,7 @@ class LanguageDataSource {
     LanguageItem('nl_NL', langDutch),
     LanguageItem('pt_PT', langPortuguese),
     LanguageItem('ru_RU', langRussian),
+    LanguageItem('ar', langArabic),
 
     LanguageItem('hi_IN', langHindi),
     LanguageItem('bn_BD', langBengali),
@@ -133,6 +135,8 @@ class _Translations extends Translations {
 
   @override
   Map<String, Map<String, String>> get keys => {
+
+    'ar': intlAr,  // Arabic-Modern Standard Arabic
 
     'bn': intlBnBd,
     'bn_BD': intlBnBd,  // Bengali-Bangladesh

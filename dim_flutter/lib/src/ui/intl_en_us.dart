@@ -1,4 +1,6 @@
 
+const String langEnglish = 'English';
+
 final Map<String, String> intlEnUs = {
 
   // 'OK': 'OK',

@@ -1,4 +1,6 @@
 
+const String langKorean = '한국인';
+
 /// Korean-Korea
 final Map<String, String> intlKoKr = {
 

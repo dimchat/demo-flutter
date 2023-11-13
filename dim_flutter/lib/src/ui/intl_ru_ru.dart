@@ -1,4 +1,6 @@
 
+const String langRussian = 'Русский';
+
 /// Russian-Russia
 final Map<String, String> intlRuRu = {
 

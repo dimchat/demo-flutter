@@ -1,4 +1,6 @@
 
+const String langGerman = 'Deutsch';
+
 /// German-Germany
 final Map<String, String> intlDeDe = {
 

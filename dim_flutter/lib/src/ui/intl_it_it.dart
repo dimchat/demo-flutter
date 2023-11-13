@@ -1,4 +1,6 @@
 
+const String langItalian = 'Italiano';
+
 /// Italian-Italy
 final Map<String, String> intlItIt = {
 

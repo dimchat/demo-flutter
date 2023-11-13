@@ -1,4 +1,6 @@
 
+const String langFrench = 'Français';
+
 /// French-France
 final Map<String, String> intlFrFr = {
 

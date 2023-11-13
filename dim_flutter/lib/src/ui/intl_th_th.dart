@@ -1,4 +1,6 @@
 
+const String langThai = 'ภาษาไทย';
+
 /// Thai-Thailand
 final Map<String, String> intlThTh = {
 

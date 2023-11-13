@@ -1,4 +1,6 @@
 
+const String langSpanish = 'Español';
+
 /// Spanish-Spain
 final Map<String, String> intlEsEs = {
 

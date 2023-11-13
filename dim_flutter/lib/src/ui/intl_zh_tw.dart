@@ -1,4 +1,6 @@
 
+const String langChineseTraditional = '繁體中文';
+
 final Map<String, String> intlZhTw = {
 
   // 'OK': '好',

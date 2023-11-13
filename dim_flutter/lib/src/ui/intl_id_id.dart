@@ -1,4 +1,6 @@
 
+const String langIndonesian = 'Bahasa Indonesia';
+
 /// Indonesian-Indonesia
 final Map<String, String> intlIdId = {
 

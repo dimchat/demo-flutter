@@ -1,4 +1,6 @@
 
+const String langVietnamese = 'Tiếng Việt';
+
 /// Vietnamese-Vietnam
 final Map<String, String> intlViVN = {
 

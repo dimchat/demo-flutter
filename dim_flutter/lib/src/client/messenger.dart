@@ -127,14 +127,9 @@ class SharedMessenger extends ClientMessenger {
       }
     }
     // 3. update visa document
-    visa.setProperty('app_id', 'chat.dim.tarsier');
-    // set locale for language
-    String locale = Platform.localeName;
-    visa.setProperty('locale', locale);
-    // set customized language
-    LanguageDataSource lds = LanguageDataSource();
-    String language = lds.getCurrentLanguageCode();
-    visa.setProperty('language', language);
+    assert(visa.publicKey != null, 'visa error: $visa');
+    visa.setProperty('app', _getAppInfo(visa));
+    visa.setProperty('sys', _getDeviceInfo(visa));
     // 4. sign it
     Uint8List? sig = visa.sign(sKey);
     assert(sig != null, 'failed to sign visa: $visa, $user');
@@ -143,6 +138,45 @@ class SharedMessenger extends ClientMessenger {
     assert(ok, 'failed to save document: $visa');
     Log.info('visa updated: $ok, $visa');
     return ok;
+  }
+  Map _getAppInfo(Visa visa) {
+    var info = visa.getProperty('app');
+    if (info == null) {
+      info = {};
+    } else if (info is Map) {
+      // app info already exist, update it
+    } else {
+      assert(info is String, 'invalid app info: $info');
+      info = {
+        'app': info,
+      };
+    }
+    GlobalVariable shared = GlobalVariable();
+    LanguageDataSource lds = LanguageDataSource();
+    info['id'] = shared.terminal.packageName;
+    info['name'] = shared.terminal.displayName;
+    info['version'] = shared.terminal.versionName;
+    info['build'] = shared.terminal.buildNumber;
+    info['language'] = lds.getCurrentLanguageCode();
+    return info;
+  }
+  Map _getDeviceInfo(Visa visa) {
+    var info = visa.getProperty('sys');
+    if (info == null) {
+      info = {};
+    } else if (info is Map) {
+      // device info already exist, update it
+    } else {
+      assert(info is String, 'invalid device info: $info');
+      info = {
+        'sys': info,
+      };
+    }
+    GlobalVariable shared = GlobalVariable();
+    info['locale'] = shared.terminal.language;
+    info['model'] = shared.terminal.systemModel;
+    info['os'] = Platform.operatingSystem;
+    return info;
   }
 
   @override

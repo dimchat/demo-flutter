@@ -145,6 +145,8 @@ class Client extends Terminal {
   final _DeviceInfo _deviceInfo = _DeviceInfo();
   final _PackageInfo _packageInfo = _PackageInfo();
 
+  String get packageName => _packageInfo.packageName;
+
   @override
   String get displayName => _packageInfo.displayName;
 
@@ -194,7 +196,7 @@ class _DeviceInfo {
     } else {
       assert(false, 'unknown platform');
     }
-    language = "en-US";
+    language = Platform.localeName;
   }
 
   void _loadAndroid(AndroidDeviceInfo info) {
@@ -260,10 +262,13 @@ class _PackageInfo {
   }
 
   void _load(PackageInfo info) {
+    packageName = info.packageName;
     displayName = info.appName;
     versionName = info.version;
     buildNumber = info.buildNumber;
   }
+
+  String packageName = "chat.dim.tarsier";
 
   String displayName = "DIM";
 

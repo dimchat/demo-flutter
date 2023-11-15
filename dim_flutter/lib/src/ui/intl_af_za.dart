@@ -59,10 +59,10 @@ final Map<String, String> intlAfZa = {
   '@several days': '@several dae',
   '@several months': '@several maande',
 
-  'Daily': '24 uur',   // 'Daily',
+  'Daily': '24 uur',    // 'Dagelijks',
   'Anon': '3 dae',
-  'Weakly': '7 dae',    // 'Weakly',
-  'Monthly': '30 dae',  // 'Monthly',
+  'Weakly': '7 dae',    // 'Weekliks',
+  'Monthly': '30 dae',  // 'Maandeliks',
   'Manually': 'Handmatig',
 
   'Burn After Reading': 'Brand Na Lees',

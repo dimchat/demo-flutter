@@ -59,13 +59,13 @@ final Map<String, String> intlRuRu = {
   '@several days': '@several дней',
   '@several months': '@several месяцев',
 
-  'Daily': '24 часа',    // 'Daily',
+  'Daily': '24 часа',    // 'Ежедневно',
   'Anon': '3 дней',
-  'Weakly': '7 дней',    // 'Weakly',
-  'Monthly': '30 дней',  // 'Monthly',
+  'Weakly': '7 дней',    // 'Еженедельно',
+  'Monthly': '30 дней',  // 'Ежемесячно',
   'Manually': 'Вручную',
 
-  'Burn After Reading': 'Сгорит после прочтения',
+  'Burn After Reading': 'Сжечь после чтения',
 
   //
   //  Connection

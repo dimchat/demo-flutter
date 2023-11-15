@@ -59,13 +59,13 @@ final Map<String, String> intlIdId = {
   '@several days': '@several hari',
   '@several months': '@several bulan',
 
-  'Daily': '24 jam',   // 'Harian',
+  'Daily': '24 jam',     // 'Harian',
   'Anon': '3 hari',
   'Weakly': '7 hari',    // 'Mingguan',
   'Monthly': '30 hari',  // 'Bulanan',
   'Manually': 'Secara Manual',
 
-  'Burn After Reading': 'Hangus Setelah Dibaca',
+  'Burn After Reading': 'Bakar Setelah Membaca',
 
   //
   //  Connection

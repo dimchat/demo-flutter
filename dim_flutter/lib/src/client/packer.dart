@@ -136,12 +136,14 @@ class SharedPacker extends ClientMessagePacker {
 
   @override
   void suspendInstantMessage(InstantMessage iMsg, Map info) {
+    iMsg['error'] = info;
     Vestibule clerk = Vestibule();
     clerk.suspendInstantMessage(iMsg);
   }
 
   @override
   void suspendReliableMessage(ReliableMessage rMsg, Map info) {
+    rMsg['error'] = info;
     Vestibule clerk = Vestibule();
     clerk.suspendReliableMessage(rMsg);
   }

@@ -100,12 +100,22 @@ void adjustImage(Uint8List jpeg, int size, void Function(Uint8List small) onSank
         minWidth: width.toInt(),
         minHeight: height.toInt(),
       );
+      int borderline = fileSize < _lintel  // 2 MB
+          ? fileSize - (fileSize >> 2)     // size * 0.75
+          : fileSize - _threshold;         // size - 0.5 MB
       Log.info('resized: ${image.width} * ${image.height} => $width * $height,'
           ' $fileSize => ${small.length} bytes');
-      onSank(small);
+      if (small.length < borderline) {
+        onSank(small);
+      } else {
+        Log.warning('unworthy compression: $fileSize -> ${small.length}, borderline: $borderline');
+        onSank(jpeg);
+      }
     });
   }
 }
+const int _lintel = 1 << 21;  // 1024 * 1024 * 2
+const int _threshold = 1 << 19;  // 1024 * 512
 
 /// fetch size info from image data
 void _resolveImage(Uint8List jpeg, void Function(ui.Image image) onResolved) =>

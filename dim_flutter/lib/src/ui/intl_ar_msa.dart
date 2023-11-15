@@ -65,7 +65,7 @@ final Map<String, String> intlAr = {
   'Monthly': '30 يومًا',
   'Manually': 'يدويًا',
 
-  'Burn After Reading': 'احتراق بعد القراءة',
+  'Burn After Reading': 'حرق بعد القراءة',
 
   //
   //  Connection

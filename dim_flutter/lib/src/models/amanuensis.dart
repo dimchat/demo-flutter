@@ -207,6 +207,11 @@ class Amanuensis {
     if (last.isEmpty) {
       Log.warning('content text empty: $content');
       return;
+    } else {
+      last = last.replaceAll(RegExp('[\r\n]+'), ' ').trim();
+      if (last.length > 200) {
+        last = '${last.substring(0, 197)}...';
+      }
     }
     DateTime? time = iMsg.time;
     Log.warning('update last message: $last for conversation: $cid');

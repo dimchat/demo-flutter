@@ -63,9 +63,9 @@ final Map<String, String> intlJaJp = {
   'Anon': '3 日間',
   'Weakly': '7 日間',   // '毎週'
   'Monthly': '30 日間', // '毎月',
-  'Manually': '手動',
+  'Manually': '手動で',
 
-  'Burn After Reading': '読み終わったら破棄',
+  'Burn After Reading': '読んだ後に燃やす',
 
   //
   //  Connection

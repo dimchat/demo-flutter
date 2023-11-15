@@ -59,13 +59,13 @@ final Map<String, String> intlNlNl = {
   '@several days': '@several dagen',
   '@several months': '@several maanden',
 
-  'Daily': '24 uur',   // 'Dagelijks',
+  'Daily': '24 uur',      // 'Dagelijks',
   'Anon': '3 dagen',
   'Weakly': '7 dagen',    // 'Wekelijks',
   'Monthly': '30 dagen',  // 'Maandelijks',
   'Manually': 'Handmatig',
 
-  'Burn After Reading': 'Verbranden na Lezen',
+  'Burn After Reading': 'Verbranden Na Lezen',
 
   //
   //  Connection

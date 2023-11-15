@@ -59,13 +59,13 @@ final Map<String, String> intlDeDe = {
   '@several days': '@several Tage',
   '@several months': '@several Monate',
 
-  'Daily': '24 Stunden',  // 'Daily',
+  'Daily': '24 Stunden',  // 'Täglich',
   'Anon': '3 Tage',
-  'Weakly': '7 Tage',     // 'Weakly',
-  'Monthly': '30 Tage',   // 'Monthly',
+  'Weakly': '7 Tage',     // 'Wöchentlich',
+  'Monthly': '30 Tage',   // 'Monatlich',
   'Manually': 'Manuell',
 
-  'Burn After Reading': 'Selbstzerstörung',
+  'Burn After Reading': 'Nach dem Lesen verbrennen',
 
   //
   //  Connection

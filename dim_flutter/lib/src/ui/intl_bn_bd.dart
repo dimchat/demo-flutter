@@ -61,7 +61,7 @@ final Map<String, String> intlBnBd = {
 
   'Daily': '24 ঘন্টা',   // 'প্রতিদিন',
   'Anon': '3 দিন',
-  'Weakly': '7 দিন',    // 'Weakly',
+  'Weakly': '7 দিন',    // 'সাপ্তাহিক',
   'Monthly': '30 দিন',  // 'Monthly',
   'Manually': 'ম্যানুয়ালি',
 

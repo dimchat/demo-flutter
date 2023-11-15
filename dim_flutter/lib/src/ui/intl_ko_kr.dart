@@ -61,11 +61,11 @@ final Map<String, String> intlKoKr = {
 
   'Daily': '24 시간',  // '매일',
   'Anon': '3 일',
-  'Weakly': '7 일',   // '매주',
-  'Monthly': '30 일', // '매월',
-  'Manually': '수동',
+  'Weakly': '7 일',   // '주간',
+  'Monthly': '30 일', // '월간',
+  'Manually': '수동으로',
 
-  'Burn After Reading': '읽은 후 소멸',
+  'Burn After Reading': '읽은 후 태우기',
 
   //
   //  Connection

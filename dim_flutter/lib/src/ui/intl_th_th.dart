@@ -59,13 +59,13 @@ final Map<String, String> intlThTh = {
   '@several days': '@several วัน',
   '@several months': '@several เดือน',
 
-  'Daily': 'รายวัน',
+  'Daily': '24 ชั่วโมง',  // 'ทุกวัน',
   'Anon': '3 วัน',
-  'Weakly': '7 วัน',
-  'Monthly': '30 วัน',
+  'Weakly': '7 วัน',     // 'ทุกสัปดาห์',
+  'Monthly': '30 วัน',   // 'ทุกเดือน',
   'Manually': 'ด้วยตนเอง',
 
-  'Burn After Reading': 'เผาไหม้หลังจากอ่าน',
+  'Burn After Reading': 'เผาหลังจากอ่าน',
 
   //
   //  Connection

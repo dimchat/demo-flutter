@@ -82,6 +82,15 @@ class LanguageDataSource {
       locale = Locale(pair.first);
     } else {
       locale = Get.deviceLocale;
+      // patch for Chinese (Traditional)
+      var code = locale?.scriptCode?.toLowerCase();
+      if (code == 'hans') {
+        // zh_Hans_XX
+        locale = const Locale('zh', 'CN');
+      } else if (code == 'hant') {
+        // zh_Hant_XX
+        locale = const Locale('zh', 'TW');
+      }
     }
     if (locale != null) {
       Get.updateLocale(locale);

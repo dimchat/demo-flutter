@@ -59,10 +59,10 @@ final Map<String, String> intlHiIn = {
   '@several days': '@several दिन',
   '@several months': '@several महीने',
 
-  'Daily': '24 घंटे',    // 'Daily',
+  'Daily': '24 घंटे',    // 'दैनिक',
   'Anon': '3 दिन',
-  'Weakly': '7 दिन',    // 'Weakly',
-  'Monthly': '30 दिन',  // 'Monthly',
+  'Weakly': '7 दिन',    // 'साप्ताहिक',
+  'Monthly': '30 दिन',  // 'मासिक',
   'Manually': 'मैन्युअल',
 
   'Burn After Reading': 'पढ़ने के बाद जला दें',

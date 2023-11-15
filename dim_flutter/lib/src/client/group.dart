@@ -136,7 +136,7 @@ class SharedGroupManager implements GroupDataSource {
 
   @override
   Future<List<ID>> getAssistants(ID group) async =>
-      await delegate.getAdministrators(group);
+      await delegate.getAssistants(group);
 
   Future<List<ID>> getAdministrators(ID group) async =>
       await delegate.getAdministrators(group);

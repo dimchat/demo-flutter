@@ -59,11 +59,11 @@ final Map<String, String> intlViVN = {
   '@several days': '@several ngày',
   '@several months': '@several tháng',
 
-  'Daily': 'Hàng ngày',
+  'Daily': '24 giờ',     // 'Hàng ngày',
   'Anon': '3 ngày',
-  'Weakly': 'Hàng tuần',
-  'Monthly': 'Hàng tháng',
-  'Manually': 'Thủ công',
+  'Weakly': '7 ngày',    // 'Hàng tuần',
+  'Monthly': '30 ngày',  // 'Hàng tháng',
+  'Manually': 'Bằng tay',
 
   'Burn After Reading': 'Đốt sau khi đọc',
 

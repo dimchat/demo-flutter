@@ -106,7 +106,7 @@ class _ProviderTable extends DataTableHandler<ProviderInfo> implements ProviderD
   Future<bool> removeProvider(ID identifier) async {
     SQLConditions cond;
     cond = SQLConditions(left: 'pid', comparison: '=', right: identifier.toString());
-    return await delete(_table, conditions: cond) > 0;
+    return await delete(_table, conditions: cond) >= 0;
   }
 
 }

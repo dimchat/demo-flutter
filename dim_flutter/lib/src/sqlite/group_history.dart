@@ -64,7 +64,7 @@ class _GroupHistoryTable extends DataTableHandler<Pair<GroupCommand, ReliableMes
     SQLConditions cond;
     cond = SQLConditions(left: 'gid', comparison: '=', right: group.toString());
     cond.addCondition(SQLConditions.kAnd, left: 'cmd', comparison: '=', right: 'resign');
-    return await delete(_table, conditions: cond) > 0;
+    return await delete(_table, conditions: cond) >= 0;
   }
 
   @override
@@ -72,7 +72,7 @@ class _GroupHistoryTable extends DataTableHandler<Pair<GroupCommand, ReliableMes
     SQLConditions cond;
     cond = SQLConditions(left: 'gid', comparison: '=', right: group.toString());
     cond.addCondition(SQLConditions.kAnd, left: 'cmd', comparison: '<>', right: 'resign');
-    return await delete(_table, conditions: cond) > 0;
+    return await delete(_table, conditions: cond) >= 0;
   }
 
 }

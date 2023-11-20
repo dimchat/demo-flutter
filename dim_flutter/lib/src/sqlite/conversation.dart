@@ -96,7 +96,7 @@ class _ConversationTable extends DataTableHandler<Conversation> implements Conve
   Future<bool> removeConversation(ID chat) async {
     SQLConditions cond;
     cond = SQLConditions(left: 'cid', comparison: '=', right: chat.toString());
-    return await delete(_table, conditions: cond) > 0;
+    return await delete(_table, conditions: cond) >= 0;
   }
 
 }

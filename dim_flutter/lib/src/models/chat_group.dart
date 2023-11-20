@@ -390,8 +390,8 @@ class _ContactManager {
     GroupInfo? info = _contacts[identifier];
     if (info == null) {
       info = GroupInfo(identifier);
-      info.reloadData();
       _contacts[identifier] = info;
+      info.reloadData();
     }
     return info;
   }

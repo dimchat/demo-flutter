@@ -248,8 +248,8 @@ class _ContactManager {
     ContactInfo? info = _contacts[identifier];
     if (info == null) {
       info = ContactInfo(identifier);
-      info.reloadData();
       _contacts[identifier] = info;
+      info.reloadData();
     }
     return info;
   }

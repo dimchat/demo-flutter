@@ -80,7 +80,7 @@ class _LoginCommandTable extends DataTableHandler<Pair<LoginCommand, ReliableMes
   Future<bool> deleteLoginCommandMessage(ID identifier) async {
     SQLConditions cond;
     cond = SQLConditions(left: 'uid', comparison: '=', right: identifier.toString());
-    return await delete(_table, conditions: cond) > 0;
+    return await delete(_table, conditions: cond) >= 0;
   }
 
   @override

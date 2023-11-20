@@ -56,14 +56,14 @@ class _StationTable extends DataTableHandler<StationInfo> implements StationDBI 
     cond = SQLConditions(left: 'pid', comparison: '=', right: provider.toString());
     cond.addCondition(SQLConditions.kAnd, left: 'host', comparison: '=', right: host);
     cond.addCondition(SQLConditions.kAnd, left: 'port', comparison: '=', right: port);
-    return await delete(_table, conditions: cond) > 0;
+    return await delete(_table, conditions: cond) >= 0;
   }
 
   @override
   Future<bool> removeStations({required ID provider}) async {
     SQLConditions cond;
     cond = SQLConditions(left: 'pid', comparison: '=', right: provider.toString());
-    return await delete(_table, conditions: cond) > 0;
+    return await delete(_table, conditions: cond) >= 0;
   }
 
 }

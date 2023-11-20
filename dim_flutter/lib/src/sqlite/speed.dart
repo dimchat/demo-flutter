@@ -51,7 +51,7 @@ class SpeedTable extends DataTableHandler<SpeedRecord> implements SpeedDBI {
     }
     SQLConditions cond;
     cond = SQLConditions(left: 'time', comparison: '<', right: time);
-    return await delete(_table, conditions: cond) > 0;
+    return await delete(_table, conditions: cond) >= 0;
   }
 
 }

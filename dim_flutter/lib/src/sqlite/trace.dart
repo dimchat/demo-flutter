@@ -63,14 +63,14 @@ class TraceTable extends DataTableHandler<String> implements TraceDBI {
       cond.addCondition(SQLConditions.kAnd,
           left: 'signature', comparison: '=', right: signature);
     }
-    return await delete(_table, conditions: cond) > 0;
+    return await delete(_table, conditions: cond) >= 0;
   }
 
   @override
   Future<bool> removeAllTraces(ID cid) async {
     SQLConditions cond;
     cond = SQLConditions(left: 'cid', comparison: '=', right: cid.toString());
-    return await delete(_table, conditions: cond) > 0;
+    return await delete(_table, conditions: cond) >= 0;
   }
 
 }

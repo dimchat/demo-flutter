@@ -170,16 +170,22 @@ class Amanuensis {
 
   Future<bool> clearUnread(Conversation chatBox) async {
     ID cid = chatBox.identifier;
-    if (_conversationMap[cid] == null) {
+    int unread = chatBox.unread;
+    if (unread == 0) {
+      // no need to update
+      Log.info('[Badge] unread is zero: $cid');
+      return false;
+    } else if (_conversationMap[cid] == null) {
       // conversation not found
+      Log.warning('[Badge] conversation not found: $cid, unread: $unread');
       return false;
     }
     chatBox.unread = 0;
     GlobalVariable shared = GlobalVariable();
     if (await shared.database.updateConversation(chatBox)) {
-      Log.debug('unread count cleared: $chatBox');
+      Log.info('[Badge] unread count cleared: $chatBox, unread: $unread');
     } else {
-      Log.error('failed to update conversation: $chatBox');
+      Log.error('[Badge] failed to update conversation: $chatBox, unread: $unread');
       return false;
     }
     var nc = lnc.NotificationCenter();
@@ -220,11 +226,14 @@ class Amanuensis {
     Conversation? chatBox = _conversationMap[cid];
     if (chatBox == null) {
       // new conversation
-      if (cid.isGroup) {
-        chatBox = GroupInfo(cid, unread: 1, lastMessage: last, lastMessageTime: time);
-      } else {
-        chatBox = ContactInfo(cid, unread: 1, lastMessage: last, lastMessageTime: time);
+      chatBox = Conversation.fromID(cid);
+      if (chatBox == null) {
+        Log.error('failed to get conversation: $cid');
+        return;
       }
+      chatBox.unread = 1;
+      chatBox.lastMessage = last;
+      chatBox.lastMessageTime = time;
       if (await shared.database.addConversation(chatBox)) {
         await chatBox.reloadData();
         // add to cache

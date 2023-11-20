@@ -87,9 +87,9 @@ abstract class MessageBuilder {
         text = '[File:${content.filename}]';
       }
     } else if (content is PageContent) {
-      text = '[URL:${content.url}]';
+      text = '[URL:${content.title}]';
     } else if (content is NameCard) {
-      text = '[NameCard:${content.identifier}]';
+      text = '[NameCard:${content.name}]';
     } else {
       text = "Current version doesn't support this message type: ${content.type}.";
     }

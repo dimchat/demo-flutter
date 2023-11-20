@@ -232,37 +232,3 @@ class InstantMessageTable extends DataTableHandler<InstantMessage> implements In
   }
 
 }
-
-
-ReliableMessage _extractReliableMessage(ResultSet resultSet, int index) {
-  String? json = resultSet.getString('msg');
-  Map? msg = JSONMap.decode(json!);
-  return ReliableMessage.parse(msg)!;
-}
-
-
-class ReliableMessageTable extends DataTableHandler<ReliableMessage> implements ReliableMessageDBI {
-  ReliableMessageTable() : super(MessageDatabase(), _extractReliableMessage);
-
-  @override
-  Future<Pair<List<ReliableMessage>, int>> getReliableMessages(ID receiver, {int start = 0, int? limit}) async {
-    // TODO: implement getReliableMessages
-    Log.error('implement getReliableMessages: $receiver');
-    return const Pair([], 0);
-  }
-
-  @override
-  Future<bool> cacheReliableMessage(ID receiver, ReliableMessage rMsg) async {
-    // TODO: implement cacheReliableMessage
-    Log.error('implement cacheReliableMessage: $receiver');
-    return false;
-  }
-
-  @override
-  Future<bool> removeReliableMessage(ID receiver, ReliableMessage rMsg) async {
-    // TODO: implement removeReliableMessage
-    Log.error('implement removeReliableMessage: $receiver');
-    return false;
-  }
-
-}

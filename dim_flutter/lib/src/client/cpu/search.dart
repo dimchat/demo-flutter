@@ -2,7 +2,7 @@ import 'package:dim_client/dim_client.dart';
 import 'package:lnc/lnc.dart';
 
 import '../../common/constants.dart';
-import '../messenger.dart';
+import '../facebook.dart';
 import '../shared.dart';
 
 class SearchCommandProcessor extends BaseCommandProcessor {
@@ -34,27 +34,16 @@ class SearchCommandProcessor extends BaseCommandProcessor {
     }
 
     GlobalVariable shared = GlobalVariable();
-    SharedMessenger? messenger = shared.messenger;
-    if (messenger == null) {
-      assert(false, 'should not happen');
-      return null;
-    }
+    SharedFacebook facebook = shared.facebook;
 
     List<ID> array = ID.convert(users);
     for (ID item in array) {
-      messenger.queryDocument(item).then((value) {
-        if (value) {
-          Log.warning('querying document: $item');
-        }
-      });
+      facebook.getDocuments(item);
       if (item.isUser) {
-        continue;
+        facebook.getDocuments(item);
+      } else {
+        facebook.getMembers(item);
       }
-      messenger.queryMembers(item).then((value) {
-        if (value) {
-          Log.warning('querying members: $item');
-        }
-      });
     }
     return array;
   }

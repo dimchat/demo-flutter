@@ -2,19 +2,17 @@ import 'package:dim_client/dim_client.dart';
 
 import '../channels/manager.dart';
 import '../widgets/browse_html.dart';
+
+import 'shared.dart';
 import 'group.dart';
 
 class SharedFacebook extends ClientFacebook {
-  SharedFacebook(super.adb);
+  SharedFacebook();
 
   @override
-  Future<Document?> getDocumentByType(ID identifier, [String? type]) async {
-    Document? doc = await super.getDocumentByType(identifier, type);
-    // compatible for document type
-    if (doc == null && type == Document.kVisa) {
-      doc = await super.getDocumentByType(identifier, 'profile');
-    }
-    return doc;
+  CommonArchivist get archivist {
+    GlobalVariable shared = GlobalVariable();
+    return shared.archivist;
   }
 
   @override
@@ -22,23 +20,13 @@ class SharedFacebook extends ClientFacebook {
     Group? group;
     if (!identifier.isBroadcast) {
       SharedGroupManager man = SharedGroupManager();
-      Bulletin? doc = await getBulletin(identifier);
+      Bulletin? doc = await man.getBulletin(identifier);
       if (doc != null) {
         group = await super.createGroup(identifier);
         group?.dataSource = man;
       }
     }
     return group;
-  }
-
-  Future<List<ID>> getAdministrators(ID group) async {
-    assert(group.isGroup, 'ID error: $group');
-    Bulletin? doc = await getBulletin(group);
-    if (doc == null) {
-      // group not ready
-      return [];
-    }
-    return await database.getAdministrators(group: group);
   }
 
   Future<Pair<String?, Uri?>> getAvatar(ID user) async {

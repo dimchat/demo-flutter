@@ -84,8 +84,9 @@ class SharedPacker extends ClientMessagePacker {
 
   // protected
   Future<bool> pushVisa(ID contact) async {
-    QueryFrequencyChecker checker = QueryFrequencyChecker();
-    if (!checker.isDocumentResponseExpired(contact, force: false)) {
+    GlobalVariable shared = GlobalVariable();
+    ClientArchivist archivist = shared.archivist;
+    if (!archivist.isDocumentResponseExpired(contact, false)) {
       // response not expired yet
       Log.debug('visa response not expired yet: $contact');
       return false;

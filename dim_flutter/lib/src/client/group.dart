@@ -79,7 +79,7 @@ class SharedGroupManager implements GroupDataSource {
   GroupDelegate get delegate {
     GroupDelegate? target = _delegate;
     if (target == null) {
-      _delegate = target = _GroupDelegate(facebook!, messenger!);
+      _delegate = target = GroupDelegate(facebook!, messenger!);
     }
     return target;
   }
@@ -230,23 +230,6 @@ class SharedGroupManager implements GroupDataSource {
     assert(iMsg.content.group != null, 'group message error: $iMsg');
     iMsg['GF'] = true;  // group flag for notification
     return await emitter.sendInstantMessage(iMsg, priority: priority);
-  }
-
-}
-
-// FIXME: cannot get 'administrators' from bulletin document here
-class _GroupDelegate extends GroupDelegate {
-  _GroupDelegate(super.facebook, super.messenger);
-
-  @override
-  Future<List<ID>> getAdministrators(ID group) async {
-    assert(group.isGroup, 'ID error: $group');
-    Bulletin? doc = await getBulletin(group);
-    if (doc == null) {
-      // group not ready
-      return [];
-    }
-    return await database!.getAdministrators(group: group);
   }
 
 }

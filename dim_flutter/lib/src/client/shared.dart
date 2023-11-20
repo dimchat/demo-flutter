@@ -13,7 +13,8 @@ class GlobalVariable {
   GlobalVariable._internal(this.database)
       : adb = database, mdb = database, sdb = database, emitter = Emitter() {
     _registerPlugins();
-    facebook = SharedFacebook(database);
+    archivist = SharedArchivist(database);
+    facebook = SharedFacebook();
     terminal = Client(facebook, database);
   }
 
@@ -21,6 +22,8 @@ class GlobalVariable {
   final MessageDBI mdb;
   final SessionDBI sdb;
   final SharedDatabase database;
+
+  late final ClientArchivist archivist;
 
   final Emitter emitter;
 
@@ -72,5 +75,23 @@ void _registerPlugins() {
 
   // Quote
   Content.setFactory(ContentType.kQuote, ContentParser((dict) => BaseQuoteContent(dict)));
+
+}
+
+
+class SharedArchivist extends ClientArchivist {
+  SharedArchivist(super.database);
+
+  @override
+  CommonFacebook? get facebook {
+    GlobalVariable shared = GlobalVariable();
+    return shared.facebook;
+  }
+
+  @override
+  CommonMessenger? get messenger {
+    GlobalVariable shared = GlobalVariable();
+    return shared.messenger;
+  }
 
 }

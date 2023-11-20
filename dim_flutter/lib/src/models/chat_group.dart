@@ -198,7 +198,7 @@ class GroupInfo extends Conversation {
       _invitations = [];
       _reset = const Pair(null, null);
     } else {
-      AccountDBI db = shared.facebook.database;
+      AccountDBI db = shared.database;
       List<Pair<GroupCommand, ReliableMessage>> histories = await db.getGroupHistories(group: identifier);
       GroupCommand content;
       ReliableMessage rMsg;

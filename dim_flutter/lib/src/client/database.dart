@@ -52,7 +52,6 @@ class SharedDatabase implements AccountDBI, SessionDBI, MessageDBI,
 
   /// Message
   final CipherKeyDBI msgKeyTable = MsgKeyCache();
-  final ReliableMessageDBI reliableMessageTable = ReliableMessageTable();
   final InstantMessageTable instantMessageTable = InstantMessageTable();
   final TraceDBI traceTable = TraceTable();
   final ConversationDBI conversationTable = ConversationCache();
@@ -373,24 +372,6 @@ class SharedDatabase implements AccountDBI, SessionDBI, MessageDBI,
     Log.error('implement saveGroupKeys: $group');
     return true;
   }
-
-  //
-  //  ReliableMessage Table
-  //
-
-  @override
-  Future<Pair<List<ReliableMessage>, int>> getReliableMessages(ID receiver,
-      {int start = 0, int? limit}) async =>
-      await reliableMessageTable.getReliableMessages(receiver,
-          start: start, limit: limit);
-
-  @override
-  Future<bool> cacheReliableMessage(ID receiver, ReliableMessage rMsg) async =>
-      reliableMessageTable.cacheReliableMessage(receiver, rMsg);
-
-  @override
-  Future<bool> removeReliableMessage(ID receiver, ReliableMessage rMsg) async =>
-      await reliableMessageTable.removeReliableMessage(receiver, rMsg);
 
   //
   //  InstantMessage Table

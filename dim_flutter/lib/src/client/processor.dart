@@ -7,11 +7,9 @@ import 'cpu/creator.dart';
 class SharedProcessor extends ClientMessageProcessor {
   SharedProcessor(super.facebook, super.messenger);
 
-  final FrequencyChecker<Pair<ID, ID>> _groupQueries = FrequencyChecker(600);
-
   @override
   ContentProcessorCreator createCreator() {
-    return SharedContentProcessorCreator(facebook, messenger);
+    return SharedContentProcessorCreator(facebook!, messenger!);
   }
 
   @override
@@ -37,26 +35,6 @@ class SharedProcessor extends ClientMessageProcessor {
       return [];
     }
     return responses;
-  }
-
-  @override
-  Future<List<Content>> processContent(Content content, ReliableMessage rMsg) async {
-    if (content is! Command) {
-      ID? group = content.group;
-      if (group != null) {
-        ID sender = rMsg.sender;
-        Pair<ID, ID> direction = Pair(sender, group);
-        Bulletin? doc = await facebook.getBulletin(group);
-        if (doc == null && _groupQueries.isExpired(direction)) {
-          Log.info('querying group: $group, $sender');
-          Command cmd1 = DocumentCommand.query(group, null);
-          messenger.sendContent(cmd1, sender: null, receiver: sender, priority: 1);
-          Command cmd2 = GroupCommand.query(group);
-          messenger.sendContent(cmd2, sender: null, receiver: sender, priority: 1);
-        }
-      }
-    }
-    return await super.processContent(content, rMsg);
   }
 
 }

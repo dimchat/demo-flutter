@@ -14,14 +14,14 @@ class GroupCache implements GroupDBI {
   @override
   Future<ID?> getFounder({required ID group}) async {
     // TODO: implement getFounder
-    Log.error('implement getFounder: $group');
+    Log.warning('implement getFounder: $group');
     return null;
   }
 
   @override
   Future<ID?> getOwner({required ID group}) async {
     // TODO: implement getOwner
-    Log.error('implement getOwner: $group');
+    Log.warning('implement getOwner: $group');
     return null;
   }
 
@@ -42,14 +42,14 @@ class GroupCache implements GroupDBI {
   @override
   Future<List<ID>> getAssistants({required ID group}) async {
     // TODO: implement getAssistants
-    Log.error('implement getAssistants: $group');
+    Log.warning('implement getAssistants: $group');
     return [];
   }
 
   @override
   Future<bool> saveAssistants(List<ID> bots, {required ID group}) async {
     // TODO: implement saveAssistants
-    Log.error('implement saveAssistants: $group, $bots');
+    Log.warning('implement saveAssistants: $group, $bots');
     return false;
   }
 
@@ -69,7 +69,7 @@ class GroupCache implements GroupDBI {
 
   Future<bool> removeGroup({required ID group}) async {
     // TODO: implement removeGroup
-    Log.error('implement removeGroup: $group');
+    Log.warning('implement removeGroup: $group');
     return false;
   }
 

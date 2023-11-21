@@ -98,7 +98,8 @@ abstract class ExternalStorage {
     file.data = data;
     try {
       return await file.write(path);
-    } catch (e) {
+    } catch (e, st) {
+      Log.error('failed to save file: $path, $e, $st');
       return -1;
     }
   }

@@ -33,9 +33,9 @@ class Amanuensis {
       if (chat is GroupInfo) {
         array.add(chat);
       } else if (chat is ContactInfo) {
-        if (chat.isNotFriend || chat.isBlocked) {
-          // skip stranger
-        } else {
+        if (chat.isBlocked) {
+          // skip blocked-list
+        } else if (chat.isFriend) {
           array.add(chat);
         }
       }
@@ -83,8 +83,6 @@ class Amanuensis {
       // build conversations
       List<Conversation> temp = [...array];
       for (Conversation item in temp) {
-        item.reloadData();
-        // TODO: get last message & unread count
         Log.debug('new conversation created: $item');
         _conversationMap[item.identifier] = item;
       }

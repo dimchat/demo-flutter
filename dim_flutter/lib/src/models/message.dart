@@ -47,8 +47,8 @@ abstract class MessageBuilder {
         return _getCommandText(content, sender);
       }
       return _getContentText(content);
-    } catch (e) {
-      Log.error('content error: $e, $content');
+    } catch (e, st) {
+      Log.error('content error: $e, $content, $st');
       return e.toString();
     }
   }

@@ -39,9 +39,7 @@ class SearchCommandProcessor extends BaseCommandProcessor {
     List<ID> array = ID.convert(users);
     for (ID item in array) {
       facebook.getDocuments(item);
-      if (item.isUser) {
-        facebook.getDocuments(item);
-      } else {
+      if (item.isGroup) {
         facebook.getMembers(item);
       }
     }

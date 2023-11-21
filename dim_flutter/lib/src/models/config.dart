@@ -90,8 +90,8 @@ Future<Map?> _load(String path) async {
   }
   try {
     return await ExternalStorage.loadJsonMap(path);
-  } catch (e) {
-    Log.error('failed to load config: $path, $e');
+  } catch (e, st) {
+    Log.error('failed to load config: $path, $e, $st');
     return null;
   }
 }
@@ -124,8 +124,8 @@ Future<Map?> _refresh(Uri url, String path) async {
   Map? conf;
   try {
     conf = await ExternalStorage.loadJsonMap(tmp);
-  } catch (e) {
-    Log.error('downloaded config error: $e');
+  } catch (e, st) {
+    Log.error('downloaded config error: $e, $st');
     conf = null;
   }
   // remove temporary file

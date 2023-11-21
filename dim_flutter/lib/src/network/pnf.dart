@@ -108,8 +108,9 @@ class _HTTPHelper {
         Log.error('[DIO] failed to download $url: $error');
         throw Exception(error);
       });
-    } catch (e) {
-      Log.error('failed to download $url: $e');
+    } catch (e, st) {
+      Log.error('failed to download $url: error: $e');
+      Log.debug('failed to download $url: error: $e, $st');
       return null;
     }
     int? statusCode = response.statusCode;

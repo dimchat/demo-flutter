@@ -170,8 +170,8 @@ class PageContentView extends StatelessWidget {
       if (icon != null) {
         return Image(image: MemoryImage(icon));
       }
-    } catch (e) {
-      Log.error('web page icon error: $e');
+    } catch (e, st) {
+      Log.error('web page icon error: $e, $st');
     }
     return null;
   }

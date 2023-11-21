@@ -1,4 +1,5 @@
 import 'package:dim_client/dim_client.dart';
+import 'package:lnc/lnc.dart';
 
 import '../channels/manager.dart';
 import '../widgets/browse_html.dart';
@@ -39,6 +40,53 @@ class SharedFacebook extends ClientFacebook {
       path = await man.ftpChannel.downloadAvatar(url);
     }
     return Pair(path, url);
+  }
+
+}
+
+class SharedArchivist extends ClientArchivist {
+  SharedArchivist(super.database);
+
+  @override
+  CommonFacebook? get facebook {
+    GlobalVariable shared = GlobalVariable();
+    return shared.facebook;
+  }
+
+  @override
+  CommonMessenger? get messenger {
+    GlobalVariable shared = GlobalVariable();
+    return shared.messenger;
+  }
+
+  @override
+  Future<bool> queryMeta(ID identifier) async {
+    Session? session = messenger?.session;
+    if (session?.identifier == null) {
+      Log.warning('querying meta cancel, waiting to connect: $identifier');
+      return false;
+    }
+    return await super.queryMeta(identifier);
+  }
+
+  @override
+  Future<bool> queryDocuments(ID identifier, List<Document> documents) async {
+    Session? session = messenger?.session;
+    if (session?.identifier == null) {
+      Log.warning('querying documents cancel, waiting to connect: $identifier');
+      return false;
+    }
+    return await super.queryDocuments(identifier, documents);
+  }
+
+  @override
+  Future<bool> queryMembers(ID identifier, List<ID> members) async {
+    Session? session = messenger?.session;
+    if (session?.identifier == null) {
+      Log.warning('querying members cancel, waiting to connect: $identifier');
+      return false;
+    }
+    return await super.queryMembers(identifier, members);
   }
 
 }

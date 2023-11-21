@@ -213,7 +213,7 @@ class GroupInfo extends Conversation {
         } else if (content is JoinCommand) {
           members = [rMsg.sender];
         } else {
-          Log.warning('ignore group command: ${content.cmd}');
+          Log.debug('ignore group command: ${content.cmd}');
           continue;
         }
         Log.info('${rMsg.sender} invites $members');

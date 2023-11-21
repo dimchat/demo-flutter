@@ -16,9 +16,9 @@ class SharedProcessor extends ClientMessageProcessor {
   Future<List<SecureMessage>> processSecureMessage(SecureMessage sMsg, ReliableMessage rMsg) async {
     try {
       return await super.processSecureMessage(sMsg, rMsg);
-    } catch (e) {
+    } catch (e, st) {
       // RangeError: Value not in range: 3
-      Log.error('failed to process message: ${rMsg.sender} -> ${rMsg.receiver}: $e');
+      Log.error('failed to process message: ${rMsg.sender} -> ${rMsg.receiver}: $e, $st');
       // assert(false, 'failed to process message: ${rMsg.sender} -> ${rMsg.receiver}: $e');
       return [];
     }

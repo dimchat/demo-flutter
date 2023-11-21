@@ -139,8 +139,8 @@ class _IPHelper {
         return null;
       }
       return bytes;
-    } catch (e) {
-      Log.error('[IMG] failed to get image from file: $path, error: $e');
+    } catch (e, st) {
+      Log.error('[IMG] failed to get image from file: $path, error: $e, $st');
       return null;
     }
   }

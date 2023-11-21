@@ -86,8 +86,8 @@ class ImageFactory {
         return null;
       }
       return MemoryImage(bytes);
-    } catch (e) {
-      Log.error('[IMG] failed to get image from file: $path, error: $e');
+    } catch (e, st) {
+      Log.error('[IMG] failed to get image from file: $path, error: $e, $st');
       return null;
     }
   }

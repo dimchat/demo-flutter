@@ -131,8 +131,8 @@ class FileTransfer {
       // delete to download again
       try {
         await Paths.delete(tempPath);
-      } catch (e) {
-        Log.error('failed to delete file: $tempPath, error: $e');
+      } catch (e, st) {
+        Log.error('failed to delete file: $tempPath, error: $e, $st');
       }
       return null;
     }
@@ -199,8 +199,8 @@ class FileTransfer {
     Log.info('decrypting file: $path, size: ${data.length}');
     try {
       return password.decrypt(data, content);
-    } catch (e) {
-      Log.error('failed to decrypt file data: $path, $password');
+    } catch (e, st) {
+      Log.error('failed to decrypt file data: $path, $password, error: $e, $st');
       return null;
     }
   }

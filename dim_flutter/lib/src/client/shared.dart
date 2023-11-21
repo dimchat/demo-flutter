@@ -77,21 +77,3 @@ void _registerPlugins() {
   Content.setFactory(ContentType.kQuote, ContentParser((dict) => BaseQuoteContent(dict)));
 
 }
-
-
-class SharedArchivist extends ClientArchivist {
-  SharedArchivist(super.database);
-
-  @override
-  CommonFacebook? get facebook {
-    GlobalVariable shared = GlobalVariable();
-    return shared.facebook;
-  }
-
-  @override
-  CommonMessenger? get messenger {
-    GlobalVariable shared = GlobalVariable();
-    return shared.messenger;
-  }
-
-}

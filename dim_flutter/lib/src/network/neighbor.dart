@@ -11,8 +11,8 @@ Future<NeighborInfo?> getNeighborStation() async {
   SessionDBI database = shared.sdb;
   try {
     await _updateStations(database);
-  } catch (e) {
-    Log.error('failed to update stations: $e');
+  } catch (e, st) {
+    Log.error('failed to update stations: $e, $st');
   }
   NeighborInfo? fast;
   // check service provider

@@ -17,9 +17,10 @@ class SharedMessenger extends ClientMessenger {
   Future<Uint8List?> encryptKey(Uint8List key, ID receiver, InstantMessage iMsg) async {
     try {
       return await super.encryptKey(key, receiver, iMsg);
-    } catch (e) {
+    } catch (e, st) {
       // FIXME:
-      Log.error('failed to encrypt key for receiver: $receiver, $e');
+      Log.error('failed to encrypt key for receiver: $receiver, error: $e');
+      Log.debug('failed to encrypt key for receiver: $receiver, error: $e, $st');
       return null;
     }
   }
@@ -77,9 +78,9 @@ class SharedMessenger extends ClientMessenger {
     ReliableMessage? rMsg;
     try {
       rMsg = await super.sendInstantMessage(iMsg, priority: priority);
-    } catch (e) {
-      Log.error('failed to send message to: ${iMsg.receiver}, $e');
-      // assert(false, '$e');
+    } catch (e, st) {
+      Log.error('failed to send message to: ${iMsg.receiver}, error: $e');
+      Log.debug('failed to send message to: ${iMsg.receiver}, error: $e, $st');
       return null;
     }
     if (rMsg != null) {
@@ -184,8 +185,8 @@ class SharedMessenger extends ClientMessenger {
     // 1. broadcast current documents after handshake success
     try {
       await super.handshakeSuccess();
-    } catch (e) {
-      Log.error('failed to broadcast document: $e');
+    } catch (e, st) {
+      Log.error('failed to broadcast document: $e, $st');
     }
     GlobalVariable shared = GlobalVariable();
     User? user = await shared.facebook.currentUser;
@@ -196,16 +197,16 @@ class SharedMessenger extends ClientMessenger {
     // 2. broadcast login command with current station info
     try {
       await broadcastLogin(user.identifier, shared.terminal.userAgent);
-    } catch (e) {
-      Log.error('failed to broadcast login command: $e');
+    } catch (e, st) {
+      Log.error('failed to broadcast login command: $e, $st');
     }
     // 3. broadcast block/mute list
     try {
       Shield shield = Shield();
       await shield.broadcastBlockList();
       await shield.broadcastMuteList();
-    } catch (e) {
-      Log.error('failed to broadcast block/mute list: $e');
+    } catch (e, st) {
+      Log.error('failed to broadcast block/mute list: $e, $st');
     }
     // 4. report station speeds to master after tested speeds
   }

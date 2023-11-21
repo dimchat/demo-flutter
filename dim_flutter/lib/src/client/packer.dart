@@ -41,16 +41,16 @@ class SharedPacker extends ClientMessagePacker {
     InstantMessage? iMsg;
     try {
       iMsg = await super.decryptMessage(sMsg);
-    } catch (e) {
+    } catch (e, st) {
       String errMsg = e.toString();
       if (errMsg.contains('failed to decrypt message key')) {
         // Exception from 'SecureMessagePacker::decrypt(sMsg, receiver)'
-        Log.warning('decrypt message error: $e');
+        Log.warning('decrypt message error: $e, $st');
         // visa.key changed?
         // push my newest visa to the sender
       } else if (errMsg.contains('receiver error')) {
         // Exception from 'MessagePacker::decryptMessage(sMsg)'
-        Log.error('decrypt message error: $e');
+        Log.error('decrypt message error: $e, $st');
         // not for you?
         // just ignore it
         return null;
@@ -148,15 +148,5 @@ class SharedPacker extends ClientMessagePacker {
     Vestibule clerk = Vestibule();
     clerk.suspendReliableMessage(rMsg);
   }
-
-  // @override
-  // Future<List<ID>> getMembers(ID group) async {
-  //   ID? owner = await facebook?.getOwner(group);
-  //   if (owner == null) {
-  //     Log.warning('failed to get owner of group: $group');
-  //     return [];
-  //   }
-  //   return await super.getMembers(group);
-  // }
 
 }

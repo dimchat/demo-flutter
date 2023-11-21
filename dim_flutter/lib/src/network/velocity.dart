@@ -217,8 +217,8 @@ class VelocityMeter {
     // fetch socket address
     try {
       socketAddress = await _decryptAddress(rMsg);
-    } catch (e) {
-      Log.error('socket address not found in message from $sender}, $e');
+    } catch (e, st) {
+      Log.error('socket address not found in message from $sender}, error: $e, $st');
     }
     Log.warning('station ($host:$port) $sender responded within $duration seconds via socket: "$socketAddress"');
     return true;

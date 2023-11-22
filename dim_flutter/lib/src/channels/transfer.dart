@@ -9,7 +9,7 @@ import '../models/config.dart';
 import '../widgets/browse_html.dart';
 import 'manager.dart';
 
-class FileTransferChannel extends MethodChannel {
+class FileTransferChannel extends SafeChannel {
   FileTransferChannel(super.name) {
     setMethodCallHandler(_handle);
   }
@@ -30,21 +30,21 @@ class FileTransferChannel extends MethodChannel {
   String? _temporaryDirectory;
   bool _apiUpdated = false;
 
-  Future<String> get cachesDirectory async {
+  Future<String?> get cachesDirectory async {
     String? dir = _cachesDirectory;
     if (dir == null) {
-      dir = await _invoke(ChannelMethods.getCachesDirectory, null);
+      dir = await invoke(ChannelMethods.getCachesDirectory, null);
       _cachesDirectory = dir;
     }
-    return dir!;
+    return dir;
   }
-  Future<String> get temporaryDirectory async {
+  Future<String?> get temporaryDirectory async {
     String? dir = _temporaryDirectory;
     if (dir == null) {
-      dir = await _invoke(ChannelMethods.getTemporaryDirectory, null);
+      dir = await invoke(ChannelMethods.getTemporaryDirectory, null);
       _temporaryDirectory = dir;
     }
-    return dir!;
+    return dir;
   }
 
   Future<void> _prepare() async {
@@ -123,18 +123,10 @@ class FileTransferChannel extends MethodChannel {
   //
   //  Invoke Methods
   //
-  Future<dynamic> _invoke(String method, Map? arguments) async {
-    try {
-      return await invokeMethod(method, arguments);
-    } on PlatformException catch (e) {
-      Log.error('channel error: $e');
-      return;
-    }
-  }
 
   /// set upload API & secret key
   Future<void> setUploadConfig({required String api, required String secret}) async =>
-      await _invoke(ChannelMethods.setUploadAPI, {
+      await invoke(ChannelMethods.setUploadAPI, {
         'api': api,
         'secret': secret,
       });
@@ -183,7 +175,7 @@ class FileTransferChannel extends MethodChannel {
       Log.info('try to upload: $filename');
       _uploads[filename] = _upWaiting;
       // call ftp client to upload
-      url = await _invoke(method, {
+      url = await invoke(method, {
         'data': data,
         'filename': filename,
         'sender': sender.toString(),
@@ -243,7 +235,7 @@ class FileTransferChannel extends MethodChannel {
       Log.info('try to download: $url');
       _downloads[url] = _downWaiting;
       // call ftp client to download
-      path = await _invoke(method, {
+      path = await invoke(method, {
         'url': url.toString(),
       });
       Log.info('downloaded: $url -> $path');

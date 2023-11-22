@@ -34,7 +34,7 @@ class SharedSession extends ClientSession {
   @override
   SessionState get state {
     SessionState? current = fsm.currentState;
-    Log.debug('current session state: $current');
+    Log.info('current session state: $current');
     return current ?? SessionState(SessionStateOrder.kDefault);
   }
 

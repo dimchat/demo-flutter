@@ -60,6 +60,33 @@ class SharedArchivist extends ClientArchivist {
   }
 
   @override
+  Future<bool> checkMeta(ID identifier, Meta? meta) async {
+    if (identifier.isBroadcast) {
+      // broadcast entity has no meta to query
+      return false;
+    }
+    return await super.checkMeta(identifier, meta);
+  }
+
+  @override
+  Future<bool> checkDocuments(ID identifier, List<Document> documents) async {
+    if (identifier.isBroadcast) {
+      // broadcast entity has no document to update
+      return false;
+    }
+    return await super.checkDocuments(identifier, documents);
+  }
+
+  @override
+  Future<bool> checkMembers(ID group, List<ID> members) async {
+    if (group.isBroadcast) {
+      // broadcast group has no members to update
+      return false;
+    }
+    return await super.checkMembers(group, members);
+  }
+
+  @override
   Future<bool> queryMeta(ID identifier) async {
     Session? session = messenger?.session;
     if (session?.identifier == null) {

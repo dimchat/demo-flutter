@@ -9,7 +9,7 @@ import '../client/session.dart';
 import '../client/shared.dart';
 import 'manager.dart';
 
-class SessionChannel extends MethodChannel {
+class SessionChannel extends SafeChannel {
   SessionChannel(super.name) {
     setMethodCallHandler(_handle);
   }
@@ -108,54 +108,46 @@ class SessionChannel extends MethodChannel {
   //
   //  Invoke Methods
   //
-  Future<dynamic> _invoke(String method, Map? arguments) async {
-    try {
-      return await invokeMethod(method, arguments);
-    } on PlatformException catch (e) {
-      Log.error('channel error: $e');
-      return;
-    }
-  }
 
   /// connect to remote address(host, port)
   Future<void> connect(String host, int port) async =>
-      await _invoke(ChannelMethods.connect, {
+      await invoke(ChannelMethods.connect, {
         'host': host, 'port': port,
       });
 
   /// login with user ID
-  Future<bool> login(ID user) async =>
-      await _invoke(ChannelMethods.login, {
+  Future<bool?> login(ID user) async =>
+      await invoke(ChannelMethods.login, {
         'user': user.toString(),
       });
 
   /// set session key for login accepted
   Future<void> setSessionKey(String? session) async =>
-      await _invoke(ChannelMethods.setSessionKey, {
+      await invoke(ChannelMethods.setSessionKey, {
         'session': session,
       });
 
   /// get session state
-  Future<int> getState() async =>
-      await _invoke(ChannelMethods.getState, null);
+  Future<int?> getState() async =>
+      await invoke(ChannelMethods.getState, null);
 
   /// send message with data pack & priority
   Future<void> sendMessagePackage(ReliableMessage rMsg, Uint8List data, int priority) async =>
-      await _invoke(ChannelMethods.sendMessagePackage, {
+      await invoke(ChannelMethods.sendMessagePackage, {
         'msg': rMsg.toMap(),
         'data': data,
         'priority': priority,
       });
 
   /// pack message payload to network package
-  Future<Uint8List> packData(Uint8List payload) async =>
-      await _invoke(ChannelMethods.packData, {
+  Future<Uint8List?> packData(Uint8List payload) async =>
+      await invoke(ChannelMethods.packData, {
         'payload': payload,
       });
 
   /// unpack payload from network package
-  Future<Map> unpackData(Uint8List data) async =>
-      await _invoke(ChannelMethods.unpackData, {
+  Future<Map?> unpackData(Uint8List data) async =>
+      await invoke(ChannelMethods.unpackData, {
         'data': data,
       });
 

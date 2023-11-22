@@ -30,6 +30,8 @@
  */
 import 'dart:io';
 
+import 'package:lnc/lnc.dart';
+
 import '../channels/manager.dart';
 import 'external.dart';
 import 'paths.dart';
@@ -45,9 +47,12 @@ class LocalStorage {
   ///
   /// @param filename - image filename: hex(md5(data)) + ext
   /// @return "{caches}/avatar/{AA}/{BB}/{filename}"
-  Future<String> getAvatarFilePath(String filename) async {
-    String dir = await cachesDirectory;
-    if (filename.length < 4) {
+  Future<String?> getAvatarFilePath(String filename) async {
+    String? dir = await cachesDirectory;
+    if (dir == null) {
+      Log.error('failed to get caches directory for avatar: $filename');
+      return null;
+    } else if (filename.length < 4) {
       assert(false, 'invalid filename: $filename');
       return Paths.append(dir, filename);
     }
@@ -61,9 +66,12 @@ class LocalStorage {
   ///
   /// @param filename - messaged filename: hex(md5(data)) + ext
   /// @return "{caches}/files/{AA}/{BB}/{filename}"
-  Future<String> getCacheFilePath(String filename) async {
-    String dir = await cachesDirectory;
-    if (filename.length < 4) {
+  Future<String?> getCacheFilePath(String filename) async {
+    String? dir = await cachesDirectory;
+    if (dir == null) {
+      Log.error('failed to get caches directory for file: $filename');
+      return null;
+    } else if (filename.length < 4) {
       assert(false, 'invalid filename: $filename');
       return Paths.append(dir, filename);
     }
@@ -76,8 +84,12 @@ class LocalStorage {
   ///
   /// @param filename - messaged filename: hex(md5(data)) + ext
   /// @return "{tmp}/upload/{filename}"
-  Future<String> getUploadFilePath(String filename) async {
-    String dir = await temporaryDirectory;
+  Future<String?> getUploadFilePath(String filename) async {
+    String? dir = await temporaryDirectory;
+    if (dir == null) {
+      Log.error('failed to get caches directory to upload: $filename');
+      return null;
+    }
     return Paths.append(dir, 'upload', filename);
   }
 
@@ -85,8 +97,12 @@ class LocalStorage {
   ///
   /// @param filename - messaged filename: hex(md5(data)) + ext
   /// @return "{tmp}/download/{filename}"
-  Future<String> getDownloadFilePath(String filename) async {
-    String dir = await temporaryDirectory;
+  Future<String?> getDownloadFilePath(String filename) async {
+    String? dir = await temporaryDirectory;
+    if (dir == null) {
+      Log.error('failed to get caches directory to download: $filename');
+      return null;
+    }
     return Paths.append(dir, 'download', filename);
   }
 
@@ -99,7 +115,7 @@ class LocalStorage {
   ///
   /// Android: "/sdcard/Android/data/chat.dim.sechat/cache"
   ///     iOS: "/Application/{...}/Library/Caches"
-  Future<String> get cachesDirectory async {
+  Future<String?> get cachesDirectory async {
     ChannelManager man = ChannelManager();
     return await man.ftpChannel.cachesDirectory;
   }
@@ -109,7 +125,7 @@ class LocalStorage {
   ///
   /// Android: "/data/data/chat.dim.sechat/cache"
   ///     iOS: "/Application/{...}/tmp"
-  Future<String> get temporaryDirectory async {
+  Future<String?> get temporaryDirectory async {
     ChannelManager man = ChannelManager();
     return await man.ftpChannel.temporaryDirectory;
   }
@@ -127,7 +143,11 @@ class LocalStorage {
     }
     _lastBurn = now;
     // cleanup cached files
-    String path = await cachesDirectory;
+    String? path = await cachesDirectory;
+    if (path == null) {
+      Log.error('failed to get caches directory for burning');
+      return 0;
+    }
     path = Paths.append(path, 'files');
     Directory dir = Directory(path);
     return await ExternalStorage.cleanupDirectory(dir, expired);

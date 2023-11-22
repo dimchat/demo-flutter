@@ -1,3 +1,6 @@
+import 'package:flutter/services.dart';
+import 'package:lnc/lnc.dart';
+
 import 'audio.dart';
 import 'keychain.dart';
 import 'session.dart';
@@ -86,5 +89,21 @@ class ChannelManager {
   final SessionChannel sessionChannel = SessionChannel(ChannelNames.session);
   final FileTransferChannel ftpChannel = FileTransferChannel(ChannelNames.fileTransfer);
   final KeychainChannel dbChannel = KeychainChannel(ChannelNames.database);
+
+}
+
+class SafeChannel extends MethodChannel {
+  SafeChannel(super.name);
+
+  Future<T?> invoke<T>(String method, Map? arguments) async {
+    try {
+      return await super.invokeMethod(method, arguments).onError((error, stackTrace) {
+        Log.error('failed to invoke method: $error, $stackTrace');
+      });
+    } catch (e, st) {
+      Log.error('channel error: $e, $st');
+      return null;
+    }
+  }
 
 }

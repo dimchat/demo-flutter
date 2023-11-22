@@ -172,7 +172,11 @@ class VelocityMeter {
     // MTP packing
     ChannelManager manager = ChannelManager();
     SessionChannel channel = manager.sessionChannel;
-    Map info = await channel.unpackData(pack);
+    Map? info = await channel.unpackData(pack);
+    if (info == null) {
+      Log.error('failed to unpack data: ${pack.length} bytes');
+      return null;
+    }
     int offset = info['position'];
     Log.error('position: $offset, pack length: ${pack.length}');
     if (offset <= 0) {
@@ -249,6 +253,6 @@ Future<Uint8List?> _getPack() async {
   ChannelManager manager = ChannelManager();
   SessionChannel channel = manager.sessionChannel;
   Uint8List? pack = await channel.packData(data);
-  Log.warning('packed ${data.length} bytes to ${pack.length} bytes');
+  Log.warning('packed ${data.length} bytes to ${pack?.length} bytes');
   return pack;
 }

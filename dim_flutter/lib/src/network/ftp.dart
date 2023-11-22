@@ -97,8 +97,11 @@ class FileTransfer {
       return null;
     }
     // check decrypted file
-    String cachePath = await _getCacheFilePath(filename);
-    if (await Paths.exists(cachePath)) {
+    String? cachePath = await _getCacheFilePath(filename);
+    if (cachePath == null) {
+      Log.error('failed to get caches directory for file: $filename');
+      return null;
+    } else if (await Paths.exists(cachePath)) {
       return cachePath;
     }
     // get download URL
@@ -206,7 +209,11 @@ class FileTransfer {
   }
 
   static Future<Uint8List?> _loadDownloadedFileData(String filename) async {
-    String path = await _getDownloadFilePath(filename);
+    String? path = await _getDownloadFilePath(filename);
+    if (path == null) {
+      Log.error('failed to get caches directory for downloaded file: $filename');
+      return null;
+    }
     if (await Paths.exists(path)) {
       return await ExternalStorage.loadBinary(path);
     }
@@ -214,11 +221,15 @@ class FileTransfer {
   }
 
   static Future<int> cacheFileData(Uint8List data, String filename) async {
-    String path = await _getCacheFilePath(filename);
+    String? path = await _getCacheFilePath(filename);
+    if (path == null) {
+      Log.error('failed to get caches directory for saving: $filename');
+      return -1;
+    }
     return await ExternalStorage.saveBinary(data, path);
   }
 
-  static Future<String> _getCacheFilePath(String filename) async {
+  static Future<String?> _getCacheFilePath(String filename) async {
     if (filename.contains('/') || filename.contains('\\')) {
       // full path?
       return filename;
@@ -229,7 +240,7 @@ class FileTransfer {
     }
   }
 
-  static Future<String> _getDownloadFilePath(String filename) async {
+  static Future<String?> _getDownloadFilePath(String filename) async {
     if (filename.contains('/') || filename.contains('\\')) {
       // full path?
       return filename;
@@ -245,18 +256,26 @@ class FileTransfer {
   /// @param entity   - user or group ID
   /// @param filename - entity file name
   /// @return entity file path
-  Future<String> getEntityFilePath(ID entity, String filename) async {
-    String dir = await _getEntityDirectory(entity.address);
+  Future<String?> getEntityFilePath(ID entity, String filename) async {
+    String? dir = await _getEntityDirectory(entity.address);
+    if (dir == null) {
+      Log.error('failed to get directory for entity: $entity, $filename');
+      return null;
+    }
     return Paths.append(dir, filename);
   }
 
-  Future<String> _getEntityDirectory(Address address) async {
+  Future<String?> _getEntityDirectory(Address address) async {
     LocalStorage cache = LocalStorage();
-    String dir = Paths.append(await cache.cachesDirectory, 'mkm');
+    String? dir = await cache.cachesDirectory;
+    if (dir == null) {
+      Log.error('failed to get directory for address: $address');
+      return null;
+    }
     String string = address.toString();
     String aa = string.substring(0, 2);
     String bb = string.substring(2, 4);
-    return Paths.append(dir, aa, bb, string);
+    return Paths.append(dir, 'mkm', aa, bb, string);
   }
 
 }

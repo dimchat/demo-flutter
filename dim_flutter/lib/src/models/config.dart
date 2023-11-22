@@ -20,10 +20,14 @@ class Config {
 
   Map? _info;
 
-  Future<Map> get info async {
+  Future<Map?> get info async {
     Map? conf = _info;
     if (conf == null) {
-      String path = await _path();
+      String? path = await _path();
+      if (path == null) {
+        Log.error('failed to get path for config.json');
+        return null;
+      }
       conf = await _load(path);
       conf ??= await _init(path);
       // update for next reading
@@ -48,36 +52,39 @@ class Config {
         });
       }
     }
-    return conf!;
+    return conf;
   }
 
   /// Default contacts
   Future<List<ID>> get contacts async {
-    List? array = (await info)['contacts'];
+    List? array = (await info)?['contacts'];
     return array == null ? [] : ID.convert(array);
   }
 
-  Future<ID?> get provider async => ID.parse((await info)['ID']);
+  Future<ID?> get provider async => ID.parse((await info)?['ID']);
 
-  Future<List?> get stations async => (await info)['stations'];
+  Future<List?> get stations async => (await info)?['stations'];
 
   // 'http://106.52.25.169:8081/{ID}/upload?md5={MD5}&salt={SALT}'
-  Future<List> get uploadAPI async => (await info)['uploads'];
+  Future<List> get uploadAPI async => (await info)?['uploads'];
   // Future<String> get uploadKey async => '12345678';
 
   /// Home Page
-  Future<String> get aboutURL async => (await info)['about']
+  Future<String> get aboutURL async => (await info)?['about']
       ?? 'https://dim.chat/';
 
   /// Terms Web Page
-  Future<String> get termsURL async => (await info)['terms']
+  Future<String> get termsURL async => (await info)?['terms']
       ?? 'https://wallet.dim.chat/dimchat/sechat/privacy.html';
 }
 
 
 /// get caches path for 'config.json'
-Future<String> _path() async {
-  String dir = await LocalStorage().cachesDirectory;
+Future<String?> _path() async {
+  String? dir = await LocalStorage().cachesDirectory;
+  if (dir == null) {
+    return null;
+  }
   return Paths.append(dir, 'config.json');
 }
 

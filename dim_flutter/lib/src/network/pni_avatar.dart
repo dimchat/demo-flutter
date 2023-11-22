@@ -195,7 +195,11 @@ class _AvatarLoader {
     // load avatar
     _imageLoader = loader = PNGLoader(avatar);
     LocalStorage local = LocalStorage();
-    String cachesDirectory = await local.cachesDirectory;
+    String? cachesDirectory = await local.cachesDirectory;
+    if (cachesDirectory == null) {
+      Log.error('failed to get caches directory for loading avatar: ${doc.identifier}');
+      return;
+    }
     String avatarDirectory = Paths.append(cachesDirectory, 'avatar');
     _imageProvider = await loader.loadImage(avatarDirectory);
   }

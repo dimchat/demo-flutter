@@ -69,6 +69,11 @@ public class UpdateManager {
       }
       return version;
    }
+   private String getNewBuild() {
+      VersionManager man = VersionManager.getInstance();
+      int build = man.getNewestVersionCode();
+      return "Build " + build;
+   }
 
    private String getApkUrl() {
       VersionManager man = VersionManager.getInstance();
@@ -106,7 +111,7 @@ public class UpdateManager {
 
    private void showUpdateDialog() {
       AlertDialog.Builder builder = new AlertDialog.Builder(mContext);
-      builder.setTitle("Upgrade (" + getNewVersion() + ")");
+      builder.setTitle("Upgrade (" + getNewVersion() + ", " + getNewBuild() + ")");
       builder.setMessage("New version is available, please download to upgrade.");
       builder.setPositiveButton("Download", (dialog, which) -> showDownloadDialog());
       builder.setNegativeButton("Later", (dialog, which) -> dialog.dismiss());

@@ -98,15 +98,18 @@ public enum ChannelManager {
     }
 
     public void initChannels(BinaryMessenger messenger) {
+        System.out.println("initChannels: audioChannel=" + audioChannel);
+        System.out.println("initChannels: sessionChannel=" + sessionChannel);
+        System.out.println("initChannels: fileChannel=" + fileChannel);
         StandardMethodCodec codec = new StandardMethodCodec(new MessageCodec());
-        if (audioChannel == null) {
+        //if (audioChannel == null) {
             audioChannel = new AudioChannel(messenger, ChannelNames.AUDIO, codec);
-        }
-        if (sessionChannel == null) {
+        //}
+        //if (sessionChannel == null) {
             sessionChannel = new SessionChannel(messenger, ChannelNames.SESSION, codec);
-        }
-        if (fileChannel == null) {
+        //}
+        //if (fileChannel == null) {
             fileChannel = new FileTransferChannel(messenger, ChannelNames.FILE_TRANSFER, codec);
-        }
+        //}
     }
 }

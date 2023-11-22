@@ -37,7 +37,11 @@ class LoginDatabase extends DatabaseConnector {
   /// returns: '{caches}/.dim/login.db'
   @override
   Future<String?> get path async {
-    String root = await LocalStorage().cachesDirectory;
+    String? root = await LocalStorage().cachesDirectory;
+    if (root == null) {
+      Log.error('failed to get directory for login.db');
+      return null;
+    }
     String dir = Paths.append(root, directory);
     if (await Paths.mkdirs(dir)) {
       // make sure parent directory exists

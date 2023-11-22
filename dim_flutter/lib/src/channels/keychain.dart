@@ -1,29 +1,19 @@
-import 'package:flutter/services.dart';
 import 'package:dim_client/dim_client.dart';
-import 'package:lnc/lnc.dart';
 
 import 'manager.dart';
 
 /// Keychain for iOS, macOS
-class KeychainChannel extends MethodChannel implements PrivateKeyDBI {
+class KeychainChannel extends SafeChannel implements PrivateKeyDBI {
   KeychainChannel(super.name);
 
   //
   //  Invoke Methods
   //
-  Future<dynamic> _invoke(String method, dynamic arguments) async {
-    try {
-      return await invokeMethod(method, arguments);
-    } on PlatformException catch (e) {
-      Log.error('channel error: $e');
-      return;
-    }
-  }
 
   @override
   Future<bool> savePrivateKey(PrivateKey key, String type, ID user,
       {int sign = 1, required int decrypt}) async {
-    int? res = await _invoke(ChannelMethods.savePrivateKey, {
+    int? res = await invoke(ChannelMethods.savePrivateKey, {
       'user': user.toString(),
       'type': type,
       'key': key.toMap(),
@@ -33,7 +23,7 @@ class KeychainChannel extends MethodChannel implements PrivateKeyDBI {
 
   @override
   Future<PrivateKey?> getPrivateKeyForSignature(ID user) async {
-    Map? key = await _invoke(ChannelMethods.privateKeyForSignature, {
+    Map? key = await invoke(ChannelMethods.privateKeyForSignature, {
       'user': user.toString(),
     });
     return PrivateKey.parse(key);
@@ -41,7 +31,7 @@ class KeychainChannel extends MethodChannel implements PrivateKeyDBI {
 
   @override
   Future<PrivateKey?> getPrivateKeyForVisaSignature(ID user) async {
-    Map? key = await _invoke(ChannelMethods.privateKeyForVisaSignature, {
+    Map? key = await invoke(ChannelMethods.privateKeyForVisaSignature, {
       'user': user.toString(),
     });
     return PrivateKey.parse(key);
@@ -49,7 +39,7 @@ class KeychainChannel extends MethodChannel implements PrivateKeyDBI {
 
   @override
   Future<List<DecryptKey>> getPrivateKeysForDecryption(ID user) async {
-    List? keys = await _invoke(ChannelMethods.privateKeysForDecryption, {
+    List? keys = await invoke(ChannelMethods.privateKeysForDecryption, {
       'user': user.toString(),
     });
     if (keys == null || keys.isEmpty) {

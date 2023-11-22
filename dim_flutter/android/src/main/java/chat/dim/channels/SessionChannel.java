@@ -30,6 +30,9 @@ public class SessionChannel extends MethodChannel {
     public SessionChannel(@NonNull BinaryMessenger messenger, @NonNull String name, @NonNull MethodCodec codec) {
         super(messenger, name, codec);
         setMethodCallHandler(new SessionChannelHandler());
+        // clear session to reconnect
+        SessionController controller = SessionController.getInstance();
+        controller.session = null;
     }
 
     static private int getStateIndex(SessionState state) {

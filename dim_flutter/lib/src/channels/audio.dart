@@ -4,7 +4,7 @@ import 'package:lnc/lnc.dart';
 import '../common//constants.dart';
 import 'manager.dart';
 
-class AudioChannel extends MethodChannel {
+class AudioChannel extends SafeChannel {
   AudioChannel(super.name) {
     setMethodCallHandler(_handle);
   }
@@ -37,28 +37,20 @@ class AudioChannel extends MethodChannel {
   //
   //  Invoke Methods
   //
-  Future<dynamic> _invoke(String method, dynamic arguments) async {
-    try {
-      return await invokeMethod(method, arguments);
-    } on PlatformException catch (e) {
-      Log.error('channel error: $e');
-      return;
-    }
-  }
 
   Future<void> startRecord() async =>
-      await _invoke(ChannelMethods.startRecord, null);
+      await invoke(ChannelMethods.startRecord, null);
 
   Future<void> stopRecord() async =>
-      await _invoke(ChannelMethods.stopRecord, null);
+      await invoke(ChannelMethods.stopRecord, null);
 
   Future<void> startPlay(String path) async =>
-      await _invoke(ChannelMethods.startPlay, {
+      await invoke(ChannelMethods.startPlay, {
         'path': path,
       });
 
   Future<void> stopPlay(String? path) async =>
-      await _invoke(ChannelMethods.stopPlay, {
+      await invoke(ChannelMethods.stopPlay, {
         'path': path,
       });
 

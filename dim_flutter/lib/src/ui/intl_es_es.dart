@@ -39,6 +39,11 @@ final Map<String, String> intlEsEs = {
   'Image File Error': 'Error en el Archivo de la Imagen',
   'Upload Failed': 'Error al Subir',
 
+  'Save to Album': 'Guardar en el Álbum',
+  'Sure to save this image?': '¿Seguro que deseas guardar esta imagen?',
+  'Image saved to album': 'Imagen guardada en el álbum exitosamente.',
+  'Failed to save image to album': 'Error al guardar la imagen en tu álbum.',
+
   //
   //  Time
   //

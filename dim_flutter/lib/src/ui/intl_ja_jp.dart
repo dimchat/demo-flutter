@@ -38,6 +38,11 @@ final Map<String, String> intlJaJp = {
   'Image File Error': '画像ファイルエラー',
   'Upload Failed': 'アップロードに失敗しました',
 
+  'Save to Album': 'アルバムに保存',
+  'Sure to save this image?': 'この画像を保存しますか？',
+  'Image saved to album': '画像がアルバムに成功裏に保存されました。',
+  'Failed to save image to album': 'この画像をアルバムに保存できませんでした。',
+
   //
   //  Time
   //

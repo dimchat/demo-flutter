@@ -38,6 +38,11 @@ final Map<String, String> intlDeDe = {
   'Image File Error': 'Fehler bei der Bilddatei',
   'Upload Failed': 'Upload fehlgeschlagen',
 
+  'Save to Album': 'In Album Speichern',
+  'Sure to save this image?': 'Sind Sie sicher, dass Sie dieses Bild speichern möchten?',
+  'Image saved to album': 'Bild erfolgreich im Album gespeichert.',
+  'Failed to save image to album': 'Fehler beim Speichern des Bildes im Album.',
+
   //
   //  Time
   //

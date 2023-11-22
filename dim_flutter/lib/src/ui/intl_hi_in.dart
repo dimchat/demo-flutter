@@ -38,6 +38,11 @@ final Map<String, String> intlHiIn = {
   'Image File Error': 'तस्वीर फ़ाइल त्रुटि',
   'Upload Failed': 'अपलोड विफल',
 
+  'Save to Album': 'एल्बम में सहेजें',
+  'Sure to save this image?': 'क्या आप इस छवि को सहेजना चाहते हैं?',
+  'Image saved to album': 'छवि सफलतापूर्वक एल्बम में सहेजी गई है।',
+  'Failed to save image to album': 'इस छवि को आपके एल्बम में सहेजने में विफल रहा।',
+
   //
   //  Time
   //

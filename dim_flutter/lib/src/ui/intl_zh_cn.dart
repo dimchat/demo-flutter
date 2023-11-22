@@ -37,6 +37,11 @@ final Map<String, String> intlZhCn = {
   'Image File Error': '图片文件错误',
   'Upload Failed': '上传失败',
 
+  'Save to Album': '保存到相册',
+  'Sure to save this image?': '确定要保存这张图片吗？',
+  'Image saved to album': '图片成功保存到相册。',
+  'Failed to save image to album': '无法将图片保存到相册。',
+
   //
   //  Time
   //

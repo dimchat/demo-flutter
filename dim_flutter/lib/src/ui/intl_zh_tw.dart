@@ -37,6 +37,11 @@ final Map<String, String> intlZhTw = {
   'Image File Error': '圖片檔案錯誤',
   'Upload Failed': '上傳失敗',
 
+  'Save to Album': '儲存到相簿',
+  'Sure to save this image?': '確定要儲存這張圖片嗎？',
+  'Image saved to album': '圖片成功儲存到相簿。',
+  'Failed to save image to album': '無法將圖片儲存到相簿。',
+
   //
   //  Time
   //

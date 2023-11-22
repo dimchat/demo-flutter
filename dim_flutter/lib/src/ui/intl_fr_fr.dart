@@ -38,6 +38,11 @@ final Map<String, String> intlFrFr = {
   'Image File Error': 'Erreur de fichier image',
   'Upload Failed': 'Échec du téléchargement',
 
+  'Save to Album': 'Enregistrer dans l\'album',
+  'Sure to save this image?': 'Êtes-vous sûr de vouloir enregistrer cette image ?',
+  'Image saved to album': 'Image enregistrée avec succès dans l\'album.',
+  'Failed to save image to album': 'Échec de l\'enregistrement de cette image dans votre album.',
+
   //
   //  Time
   //

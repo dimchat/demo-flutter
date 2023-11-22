@@ -38,6 +38,11 @@ final Map<String, String> intlAr = {
   'Image File Error': 'خطأ في ملف الصورة',
   'Upload Failed': 'فشل التحميل',
 
+  'Save to Album': 'حفظ في الألبوم',
+  'Sure to save this image?': 'هل أنت متأكد من حفظ هذه الصورة؟',
+  'Image saved to album': 'تم حفظ الصورة بنجاح في الألبوم.',
+  'Failed to save image to album': 'فشل في حفظ الصورة في الألبوم الخاص بك.',
+
   //
   //  Time
   //

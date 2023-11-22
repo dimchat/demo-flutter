@@ -38,6 +38,11 @@ final Map<String, String> intlIdId = {
   'Image File Error': 'Kesalahan Berkas Gambar',
   'Upload Failed': 'Gagal Mengunggah',
 
+  'Save to Album': 'Simpan ke Album',
+  'Sure to save this image?': 'Apakah Anda yakin ingin menyimpan gambar ini?',
+  'Image saved to album': 'Gambar berhasil disimpan ke album.',
+  'Failed to save image to album': 'Gagal menyimpan gambar ini ke album Anda.',
+
   //
   //  Time
   //

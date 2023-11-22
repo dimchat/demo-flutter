@@ -38,6 +38,11 @@ final Map<String, String> intlKoKr = {
   'Image File Error': '이미지 파일 오류',
   'Upload Failed': '업로드 실패',
 
+  'Save to Album': '앨범에 저장',
+  'Sure to save this image?': '이 이미지를 저장하시겠습니까?',
+  'Image saved to album': '이미지가 성공적으로 앨범에 저장되었습니다.',
+  'Failed to save image to album': '이미지를 앨범에 저장하지 못했습니다.',
+
   //
   //  Time
   //

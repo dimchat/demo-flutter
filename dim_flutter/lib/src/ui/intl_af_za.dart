@@ -38,6 +38,11 @@ final Map<String, String> intlAfZa = {
   'Image File Error': 'Beeldlêer Fout',
   'Upload Failed': 'Oplaai Misluk',
 
+  'Save to Album': 'Stoor in Album',
+  'Sure to save this image?': 'Is jy seker jy wil hierdie beeld stoor?',
+  'Image saved to album': 'Beeld suksesvol gestoor in album.',
+  'Failed to save image to album': 'Kon nie die beeld stoor in jou album nie.',
+
   //
   //  Time
   //

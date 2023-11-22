@@ -38,6 +38,11 @@ final Map<String, String> intlNlNl = {
   'Image File Error': 'Afbeeldingsbestandfout',
   'Upload Failed': 'Upload Mislukt',
 
+  'Save to Album': 'Opslaan in Album',
+  'Sure to save this image?': 'Weet u zeker dat u deze afbeelding wilt opslaan?',
+  'Image saved to album': 'Afbeelding succesvol opgeslagen in het album.',
+  'Failed to save image to album': 'Kon deze afbeelding niet opslaan in uw album.',
+
   //
   //  Time
   //

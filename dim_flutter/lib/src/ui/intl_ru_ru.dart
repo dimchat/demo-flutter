@@ -38,6 +38,11 @@ final Map<String, String> intlRuRu = {
   'Image File Error': 'Ошибка загрузки изображения',
   'Upload Failed': 'Ошибка загрузки',
 
+  'Save to Album': 'Сохранить в альбом',
+  'Sure to save this image?': 'Вы уверены, что хотите сохранить это изображение?',
+  'Image saved to album': 'Изображение успешно сохранено в альбоме.',
+  'Failed to save image to album': 'Не удалось сохранить это изображение в вашем альбоме.',
+
   //
   //  Time
   //

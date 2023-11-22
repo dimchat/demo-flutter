@@ -37,6 +37,11 @@ final Map<String, String> intlEnUs = {
   'Image File Error': 'Image File Error',
   'Upload Failed': 'Upload Failed',
 
+  'Save to Album': 'Save to Album',
+  'Sure to save this image?': 'Are you sure to save this image?',
+  'Image saved to album': 'Image saved to album successfully.',
+  'Failed to save image to album': 'Failed to save this image to your album.',
+
   //
   //  Time
   //

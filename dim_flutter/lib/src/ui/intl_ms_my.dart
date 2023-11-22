@@ -38,6 +38,11 @@ final Map<String, String> intlMsMy = {
   'Image File Error': 'Ralat Fail Imej',
   'Upload Failed': 'Muat Naik Gagal',
 
+  'Save to Album': 'Simpan ke Album',
+  'Sure to save this image?': 'Anda pasti ingin menyimpan imej ini?',
+  'Image saved to album': 'Imej berjaya disimpan ke dalam album.',
+  'Failed to save image to album': 'Gagal menyimpan imej ini ke dalam album anda.',
+
   //
   //  Time
   //

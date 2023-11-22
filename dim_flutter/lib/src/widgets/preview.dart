@@ -1,12 +1,18 @@
 import 'dart:io';
 
 import 'package:flutter/cupertino.dart';
+import 'package:get/get.dart';
+import 'package:image_gallery_saver/image_gallery_saver.dart';
 import 'package:photo_view/photo_view_gallery.dart';
 
 import 'package:dim_client/dim_client.dart';
 import 'package:lnc/lnc.dart';
 
 import '../network/ftp.dart';
+import '../ui/icons.dart';
+
+import 'alert.dart';
+import 'permissions.dart';
 
 /// preview avatar image
 void previewImage(BuildContext ctx, String path) {
@@ -127,6 +133,19 @@ class _ImagePreviewState extends State<_ImagePreview> {
         } else if (pos.dx == old.dx && pos.dy == old.dy) {
           // onTap();
           Navigator.pop(context);
+        } else {
+          Alert.actionSheet(context, null, null,
+            Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                const Icon(AppIcons.saveFileIcon),
+                const SizedBox(width: 12,),
+                Text('Save to Album'.tr),
+              ],
+            ), () => requestPhotosPermissions(context,
+              onGranted: (context) => _confirmToSave(context, info.images[index]),
+            ),
+          );
         }
       },
       onTapDown: (context, details, controllerValue) {
@@ -139,6 +158,24 @@ class _ImagePreviewState extends State<_ImagePreview> {
   );
 
 }
+
+void _confirmToSave(BuildContext context, String path) =>
+    Alert.confirm(context, 'Confirm',
+      'Sure to save this image?'.tr,
+      okAction: () => _saveImage(context, path),
+    );
+void _saveImage(BuildContext context, String path) =>
+    ImageGallerySaver.saveFile(path).then((result) {
+      Log.info('saving image: $path, result: $result');
+      if (result != null && result['isSuccess']) {
+        Alert.show(context, 'Success', 'Image saved to album'.tr);
+      } else {
+        String? error = result['error'];
+        error ??= result['errorMessage'];
+        error ??= 'Failed to save image to album'.tr;
+        Alert.show(context, 'Error', error);
+      }
+    });
 
 Future<Pair<List<String>, int>> _fetchImages(List<InstantMessage> messages, ImageContent target) async {
   FileTransfer ftp = FileTransfer();

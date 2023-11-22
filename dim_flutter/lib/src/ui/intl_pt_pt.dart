@@ -38,6 +38,11 @@ final Map<String, String> intlPtPt = {
   'Image File Error': 'Erro no Ficheiro de Imagem',
   'Upload Failed': 'Falha ao Carregar',
 
+  'Save to Album': 'Salvar no Álbum',
+  'Sure to save this image?': 'Tem certeza de que deseja salvar esta imagem?',
+  'Image saved to album': 'Imagem salva com sucesso no álbum.',
+  'Failed to save image to album': 'Falha ao salvar esta imagem no seu álbum.',
+
   //
   //  Time
   //

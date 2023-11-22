@@ -38,6 +38,11 @@ final Map<String, String> intlThTh = {
   'Image File Error': 'ข้อผิดพลาดในไฟล์รูปภาพ',
   'Upload Failed': 'การอัปโหลดล้มเหลว',
 
+  'Save to Album': 'บันทึกในอัลบั้ม',
+  'Sure to save this image?': 'คุณแน่ใจหรือไม่ที่จะบันทึกภาพนี้?',
+  'Image saved to album': 'บันทึกรูปภาพลงในอัลบั้มเรียบร้อยแล้ว',
+  'Failed to save image to album': 'บันทึกรูปภาพล้มเหลว ไม่สามารถบันทึกภาพนี้ลงในอัลบั้มของคุณได้',
+
   //
   //  Time
   //

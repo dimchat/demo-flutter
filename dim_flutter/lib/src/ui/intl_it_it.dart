@@ -38,6 +38,11 @@ final Map<String, String> intlItIt = {
   'Image File Error': 'Errore nel file immagine',
   'Upload Failed': 'Caricamento fallito',
 
+  'Save to Album': 'Salva nell\'Album',
+  'Sure to save this image?': 'Sei sicuro di voler salvare questa immagine?',
+  'Image saved to album': 'Immagine salvata con successo nell\'Album.',
+  'Failed to save image to album': 'Impossibile salvare questa immagine nell\'Album.',
+
   //
   //  Time
   //

@@ -38,6 +38,11 @@ final Map<String, String> intlBnBd = {
   'Image File Error': 'চিত্র ফাইল ত্রুটি',
   'Upload Failed': 'আপলোড ব্যর্থ',
 
+  'Save to Album': 'অ্যালবামে সংরক্ষণ করুন',
+  'Sure to save this image?': 'আপনি কি নিশ্চিত যে এই ছবি সংরক্ষণ করতে চান?',
+  'Image saved to album': 'ছবি সফলভাবে অ্যালবামে সংরক্ষিত হয়েছে।',
+  'Failed to save image to album': 'এই ছবি আপনার অ্যালবামে সংরক্ষণ করতে ব্যর্থ হয়েছে।',
+
   //
   //  Time
   //

@@ -38,6 +38,11 @@ final Map<String, String> intlViVN = {
   'Image File Error': 'Lỗi tệp hình ảnh',
   'Upload Failed': 'Tải lên thất bại',
 
+  'Save to Album': 'Lưu vào Album',
+  'Sure to save this image?': 'Bạn có chắc chắn muốn lưu hình này không?',
+  'Image saved to album': 'Hình ảnh đã được lưu vào album thành công.',
+  'Failed to save image to album': 'Không thể lưu hình ảnh này vào album của bạn.',
+
   //
   //  Time
   //

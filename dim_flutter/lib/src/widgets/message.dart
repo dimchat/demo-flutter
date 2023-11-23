@@ -8,14 +8,14 @@ import 'package:lnc/lnc.dart' show Log;
 import '../models/chat.dart';
 import '../models/chat_contact.dart';
 import '../models/message.dart';
-import '../network/image_view.dart';
+import '../pnf/image.dart';
+import '../pnf/image_preview.dart';
 import '../ui/styles.dart';
 
 import 'audio.dart';
 import 'browser.dart';
 import 'browse_html.dart';
 import 'name_card.dart';
-import 'preview.dart';
 
 
 abstract class ContentViewUtils {
@@ -107,9 +107,10 @@ abstract class ContentViewUtils {
   static Widget getImageContentView(BuildContext ctx,
       ImageContent content, ID sender, List<InstantMessage> messages,
       {GestureTapCallback? onTap, GestureLongPressCallback? onLongPress}) =>
-      ImageViewFactory().fromContent(content,
+      GestureDetector(
         onTap: onTap ?? () => previewImageContent(ctx, content, messages),
         onLongPress: onLongPress,
+        child: AutoImageView.fromContent(content),
       );
 
   static Widget getPageContentView(BuildContext ctx, PageContent content, ID sender,

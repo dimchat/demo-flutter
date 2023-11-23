@@ -30,17 +30,22 @@ class SharedFacebook extends ClientFacebook {
     return group;
   }
 
-  Future<Pair<String?, Uri?>> getAvatar(ID user) async {
+  Future<PortableNetworkFile?> getAvatar(ID user) async {
     Visa? doc = await getVisa(user);
-    String? urlString = doc?.avatar?.toString();
-    String? path;
-    Uri? url = HtmlUri.parseUri(urlString);
-    if (url == null) {} else {
-      ChannelManager man = ChannelManager();
-      path = await man.ftpChannel.downloadAvatar(url);
-    }
-    return Pair(path, url);
+    return doc?.avatar;
   }
+
+  // Future<Pair<String?, Uri?>> getAvatarPair(ID user) async {
+  //   Visa? doc = await getVisa(user);
+  //   String? urlString = doc?.avatar?.toString();
+  //   String? path;
+  //   Uri? url = HtmlUri.parseUri(urlString);
+  //   if (url == null) {} else {
+  //     ChannelManager man = ChannelManager();
+  //     path = await man.ftpChannel.downloadAvatar(url);
+  //   }
+  //   return Pair(path, url);
+  // }
 
 }
 

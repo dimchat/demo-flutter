@@ -143,7 +143,7 @@ class AvatarFactory {
 
 class _FacadeInfo {
 
-  PortableNetworkFile? avatar;
+  PortableImageView? avatarView;
 
 }
 
@@ -156,15 +156,6 @@ class _FacadeView extends StatefulWidget {
   final double height;
 
   final _FacadeInfo _info = _FacadeInfo();
-
-  bool updateAvatar(PortableNetworkFile avatar) {
-    if (_info.avatar == avatar) {
-      Log.info('avatar not changed: $identifier');
-      return false;
-    }
-    _info.avatar = avatar;
-    return true;
-  }
 
   @override
   State<StatefulWidget> createState() => _FacadeState();
@@ -216,9 +207,13 @@ class _FacadeState extends State<_FacadeView> implements lnc.Observer {
       Log.warning('avatar not found: $doc');
       return;
     }
-    // refresh with new avatar
-    if (mounted && widget.updateAvatar(avatar)) {
+    var factory = AvatarFactory();
+    var view = factory.getAvatarView(identifier, avatar,
+        width: widget.width, height: widget.height);
+    await view.loader.run();
+    if (mounted) {
       setState(() {
+        widget._info.avatarView = view;
       });
     }
   }
@@ -231,17 +226,11 @@ class _FacadeState extends State<_FacadeView> implements lnc.Observer {
 
   @override
   Widget build(BuildContext context) {
-    var info = widget._info;
     double width = widget.width;
     double height = widget.height;
     ID identifier = widget.identifier;
-    var avatar = info.avatar;
-    Widget? view;
-    if (avatar == null) {
-      view = _AvatarView.getNoImage(identifier, width: width, height: height);
-    } else {
-      view = AvatarFactory().getAvatarView(identifier, avatar, width: width, height: height);
-    }
+    Widget? view = widget._info.avatarView;
+    view ??= _AvatarView.getNoImage(identifier, width: width, height: height);
     return ClipRRect(
       borderRadius: BorderRadius.all(
         Radius.elliptical(width / 8, height / 8),

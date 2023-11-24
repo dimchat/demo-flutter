@@ -33,9 +33,8 @@ import 'package:flutter/material.dart';
 
 import 'package:dim_client/dim_client.dart';
 
-import '../network/image_factory.dart';
+import '../pnf/auto_image.dart';
 import '../pnf/avatar.dart';
-import '../ui/icons.dart';
 import '../ui/styles.dart';
 
 
@@ -57,13 +56,14 @@ class NameCardView extends StatelessWidget {
   static Widget avatarImage(NameCard content, {double? width, double? height}) {
     width ??= 48;
     height ??= 48;
-    AvatarFactory factory = AvatarFactory();
     ID identifier = content.identifier;
-    // TODO: decrypt avatar when 'password' exists
-    String? url = content.avatar?.toString();
-    Widget image = url == null
-        ? factory.getFacadeView(identifier, width: 32, height: 32)
-        : ImageView(url: url, width: 32, height: 32,);
+    var avatar = content.avatar;
+    if (avatar == null) {
+      var factory = AvatarFactory();
+      return factory.getFacadeView(identifier, width: width, height: height);
+    }
+    var factory = NetworkImageFactory();
+    var image = factory.getImageView(avatar, width: width, height: height);
     return ClipRRect(
       borderRadius: const BorderRadius.all(
           Radius.elliptical(8, 8)
@@ -100,48 +100,48 @@ class NameCardView extends StatelessWidget {
 }
 
 
-class ImageView extends StatefulWidget {
-  const ImageView({super.key, required this.url,
-    required this.width, required this.height});
-
-  final String url;
-  final double width;
-  final double height;
-
-  @override
-  State<StatefulWidget> createState() => _ImageViewState();
-
-}
-
-class _ImageViewState extends State<ImageView> {
-
-  ImageProvider? get image {
-    ImageFactory factory = ImageFactory();
-    ImageProvider? img = factory.getImage(widget.url);
-    if (img == null) {
-      factory.downloadImage(widget.url).then((image) {
-        if (mounted) {
-          setState(() {
-          });
-        }
-      });
-    }
-    return img;
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    ImageProvider? img = image;
-    if (img == null) {
-      return Icon(AppIcons.noImageIcon,
-        size: widget.width,
-        color: Styles.colors.avatarDefaultColor,
-      );
-    }
-    return Image(image: img,
-      width: widget.width, height: widget.height,
-      fit: BoxFit.cover,
-    );
-  }
-
-}
+// class ImageView extends StatefulWidget {
+//   const ImageView({super.key, required this.url,
+//     required this.width, required this.height});
+//
+//   final String url;
+//   final double width;
+//   final double height;
+//
+//   @override
+//   State<StatefulWidget> createState() => _ImageViewState();
+//
+// }
+//
+// class _ImageViewState extends State<ImageView> {
+//
+//   ImageProvider? get image {
+//     ImageFactory factory = ImageFactory();
+//     ImageProvider? img = factory.getImage(widget.url);
+//     if (img == null) {
+//       factory.downloadImage(widget.url).then((image) {
+//         if (mounted) {
+//           setState(() {
+//           });
+//         }
+//       });
+//     }
+//     return img;
+//   }
+//
+//   @override
+//   Widget build(BuildContext context) {
+//     ImageProvider? img = image;
+//     if (img == null) {
+//       return Icon(AppIcons.noImageIcon,
+//         size: widget.width,
+//         color: Styles.colors.avatarDefaultColor,
+//       );
+//     }
+//     return Image(image: img,
+//       width: widget.width, height: widget.height,
+//       fit: BoxFit.cover,
+//     );
+//   }
+//
+// }

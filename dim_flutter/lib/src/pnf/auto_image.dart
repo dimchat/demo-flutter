@@ -78,19 +78,19 @@ class NetworkImageFactory {
   static final NetworkImageFactory _instance = NetworkImageFactory._internal();
   NetworkImageFactory._internal();
 
-  final Map<Uri, PortableImageLoader> _loaders = WeakValueMap();
-  final Map<Uri, PortableImageView> _views = WeakValueMap();
+  final Map<Uri, _ImageLoader> _loaders = WeakValueMap();
+  final Map<Uri, Set<_ImageView>> _views = {};
 
   PortableImageLoader getImageLoader(PortableNetworkFile pnf) {
-    PortableImageLoader? runner;
+    _ImageLoader? runner;
     Uri? url = pnf.url;
     if (url == null) {
-      runner = _ImageContentLoader(pnf);
+      runner = _ImageLoader(pnf);
       runner.run();
     } else {
       runner = _loaders[url];
       if (runner == null) {
-        runner = _ImageContentLoader(pnf);
+        runner = _ImageLoader(pnf);
         _loaders[url] = runner;
         runner.run();
       }
@@ -98,24 +98,54 @@ class NetworkImageFactory {
     return runner;
   }
 
-  PortableImageView getImageView(PortableNetworkFile pnf) {
+  PortableImageView getImageView(PortableNetworkFile pnf, {double? width, double? height}) {
     Uri? url = pnf.url;
     var loader = getImageLoader(pnf);
     if (url == null) {
-      return PortableImageView(loader);
+      return _ImageView(loader, width: width, height: height,);
     }
-    PortableImageView? view = _views[url];
-    if (view == null) {
-      view = PortableImageView(loader);
-      _views[url] = view;
+    _ImageView? img;
+    Set<_ImageView>? table = _views[url];
+    if (table == null) {
+      table = WeakSet();
+      _views[url] = table;
+    } else {
+      for (_ImageView item in table) {
+        if (item.width != width || item.height != height) {
+          // size not match
+        } else {
+          // got it
+          img = item;
+          break;
+        }
+      }
     }
-    return view;
+    if (img == null) {
+      img = _ImageView(loader, width: width, height: height,);
+      table.add(img);
+    }
+    return img;
   }
 
 }
 
-class _ImageContentLoader extends PortableImageLoader {
-  _ImageContentLoader(super.pnf);
+class _ImageView extends PortableImageView {
+  const _ImageView(super.loader, {this.width, this.height});
+
+  final double? width;
+  final double? height;
+
+  static Widget getNoImage({double? width, double? height}) {
+    double? size = width ?? height;
+    return Icon(AppIcons.noImageIcon, size: size,
+      color: Styles.colors.avatarDefaultColor,
+    );
+  }
+
+}
+
+class _ImageLoader extends PortableImageLoader {
+  _ImageLoader(super.pnf);
 
   ImageProvider<Object>? _thumbnail;
 
@@ -143,13 +173,28 @@ class _ImageContentLoader extends PortableImageLoader {
 
   @override
   Widget getImage(PortableImageView view) {
+    _ImageView widget = view as _ImageView;
+    double? width = widget.width;
+    double? height = widget.height;
     var image = imageProvider;
-    if (image != null) {
+    if (image == null) {
+      return _ImageView.getNoImage(width: width, height: height);
+    } else if (width == null && height == null) {
       return Image(image: image,);
+    } else {
+      return Image(image: image, width: width, height: height, fit: BoxFit.cover,);
     }
-    return Icon(AppIcons.noImageIcon,
-      color: Styles.colors.avatarDefaultColor,
-    );
+  }
+
+  @override
+  Widget? getProgress(PortableImageView view) {
+    _ImageView widget = view as _ImageView;
+    double? width = widget.width;
+    double? height = widget.height;
+    if (width != null && height != null) {
+      return null;
+    }
+    return super.getProgress(view);
   }
 
   @override

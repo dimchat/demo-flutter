@@ -88,38 +88,38 @@ class _PortableImageState extends State<PortableImageView> implements lnc.Observ
       if (url == widget.pnf.url || notification.sender == widget.loader) {
         var previous = userInfo?['previous'];
         var current = userInfo?['current'];
-        Log.info('[PNF] onStatusChanged: $previous -> $current, $url');
+        Log.info('[PNF] onStatusChanged: $previous -> $current, $url, $this');
         await _reload();
       }
     } else if (name == NotificationNames.kPortableNetworkReceiveProgress) {
       if (url == widget.pnf.url) {
-        // Log.info('[PNF] onReceiveProgress: $count/$total, ${pnf.url}');
+        // Log.info('[PNF] onReceiveProgress: $count/$total, ${pnf.url}, $this');
         await _reload();
       }
     } else if (name == NotificationNames.kPortableNetworkReceived) {
       if (url == widget.pnf.url) {
         Uint8List? data = userInfo?['data'];
         String? tmpPath = userInfo?['path'];
-        Log.info('[PNF] onReceived: ${data?.length} bytes into file "$tmpPath"');
+        Log.info('[PNF] onReceived: ${data?.length} bytes into file "$tmpPath", $this');
         await _reload();
       }
     } else if (name == NotificationNames.kPortableNetworkDecrypted) {
       if (url == widget.pnf.url || notification.sender == widget.loader) {
         Uint8List? data = userInfo?['data'];
         String? path = userInfo?['path'];
-        Log.info('[PNF] onDecrypted: ${data?.length} bytes into file "$path", $url');
+        Log.info('[PNF] onDecrypted: ${data?.length} bytes into file "$path", $url, $this');
         await _reload();
       }
     } else if (name == NotificationNames.kPortableNetworkSuccess) {
       if (url == widget.pnf.url || notification.sender == widget.loader) {
         Uint8List? data = userInfo?['data'];
-        Log.info('[PNF] onSuccess: ${data?.length} bytes, $url');
+        Log.info('[PNF] onSuccess: ${data?.length} bytes, $url, $this');
         await _reload();
       }
     } else if (name == NotificationNames.kPortableNetworkError) {
       if (url == widget.pnf.url || notification.sender == widget.loader) {
         String? error = userInfo?['error'];
-        Log.error('[PNF] onError: $error, $url');
+        Log.error('[PNF] onError: $error, $url, $this');
         await _reload();
       }
     }

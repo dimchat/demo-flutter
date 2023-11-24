@@ -38,9 +38,8 @@ import '../common/constants.dart';
 import '../filesys/external.dart';
 import '../filesys/local.dart';
 import '../filesys/paths.dart';
+import '../pnf/helper.dart';
 import '../widgets/browse_html.dart';
-
-import 'pnf.dart';
 
 
 class FileTransfer {

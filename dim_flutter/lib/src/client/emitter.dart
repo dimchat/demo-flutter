@@ -9,8 +9,8 @@ import '../common/constants.dart';
 import '../filesys/paths.dart';
 import '../models/amanuensis.dart';
 import '../network/ftp.dart';
-import '../network/pnf.dart';
 
+import '../pnf/helper.dart';
 import 'group.dart';
 import 'shared.dart';
 

@@ -30,16 +30,16 @@
  */
 import 'dart:typed_data';
 
-import 'package:dio/dio.dart';
 import 'package:mutex/mutex.dart';
 
 import 'package:dim_client/dim_client.dart';
 import 'package:lnc/lnc.dart';
 
-import '../client/shared.dart';
 import '../common/constants.dart';
 import '../filesys/external.dart';
 import '../filesys/paths.dart';
+
+import 'helper.dart';
 
 enum PortableNetworkStatus {
   init,
@@ -120,22 +120,23 @@ abstract class PortableNetworkLoader {
   String? get filename {
     String? name = pnf.filename;
     Uri? url = pnf.url;
-    return url == null ? name : _FilenameUtils.filenameFromURL(url, name);
+    return url == null ? name : PNFHelper.filenameFromURL(url, name);
   }
 
   Future<Uint8List?> _decrypt(Uint8List data, String cachePath) async {
     var nc = NotificationCenter();
-    // 1. check password
+    //
+    //  1. check password
+    //
     DecryptKey? password = pnf.password;
     if (password == null) {
-      // password not found, means it's not an encrypted data
+      // password not found, means the data is not encrypted
       _bytes = data;
     } else {
       setStatus(PortableNetworkStatus.decrypting);
       // try to decrypt with password
       Uint8List? plaintext = password.decrypt(data, pnf);
       if (plaintext == null || plaintext.isEmpty) {
-        assert(false, 'failed to decrypt data (${data.length} bytes) with password: $password');
         nc.postNotification(NotificationNames.kPortableNetworkError, this, {
           'URL': pnf.url,
           'error': 'Failed to decrypt data',
@@ -146,15 +147,14 @@ abstract class PortableNetworkLoader {
       data = plaintext;
       _bytes = plaintext;
     }
-    // 2. save original file content
-    Log.info('[PNF] save cache file (${data.length} bytes): $cachePath');
-    int size = await ExternalStorage.saveBinary(data, cachePath);
-    if (size != data.length) {
-      nc.postNotification(NotificationNames.kPortableNetworkError, this, {
-        'URL': pnf.url,
-        'error': 'Failed to cache file',
-      });
+    //
+    //  2. save original file content
+    //
+    Log.info('[PNF] saving file (${data.length} bytes) into caches: $cachePath');
+    int cnt = await ExternalStorage.saveBinary(data, cachePath);
+    if (cnt != data.length) {
       // setStatus(PortableNetworkStatus.error);
+      assert(false, 'failed to cache file: $cnt/${data.length}, $cachePath');
       // return null;
     }
     if (_status == PortableNetworkStatus.decrypting) {
@@ -176,14 +176,13 @@ abstract class PortableNetworkLoader {
     setStatus(PortableNetworkStatus.init);
     Uint8List? data;
     var nc = NotificationCenter();
-    // 1. check cached file
+    //
+    //  1. check cached file
+    //
     String? cachePath = await cacheFilePath;
     if (cachePath == null) {
-      nc.postNotification(NotificationNames.kPortableNetworkError, this, {
-        'URL': pnf.url,
-        'error': 'Failed to get cache file path',
-      });
       setStatus(PortableNetworkStatus.error);
+      assert(false, 'failed to get cache file path');
       return false;
     }
     // try to load cached file
@@ -191,6 +190,7 @@ abstract class PortableNetworkLoader {
       data = await ExternalStorage.loadBinary(cachePath);
       if (data != null && data.isNotEmpty) {
         // data loaded from cached file
+        Log.info('[PNF] loaded ${data.length} bytes from caches: $cachePath');
         _bytes = data;
         nc.postNotification(NotificationNames.kPortableNetworkSuccess, this, {
           'URL': pnf.url,
@@ -200,38 +200,38 @@ abstract class PortableNetworkLoader {
         return true;
       }
     }
-    // 2. check temporary file
+    //
+    //  2. check temporary file
+    //
     String? tmpPath = await temporaryFilePath;
     if (tmpPath == null) {
-      nc.postNotification(NotificationNames.kPortableNetworkError, this, {
-        'URL': pnf.url,
-        'error': 'Failed to get temporary path',
-      });
       setStatus(PortableNetworkStatus.error);
+      assert(false, 'failed to get temporary path');
       return false;
     }
     // try to load temporary file
     if (await Paths.exists(tmpPath)) {
       data = await ExternalStorage.loadBinary(tmpPath);
       if (data != null && data.isNotEmpty) {
+        // data loaded from temporary file
+        Log.info('[PNF] loaded ${data.length} bytes from tmp: $tmpPath');
         // encrypted data loaded from temporary file
         // try to decrypt it
         data = await _decrypt(data, cachePath);
         return data != null;
       }
     }
-    // 3. try to download
+    //
+    //  3. download from remote URL
+    //
     Uri? url = pnf.url;
     if (url == null) {
-      nc.postNotification(NotificationNames.kPortableNetworkError, this, {
-        'URL': pnf.url,
-        'error': 'URL not found',
-      });
       setStatus(PortableNetworkStatus.error);
+      assert(false, 'URL not found: $pnf');
       return false;
     }
     setStatus(PortableNetworkStatus.downloading);
-    data = await _HTTPHelper.download(url, onReceiveProgress: (count, total) {
+    data = await HTTPHelper.download(url, onReceiveProgress: (count, total) {
       _count = count;
       _total = total;
       nc.postNotification(NotificationNames.kPortableNetworkReceiveProgress, this, {
@@ -248,21 +248,24 @@ abstract class PortableNetworkLoader {
       setStatus(PortableNetworkStatus.error);
       return false;
     }
+    //
+    //  4. save data from remote URL
+    //
+    Log.info('[PNF] saving file (${data.length} bytes) into tmp: $tmpPath');
     int cnt = await ExternalStorage.saveBinary(data, tmpPath);
-    if (cnt == data.length) {
-      nc.postNotification(NotificationNames.kPortableNetworkReceived, this, {
-        'URL': pnf.url,
-        'data': data,
-        'path': tmpPath,
-      });
-    } else {
-      nc.postNotification(NotificationNames.kPortableNetworkError, this, {
-        'URL': pnf.url,
-        'error': 'Failed to save temporary file',
-      });
+    if (cnt != data.length) {
+      // setStatus(PortableNetworkStatus.error);
+      assert(false, 'failed to save temporary file: $cnt/${data.length}, $tmpPath');
+      // return false;
     }
-    // encrypted data downloaded from remote URL
-    // try to decrypt it
+    nc.postNotification(NotificationNames.kPortableNetworkReceived, this, {
+      'URL': pnf.url,
+      'data': data,
+      'path': tmpPath,
+    });
+    //
+    //  5. decrypt data from remote URL
+    //
     data = await _decrypt(data, cachePath);
     return data != null;
   }
@@ -272,11 +275,15 @@ abstract class PortableNetworkLoader {
     if (data == null) {
       data = pnf.data;
       if (data != null && data.isNotEmpty) {
-        // assert(pnf.url == null, 'PNF error: $_pnf');
+        assert(pnf.url == null, 'PNF error: $pnf');
         // assert(_status == PortableNetworkStatus.init, 'PNF status: $_status');
         _bytes = data;
-        // callback?.onSuccess(data, pnf);
-        // setStatus(PortableNetworkStatus.success);
+        var nc = NotificationCenter();
+        nc.postNotification(NotificationNames.kPortableNetworkSuccess, this, {
+          // 'URL': pnf.url,
+          'data': data,
+        });
+        setStatus(PortableNetworkStatus.success);
         return true;
       }
     } else {
@@ -285,119 +292,19 @@ abstract class PortableNetworkLoader {
       return true;
     }
     bool ok;
-    await lock.acquire();
+    await _lock.acquire();
     try {
-      ok = await _process();
+      if (_bytes == null) {
+        ok = await _process();
+      } else {
+        ok = true;
+      }
     } finally {
-      lock.release();
+      _lock.release();
     }
     return ok;
   }
 
-  static final Mutex lock = Mutex();
-
-}
-
-class _FilenameUtils {
-
-  static String filenameFromURL(Uri url, String? filename) {
-    String? urlFilename = Paths.filename(url.toString());
-    // check URL extension
-    String? urlExt;
-    if (urlFilename != null) {
-      urlExt = Paths.extension(urlFilename);
-      if (_isEncoded(urlFilename, urlExt)) {
-        // URL filename already encoded
-        return urlFilename;
-      }
-    }
-    // check filename extension
-    String? ext;
-    if (filename != null) {
-      ext = Paths.extension(filename);
-      if (_isEncoded(filename, ext)) {
-        // filename already encoded
-        return filename;
-      }
-    }
-    ext ??= urlExt;
-    // get filename from URL
-    Uint8List data = UTF8.encode(url.toString());
-    filename = Hex.encode(MD5.digest(data));
-    return ext == null || ext.isEmpty ? filename : '$filename.$ext';
-  }
-
-  // static String filenameFromData(Uint8List data, String filename) {
-  //   // split file extension
-  //   String? ext = Paths.extension(filename);
-  //   if (_isEncoded(filename, ext)) {
-  //     // already encoded
-  //     return filename;
-  //   }
-  //   // get filename from data
-  //   filename = Hex.encode(MD5.digest(data));
-  //   return ext == null || ext.isEmpty ? filename : '$filename.$ext';
-  // }
-
-  static bool _isEncoded(String filename, String? ext) {
-    if (ext != null && ext.isNotEmpty) {
-      filename = filename.substring(0, filename.length - ext.length - 1);
-    }
-    return filename.length == 32 && _hex.hasMatch(filename);
-  }
-  static final _hex = RegExp(r'^[\dA-Fa-f]+$');
-
-}
-
-class _HTTPHelper {
-
-  static String get userAgent {
-    // return 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7)'
-    //     ' AppleWebKit/537.36 (KHTML, like Gecko)'
-    //     ' Chrome/118.0.0.0 Safari/537.36';
-    GlobalVariable shared = GlobalVariable();
-    return shared.terminal.userAgent;
-  }
-
-  static Future<Uint8List?> download(Uri url, {ProgressCallback? onReceiveProgress}) async {
-    Response response;
-    try {
-      response = await Dio().getUri(url, onReceiveProgress: onReceiveProgress, options: Options(
-          responseType: ResponseType.bytes,
-          headers: {
-            'User-Agent': userAgent,
-          }
-      )).onError((error, stackTrace) {
-        Log.error('[DIO] failed to download $url: $error');
-        throw Exception(error);
-      });
-    } catch (e, st) {
-      Log.error('failed to download $url: error: $e');
-      Log.debug('failed to download $url: error: $e, $st');
-      return null;
-    }
-    int? statusCode = response.statusCode;
-    String? statusMessage = response.statusMessage;
-    if (statusCode != 200) {
-      Log.error('failed to download $url, status: $statusCode - $statusMessage');
-      return null;
-    }
-    int? contentLength = getContentLength(response);
-    Uint8List? data = response.data;
-    if (data == null) {
-      assert(contentLength == 0, 'content length error: $contentLength');
-      return null;
-    } else if (contentLength != null && contentLength != data.length) {
-      assert(false, 'content length not match: $contentLength, ${data.length}');
-      return null;
-    }
-    Log.info('downloaded ${data.length} byte(s) from: $url');
-    return data;
-  }
-
-  static int? getContentLength(Response response) {
-    String? value = response.headers.value(Headers.contentLengthHeader);
-    return Converter.getInt(value, null);
-  }
+  static final Mutex _lock = Mutex();
 
 }

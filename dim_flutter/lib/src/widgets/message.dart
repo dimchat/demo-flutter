@@ -110,7 +110,7 @@ abstract class ContentViewUtils {
       GestureDetector(
         onTap: onTap ?? () => previewImageContent(ctx, content, messages),
         onLongPress: onLongPress,
-        child: AutoImageView.fromContent(content),
+        child: NetworkImageFactory().getImageView(PortableNetworkFile.parse(content)!),
       );
 
   static Widget getPageContentView(BuildContext ctx, PageContent content, ID sender,

@@ -39,15 +39,27 @@ abstract class NotificationNames {
 
   static const String kSearchUpdated = 'SearchUpdated';
 
-  static const String kFileDownloadSuccess = 'FileDownloadSuccess';
-  static const String kFileDownloadFailure = 'FileDownloadFailure';
-
-  static const String kFileUploadSuccess = 'FileUploadSuccess';
-  static const String kFileUploadFailure = 'FileUploadFailure';
-
   static const String kRecordFinished = 'RecordFinished';
   static const String kPlayFinished = 'PlayFinished';
 
   static const String kSettingUpdated = 'SettingUpdated';
+
+  static const String kFileUploadSuccess = 'FileUploadSuccess';
+  static const String kFileUploadFailure = 'FileUploadFailure';
+
+  static const String kFileDownloadSuccess = 'FileDownloadSuccess';
+  static const String kFileDownloadFailure = 'FileDownloadFailure';
+
+  //
+  //  PNF
+  //
+
+  static const String kPortableNetworkStatusChanged = 'PNF_OnStatusChanged';
+  static const String kPortableNetworkReceiveProgress = 'PNF_OnReceiveProgress';
+  static const String kPortableNetworkReceived = 'PNF_OnReceived';
+  static const String kPortableNetworkDecrypted = 'PNF_OnDecrypted';
+  static const String kPortableNetworkSuccess = 'PNF_OnSuccess';
+  static const String kPortableNetworkError = 'PNF_OnError';
+
 
 }

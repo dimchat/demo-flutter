@@ -93,7 +93,7 @@ class _ImagePreviewState extends State<_ImagePreview> {
     scrollPhysics: const BouncingScrollPhysics(),
     builder: (context, index) => PhotoViewGalleryPageOptions.customChild(
       child: GestureDetector(
-        child: AutoImageView.from(widget.info.images[index]),
+        child: NetworkImageFactory().getImageView(widget.info.images[index]),
         onTap: () {
           Navigator.pop(context);
         },
@@ -126,7 +126,7 @@ void _confirmToSave(BuildContext context, PortableNetworkFile pnf) =>
       okAction: () => _saveImage(context, pnf),
     );
 void _saveImage(BuildContext context, PortableNetworkFile pnf) {
-  PortableNetworkLoader loader = AutoImageView.getLoader(pnf);
+  PortableNetworkLoader loader = NetworkImageFactory().getImageLoader(pnf);
   loader.run().then((ok) {
     assert(ok && loader.status == PortableNetworkStatus.success, 'PNF loader error');
     loader.cacheFilePath.then((path) {

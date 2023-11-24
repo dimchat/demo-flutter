@@ -37,43 +37,9 @@ import 'package:dim_client/dim_client.dart';
 import 'package:lnc/lnc.dart';
 
 import '../client/shared.dart';
+import '../common/constants.dart';
 import '../filesys/external.dart';
 import '../filesys/paths.dart';
-
-abstract interface class PortableNetworkCallback {
-
-  ///  Callback when downloading
-  ///
-  /// @param count - received bytes
-  /// @param total - content length
-  void onReceiveProgress(int count, int total, PortableNetworkFile pnf);
-
-  ///  Callback after downloaded
-  ///
-  /// @param data  - received data (maybe encrypted)
-  /// @param tmp   - temporary file path
-  void onReceived(Uint8List data, String tmp, PortableNetworkFile pnf);
-
-  ///  Callback after successful decryption
-  ///
-  /// @param data  - decrypted data (original file content)
-  /// @param path  - cached file path
-  void onDecrypted(Uint8List data, String path, PortableNetworkFile pnf);
-
-  ///  Callback after success
-  ///
-  /// @param data  - original file content
-  void onSuccess(Uint8List data, PortableNetworkFile pnf);
-
-  ///  Callback when error
-  ///
-  /// @param error - reason
-  void onError(String error, PortableNetworkFile pnf);
-
-  void onStatusChanged(PortableNetworkStatus previous,
-      PortableNetworkStatus current, PortableNetworkFile pnf);
-
-}
 
 enum PortableNetworkStatus {
   init,
@@ -84,26 +50,34 @@ enum PortableNetworkStatus {
 }
 
 abstract class PortableNetworkLoader {
-  PortableNetworkLoader(this.pnf, PortableNetworkCallback? callback) {
-    if (callback != null) {
-      _callback = WeakReference(callback);
-    }
-  }
+  PortableNetworkLoader(this.pnf);
 
   final PortableNetworkFile pnf;
-  late final WeakReference<PortableNetworkCallback>? _callback;
-  PortableNetworkCallback? get callback => _callback?.target;
 
+  /// file content received
   Uint8List? _bytes;
   Uint8List? get content => _bytes;
 
+  /// count of bytes received
+  int _count = 0;
+  int get count => _count;
+  /// total bytes receiving
+  int _total = 0;
+  int get total => _total;
+
+  /// loader status
   PortableNetworkStatus _status = PortableNetworkStatus.init;
   PortableNetworkStatus get status => _status;
   setStatus(PortableNetworkStatus current) {
     PortableNetworkStatus previous = _status;
     _status = current;
     if (previous != current) {
-      callback?.onStatusChanged(previous, current, pnf);
+      var nc = NotificationCenter();
+      nc.postNotification(NotificationNames.kPortableNetworkStatusChanged, this, {
+        'URL': pnf.url,
+        'previous': previous,
+        'current': current,
+      });
     }
   }
 
@@ -150,6 +124,7 @@ abstract class PortableNetworkLoader {
   }
 
   Future<Uint8List?> _decrypt(Uint8List data, String cachePath) async {
+    var nc = NotificationCenter();
     // 1. check password
     DecryptKey? password = pnf.password;
     if (password == null) {
@@ -161,7 +136,10 @@ abstract class PortableNetworkLoader {
       Uint8List? plaintext = password.decrypt(data, pnf);
       if (plaintext == null || plaintext.isEmpty) {
         assert(false, 'failed to decrypt data (${data.length} bytes) with password: $password');
-        callback?.onError('Failed to decrypt data', pnf);
+        nc.postNotification(NotificationNames.kPortableNetworkError, this, {
+          'URL': pnf.url,
+          'error': 'Failed to decrypt data',
+        });
         setStatus(PortableNetworkStatus.error);
         return null;
       }
@@ -171,14 +149,24 @@ abstract class PortableNetworkLoader {
     // 2. save original file content
     int size = await ExternalStorage.saveBinary(data, cachePath);
     if (size != data.length) {
-      callback?.onError('Failed to cache file: $cachePath', pnf);
+      nc.postNotification(NotificationNames.kPortableNetworkError, this, {
+        'URL': pnf.url,
+        'error': 'Failed to cache file',
+      });
       // setStatus(PortableNetworkStatus.error);
       // return null;
     }
     if (_status == PortableNetworkStatus.decrypting) {
-      callback?.onDecrypted(data, cachePath, pnf);
+      nc.postNotification(NotificationNames.kPortableNetworkDecrypted, this, {
+        'URL': pnf.url,
+        'data': data,
+        'path': cachePath,
+      });
     }
-    callback?.onSuccess(data, pnf);
+    nc.postNotification(NotificationNames.kPortableNetworkSuccess, this, {
+      'URL': pnf.url,
+      'data': data,
+    });
     setStatus(PortableNetworkStatus.success);
     return data;
   }
@@ -186,10 +174,14 @@ abstract class PortableNetworkLoader {
   Future<bool> _process() async {
     setStatus(PortableNetworkStatus.init);
     Uint8List? data;
+    var nc = NotificationCenter();
     // 1. check cached file
     String? cachePath = await cacheFilePath;
     if (cachePath == null) {
-      callback?.onError('Failed to get cache file path', pnf);
+      nc.postNotification(NotificationNames.kPortableNetworkError, this, {
+        'URL': pnf.url,
+        'error': 'Failed to get cache file path',
+      });
       setStatus(PortableNetworkStatus.error);
       return false;
     }
@@ -199,7 +191,10 @@ abstract class PortableNetworkLoader {
       if (data != null && data.isNotEmpty) {
         // data loaded from cached file
         _bytes = data;
-        callback?.onSuccess(data, pnf);
+        nc.postNotification(NotificationNames.kPortableNetworkSuccess, this, {
+          'URL': pnf.url,
+          'data': data,
+        });
         setStatus(PortableNetworkStatus.success);
         return true;
       }
@@ -207,7 +202,10 @@ abstract class PortableNetworkLoader {
     // 2. check temporary file
     String? tmpPath = await temporaryFilePath;
     if (tmpPath == null) {
-      callback?.onError('Failed to get temporary path', pnf);
+      nc.postNotification(NotificationNames.kPortableNetworkError, this, {
+        'URL': pnf.url,
+        'error': 'Failed to get temporary path',
+      });
       setStatus(PortableNetworkStatus.error);
       return false;
     }
@@ -224,24 +222,43 @@ abstract class PortableNetworkLoader {
     // 3. try to download
     Uri? url = pnf.url;
     if (url == null) {
-      callback?.onError('URL not found', pnf);
+      nc.postNotification(NotificationNames.kPortableNetworkError, this, {
+        'URL': pnf.url,
+        'error': 'URL not found',
+      });
       setStatus(PortableNetworkStatus.error);
       return false;
     }
     setStatus(PortableNetworkStatus.downloading);
     data = await _HTTPHelper.download(url, onReceiveProgress: (count, total) {
-      callback?.onReceiveProgress(count, total, pnf);
+      _count = count;
+      _total = total;
+      nc.postNotification(NotificationNames.kPortableNetworkReceiveProgress, this, {
+        'URL': pnf.url,
+        'count': count,
+        'total': total,
+      });
     });
     if (data == null || data.isEmpty) {
-      callback?.onError('Failed to download file', pnf);
+      nc.postNotification(NotificationNames.kPortableNetworkError, this, {
+        'URL': pnf.url,
+        'error': 'Failed to download file',
+      });
       setStatus(PortableNetworkStatus.error);
       return false;
     }
     int cnt = await ExternalStorage.saveBinary(data, tmpPath);
     if (cnt == data.length) {
-      callback?.onReceived(data, tmpPath, pnf);
+      nc.postNotification(NotificationNames.kPortableNetworkReceived, this, {
+        'URL': pnf.url,
+        'data': data,
+        'path': tmpPath,
+      });
     } else {
-      callback?.onError('Failed to save temporary file', pnf);
+      nc.postNotification(NotificationNames.kPortableNetworkError, this, {
+        'URL': pnf.url,
+        'error': 'Failed to save temporary file',
+      });
     }
     // encrypted data downloaded from remote URL
     // try to decrypt it

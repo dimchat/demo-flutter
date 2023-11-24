@@ -8,8 +8,7 @@ import 'package:lnc/lnc.dart' show Log;
 import '../models/chat.dart';
 import '../models/chat_contact.dart';
 import '../models/message.dart';
-import '../pnf/image.dart';
-import '../pnf/image_preview.dart';
+import '../pnf/auto_image.dart';
 import '../ui/styles.dart';
 
 import 'audio.dart';

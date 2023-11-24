@@ -144,8 +144,8 @@ class GroupInfo extends Conversation {
   Pair<ResetCommand?, ReliableMessage?> get reset => _reset ?? const Pair(null, null);
 
   @override
-  Widget getImage({double? width, double? height, GestureTapCallback? onTap}) =>
-      GroupImage(this, width: width, height: height, onTap: onTap);
+  Widget getImage({double? width, double? height}) =>
+      GroupImage(this, width: width, height: height);
 
   @override
   Future<void> loadData() async {

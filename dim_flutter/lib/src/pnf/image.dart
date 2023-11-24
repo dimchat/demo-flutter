@@ -38,70 +38,26 @@ import 'package:lnc/lnc.dart' as lnc;
 import 'package:lnc/lnc.dart' show Log;
 
 import '../common/constants.dart';
-import '../filesys/local.dart';
-import '../filesys/paths.dart';
-import '../ui/icons.dart';
 import '../ui/styles.dart';
 import '../widgets/circle_progress.dart';
 
 import 'loader.dart';
 
 
-class NetworkImageFactory {
-  factory NetworkImageFactory() => _instance;
-  static final NetworkImageFactory _instance = NetworkImageFactory._internal();
-  NetworkImageFactory._internal();
+class PortableImageView extends StatefulWidget {
+  const PortableImageView(this.loader, {super.key});
 
-  final Map<Uri, _PortableImageLoader> _loaders = WeakValueMap();
-  final Map<Uri, _AutoImageView> _views = WeakValueMap();
+  final PortableImageLoader loader;
 
-  PortableNetworkLoader getImageLoader(PortableNetworkFile pnf) {
-    _PortableImageLoader? runner;
-    Uri? url = pnf.url;
-    if (url == null) {
-      runner = _PortableImageLoader(pnf);
-      runner.run();
-    } else {
-      runner = _loaders[url];
-      if (runner == null) {
-        runner = _PortableImageLoader(pnf);
-        _loaders[url] = runner;
-        runner.run();
-      }
-    }
-    return runner;
-  }
-
-  Widget getImageView(PortableNetworkFile pnf) {
-    Uri? url = pnf.url;
-    var loader = getImageLoader(pnf) as _PortableImageLoader;
-    if (url == null) {
-      return _AutoImageView(loader);
-    }
-    _AutoImageView? view = _views[url];
-    if (view == null) {
-      view = _AutoImageView(loader);
-      _views[url] = view;
-    }
-    return view;
-  }
-
-}
-
-class _AutoImageView extends StatefulWidget {
-  const _AutoImageView(this._loader);
-
-  final _PortableImageLoader _loader;
-
-  PortableNetworkFile get pnf => _loader.pnf;
+  PortableNetworkFile get pnf => loader.pnf;
 
   @override
-  State<StatefulWidget> createState() => _AutoImageState();
+  State<StatefulWidget> createState() => _PortableImageState();
 
 }
 
-class _AutoImageState extends State<_AutoImageView> implements lnc.Observer {
-  _AutoImageState() {
+class _PortableImageState extends State<PortableImageView> implements lnc.Observer {
+  _PortableImageState() {
     var nc = lnc.NotificationCenter();
     nc.addObserver(this, NotificationNames.kPortableNetworkStatusChanged);
     nc.addObserver(this, NotificationNames.kPortableNetworkReceiveProgress);
@@ -129,7 +85,7 @@ class _AutoImageState extends State<_AutoImageView> implements lnc.Observer {
     Map? userInfo = notification.userInfo;
     Uri? url = userInfo?['URL'];
     if (name == NotificationNames.kPortableNetworkStatusChanged) {
-      if (url == widget.pnf.url || notification.sender == widget._loader) {
+      if (url == widget.pnf.url || notification.sender == widget.loader) {
         var previous = userInfo?['previous'];
         var current = userInfo?['current'];
         Log.info('[PNF] onStatusChanged: $previous -> $current, $url');
@@ -148,20 +104,20 @@ class _AutoImageState extends State<_AutoImageView> implements lnc.Observer {
         await _reload();
       }
     } else if (name == NotificationNames.kPortableNetworkDecrypted) {
-      if (url == widget.pnf.url || notification.sender == widget._loader) {
+      if (url == widget.pnf.url || notification.sender == widget.loader) {
         Uint8List? data = userInfo?['data'];
         String? path = userInfo?['path'];
         Log.info('[PNF] onDecrypted: ${data?.length} bytes into file "$path", $url');
         await _reload();
       }
     } else if (name == NotificationNames.kPortableNetworkSuccess) {
-      if (url == widget.pnf.url || notification.sender == widget._loader) {
+      if (url == widget.pnf.url || notification.sender == widget.loader) {
         Uint8List? data = userInfo?['data'];
         Log.info('[PNF] onSuccess: ${data?.length} bytes, $url');
         await _reload();
       }
     } else if (name == NotificationNames.kPortableNetworkError) {
-      if (url == widget.pnf.url || notification.sender == widget._loader) {
+      if (url == widget.pnf.url || notification.sender == widget.loader) {
         String? error = userInfo?['error'];
         Log.error('[PNF] onError: $error, $url');
         await _reload();
@@ -178,112 +134,64 @@ class _AutoImageState extends State<_AutoImageView> implements lnc.Observer {
 
   @override
   Widget build(BuildContext context) {
-    Widget view;
-    var loader = widget._loader;
-    ImageProvider? image = loader.image;
-    if (image == null) {
-      view = Icon(AppIcons.noImageIcon,
-        color: Styles.colors.avatarDefaultColor,
-      );
-    } else {
-      view = Image(image: image,);
-    }
-    Widget? indicator;
-    PortableNetworkStatus? status = loader.status;
-    if (status == PortableNetworkStatus.init) {
-      indicator = _progress();
-    } else if (status == PortableNetworkStatus.downloading) {
-      indicator = _progress();
-    } else if (status == PortableNetworkStatus.decrypting) {
-      indicator = _progress();
-    } else if (status == PortableNetworkStatus.error) {
-      indicator = Text('Error'.tr,
-        style: TextStyle(color: Styles.colors.criticalButtonColor,
-          fontSize: 12,
-          decoration: TextDecoration.none,
-        ),
-      );
-    }
+    var loader = widget.loader;
+    Widget? indicator = loader.getProgress(widget);
     if (indicator == null) {
-      return view;
+      return loader.getImage(widget);
     }
     return Stack(
       alignment: AlignmentDirectional.center,
       children: [
-        view,
+        loader.getImage(widget),
         indicator,
       ],
-    );
-  }
-
-  Widget _progress() {
-    int count = widget._loader.count;
-    int total = widget._loader.total;
-    double value = total > 0 ? count.toDouble() / total.toDouble() : 0.0;
-    return CircleProgressWidget.from(value,
-      color: Styles.colors.avatarColor,
-      backgroundColor: Styles.colors.avatarDefaultColor,
-      // textStyle: Styles.buttonTextStyle,
-      completeText: 'Decrypting'.tr,
     );
   }
 
 }
 
 
-class _PortableImageLoader extends PortableNetworkLoader {
-  _PortableImageLoader(super.pnf);
+abstract class PortableImageLoader extends PortableNetworkLoader {
+  PortableImageLoader(super.pnf);
 
   ImageProvider<Object>? _provider;
-  ImageProvider<Object>? _thumbnail;
 
-  ImageProvider<Object>? get image {
-    ImageProvider<Object>? ip = _provider;
-    if (ip != null) {
-      return ip;
-    }
-    Uint8List? bytes = content;
-    if (bytes == null || bytes.isEmpty) {
-      // waiting to download & decrypt
-    } else {
-      ip = _provider = MemoryImage(bytes);
-      return ip;
-    }
-    // check thumbnail
-    ip = _thumbnail;
-    if (ip != null) {
-      return ip;
-    }
-    var base64 = pnf['thumbnail'];
-    if (base64 is String) {
-      bytes = Base64.decode(base64);
-      if (bytes == null || bytes.isEmpty) {
-        assert(false, 'thumbnail error: $base64');
-      } else {
-        ip = _thumbnail = MemoryImage(bytes);
+  ImageProvider<Object>? get imageProvider {
+    var image = _provider;
+    if (image == null) {
+      // check file content
+      Uint8List? bytes = content;
+      if (bytes != null && bytes.isNotEmpty) {
+        image = _provider = MemoryImage(bytes);
+      // } else {
+      //   // waiting to download & decrypt
       }
     }
-    return ip;
+    return image;
   }
 
-  @override
-  Future<String?> get temporaryDirectory async {
-    LocalStorage cache = LocalStorage();
-    String? dir = await cache.temporaryDirectory;
-    if (dir == null) {
-      return null;
-    }
-    return Paths.append(dir, 'download');
-  }
+  Widget getImage(PortableImageView view);
 
-  @override
-  Future<String?> get cachesDirectory async {
-    LocalStorage cache = LocalStorage();
-    String? dir = await cache.cachesDirectory;
-    if (dir == null) {
+  Widget? getProgress(PortableImageView view) {
+    if (status == PortableNetworkStatus.success) {
       return null;
+    } else if (status == PortableNetworkStatus.error) {
+      return Text('Error'.tr,
+        style: TextStyle(color: Styles.colors.criticalButtonColor,
+          fontSize: 12,
+          decoration: TextDecoration.none,
+        ),
+      );
     }
-    return Paths.append(dir, 'files');
+    double len = total.toDouble();
+    double value = len > 0 ? count / len : 0.0;
+    return CircleProgressWidget.from(value,
+      color: Styles.colors.avatarColor,
+      backgroundColor: Styles.colors.avatarDefaultColor,
+      // textStyle: Styles.buttonTextStyle,
+      completeText: 'Decrypting'.tr,
+    );
+
   }
 
 }

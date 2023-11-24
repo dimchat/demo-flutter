@@ -106,7 +106,7 @@ abstract class Conversation implements lnc.Observer {
   bool get isNotMuted => _muted == false;
 
   /// icon
-  Widget getImage({double? width, double? height, GestureTapCallback? onTap});
+  Widget getImage({double? width, double? height});
 
   NameLabel getNameLabel({
     TextStyle? style,

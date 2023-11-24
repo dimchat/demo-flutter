@@ -10,14 +10,12 @@ import '../models/chat_group.dart';
 
 /// Group Icon
 class GroupImage extends StatefulWidget {
-  const GroupImage(this.info, {super.key, this.width, this.height, this.onTap});
+  const GroupImage(this.info, {super.key, this.width, this.height});
 
   final GroupInfo info;
 
   final double? width;
   final double? height;
-
-  final GestureTapCallback? onTap;
 
   @override
   State<StatefulWidget> createState() => _GroupImageState();

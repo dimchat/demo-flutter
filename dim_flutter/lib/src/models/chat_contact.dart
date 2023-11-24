@@ -8,7 +8,7 @@ import 'package:lnc/lnc.dart' show Log;
 import '../common/dbi/contact.dart';
 import '../common/constants.dart';
 import '../client/shared.dart';
-import '../network/pni_avatar.dart';
+import '../pnf/avatar.dart';
 import '../widgets/alert.dart';
 
 import 'amanuensis.dart';
@@ -79,8 +79,8 @@ class ContactInfo extends Conversation {
   }
 
   @override
-  Widget getImage({double? width, double? height, GestureTapCallback? onTap}) =>
-      AvatarFactory().getAvatarView(identifier, width: width, height: height, onTap: onTap);
+  Widget getImage({double? width, double? height}) =>
+      AvatarFactory().getFacadeView(identifier, width: width, height: height);
 
   @override
   Future<void> loadData() async {

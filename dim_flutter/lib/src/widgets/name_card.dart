@@ -34,7 +34,7 @@ import 'package:flutter/material.dart';
 import 'package:dim_client/dim_client.dart';
 
 import '../network/image_factory.dart';
-import '../network/pni_avatar.dart';
+import '../pnf/avatar.dart';
 import '../ui/icons.dart';
 import '../ui/styles.dart';
 
@@ -62,7 +62,7 @@ class NameCardView extends StatelessWidget {
     // TODO: decrypt avatar when 'password' exists
     String? url = content.avatar?.toString();
     Widget image = url == null
-        ? factory.getAvatarView(identifier, width: 32, height: 32)
+        ? factory.getFacadeView(identifier, width: 32, height: 32)
         : ImageView(url: url, width: 32, height: 32,);
     return ClipRRect(
       borderRadius: const BorderRadius.all(

@@ -28,9 +28,8 @@
  * SOFTWARE.
  * =============================================================================
  */
-import 'dart:typed_data';
-
 import 'package:flutter/cupertino.dart';
+
 import 'package:dim_client/dim_client.dart';
 import 'package:lnc/lnc.dart' as lnc;
 import 'package:lnc/lnc.dart' show Log;
@@ -42,65 +41,138 @@ import '../filesys/paths.dart';
 import '../ui/icons.dart';
 import '../ui/styles.dart';
 
-import 'loader.dart';
+import 'gallery.dart';
+import 'image.dart';
 
 
-// class AvatarFactory {
-//   factory AvatarFactory() => _instance;
-//   static final AvatarFactory _instance = AvatarFactory._internal();
-//   AvatarFactory._internal();
-//
-//   Widget getAvatarView(ID identifier, {double? width, double? height, GestureTapCallback? onTap}) {
-//     width ??= 32;
-//     height ??= 32;
-//     Widget view = ClipRRect(
-//       borderRadius: BorderRadius.all(
-//         Radius.elliptical(width / 8, height / 8),
-//       ),
-//       child: _AutoAvatarView(identifier, width: width, height: height,),
-//     );
-//     if (onTap == null) {
-//       return view;
-//     }
-//     return GestureDetector(
-//       onTap: onTap,
-//       child: view,
-//     );
-//   }
-//
-//   static PortableNetworkLoader getLoader(PortableNetworkFile pnf, {PortableNetworkCallback? callback}) =>
-//       _PortableNetworkFactory().get(pnf, callback);
-//
-// }
+/// preview avatar image
+void previewAvatar(BuildContext context, ID identifier, PortableNetworkFile avatar) {
+  var image = AvatarFactory().getAvatarView(identifier, avatar);
+  Gallery([image], 0).show(context);
+}
 
-class _AutoInfo {
 
-  PortableNetworkFile? pnf;
-  _PortableAvatarLoader? loader;
+/// Factory for Avatar
+class AvatarFactory {
+  factory AvatarFactory() => _instance;
+  static final AvatarFactory _instance = AvatarFactory._internal();
+  AvatarFactory._internal();
+
+  final Map<Uri, _AvatarLoader> _loaders = WeakValueMap();
+  final Map<Uri, Set<_AvatarView>> _images = {};
+  final Map<ID, Set<_FacadeView>> _facades = {};
+
+  PortableImageLoader getAvatarLoader(PortableNetworkFile pnf) {
+    _AvatarLoader? runner;
+    Uri? url = pnf.url;
+    if (url == null) {
+      runner = _AvatarLoader(pnf);
+      runner.run();
+    } else {
+      runner = _loaders[url];
+      if (runner == null) {
+        runner = _AvatarLoader(pnf);
+        _loaders[url] = runner;
+        runner.run();
+      }
+    }
+    return runner;
+  }
+
+  PortableImageView getAvatarView(ID user, PortableNetworkFile pnf,
+      {double? width, double? height}) {
+    var loader = getAvatarLoader(pnf);
+    Uri? url = pnf.url;
+    if (url == null) {
+      return _AvatarView(loader, user, width: width, height: height,);
+    }
+    _AvatarView? img;
+    Set<_AvatarView>? table = _images[url];
+    if (table == null) {
+      table = WeakSet();
+      _images[url] = table;
+    } else {
+      for (_AvatarView item in table) {
+        if (item.width != width || item.height != height) {
+          // size not match
+        } else if (item.identifier != user) {
+          // ID not match
+        } else {
+          // got it
+          img = item;
+          break;
+        }
+      }
+    }
+    if (img == null) {
+      img = _AvatarView(loader, user, width: width, height: height,);
+      table.add(img);
+    }
+    return img;
+  }
+
+  Widget getFacadeView(ID user, {double? width, double? height}) {
+    width ??= 32;
+    height ??= 32;
+    _FacadeView? facade;
+    Set<_FacadeView>? table = _facades[user];
+    if (table == null) {
+      table = WeakSet();
+      _facades[user] = table;
+    } else {
+      for (_FacadeView item in table) {
+        if (item.width != width || item.height != height) {
+          // size not match
+        } else if (item.identifier != user) {
+          // ID not match
+        } else {
+          // got it
+          facade = item;
+          break;
+        }
+      }
+    }
+    if (facade == null) {
+      facade = _FacadeView(user, width: width, height: height,);
+      table.add(facade);
+    }
+    return facade;
+  }
 
 }
 
-class _AutoAvatarView extends StatefulWidget {
-  _AutoAvatarView(this.identifier, {required this.width, required this.height});
+class _FacadeInfo {
+
+  PortableNetworkFile? avatar;
+
+}
+
+/// Auto refresh avatar view
+class _FacadeView extends StatefulWidget {
+  _FacadeView(this.identifier, {required this.width, required this.height});
 
   final ID identifier;
   final double width;
   final double height;
 
-  final _AutoInfo _info = _AutoInfo();
+  final _FacadeInfo _info = _FacadeInfo();
 
-  void setNeedsReload() {
-    _info.pnf = null;
-    _info.loader = null;
+  bool updateAvatar(PortableNetworkFile avatar) {
+    if (_info.avatar == avatar) {
+      Log.info('avatar not changed: $identifier');
+      return false;
+    }
+    _info.avatar = avatar;
+    return true;
   }
 
   @override
-  State<StatefulWidget> createState() => _AutoImageState();
+  State<StatefulWidget> createState() => _FacadeState();
 
 }
 
-class _AutoImageState extends State<_AutoAvatarView> implements lnc.Observer {
-  _AutoImageState() {
+class _FacadeState extends State<_FacadeView> implements lnc.Observer {
+  _FacadeState() {
     var nc = lnc.NotificationCenter();
     nc.addObserver(this, NotificationNames.kDocumentUpdated);
   }
@@ -120,10 +192,9 @@ class _AutoImageState extends State<_AutoAvatarView> implements lnc.Observer {
       ID? identifier = userInfo?['ID'];
       Document? visa = userInfo?['document'];
       assert(identifier != null && visa != null, 'notification error: $notification');
-      if (identifier == widget.identifier) {
+      if (identifier == widget.identifier && visa is Visa) {
         Log.info('document updated, refreshing facade: $identifier');
-        // update visa document and refresh
-        widget.setNeedsReload();
+        // update refresh for new avatar
         await _reload();
       }
     } else {
@@ -145,11 +216,8 @@ class _AutoImageState extends State<_AutoAvatarView> implements lnc.Observer {
       Log.warning('avatar not found: $doc');
       return;
     }
-    var loader = _PortableNetworkFactory().get(avatar);
-    widget._info.pnf = avatar;
-    widget._info.loader = loader;
-    await loader.run();
-    if (mounted) {
+    // refresh with new avatar
+    if (mounted && widget.updateAvatar(avatar)) {
       setState(() {
       });
     }
@@ -163,19 +231,35 @@ class _AutoImageState extends State<_AutoAvatarView> implements lnc.Observer {
 
   @override
   Widget build(BuildContext context) {
+    var info = widget._info;
     double width = widget.width;
     double height = widget.height;
-    var loader = widget._info.loader;
-    ImageProvider? image = loader?.image;
-    if (image == null) {
-      return getNoImage(width: width, height: height);
+    ID identifier = widget.identifier;
+    var avatar = info.avatar;
+    Widget? view;
+    if (avatar == null) {
+      view = _AvatarView.getNoImage(identifier, width: width, height: height);
     } else {
-      return Image(image: image, width: width, height: height, fit: BoxFit.cover,);
+      view = AvatarFactory().getAvatarView(identifier, avatar, width: width, height: height);
     }
+    return ClipRRect(
+      borderRadius: BorderRadius.all(
+        Radius.elliptical(width / 8, height / 8),
+      ),
+      child: view,
+    );
   }
 
-  Widget getNoImage({double? width, double? height}) {
-    ID identifier = widget.identifier;
+}
+
+class _AvatarView extends PortableImageView {
+  const _AvatarView(super.loader, this.identifier, {this.width, this.height});
+
+  final ID identifier;
+  final double? width;
+  final double? height;
+
+  static Widget getNoImage(ID identifier, {double? width, double? height}) {
     double? size = width ?? height;
     if (identifier.type == EntityType.kStation) {
       return Icon(AppIcons.stationIcon, size: size, color: Styles.colors.avatarColor);
@@ -193,60 +277,36 @@ class _AutoImageState extends State<_AutoAvatarView> implements lnc.Observer {
     }
   }
 
-  @override
-  void onDecrypted(Uint8List data, String path, PortableNetworkFile pnf) {
-    Log.info('[PNF] onDecrypted: ${data.length} bytes into file "$path", ${pnf.url}');
-  }
-
-  @override
-  void onError(String error, PortableNetworkFile pnf) {
-    Log.error('[PNF] onError: $error, ${pnf.url}');
-  }
-
-  @override
-  void onReceiveProgress(int count, int total, PortableNetworkFile pnf) {
-    Log.info('[PNF] onReceiveProgress: $count/$total, ${pnf.url}');
-  }
-
-  @override
-  void onReceived(Uint8List data, String tmp, PortableNetworkFile pnf) {
-    Log.info('[PNF] onReceived: ${data.length} bytes into file "$tmp"');
-  }
-
-  @override
-  void onStatusChanged(PortableNetworkStatus previous, PortableNetworkStatus current, PortableNetworkFile pnf) {
-    Log.info('[PNF] onStatusChanged: $previous -> $current, ${pnf.url}');
-  }
-
-  @override
-  void onSuccess(Uint8List data, PortableNetworkFile pnf) {
-    Log.info('[PNF] onSuccess: ${data.length} bytes, ${pnf.url}');
-    if (mounted) {
-      setState(() {
-      });
-    }
-  }
-
 }
 
+class _AvatarLoader extends PortableImageLoader {
+  _AvatarLoader(super.pnf);
 
-class _PortableAvatarLoader extends PortableNetworkLoader {
-  _PortableAvatarLoader(super.pnf);
-
-  ImageProvider<Object>? _provider;
-
-  ImageProvider<Object>? get image {
-    ImageProvider<Object>? ip = _provider;
-    if (ip != null) {
-      return ip;
-    }
-    Uint8List? bytes = content;
-    if (bytes == null || bytes.isEmpty) {
-      // waiting to download & decrypt
+  @override
+  Widget getImage(PortableImageView view) {
+    _AvatarView widget = view as _AvatarView;
+    ID identifier = widget.identifier;
+    double? width = widget.width;
+    double? height = widget.height;
+    var image = imageProvider;
+    if (image == null) {
+      return _AvatarView.getNoImage(identifier, width: width, height: height);
+    } else if (width == null && height == null) {
+      return Image(image: image,);
     } else {
-      ip = _provider = MemoryImage(bytes);
+      return Image(image: image, width: width, height: height, fit: BoxFit.cover,);
     }
-    return ip;
+  }
+
+  @override
+  Widget? getProgress(PortableImageView view) {
+    _AvatarView widget = view as _AvatarView;
+    double width = widget.width ?? 0;
+    double height = widget.height ?? 0;
+    if (width < 64 || height < 64) {
+      return null;
+    }
+    return super.getProgress(view);
   }
 
   @override
@@ -267,32 +327,6 @@ class _PortableAvatarLoader extends PortableNetworkLoader {
       return null;
     }
     return Paths.append(dir, 'avatar');
-  }
-
-}
-
-class _PortableNetworkFactory {
-  factory _PortableNetworkFactory() => _instance;
-  static final _PortableNetworkFactory _instance = _PortableNetworkFactory._internal();
-  _PortableNetworkFactory._internal();
-
-  final Map<Uri, _PortableAvatarLoader> _loaders = WeakValueMap();
-
-  _PortableAvatarLoader get(PortableNetworkFile pnf) {
-    _PortableAvatarLoader? runner;
-    Uri? url = pnf.url;
-    if (url == null) {
-      runner = _PortableAvatarLoader(pnf);
-      runner.run();
-    } else {
-      runner = _loaders[url];
-      if (runner == null) {
-        runner = _PortableAvatarLoader(pnf);
-        _loaders[url] = runner;
-        runner.run();
-      }
-    }
-    return runner;
   }
 
 }

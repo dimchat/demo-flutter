@@ -31,40 +31,34 @@
 import 'package:flutter/cupertino.dart';
 import 'package:get/get.dart';
 import 'package:image_gallery_saver/image_gallery_saver.dart';
-import 'package:lnc/lnc.dart';
 import 'package:photo_view/photo_view_gallery.dart';
 
-import 'package:dim_client/dim_common.dart';
+import 'package:lnc/lnc.dart';
 
 import '../ui/icons.dart';
 import '../widgets/alert.dart';
 import '../widgets/permissions.dart';
 
-import 'image.dart';
 import 'loader.dart';
+import 'image.dart';
 
 
-/// preview avatar image
-void previewImage(BuildContext ctx, PortableNetworkFile pnf) {
-  showCupertinoDialog(
-    context: ctx,
-    builder: (context) => _ImagePreview(_PreviewInfo([pnf], 0)),
+class Gallery {
+  Gallery(this.images, this.index);
+
+  final List<PortableImageView> images;
+  final int index;
+
+  void show(BuildContext context) => showCupertinoDialog(
+    context: context,
+    builder: (context) => _ImagePreview(this),
   );
 }
-
-/// preview image in chat box
-void previewImageContent(BuildContext ctx, ImageContent content, List<InstantMessage> messages) =>
-    _fetchImages(messages, content).then((info) {
-      showCupertinoDialog(
-        context: ctx,
-        builder: (context) => _ImagePreview(info),
-      );
-    });
 
 class _ImagePreview extends StatefulWidget {
   const _ImagePreview(this.info);
 
-  final _PreviewInfo info;
+  final Gallery info;
 
   @override
   State<_ImagePreview> createState() => _ImagePreviewState();
@@ -91,28 +85,32 @@ class _ImagePreviewState extends State<_ImagePreview> {
 
   Widget _gallery() => PhotoViewGallery.builder(
     scrollPhysics: const BouncingScrollPhysics(),
-    builder: (context, index) => PhotoViewGalleryPageOptions.customChild(
-      child: GestureDetector(
-        child: NetworkImageFactory().getImageView(widget.info.images[index]),
-        onTap: () {
-          Navigator.pop(context);
-        },
-        onLongPress: () {
-          Alert.actionSheet(context, null, null,
-            Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                const Icon(AppIcons.saveFileIcon),
-                const SizedBox(width: 12,),
-                Text('Save to Album'.tr),
-              ],
-            ), () => requestPhotosPermissions(context,
-              onGranted: (context) => _confirmToSave(context, widget.info.images[index]),
-            ),
-          );
-        },
-      ),
-    ),
+    builder: (context, index) {
+      var view = widget.info.images[index];
+      var loader = view.loader;
+      return PhotoViewGalleryPageOptions.customChild(
+        child: GestureDetector(
+          child: view,
+          onTap: () {
+            Navigator.pop(context);
+          },
+          onLongPress: () {
+            Alert.actionSheet(context, null, null,
+              Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  const Icon(AppIcons.saveFileIcon),
+                  const SizedBox(width: 12,),
+                  Text('Save to Album'.tr),
+                ],
+              ), () => requestPhotosPermissions(context,
+                onGranted: (context) => _confirmToSave(context, loader),
+              ),
+            );
+          },
+        ),
+      );
+    },
     itemCount: widget.info.images.length,
     backgroundDecoration: const BoxDecoration(color: CupertinoColors.black),
     pageController: controller,
@@ -120,24 +118,26 @@ class _ImagePreviewState extends State<_ImagePreview> {
 
 }
 
-void _confirmToSave(BuildContext context, PortableNetworkFile pnf) =>
+void _confirmToSave(BuildContext context, PortableImageLoader loader) =>
     Alert.confirm(context, 'Confirm',
       'Sure to save this image?'.tr,
-      okAction: () => _saveImage(context, pnf),
+      okAction: () => _saveImage(context, loader),
     );
-void _saveImage(BuildContext context, PortableNetworkFile pnf) {
-  PortableNetworkLoader loader = NetworkImageFactory().getImageLoader(pnf);
-  loader.run().then((ok) {
-    assert(ok && loader.status == PortableNetworkStatus.success, 'PNF loader error');
-    loader.cacheFilePath.then((path) {
-      if (path == null) {
-        Alert.show(context, 'Error', 'Failed to get image file');
-      } else {
-        _saveFile(context, path);
+void _saveImage(BuildContext context, PortableImageLoader loader) =>
+    loader.run().then((ok) {
+      if (!ok) {
+        Alert.show(context, 'Error', 'Cannot save this image');
+        return;
       }
+      assert(loader.status == PortableNetworkStatus.success, 'PNF loader error');
+      loader.cacheFilePath.then((path) {
+        if (path == null) {
+          Alert.show(context, 'Error', 'Failed to get image file');
+        } else {
+          _saveFile(context, path);
+        }
+      });
     });
-  });
-}
 void _saveFile(BuildContext context, String path) =>
     ImageGallerySaver.saveFile(path).then((result) {
       Log.info('saving image: $path, result: $result');
@@ -150,36 +150,3 @@ void _saveFile(BuildContext context, String path) =>
         Alert.show(context, 'Error', error);
       }
     });
-
-class _PreviewInfo {
-  _PreviewInfo(this.images, this.index);
-
-  List<PortableNetworkFile> images;
-  int index;
-
-}
-
-Future<_PreviewInfo> _fetchImages(List<InstantMessage> messages, ImageContent target) async {
-  int pos = messages.length;
-  Content content;
-  PortableNetworkFile? pnf;
-  List<PortableNetworkFile> images = [];
-  int index = -1;
-  while (--pos >= 0) {
-    content = messages[pos].content;
-    if (content is! ImageContent) {
-      continue;
-    } else if (content == target) {
-      assert(index == -1, 'duplicated message?');
-      index = images.length;
-    }
-    pnf = PortableNetworkFile.parse(content);
-    if (pnf == null) {
-      assert(false, '[PNF] image content error: $content');
-      continue;
-    }
-    images.add(pnf);
-  }
-  assert(images.length > index, 'index error: $index, ${images.length}');
-  return _PreviewInfo(images, index);
-}

@@ -147,6 +147,7 @@ abstract class PortableNetworkLoader {
       _bytes = plaintext;
     }
     // 2. save original file content
+    Log.info('[PNF] save cache file (${data.length} bytes): $cachePath');
     int size = await ExternalStorage.saveBinary(data, cachePath);
     if (size != data.length) {
       nc.postNotification(NotificationNames.kPortableNetworkError, this, {

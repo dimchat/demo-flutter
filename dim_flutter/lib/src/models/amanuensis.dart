@@ -35,7 +35,9 @@ class Amanuensis {
       } else if (chat is ContactInfo) {
         if (chat.isBlocked) {
           // skip blocked-list
-        } else if (chat.isFriend) {
+        } else if (chat.isNotFriend) {
+          // skip stranger
+        } else {
           array.add(chat);
         }
       }

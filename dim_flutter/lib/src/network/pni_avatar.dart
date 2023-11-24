@@ -15,35 +15,35 @@ import '../ui/styles.dart';
 import 'png.dart';
 
 
-class AvatarFactory {
-  factory AvatarFactory() => _instance;
-  static final AvatarFactory _instance = AvatarFactory._internal();
-  AvatarFactory._internal();
-
-  final Map<ID, _AvatarLoader> _avatarLoaders = WeakValueMap();
-
-  _AvatarLoader _getAvatarLoader(ID identifier) {
-    _AvatarLoader? loader = _avatarLoaders[identifier];
-    if (loader == null) {
-      loader = _AvatarLoader(identifier);
-      _avatarLoaders[identifier] = loader;
-    }
-    return loader;
-  }
-
-  Widget getAvatarView(ID identifier, {double? width, double? height, GestureTapCallback? onTap}) {
-    width ??= 32;
-    height ??= 32;
-    _AvatarLoader loader = _getAvatarLoader(identifier);
-    return ClipRRect(
-      borderRadius: BorderRadius.all(
-        Radius.elliptical(width / 8, height / 8),
-      ),
-      child: _FacadeView(loader, width: width, height: height, onTap: onTap,),
-    );
-  }
-
-}
+// class AvatarFactory {
+//   factory AvatarFactory() => _instance;
+//   static final AvatarFactory _instance = AvatarFactory._internal();
+//   AvatarFactory._internal();
+//
+//   final Map<ID, _AvatarLoader> _avatarLoaders = WeakValueMap();
+//
+//   _AvatarLoader _getAvatarLoader(ID identifier) {
+//     _AvatarLoader? loader = _avatarLoaders[identifier];
+//     if (loader == null) {
+//       loader = _AvatarLoader(identifier);
+//       _avatarLoaders[identifier] = loader;
+//     }
+//     return loader;
+//   }
+//
+//   Widget getAvatarView(ID identifier, {double? width, double? height, GestureTapCallback? onTap}) {
+//     width ??= 32;
+//     height ??= 32;
+//     _AvatarLoader loader = _getAvatarLoader(identifier);
+//     return ClipRRect(
+//       borderRadius: BorderRadius.all(
+//         Radius.elliptical(width / 8, height / 8),
+//       ),
+//       child: _FacadeView(loader, width: width, height: height, onTap: onTap,),
+//     );
+//   }
+//
+// }
 
 /// Auto refresh avatar view
 class _FacadeView extends StatefulWidget {

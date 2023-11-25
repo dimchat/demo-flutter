@@ -38,7 +38,7 @@ import '../common/constants.dart';
 import '../filesys/external.dart';
 import '../filesys/local.dart';
 import '../filesys/paths.dart';
-import '../pnf/helper.dart';
+import '../pnf/http.dart';
 import '../widgets/browse_html.dart';
 
 
@@ -89,8 +89,24 @@ class FileTransfer {
   //     hex format by hex(md5(data)), which is the same string with content.filename.
   //
 
+  /// cache filename for PNF
+  static String? _getCacheName(Map info) {
+    PortableNetworkFile? pnf = PortableNetworkFile.parse(info);
+    if (pnf == null) {
+      assert(false, 'PNF error: $info');
+      return null;
+    }
+    String? filename = pnf.filename;
+    Uri? url = pnf.url;
+    if (url == null) {
+      return filename;
+    } else {
+      return URLHelper.filenameFromURL(url, filename);
+    }
+  }
+
   Future<String?> getFilePath(FileContent content) async {
-    String? filename = PNFHelper.getCacheName(content);
+    String? filename = _getCacheName(content);
     if (filename == null) {
       Log.error('file content error: $content');
       return null;

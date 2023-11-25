@@ -39,7 +39,7 @@ import '../common/constants.dart';
 import '../filesys/external.dart';
 import '../filesys/paths.dart';
 
-import 'helper.dart';
+import 'http.dart';
 
 enum PortableNetworkStatus {
   init,
@@ -120,7 +120,7 @@ abstract class PortableNetworkLoader {
   String? get filename {
     String? name = pnf.filename;
     Uri? url = pnf.url;
-    return url == null ? name : PNFHelper.filenameFromURL(url, name);
+    return url == null ? name : URLHelper.filenameFromURL(url, name);
   }
 
   Future<Uint8List?> _decrypt(Uint8List data, String cachePath) async {

@@ -1,6 +1,6 @@
 library dim_flutter;
 
-export 'pnf/helper.dart';
+export 'pnf/http.dart';
 export 'pnf/loader.dart';
 export 'pnf/image.dart';
 export 'pnf/gallery.dart';

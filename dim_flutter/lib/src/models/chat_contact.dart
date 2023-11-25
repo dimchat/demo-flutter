@@ -80,7 +80,7 @@ class ContactInfo extends Conversation {
 
   @override
   Widget getImage({double? width, double? height}) =>
-      AvatarFactory().getFacadeView(identifier, width: width, height: height);
+      AvatarFactory().getAvatarView(identifier, width: width, height: height);
 
   @override
   Future<void> loadData() async {

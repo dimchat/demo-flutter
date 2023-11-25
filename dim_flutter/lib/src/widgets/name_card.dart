@@ -33,7 +33,6 @@ import 'package:flutter/material.dart';
 
 import 'package:dim_client/dim_client.dart';
 
-import '../pnf/auto_image.dart';
 import '../pnf/avatar.dart';
 import '../ui/styles.dart';
 
@@ -56,23 +55,18 @@ class NameCardView extends StatelessWidget {
   static Widget avatarImage(NameCard content, {double? width, double? height}) {
     width ??= 48;
     height ??= 48;
+    var factory = AvatarFactory();
     ID identifier = content.identifier;
     var avatar = content.avatar;
     if (avatar == null) {
-      var factory = AvatarFactory();
-      return factory.getFacadeView(identifier, width: width, height: height);
+      return factory.getAvatarView(identifier, width: width, height: height);
     }
-    var factory = NetworkImageFactory();
-    var image = factory.getImageView(avatar, width: width, height: height);
+    var view = factory.getImageView(identifier, avatar, width: width, height: height);
     return ClipRRect(
-      borderRadius: const BorderRadius.all(
-          Radius.elliptical(8, 8)
+      borderRadius: BorderRadius.all(
+        Radius.elliptical(width / 8, height / 8),
       ),
-      child: SizedBox(
-        width: width, height: height,
-        // color: CupertinoColors.systemIndigo,
-        child: image,
-      ),
+      child: view,
     );
   }
 

@@ -47,7 +47,7 @@ import 'image.dart';
 
 /// preview avatar image
 void previewAvatar(BuildContext context, ID identifier, PortableNetworkFile avatar) {
-  var image = AvatarFactory().getAvatarView(identifier, avatar);
+  var image = AvatarFactory().getImageView(identifier, avatar);
   Gallery([image], 0).show(context);
 }
 
@@ -58,20 +58,20 @@ class AvatarFactory {
   static final AvatarFactory _instance = AvatarFactory._internal();
   AvatarFactory._internal();
 
-  final Map<Uri, _AvatarLoader> _loaders = WeakValueMap();
-  final Map<Uri, Set<_AvatarView>> _images = {};
-  final Map<ID, Set<_FacadeView>> _facades = {};
+  final Map<Uri, _AvatarImageLoader> _loaders = WeakValueMap();
+  final Map<Uri, Set<_AvatarImageView>> _views = {};
+  final Map<ID, Set<_AutoAvatarView>> _avatars = {};
 
-  PortableImageLoader getAvatarLoader(PortableNetworkFile pnf) {
-    _AvatarLoader? runner;
+  PortableImageLoader getImageLoader(PortableNetworkFile pnf) {
+    _AvatarImageLoader? runner;
     Uri? url = pnf.url;
     if (url == null) {
-      runner = _AvatarLoader(pnf);
+      runner = _AvatarImageLoader(pnf);
       runner.run();
     } else {
       runner = _loaders[url];
       if (runner == null) {
-        runner = _AvatarLoader(pnf);
+        runner = _AvatarImageLoader(pnf);
         _loaders[url] = runner;
         runner.run();
       }
@@ -79,20 +79,20 @@ class AvatarFactory {
     return runner;
   }
 
-  PortableImageView getAvatarView(ID user, PortableNetworkFile pnf,
+  PortableImageView getImageView(ID user, PortableNetworkFile pnf,
       {double? width, double? height}) {
-    var loader = getAvatarLoader(pnf);
+    var loader = getImageLoader(pnf);
     Uri? url = pnf.url;
     if (url == null) {
-      return _AvatarView(loader, user, width: width, height: height,);
+      return _AvatarImageView(loader, user, width: width, height: height,);
     }
-    _AvatarView? img;
-    Set<_AvatarView>? table = _images[url];
+    _AvatarImageView? img;
+    Set<_AvatarImageView>? table = _views[url];
     if (table == null) {
       table = WeakSet();
-      _images[url] = table;
+      _views[url] = table;
     } else {
-      for (_AvatarView item in table) {
+      for (_AvatarImageView item in table) {
         if (item.width != width || item.height != height) {
           // size not match
         } else if (item.identifier != user) {
@@ -105,38 +105,38 @@ class AvatarFactory {
       }
     }
     if (img == null) {
-      img = _AvatarView(loader, user, width: width, height: height,);
+      img = _AvatarImageView(loader, user, width: width, height: height,);
       table.add(img);
     }
     return img;
   }
 
-  Widget getFacadeView(ID user, {double? width, double? height}) {
+  Widget getAvatarView(ID user, {double? width, double? height}) {
     width ??= 32;
     height ??= 32;
-    _FacadeView? facade;
-    Set<_FacadeView>? table = _facades[user];
+    _AutoAvatarView? avt;
+    Set<_AutoAvatarView>? table = _avatars[user];
     if (table == null) {
       table = WeakSet();
-      _facades[user] = table;
+      _avatars[user] = table;
     } else {
-      for (_FacadeView item in table) {
+      for (_AutoAvatarView item in table) {
         if (item.width != width || item.height != height) {
           // size not match
         } else if (item.identifier != user) {
           // ID not match
         } else {
           // got it
-          facade = item;
+          avt = item;
           break;
         }
       }
     }
-    if (facade == null) {
-      facade = _FacadeView(user, width: width, height: height,);
-      table.add(facade);
+    if (avt == null) {
+      avt = _AutoAvatarView(user, width: width, height: height,);
+      table.add(avt);
     }
-    return facade;
+    return avt;
   }
 
 }
@@ -148,8 +148,8 @@ class _FacadeInfo {
 }
 
 /// Auto refresh avatar view
-class _FacadeView extends StatefulWidget {
-  _FacadeView(this.identifier, {required this.width, required this.height});
+class _AutoAvatarView extends StatefulWidget {
+  _AutoAvatarView(this.identifier, {required this.width, required this.height});
 
   final ID identifier;
   final double width;
@@ -162,7 +162,7 @@ class _FacadeView extends StatefulWidget {
 
 }
 
-class _FacadeState extends State<_FacadeView> implements lnc.Observer {
+class _FacadeState extends State<_AutoAvatarView> implements lnc.Observer {
   _FacadeState() {
     var nc = lnc.NotificationCenter();
     nc.addObserver(this, NotificationNames.kDocumentUpdated);
@@ -208,7 +208,7 @@ class _FacadeState extends State<_FacadeView> implements lnc.Observer {
       return;
     }
     var factory = AvatarFactory();
-    var view = factory.getAvatarView(identifier, avatar,
+    var view = factory.getImageView(identifier, avatar,
         width: widget.width, height: widget.height);
     await view.loader.run();
     if (mounted) {
@@ -230,7 +230,7 @@ class _FacadeState extends State<_FacadeView> implements lnc.Observer {
     double height = widget.height;
     ID identifier = widget.identifier;
     Widget? view = widget._info.avatarView;
-    view ??= _AvatarView.getNoImage(identifier, width: width, height: height);
+    view ??= _AvatarImageView.getNoImage(identifier, width: width, height: height);
     return ClipRRect(
       borderRadius: BorderRadius.all(
         Radius.elliptical(width / 8, height / 8),
@@ -241,8 +241,8 @@ class _FacadeState extends State<_FacadeView> implements lnc.Observer {
 
 }
 
-class _AvatarView extends PortableImageView {
-  const _AvatarView(super.loader, this.identifier, {this.width, this.height});
+class _AvatarImageView extends PortableImageView {
+  const _AvatarImageView(super.loader, this.identifier, {this.width, this.height});
 
   final ID identifier;
   final double? width;
@@ -268,18 +268,18 @@ class _AvatarView extends PortableImageView {
 
 }
 
-class _AvatarLoader extends PortableImageLoader {
-  _AvatarLoader(super.pnf);
+class _AvatarImageLoader extends PortableImageLoader {
+  _AvatarImageLoader(super.pnf);
 
   @override
   Widget getImage(PortableImageView view) {
-    _AvatarView widget = view as _AvatarView;
+    _AvatarImageView widget = view as _AvatarImageView;
     ID identifier = widget.identifier;
     double? width = widget.width;
     double? height = widget.height;
     var image = imageProvider;
     if (image == null) {
-      return _AvatarView.getNoImage(identifier, width: width, height: height);
+      return _AvatarImageView.getNoImage(identifier, width: width, height: height);
     } else if (width == null && height == null) {
       return Image(image: image,);
     } else {
@@ -289,7 +289,7 @@ class _AvatarLoader extends PortableImageLoader {
 
   @override
   Widget? getProgress(PortableImageView view) {
-    _AvatarView widget = view as _AvatarView;
+    _AvatarImageView widget = view as _AvatarImageView;
     double width = widget.width ?? 0;
     double height = widget.height ?? 0;
     if (width < 64 || height < 64) {

@@ -39,23 +39,7 @@ import '../client/shared.dart';
 import '../filesys/paths.dart';
 
 
-class PNFHelper {
-
-  /// cache filename for PNF
-  static String? getCacheName(Map info) {
-    PortableNetworkFile? pnf = PortableNetworkFile.parse(info);
-    if (pnf == null) {
-      assert(false, 'PNF error: $info');
-      return null;
-    }
-    String? filename = pnf.filename;
-    Uri? url = pnf.url;
-    if (url == null) {
-      return filename;
-    } else {
-      return filenameFromURL(url, filename);
-    }
-  }
+class URLHelper {
 
   static String filenameFromURL(Uri url, String? filename) {
     String? urlFilename = Paths.filename(url.toString());

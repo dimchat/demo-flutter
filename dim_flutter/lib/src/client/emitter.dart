@@ -9,8 +9,8 @@ import '../common/constants.dart';
 import '../filesys/paths.dart';
 import '../models/amanuensis.dart';
 import '../network/ftp.dart';
+import '../pnf/http.dart';
 
-import '../pnf/helper.dart';
 import 'group.dart';
 import 'shared.dart';
 
@@ -140,7 +140,7 @@ class Emitter implements Observer {
     }
     // 2. add upload task with encrypted data
     Uint8List encrypted = password.encrypt(data, content);
-    filename = PNFHelper.filenameFromData(encrypted, filename);
+    filename = URLHelper.filenameFromData(encrypted, filename);
     ChannelManager man = ChannelManager();
     FileTransferChannel ftp = man.ftpChannel;
     Uri? url = await ftp.uploadEncryptData(encrypted, filename, sender);

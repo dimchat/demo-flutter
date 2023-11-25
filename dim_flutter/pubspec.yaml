@@ -50,6 +50,7 @@ dependencies:
 
   lnc: ^0.1.0
   dim_client: ^0.3.2
+  object_key: ^0.1.1
 
 dev_dependencies:
   flutter_test:

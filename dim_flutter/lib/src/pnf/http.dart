@@ -37,6 +37,7 @@ import 'package:lnc/lnc.dart';
 
 import '../client/shared.dart';
 import '../filesys/paths.dart';
+import 'loader.dart';
 
 
 class URLHelper {
@@ -90,8 +91,165 @@ class URLHelper {
 
 }
 
+///
+/// HTTP Downloader
+///
 
-class HTTPHelper {
+abstract interface class DownloadTask {
+
+  /// Prepare the task and get remote URL
+  Future<Uri?> prepare();
+
+  /// Callback when downloading
+  Future<void> progress(int count, int total, Uri url);
+
+  /// Callback when download completed or failed
+  Future<void> process(Uint8List? data, Uri url);
+
+}
+
+abstract class Downloader {
+
+  bool _running = false;
+
+  final List<DownloadTask> _tasks = WeakList();
+
+  void addTask(DownloadTask task) async {
+    Uri? url = await task.prepare();
+    if (url == null) {
+      return;
+    }
+    _tasks.add(task);
+  }
+  DownloadTask? getTask() {
+    if (_tasks.isNotEmpty) {
+      return _tasks.removeAt(0);
+    }
+    return null;
+  }
+
+  //
+  //  threading
+  //
+
+  void start() async {
+    _running = true;
+    await run();
+  }
+
+  void stop() {
+    _running = false;
+  }
+
+  // protected
+  Future<void> run() async {
+    while (_running) {
+      if (await process()) {
+        // it's busy now
+      } else {
+        await idle();
+      }
+    }
+  }
+
+  // protected
+  Future idle() async {
+    await Future.delayed(const Duration(milliseconds: 256));
+  }
+
+  // protected
+  Future<bool> process() async {
+    //
+    //  0. get next task
+    //
+    DownloadTask? next = getTask();
+    if (next == null) {
+      // nothing to do now, return false to have a rest.
+      return false;
+    }
+    //
+    //  1. prepare the task
+    //
+    Uri? url;
+    try {
+      url = await next.prepare();
+    } catch (e, st) {
+      Log.error('failed to prepare HTTP task: $next, error: $e, $st');
+    }
+    if (url == null) {
+      // this task doesn't need to download
+      // return true for next task immediately
+      return true;
+    }
+    //
+    //  2. do the job
+    //
+    Uint8List? data;
+    try {
+      data = await download(url,
+        onReceiveProgress: (count, total) => next.progress(count, total, url!),
+      );
+    } catch (e, st) {
+      Log.error('failed to download: $url, error: $e, $st');
+    }
+    //
+    //  3. callback with downloaded data
+    //
+    try {
+      await next.process(data, url);
+    } catch (e, st) {
+      Log.error('failed to process: ${data?.length} bytes, $url, error: $e, $st');
+    }
+    if (data != null && data.isNotEmpty) {
+      // check other task with same URL
+      List<DownloadTask> all = _tasks.toList();
+      Uri? that;
+      for (DownloadTask item in all) {
+        try {
+          if (item is PortableNetworkLoader) {
+            that = item.pnf.url;
+            if (that != url) {
+              continue;
+            }
+          }
+          Log.info('checking task with same URL: $url, $item');
+          that = await item.prepare();
+          if (that == null) {
+            Log.info('remove task: $item');
+            _tasks.remove(item);
+          } else if (that == url) {
+            assert(false, 'should not happen');
+            Log.info('process task with same URL: $url, $item');
+            await item.process(data, url);
+            _tasks.remove(item);
+          }
+        } catch (e, st) {
+          Log.error('failed to handle: ${data.length} bytes, $url, error: $e, $st');
+        }
+      }
+    }
+    return true;
+  }
+
+  Future<Uint8List?> download(Uri url, {ProgressCallback? onReceiveProgress});
+
+}
+
+class SharedDownloader extends Downloader {
+  factory SharedDownloader() => _instance;
+  static final SharedDownloader _instance = SharedDownloader._internal();
+  SharedDownloader._internal() {
+    start();
+  }
+
+  @override
+  Future<Uint8List?> download(Uri url, {ProgressCallback? onReceiveProgress}) async {
+    return await _HTTPHelper.download(url, onReceiveProgress);
+  }
+
+}
+
+class _HTTPHelper {
 
   static String get userAgent {
     // return 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7)'
@@ -101,7 +259,7 @@ class HTTPHelper {
     return shared.terminal.userAgent;
   }
 
-  static Future<Uint8List?> download(Uri url, {ProgressCallback? onReceiveProgress}) async {
+  static Future<Uint8List?> download(Uri url, ProgressCallback? onReceiveProgress) async {
     Response response;
     try {
       response = await Dio().getUri(url, onReceiveProgress: onReceiveProgress, options: Options(

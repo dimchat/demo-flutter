@@ -30,8 +30,6 @@
  */
 import 'dart:typed_data';
 
-import 'package:mutex/mutex.dart';
-
 import 'package:dim_client/dim_client.dart';
 import 'package:lnc/lnc.dart';
 
@@ -43,13 +41,14 @@ import 'http.dart';
 
 enum PortableNetworkStatus {
   init,
+  waiting,
   downloading,
   decrypting,
   success,
   error,
 }
 
-abstract class PortableNetworkLoader {
+abstract class PortableNetworkLoader implements DownloadTask {
   PortableNetworkLoader(this.pnf);
 
   final PortableNetworkFile pnf;
@@ -79,6 +78,18 @@ abstract class PortableNetworkLoader {
         'current': current,
       });
     }
+  }
+
+  @override
+  String toString() {
+    Type clazz = runtimeType;
+    Uri? url = pnf.url;
+    if (url != null) {
+      return '<$clazz URL="$url" />';
+    }
+    String? filename = pnf.filename;
+    Uint8List? data = pnf.data;
+    return '<$clazz filename="$filename" length="${data?.length}" />';
   }
 
   /// Temporary Directory
@@ -172,10 +183,41 @@ abstract class PortableNetworkLoader {
     return data;
   }
 
-  Future<bool> _process() async {
-    setStatus(PortableNetworkStatus.init);
-    Uint8List? data;
+  //
+  //  DownloadTask
+  //
+
+  @override
+  Future<Uri?> prepare() async {
+    // setStatus(PortableNetworkStatus.init);
     var nc = NotificationCenter();
+    //
+    //  0. check file content
+    //
+    Uint8List? data = _bytes;
+    if (data != null && data.isNotEmpty) {
+      // data already loaded
+      nc.postNotification(NotificationNames.kPortableNetworkSuccess, this, {
+        'URL': pnf.url,
+        'data': data,
+      });
+      setStatus(PortableNetworkStatus.success);
+      return null;
+    } else {
+      data = pnf.data;
+      if (data != null && data.isNotEmpty) {
+        assert(pnf.url == null, 'PNF error: $pnf');
+        // assert(_status == PortableNetworkStatus.init, 'PNF status: $_status');
+        _bytes = data;
+        var nc = NotificationCenter();
+        nc.postNotification(NotificationNames.kPortableNetworkSuccess, this, {
+          // 'URL': pnf.url,
+          'data': data,
+        });
+        setStatus(PortableNetworkStatus.success);
+        return null;
+      }
+    }
     //
     //  1. check cached file
     //
@@ -183,7 +225,7 @@ abstract class PortableNetworkLoader {
     if (cachePath == null) {
       setStatus(PortableNetworkStatus.error);
       assert(false, 'failed to get cache file path');
-      return false;
+      return null;
     }
     // try to load cached file
     if (await Paths.exists(cachePath)) {
@@ -197,7 +239,7 @@ abstract class PortableNetworkLoader {
           'data': data,
         });
         setStatus(PortableNetworkStatus.success);
-        return true;
+        return null;
       }
     }
     //
@@ -207,7 +249,7 @@ abstract class PortableNetworkLoader {
     if (tmpPath == null) {
       setStatus(PortableNetworkStatus.error);
       assert(false, 'failed to get temporary path');
-      return false;
+      return null;
     }
     // try to load temporary file
     if (await Paths.exists(tmpPath)) {
@@ -218,39 +260,60 @@ abstract class PortableNetworkLoader {
         // encrypted data loaded from temporary file
         // try to decrypt it
         data = await _decrypt(data, cachePath);
-        return data != null;
+        if (data != null && data.isNotEmpty) {
+          return null;
+        }
       }
     }
     //
-    //  3. download from remote URL
+    //  3. get remote URL
     //
     Uri? url = pnf.url;
     if (url == null) {
       setStatus(PortableNetworkStatus.error);
       assert(false, 'URL not found: $pnf');
-      return false;
+    } else {
+      setStatus(PortableNetworkStatus.waiting);
     }
-    setStatus(PortableNetworkStatus.downloading);
-    data = await HTTPHelper.download(url, onReceiveProgress: (count, total) {
-      _count = count;
-      _total = total;
-      nc.postNotification(NotificationNames.kPortableNetworkReceiveProgress, this, {
-        'URL': pnf.url,
-        'count': count,
-        'total': total,
-      });
+    return url;
+  }
+
+  @override
+  Future<void> progress(int count, int total, Uri url) async {
+    _count = count;
+    _total = total;
+    var nc = NotificationCenter();
+    nc.postNotification(NotificationNames.kPortableNetworkReceiveProgress, this, {
+      'URL': pnf.url,
+      'count': count,
+      'total': total,
     });
+    setStatus(PortableNetworkStatus.downloading);
+  }
+
+  @override
+  Future<void> process(Uint8List? data, Uri url) async {
+    var nc = NotificationCenter();
+    //
+    //  0. check data
+    //
     if (data == null || data.isEmpty) {
       nc.postNotification(NotificationNames.kPortableNetworkError, this, {
         'URL': pnf.url,
         'error': 'Failed to download file',
       });
       setStatus(PortableNetworkStatus.error);
-      return false;
+      return;
     }
     //
-    //  4. save data from remote URL
+    //  1.. save data from remote URL
     //
+    String? tmpPath = await temporaryFilePath;
+    if (tmpPath == null) {
+      setStatus(PortableNetworkStatus.error);
+      assert(false, 'failed to get temporary path');
+      return;
+    }
     Log.info('[PNF] saving file (${data.length} bytes) into tmp: $tmpPath');
     int cnt = await ExternalStorage.saveBinary(data, tmpPath);
     if (cnt != data.length) {
@@ -264,47 +327,15 @@ abstract class PortableNetworkLoader {
       'path': tmpPath,
     });
     //
-    //  5. decrypt data from remote URL
+    //  2. decrypt data from remote URL
     //
+    String? cachePath = await cacheFilePath;
+    if (cachePath == null) {
+      setStatus(PortableNetworkStatus.error);
+      assert(false, 'failed to get cache file path');
+      return;
+    }
     data = await _decrypt(data, cachePath);
-    return data != null;
   }
-
-  Future<bool> run() async {
-    Uint8List? data = _bytes;
-    if (data == null) {
-      data = pnf.data;
-      if (data != null && data.isNotEmpty) {
-        assert(pnf.url == null, 'PNF error: $pnf');
-        // assert(_status == PortableNetworkStatus.init, 'PNF status: $_status');
-        _bytes = data;
-        var nc = NotificationCenter();
-        nc.postNotification(NotificationNames.kPortableNetworkSuccess, this, {
-          // 'URL': pnf.url,
-          'data': data,
-        });
-        setStatus(PortableNetworkStatus.success);
-        return true;
-      }
-    } else {
-      assert(data.isNotEmpty, 'file content error: $pnf');
-      // assert(_status == PortableNetworkStatus.success, 'PNF status: $_status');
-      return true;
-    }
-    bool ok;
-    await _lock.acquire();
-    try {
-      if (_bytes == null) {
-        ok = await _process();
-      } else {
-        ok = true;
-      }
-    } finally {
-      _lock.release();
-    }
-    return ok;
-  }
-
-  static final Mutex _lock = Mutex();
 
 }

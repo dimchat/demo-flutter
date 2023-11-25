@@ -40,6 +40,7 @@ import '../ui/icons.dart';
 import '../ui/styles.dart';
 
 import 'gallery.dart';
+import 'http.dart';
 import 'image.dart';
 
 
@@ -85,14 +86,12 @@ class NetworkImageFactory {
     _ImageLoader? runner;
     Uri? url = pnf.url;
     if (url == null) {
-      runner = _ImageLoader(pnf);
-      runner.run();
+      runner = _ImageLoader.from(pnf);
     } else {
       runner = _loaders[url];
       if (runner == null) {
-        runner = _ImageLoader(pnf);
+        runner = _ImageLoader.from(pnf);
         _loaders[url] = runner;
-        runner.run();
       }
     }
     return runner;
@@ -191,7 +190,9 @@ class _ImageLoader extends PortableImageLoader {
     _ImageView widget = view as _ImageView;
     double? width = widget.width;
     double? height = widget.height;
-    if (width != null && height != null) {
+    if (width == null || height == null) {
+      // unlimited
+    } else if (width < 64 || height < 64) {
       return null;
     }
     return super.getProgress(view);
@@ -215,6 +216,17 @@ class _ImageLoader extends PortableImageLoader {
       return null;
     }
     return Paths.append(dir, 'files');
+  }
+
+  //
+  //  Factory
+  //
+  static _ImageLoader from(PortableNetworkFile pnf) {
+    _ImageLoader loader = _ImageLoader(pnf);
+    if (pnf.url != null && pnf.data == null) {
+      SharedDownloader().addTask(loader);
+    }
+    return loader;
   }
 
 }

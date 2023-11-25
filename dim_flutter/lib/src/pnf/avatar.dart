@@ -42,6 +42,7 @@ import '../ui/icons.dart';
 import '../ui/styles.dart';
 
 import 'gallery.dart';
+import 'http.dart';
 import 'image.dart';
 
 
@@ -66,14 +67,12 @@ class AvatarFactory {
     _AvatarImageLoader? runner;
     Uri? url = pnf.url;
     if (url == null) {
-      runner = _AvatarImageLoader(pnf);
-      runner.run();
+      runner = _AvatarImageLoader.from(pnf);
     } else {
       runner = _loaders[url];
       if (runner == null) {
-        runner = _AvatarImageLoader(pnf);
+        runner = _AvatarImageLoader.from(pnf);
         _loaders[url] = runner;
-        runner.run();
       }
     }
     return runner;
@@ -123,9 +122,8 @@ class AvatarFactory {
       for (_AutoAvatarView item in table) {
         if (item.width != width || item.height != height) {
           // size not match
-        } else if (item.identifier != user) {
-          // ID not match
         } else {
+          assert(item.identifier == user, 'should not happen: ${item.identifier}, $user');
           // got it
           avt = item;
           break;
@@ -141,36 +139,66 @@ class AvatarFactory {
 
 }
 
-class _FacadeInfo {
-
-  PortableImageView? avatarView;
-
-}
-
-/// Auto refresh avatar view
-class _AutoAvatarView extends StatefulWidget {
-  _AutoAvatarView(this.identifier, {required this.width, required this.height});
+class _Info {
+  _Info(this.identifier, {required this.width, required this.height});
 
   final ID identifier;
   final double width;
   final double height;
 
-  final _FacadeInfo _info = _FacadeInfo();
+  PortableNetworkFile? avatar;
+  PortableImageView? avatarView;
 
-  @override
-  State<StatefulWidget> createState() => _FacadeState();
+  static from(ID identifier, {required double width, required double height}) {
+    var info = _Info(identifier, width: width, height: height);
+    GlobalVariable shared = GlobalVariable();
+    shared.facebook.getVisa(identifier).then((visa) {
+      var avatar = visa?.avatar;
+      if (avatar != null) {
+        info.avatar = avatar;
+        var factory = AvatarFactory();
+        info.avatarView = factory.getImageView(identifier, avatar,
+          width: width, height: height,);
+        var nc = lnc.NotificationCenter();
+        nc.postNotification(_kAutoAvatarUpdate, info, {
+          'ID': identifier,
+        });
+      }
+    });
+    return info;
+  }
 
 }
 
-class _FacadeState extends State<_AutoAvatarView> implements lnc.Observer {
-  _FacadeState() {
+const String _kAutoAvatarUpdate = '_AutoAvatarUpdate';
+
+/// Auto refresh avatar view
+class _AutoAvatarView extends StatefulWidget {
+  _AutoAvatarView(ID identifier, {required double width, required double height})
+      : info = _Info.from(identifier, width: width, height: height);
+
+  final _Info info;
+
+  ID get identifier => info.identifier;
+  double get width => info.width;
+  double get height => info.height;
+
+  @override
+  State<StatefulWidget> createState() => _AutoAvatarState();
+
+}
+
+class _AutoAvatarState extends State<_AutoAvatarView> implements lnc.Observer {
+  _AutoAvatarState() {
     var nc = lnc.NotificationCenter();
     nc.addObserver(this, NotificationNames.kDocumentUpdated);
+    nc.addObserver(this, _kAutoAvatarUpdate);
   }
 
   @override
   void dispose() {
     var nc = lnc.NotificationCenter();
+    nc.removeObserver(this, _kAutoAvatarUpdate);
     nc.removeObserver(this, NotificationNames.kDocumentUpdated);
     super.dispose();
   }
@@ -184,9 +212,19 @@ class _FacadeState extends State<_AutoAvatarView> implements lnc.Observer {
       Document? visa = userInfo?['document'];
       assert(identifier != null && visa != null, 'notification error: $notification');
       if (identifier == widget.identifier && visa is Visa) {
-        Log.info('document updated, refreshing facade: $identifier');
+        Log.info('document updated, refreshing avatar: $identifier');
         // update refresh for new avatar
         await _reload();
+      }
+    } else if (name == _kAutoAvatarUpdate) {
+      ID? identifier = userInfo?['ID'];
+      if (identifier == widget.identifier) {
+        Log.info('avatar updated, refreshing avatar: $identifier');
+        // refresh for avatar
+        if (mounted) {
+          setState(() {
+          });
+        }
       }
     } else {
       assert(false, 'should not happen');
@@ -206,22 +244,19 @@ class _FacadeState extends State<_AutoAvatarView> implements lnc.Observer {
     if (avatar == null) {
       Log.warning('avatar not found: $doc');
       return;
+    } else if (avatar == widget.info.avatar) {
+      Log.warning('avatar not changed: $identifier, $avatar');
+      return;
+    } else {
+      widget.info.avatar = avatar;
     }
     var factory = AvatarFactory();
-    var view = factory.getImageView(identifier, avatar,
+    widget.info.avatarView = factory.getImageView(identifier, avatar,
         width: widget.width, height: widget.height);
-    await view.loader.run();
     if (mounted) {
       setState(() {
-        widget._info.avatarView = view;
       });
     }
-  }
-
-  @override
-  void initState() {
-    super.initState();
-    _reload();
   }
 
   @override
@@ -229,7 +264,7 @@ class _FacadeState extends State<_AutoAvatarView> implements lnc.Observer {
     double width = widget.width;
     double height = widget.height;
     ID identifier = widget.identifier;
-    Widget? view = widget._info.avatarView;
+    Widget? view = widget.info.avatarView;
     view ??= _AvatarImageView.getNoImage(identifier, width: width, height: height);
     return ClipRRect(
       borderRadius: BorderRadius.all(
@@ -290,9 +325,11 @@ class _AvatarImageLoader extends PortableImageLoader {
   @override
   Widget? getProgress(PortableImageView view) {
     _AvatarImageView widget = view as _AvatarImageView;
-    double width = widget.width ?? 0;
-    double height = widget.height ?? 0;
-    if (width < 64 || height < 64) {
+    double? width = widget.width;
+    double? height = widget.height;
+    if (width == null || height == null) {
+      // unlimited
+    } else if (width < 64 || height < 64) {
       return null;
     }
     return super.getProgress(view);
@@ -316,6 +353,17 @@ class _AvatarImageLoader extends PortableImageLoader {
       return null;
     }
     return Paths.append(dir, 'avatar');
+  }
+
+  //
+  //  Factory
+  //
+  static _AvatarImageLoader from(PortableNetworkFile pnf) {
+    _AvatarImageLoader loader = _AvatarImageLoader(pnf);
+    if (pnf.url != null && pnf.data == null) {
+      SharedDownloader().addTask(loader);
+    }
+    return loader;
   }
 
 }

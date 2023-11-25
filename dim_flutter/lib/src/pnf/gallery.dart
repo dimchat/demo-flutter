@@ -118,35 +118,35 @@ class _ImagePreviewState extends State<_ImagePreview> {
 
 }
 
-void _confirmToSave(BuildContext context, PortableImageLoader loader) =>
-    Alert.confirm(context, 'Confirm',
-      'Sure to save this image?'.tr,
-      okAction: () => _saveImage(context, loader),
-    );
-void _saveImage(BuildContext context, PortableImageLoader loader) =>
-    loader.run().then((ok) {
-      if (!ok) {
-        Alert.show(context, 'Error', 'Cannot save this image');
-        return;
-      }
-      assert(loader.status == PortableNetworkStatus.success, 'PNF loader error');
-      loader.cacheFilePath.then((path) {
-        if (path == null) {
-          Alert.show(context, 'Error', 'Failed to get image file');
-        } else {
-          _saveFile(context, path);
-        }
-      });
-    });
-void _saveFile(BuildContext context, String path) =>
-    ImageGallerySaver.saveFile(path).then((result) {
-      Log.info('saving image: $path, result: $result');
-      if (result != null && result['isSuccess']) {
-        Alert.show(context, 'Success', 'Image saved to album'.tr);
+void _confirmToSave(BuildContext context, PortableImageLoader loader) {
+  Alert.confirm(context, 'Confirm',
+    'Sure to save this image?'.tr,
+    okAction: () => _saveImage(context, loader),
+  );
+}
+void _saveImage(BuildContext context, PortableImageLoader loader) {
+  if (loader.status == PortableNetworkStatus.success) {
+    loader.cacheFilePath.then((path) {
+      if (path == null) {
+        Alert.show(context, 'Error', 'Failed to get image file'.tr);
       } else {
-        String? error = result['error'];
-        error ??= result['errorMessage'];
-        error ??= 'Failed to save image to album'.tr;
-        Alert.show(context, 'Error', error);
+        _saveFile(context, path);
       }
     });
+  } else {
+    Alert.show(context, 'Error', 'Cannot save this image'.tr);
+  }
+}
+void _saveFile(BuildContext context, String path) {
+  ImageGallerySaver.saveFile(path).then((result) {
+    Log.info('saving image: $path, result: $result');
+    if (result != null && result['isSuccess']) {
+      Alert.show(context, 'Success', 'Image saved to album'.tr);
+    } else {
+      String? error = result['error'];
+      error ??= result['errorMessage'];
+      error ??= 'Failed to save image to album'.tr;
+      Alert.show(context, 'Error', error);
+    }
+  });
+}

@@ -20,26 +20,14 @@ typedef OnImageRead = void Function(String path, Uint8List data);
 
 void openImagePicker(BuildContext context, {OnImagePicked? onPicked, required OnImageRead onRead}) =>
     Alert.actionSheet(context, null, null,
-      Row(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          const Icon(AppIcons.cameraIcon),
-          const SizedBox(width: 12,),
-          Text('Camera'.tr),
-        ],
-      ), () => requestCameraPermissions(context,
-        onGranted: (context) => _openImagePicker(context, true, onPicked, onRead),
-      ),
-      Row(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          const Icon(AppIcons.albumIcon),
-          const SizedBox(width: 12,),
-          Text('Album'.tr),
-        ],
-      ), () => requestPhotosPermissions(context,
-        onGranted: (context) => _openImagePicker(context, false, onPicked, onRead),
-      ),
+      Alert.action(AppIcons.cameraIcon, 'Camera'),
+          () => requestCameraPermissions(context,
+            onGranted: (context) => _openImagePicker(context, true, onPicked, onRead),
+          ),
+      Alert.action(AppIcons.albumIcon, 'Album'),
+          () => requestPhotosPermissions(context,
+            onGranted: (context) => _openImagePicker(context, false, onPicked, onRead),
+          ),
     );
 
 void _openImagePicker(BuildContext context, bool camera, OnImagePicked? onPicked, OnImageRead onRead) =>

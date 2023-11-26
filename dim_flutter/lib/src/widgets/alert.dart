@@ -141,4 +141,14 @@ class Alert {
       ],
     ),
   );
+
+  static Widget action(IconData icon, String text) => Row(
+    mainAxisAlignment: MainAxisAlignment.center,
+    children: [
+      Icon(icon),
+      const SizedBox(width: 12,),
+      Text(text.tr),
+    ],
+  );
+
 }

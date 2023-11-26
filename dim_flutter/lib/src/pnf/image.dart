@@ -225,7 +225,7 @@ abstract class PortableImageLoader extends PortableNetworkLoader {
     height: size,
     child: icon == null
         ? CupertinoActivityIndicator(color: color, radius: size/2,)
-        : Icon(AppIcons.decryptingIcon, color: color, size: size,),
+        : Icon(icon, color: color, size: size,),
   );
 
   Widget _tray(String text, IconData? icon, Color color) => ClipRRect(
@@ -241,7 +241,7 @@ abstract class PortableImageLoader extends PortableNetworkLoader {
         children: [
           icon == null
               ? CupertinoActivityIndicator(color: color)
-              : Icon(AppIcons.decryptingIcon, color: color),
+              : Icon(icon, color: color),
           Text(text,
             style: TextStyle(color: color, fontSize: 10,
               decoration: TextDecoration.none,

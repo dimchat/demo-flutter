@@ -74,6 +74,18 @@ void previewImageContent(BuildContext context, ImageContent image, List<InstantM
 }
 
 
+void saveImageContent(BuildContext context, ImageContent image) {
+  PortableNetworkFile? pnf = PortableNetworkFile.parse(image);
+  if (pnf == null) {
+    assert(false, 'PNF error: $image');
+    return;
+  }
+  var factory = NetworkImageFactory();
+  var loader = factory.getImageLoader(pnf);
+  return Gallery.saveImage(context, loader);
+}
+
+
 /// Factory for AutoImage
 class NetworkImageFactory {
   factory NetworkImageFactory() => _instance;

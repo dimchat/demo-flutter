@@ -223,6 +223,16 @@ class Amanuensis {
     Log.warning('update last message: $last for conversation: $cid');
 
     GlobalVariable shared = GlobalVariable();
+    User? current = await shared.facebook.currentUser;
+    assert(current != null, 'failed to get current user');
+    int increase;
+    if (current?.identifier == iMsg.sender) {
+      Log.debug('message from myself');
+      increase = 0;
+    } else {
+      increase = 1;
+    }
+
     Conversation? chatBox = _conversationMap[cid];
     if (chatBox == null) {
       // new conversation
@@ -231,7 +241,7 @@ class Amanuensis {
         Log.error('failed to get conversation: $cid');
         return;
       }
-      chatBox.unread = 1;
+      chatBox.unread = increase;
       chatBox.lastMessage = last;
       chatBox.lastMessageTime = time;
       if (await shared.database.addConversation(chatBox)) {
@@ -246,7 +256,7 @@ class Amanuensis {
     } else {
       // conversation exists
       if (chatBox.widget == null) {
-        chatBox.unread += 1;
+        chatBox.unread += increase;
       } else {
         Log.warning('chat box is opened for: $cid');
         chatBox.unread = 0;

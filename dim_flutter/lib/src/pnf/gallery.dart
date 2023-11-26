@@ -53,6 +53,12 @@ class Gallery {
     context: context,
     builder: (context) => _ImagePreview(this),
   );
+
+  static void saveImage(BuildContext context, PortableImageLoader loader) =>
+      requestPhotosPermissions(context,
+        onGranted: (context) => _confirmToSave(context, loader),
+      );
+
 }
 
 class _ImagePreview extends StatefulWidget {
@@ -96,16 +102,8 @@ class _ImagePreviewState extends State<_ImagePreview> {
           },
           onLongPress: () {
             Alert.actionSheet(context, null, null,
-              Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  const Icon(AppIcons.saveFileIcon),
-                  const SizedBox(width: 12,),
-                  Text('Save to Album'.tr),
-                ],
-              ), () => requestPhotosPermissions(context,
-                onGranted: (context) => _confirmToSave(context, loader),
-              ),
+              Alert.action(AppIcons.saveFileIcon, 'Save to Album'),
+                  () => Gallery.saveImage(context, loader),
             );
           },
         ),

@@ -35,6 +35,7 @@ import 'package:lnc/lnc.dart';
 
 import '../common/constants.dart';
 import '../filesys/external.dart';
+import '../filesys/local.dart';
 import '../filesys/paths.dart';
 
 import 'http.dart';
@@ -92,46 +93,54 @@ abstract class PortableNetworkLoader implements DownloadTask {
     return '<$clazz filename="$filename" length="${data?.length}" />';
   }
 
-  /// Temporary Directory
-  ///     Android -
-  ///     iOS -
-  Future<String?> get temporaryDirectory;
-  /// Caches Directory
-  ///     Android -
-  ///     iOS -
-  Future<String?> get cachesDirectory;
-
-  /// "{tmp}/filename"
-  Future<String?> get temporaryFilePath async {
-    String? dir = await temporaryDirectory;
-    if (dir == null) {
-      return null;
+  /// original filename
+  String? get cacheFilename {
+    String? name = pnf.filename;
+    // get name from PNF
+    if (name != null && URLHelper.isFilenameEncoded(name)) {
+      return name;
     }
-    return Paths.append(dir, filename);
+    // Log.debug('[PNF] filename error: $pnf');
+    Uri? url = pnf.url;
+    if (url != null) {
+      return URLHelper.filenameFromURL(url, name);
+    }
+    assert(false, 'PNF error: $pnf');
+    return name;
   }
-  /// "{caches}/{AA}/{BB}/filename"
-  Future<String?> get cacheFilePath async {
-    String? dir = await cachesDirectory;
-    if (dir == null) {
-      return null;
+
+  /// encrypted filename
+  String? get temporaryFilename {
+    String? name = pnf.filename;
+    // get name from URL
+    Uri? url = pnf.url;
+    if (url != null) {
+      return URLHelper.filenameFromURL(url, name);
     }
-    String? name = filename;
+    assert(false, 'PNF error: $pnf');
+    return name;
+  }
+
+  /// "{caches}/files/{AA}/{BB}/{filename}"
+  Future<String?> get cacheFilePath async {
+    String? name = cacheFilename;
     if (name == null || name.isEmpty) {
       assert(false, 'PNF error: $pnf');
       return null;
-    } else if (name.length < 4) {
-      assert(false, 'invalid filename: $name, $pnf');
-      return Paths.append(dir, name);
     }
-    String aa = name.substring(0, 2);
-    String bb = name.substring(2, 4);
-    return Paths.append(dir, aa, bb, name);
+    LocalStorage cache = LocalStorage();
+    return await cache.getCacheFilePath(name);
   }
 
-  String? get filename {
-    String? name = pnf.filename;
-    Uri? url = pnf.url;
-    return url == null ? name : URLHelper.filenameFromURL(url, name);
+  /// "{tmp}/download/{filename}"
+  Future<String?> get temporaryFilePath async {
+    String? name = temporaryFilename;
+    if (name == null || name.isEmpty) {
+      assert(false, 'PNF error: $pnf');
+      return null;
+    }
+    LocalStorage cache = LocalStorage();
+    return await cache.getDownloadFilePath(name);
   }
 
   Future<Uint8List?> _decrypt(Uint8List data, String cachePath) async {

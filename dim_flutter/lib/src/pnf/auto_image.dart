@@ -33,6 +33,7 @@ import 'dart:typed_data';
 import 'package:flutter/cupertino.dart';
 
 import 'package:dim_client/dim_client.dart';
+import 'package:lnc/lnc.dart';
 
 import '../filesys/local.dart';
 import '../filesys/paths.dart';
@@ -129,10 +130,7 @@ class NetworkImageFactory {
 }
 
 class _ImageView extends PortableImageView {
-  const _ImageView(super.loader, {this.width, this.height});
-
-  final double? width;
-  final double? height;
+  const _ImageView(super.loader, {super.width, super.height});
 
   static Widget getNoImage({double? width, double? height}) {
     double? size = width ?? height;
@@ -171,8 +169,7 @@ class _ImageLoader extends PortableImageLoader {
   }
 
   @override
-  Widget getImage(PortableImageView view) {
-    _ImageView widget = view as _ImageView;
+  Widget getImage(PortableImageView widget) {
     double? width = widget.width;
     double? height = widget.height;
     var image = imageProvider;
@@ -186,36 +183,28 @@ class _ImageLoader extends PortableImageLoader {
   }
 
   @override
-  Widget? getProgress(PortableImageView view) {
-    _ImageView widget = view as _ImageView;
-    double? width = widget.width;
-    double? height = widget.height;
-    if (width == null || height == null) {
-      // unlimited
-    } else if (width < 64 || height < 64) {
-      return null;
+  Future<String?> get temporaryFilePath async {
+    String? download = await super.temporaryFilePath;
+    if (download != null && await Paths.exists(download)) {
+      return download;
     }
-    return super.getProgress(view);
+    String? upload = await uploadFilePath;
+    Log.debug('download path not exist, checking upload path: $download -> $upload');
+    if (upload != null && await Paths.exists(upload)) {
+      return upload;
+    }
+    Log.debug('upload path not exist, use download path: $download');
+    return download;
   }
 
-  @override
-  Future<String?> get temporaryDirectory async {
-    LocalStorage cache = LocalStorage();
-    String? dir = await cache.temporaryDirectory;
-    if (dir == null) {
+  Future<String?> get uploadFilePath async {
+    String? name = temporaryFilename;
+    if (name == null || name.isEmpty) {
+      assert(false, 'PNF error: $pnf');
       return null;
     }
-    return Paths.append(dir, 'download');
-  }
-
-  @override
-  Future<String?> get cachesDirectory async {
     LocalStorage cache = LocalStorage();
-    String? dir = await cache.cachesDirectory;
-    if (dir == null) {
-      return null;
-    }
-    return Paths.append(dir, 'files');
+    return await cache.getUploadFilePath(name);
   }
 
   //

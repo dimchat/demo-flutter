@@ -33,6 +33,8 @@ abstract class AppIcons {
   static const IconData       cameraIcon = CupertinoIcons.camera;
   static const IconData        albumIcon = CupertinoIcons.photo;
   static const IconData     saveFileIcon = CupertinoIcons.floppy_disk;
+  static const IconData   decryptingIcon = CupertinoIcons.lock_open;
+  static const IconData decryptErrorIcon = CupertinoIcons.slash_circle;
   // Audio
   static const IconData    waitAudioIcon = CupertinoIcons.cloud_download;
   static const IconData    playAudioIcon = CupertinoIcons.play;

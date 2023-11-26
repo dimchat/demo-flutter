@@ -81,8 +81,13 @@ class URLHelper {
     return ext == null || ext.isEmpty ? filename : '$filename.$ext';
   }
 
+  static bool isFilenameEncoded(String filename) {
+    String? ext = Paths.extension(filename);
+    return _isEncoded(filename, ext);
+  }
+
   static bool _isEncoded(String filename, String? ext) {
-    if (ext != null && ext.isNotEmpty) {
+    if (ext != null/* && ext.isNotEmpty*/) {
       filename = filename.substring(0, filename.length - ext.length - 1);
     }
     return filename.length == 32 && _hex.hasMatch(filename);

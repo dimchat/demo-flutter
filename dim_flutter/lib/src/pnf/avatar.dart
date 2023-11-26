@@ -83,7 +83,7 @@ class AvatarFactory {
     var loader = getImageLoader(pnf);
     Uri? url = pnf.url;
     if (url == null) {
-      return _AvatarImageView(loader, user, width: width, height: height,);
+      return _AvatarImageView(user, loader, width: width, height: height,);
     }
     _AvatarImageView? img;
     Set<_AvatarImageView>? table = _views[url];
@@ -104,7 +104,7 @@ class AvatarFactory {
       }
     }
     if (img == null) {
-      img = _AvatarImageView(loader, user, width: width, height: height,);
+      img = _AvatarImageView(user, loader, width: width, height: height,);
       table.add(img);
     }
     return img;
@@ -277,11 +277,9 @@ class _AutoAvatarState extends State<_AutoAvatarView> implements lnc.Observer {
 }
 
 class _AvatarImageView extends PortableImageView {
-  const _AvatarImageView(super.loader, this.identifier, {this.width, this.height});
+  const _AvatarImageView(this.identifier, super.loader, {super.width, super.height});
 
   final ID identifier;
-  final double? width;
-  final double? height;
 
   static Widget getNoImage(ID identifier, {double? width, double? height}) {
     double? size = width ?? height;
@@ -307,9 +305,9 @@ class _AvatarImageLoader extends PortableImageLoader {
   _AvatarImageLoader(super.pnf);
 
   @override
-  Widget getImage(PortableImageView view) {
-    _AvatarImageView widget = view as _AvatarImageView;
-    ID identifier = widget.identifier;
+  Widget getImage(PortableImageView widget) {
+    _AvatarImageView aiv = widget as _AvatarImageView;
+    ID identifier = aiv.identifier;
     double? width = widget.width;
     double? height = widget.height;
     var image = imageProvider;
@@ -323,36 +321,39 @@ class _AvatarImageLoader extends PortableImageLoader {
   }
 
   @override
-  Widget? getProgress(PortableImageView view) {
-    _AvatarImageView widget = view as _AvatarImageView;
-    double? width = widget.width;
-    double? height = widget.height;
-    if (width == null || height == null) {
-      // unlimited
-    } else if (width < 64 || height < 64) {
+  Future<String?> get cacheFilePath async {
+    String? name = cacheFilename;
+    if (name == null || name.isEmpty) {
+      assert(false, 'PNF error: $pnf');
       return null;
     }
-    return super.getProgress(view);
+    LocalStorage cache = LocalStorage();
+    return await cache.getAvatarFilePath(name);
   }
 
   @override
-  Future<String?> get temporaryDirectory async {
-    LocalStorage cache = LocalStorage();
-    String? dir = await cache.temporaryDirectory;
-    if (dir == null) {
-      return null;
+  Future<String?> get temporaryFilePath async {
+    String? download = await super.temporaryFilePath;
+    if (download != null && await Paths.exists(download)) {
+      return download;
     }
-    return Paths.append(dir, 'download');
+    String? upload = await uploadFilePath;
+    Log.debug('download path not exist, checking upload path: $download -> $upload');
+    if (upload != null && await Paths.exists(upload)) {
+      return upload;
+    }
+    Log.debug('upload path not exist, use download path: $download');
+    return download;
   }
 
-  @override
-  Future<String?> get cachesDirectory async {
-    LocalStorage cache = LocalStorage();
-    String? dir = await cache.cachesDirectory;
-    if (dir == null) {
+  Future<String?> get uploadFilePath async {
+    String? name = temporaryFilename;
+    if (name == null || name.isEmpty) {
+      assert(false, 'PNF error: $pnf');
       return null;
     }
-    return Paths.append(dir, 'avatar');
+    LocalStorage cache = LocalStorage();
+    return await cache.getUploadFilePath(name);
   }
 
   //

@@ -31,23 +31,24 @@
 import 'dart:typed_data';
 
 import 'package:flutter/cupertino.dart';
-import 'package:get/get.dart';
 
 import 'package:dim_client/dim_client.dart';
 import 'package:lnc/lnc.dart' as lnc;
 import 'package:lnc/lnc.dart' show Log;
 
 import '../common/constants.dart';
-import '../ui/styles.dart';
-import '../widgets/circle_progress.dart';
+import '../ui/icons.dart';
 
 import 'loader.dart';
 
 
 class PortableImageView extends StatefulWidget {
-  const PortableImageView(this.loader, {super.key});
+  const PortableImageView(this.loader, {this.width, this.height, super.key});
 
   final PortableImageLoader loader;
+
+  final double? width;
+  final double? height;
 
   PortableNetworkFile get pnf => loader.pnf;
 
@@ -141,6 +142,7 @@ class _PortableImageState extends State<PortableImageView> implements lnc.Observ
     }
     return Stack(
       alignment: AlignmentDirectional.center,
+      // fit: StackFit.passthrough,
       children: [
         loader.getImage(widget),
         indicator,
@@ -170,28 +172,84 @@ abstract class PortableImageLoader extends PortableNetworkLoader {
     return image;
   }
 
-  Widget getImage(PortableImageView view);
+  Widget getImage(PortableImageView widget);
 
-  Widget? getProgress(PortableImageView view) {
-    if (status == PortableNetworkStatus.success) {
+  Widget? getProgress(PortableImageView widget) {
+    PortableNetworkStatus pns = status;
+    if (pns == PortableNetworkStatus.success ||
+        pns == PortableNetworkStatus.init) {
       return null;
-    } else if (status == PortableNetworkStatus.error) {
-      return Text('Error'.tr,
-        style: TextStyle(color: Styles.colors.criticalButtonColor,
-          fontSize: 12,
-          decoration: TextDecoration.none,
-        ),
-      );
     }
-    double len = total.toDouble();
-    double value = len > 0 ? count / len : 0.0;
-    return CircleProgressWidget.from(value,
-      color: Styles.colors.avatarColor,
-      backgroundColor: Styles.colors.avatarDefaultColor,
-      // textStyle: Styles.buttonTextStyle,
-      completeText: 'Decrypting'.tr,
-    );
-
+    String text;
+    IconData? icon;
+    Color color = CupertinoColors.white;
+    // check status
+    if (pns == PortableNetworkStatus.error) {
+      text = 'Error';
+      icon = AppIcons.decryptErrorIcon;
+      color = CupertinoColors.systemRed;
+    } else if (pns == PortableNetworkStatus.downloading) {
+      double len = total.toDouble();
+      double value = len > 0 ? count * 100.0 / len : 0.0;
+      if (value < 100.0) {
+        text = '${value.toStringAsFixed(1)}%';
+      } else {
+        text = 'Decrypting';
+        icon = AppIcons.decryptingIcon;
+      }
+    } else if (pns == PortableNetworkStatus.decrypting) {
+      text = 'Decrypting';
+      icon = AppIcons.decryptingIcon;
+    } else if (pns == PortableNetworkStatus.waiting) {
+      text = 'Waiting';
+    } else {
+      assert(false, 'status error: $pns');
+      return null;
+    }
+    // check size
+    double? width = widget.width;
+    double? height = widget.height;
+    if (width == null || height == null) {
+      // size unlimited
+    } else if (width < 64 || height < 64) {
+      double size = width < height ? width : height;
+      return _indicator(icon, color, size);
+    }
+    // indicator on tray
+    return _tray(text, icon, color);
   }
+
+  Widget _indicator(IconData? icon, Color color, double size) => Container(
+    color: CupertinoColors.secondaryLabel,
+    width: size,
+    height: size,
+    child: icon == null
+        ? CupertinoActivityIndicator(color: color, radius: size/2,)
+        : Icon(AppIcons.decryptingIcon, color: color, size: size,),
+  );
+
+  Widget _tray(String text, IconData? icon, Color color) => ClipRRect(
+    borderRadius: const BorderRadius.all(
+      Radius.elliptical(8, 8),
+    ),
+    child: Container(
+      color: CupertinoColors.secondaryLabel,
+      width: 64,
+      height: 64,
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          icon == null
+              ? CupertinoActivityIndicator(color: color)
+              : Icon(AppIcons.decryptingIcon, color: color),
+          Text(text,
+            style: TextStyle(color: color, fontSize: 10,
+              decoration: TextDecoration.none,
+            ),
+          ),
+        ],
+      ),
+    ),
+  );
 
 }

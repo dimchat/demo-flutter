@@ -37,7 +37,6 @@ import 'package:lnc/lnc.dart' show Log;
 import '../client/shared.dart';
 import '../common/constants.dart';
 import '../filesys/local.dart';
-import '../filesys/paths.dart';
 import '../ui/icons.dart';
 import '../ui/styles.dart';
 
@@ -329,31 +328,6 @@ class _AvatarImageLoader extends PortableImageLoader {
     }
     LocalStorage cache = LocalStorage();
     return await cache.getAvatarFilePath(name);
-  }
-
-  @override
-  Future<String?> get temporaryFilePath async {
-    String? download = await super.temporaryFilePath;
-    if (download != null && await Paths.exists(download)) {
-      return download;
-    }
-    String? upload = await uploadFilePath;
-    Log.debug('download path not exist, checking upload path: $download -> $upload');
-    if (upload != null && await Paths.exists(upload)) {
-      return upload;
-    }
-    Log.debug('upload path not exist, use download path: $download');
-    return download;
-  }
-
-  Future<String?> get uploadFilePath async {
-    String? name = temporaryFilename;
-    if (name == null || name.isEmpty) {
-      assert(false, 'PNF error: $pnf');
-      return null;
-    }
-    LocalStorage cache = LocalStorage();
-    return await cache.getUploadFilePath(name);
   }
 
   //

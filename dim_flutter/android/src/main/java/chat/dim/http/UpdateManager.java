@@ -114,9 +114,17 @@ public class UpdateManager {
       builder.setTitle("Upgrade (" + getNewVersion() + ", " + getNewBuild() + ")");
       builder.setMessage("New version is available, please download to upgrade.");
       builder.setPositiveButton("Download", (dialog, which) -> showDownloadDialog());
-      builder.setNegativeButton("Later", (dialog, which) -> dialog.dismiss());
+      //builder.setNegativeButton("Later", (dialog, which) -> dialog.dismiss());
+      builder.setNegativeButton("Home", (dialog, which) -> goHome());
 
       builder.create().show();
+   }
+
+   private void goHome() {
+      Uri url = Uri.parse("http://tarsier.dim.chat/");
+      Intent intent = new Intent(Intent.ACTION_VIEW, url);
+      Intent chooser = Intent.createChooser(intent, "Open With");
+      mContext.startActivity(chooser);
    }
 
    private void showDownloadDialog() {

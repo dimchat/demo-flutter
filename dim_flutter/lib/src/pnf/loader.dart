@@ -133,7 +133,7 @@ abstract class PortableNetworkLoader implements DownloadTask {
   }
 
   /// "{tmp}/download/{filename}"
-  Future<String?> get temporaryFilePath async {
+  Future<String?> get downloadFilePath async {
     String? name = temporaryFilename;
     if (name == null || name.isEmpty) {
       assert(false, 'PNF error: $pnf');
@@ -141,6 +141,16 @@ abstract class PortableNetworkLoader implements DownloadTask {
     }
     LocalStorage cache = LocalStorage();
     return await cache.getDownloadFilePath(name);
+  }
+  /// "{tmp}/upload/{filename}"
+  Future<String?> get uploadFilePath async {
+    String? name = temporaryFilename;
+    if (name == null || name.isEmpty) {
+      assert(false, 'PNF error: $pnf');
+      return null;
+    }
+    LocalStorage cache = LocalStorage();
+    return await cache.getUploadFilePath(name);
   }
 
   Future<Uint8List?> _decrypt(Uint8List data, String cachePath) async {
@@ -254,14 +264,20 @@ abstract class PortableNetworkLoader implements DownloadTask {
     //
     //  2. check temporary file
     //
-    String? tmpPath = await temporaryFilePath;
-    if (tmpPath == null) {
-      setStatus(PortableNetworkStatus.error);
-      assert(false, 'failed to get temporary path');
-      return null;
+    String? tmpPath;
+    String? down = await downloadFilePath;
+    if (down != null && await Paths.exists(down)) {
+      // file exists in download directory
+      tmpPath = down;
+    } else {
+      String? up = await uploadFilePath;
+      if (up != null && up != down && await Paths.exists(up)) {
+        // file exists in upload directory
+        tmpPath = up;
+      }
     }
-    // try to load temporary file
-    if (await Paths.exists(tmpPath)) {
+    if (tmpPath != null) {
+      // try to load temporary file
       data = await ExternalStorage.loadBinary(tmpPath);
       if (data != null && data.isNotEmpty) {
         // data loaded from temporary file
@@ -317,7 +333,7 @@ abstract class PortableNetworkLoader implements DownloadTask {
     //
     //  1.. save data from remote URL
     //
-    String? tmpPath = await temporaryFilePath;
+    String? tmpPath = await downloadFilePath;
     if (tmpPath == null) {
       setStatus(PortableNetworkStatus.error);
       assert(false, 'failed to get temporary path');

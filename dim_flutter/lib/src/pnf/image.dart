@@ -224,8 +224,8 @@ abstract class PortableImageLoader extends PortableNetworkLoader {
     width: size,
     height: size,
     child: icon == null
-        ? CupertinoActivityIndicator(color: color, radius: size/2,)
-        : Icon(icon, color: color, size: size,),
+        ? CupertinoActivityIndicator(color: color, radius: size/4,)
+        : Icon(icon, color: color, size: size/2,),
   );
 
   Widget _tray(String text, IconData? icon, Color color) => ClipRRect(

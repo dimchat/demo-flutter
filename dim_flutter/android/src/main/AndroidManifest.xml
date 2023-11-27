@@ -5,8 +5,8 @@
          but are required if your app needs access to the internet. -->
     <uses-permission android:name="android.permission.INTERNET" />
     <!-- Permissions options for the `storage` group -->
-    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" android:maxSdkVersion="32" />
-    <!--    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />-->
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
     <!-- Permissions options for the `photos` group -->
     <uses-permission android:name="android.permission.READ_MEDIA_IMAGES" />
     <!-- Permissions options for the `camera` group -->
@@ -17,7 +17,8 @@
 
     <application
         android:networkSecurityConfig="@xml/network_security_config"
-        android:usesCleartextTraffic="true">
+        android:usesCleartextTraffic="true"
+        android:requestLegacyExternalStorage="true">
 
         <service android:name="chat.dim.ui.media.MediaService" />
 

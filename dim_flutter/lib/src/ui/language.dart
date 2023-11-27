@@ -26,10 +26,11 @@ import 'intl_zh_tw.dart';
 
 
 class LanguageItem {
-  LanguageItem(this.code, this.name);
+  LanguageItem(this.code, this.name, this.desc);
 
   final String code;
   final String name;
+  final String? desc;
 }
 
 class LanguageDataSource {
@@ -40,30 +41,34 @@ class LanguageDataSource {
   AppSettings? _settings;
 
   final List<LanguageItem> _items = [
-    LanguageItem('', 'System'),
+    LanguageItem('', 'System', null),
 
-    LanguageItem('en_US', langEnglish),
-    LanguageItem('es_ES', langSpanish),
-    LanguageItem('fr_FR', langFrench),
-    LanguageItem('de_DE', langGerman),
-    LanguageItem('it_IT', langItalian),
-    LanguageItem('nl_NL', langDutch),
-    LanguageItem('pt_PT', langPortuguese),
-    LanguageItem('ru_RU', langRussian),
-    LanguageItem('ar', langArabic),
-    LanguageItem('af_ZA', langAfrikaans),
+    LanguageItem('en_US', langEnglish, null),
+    LanguageItem('es_ES', langSpanish, 'Spanish'),
+    LanguageItem('fr_FR', langFrench, 'French'),
+    LanguageItem('de_DE', langGerman, 'German'),
+    LanguageItem('it_IT', langItalian, 'Italian'),
+    LanguageItem('nl_NL', langDutch, 'Dutch'),
+    LanguageItem('pt_PT', langPortuguese, 'Portuguese'),
+    LanguageItem('ru_RU', langRussian, 'Russian'),
+    LanguageItem('ar', langArabic, 'Arabic'),
+    LanguageItem('af_ZA', langAfrikaans, 'Afrikaans'),
 
-    LanguageItem('hi_IN', langHindi),
-    LanguageItem('bn_BD', langBengali),
-    LanguageItem('ja_JP', langJapanese),
-    LanguageItem('ko_KR', langKorean),
-    LanguageItem('ms_MY', langMalaysian),
-    LanguageItem('th_TH', langThai),
-    LanguageItem('id_ID', langIndonesian),
-    LanguageItem('vi_VN', langVietnamese),
-    LanguageItem('zh_CN', langChinese),
-    LanguageItem('zh_TW', langChineseTraditional),
-  ];
+    LanguageItem('hi_IN', langHindi, 'Hindi'),
+    LanguageItem('bn_BD', langBengali, 'Bengali'),
+    LanguageItem('ja_JP', langJapanese, 'Japanese'),
+    LanguageItem('ko_KR', langKorean, 'Korean'),
+    LanguageItem('ms_MY', langMalaysian, 'Malay'),
+    LanguageItem('th_TH', langThai, 'Thai'),
+    LanguageItem('id_ID', langIndonesian, 'Indonesian'),
+    LanguageItem('vi_VN', langVietnamese, 'Vietnamese'),
+    LanguageItem('zh_CN', langChinese, 'Chinese'),
+    LanguageItem('zh_TW', langChineseTraditional, 'Chinese'),
+  ]..sort((a, b) {
+    String as = a.desc ?? '';
+    String bs = b.desc ?? '';
+    return as.compareTo(bs);
+  });
 
   Future<void> init(AppSettings settings) async {
     _settings = settings;

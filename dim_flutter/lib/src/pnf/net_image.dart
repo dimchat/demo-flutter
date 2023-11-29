@@ -32,110 +32,31 @@ import 'dart:typed_data';
 
 import 'package:flutter/cupertino.dart';
 
-import 'package:dim_client/dim_client.dart';
 import 'package:lnc/lnc.dart' as lnc;
-import 'package:lnc/lnc.dart' show Log;
 
-import '../common/constants.dart';
 import '../ui/icons.dart';
 
 import 'loader.dart';
+import 'net_base.dart';
 
 
-class PortableImageView extends StatefulWidget {
-  const PortableImageView(this.loader, {this.width, this.height, super.key});
-
-  final PortableImageLoader loader;
+/// View for show Image Content
+class PortableImageView extends PortableNetworkView {
+  const PortableImageView(super.loader, {this.width, this.height, super.key});
 
   final double? width;
   final double? height;
-
-  PortableNetworkFile get pnf => loader.pnf;
 
   @override
   State<StatefulWidget> createState() => _PortableImageState();
 
 }
 
-class _PortableImageState extends State<PortableImageView> implements lnc.Observer {
-  _PortableImageState() {
-    var nc = lnc.NotificationCenter();
-    nc.addObserver(this, NotificationNames.kPortableNetworkStatusChanged);
-    nc.addObserver(this, NotificationNames.kPortableNetworkReceiveProgress);
-    nc.addObserver(this, NotificationNames.kPortableNetworkReceived);
-    nc.addObserver(this, NotificationNames.kPortableNetworkDecrypted);
-    nc.addObserver(this, NotificationNames.kPortableNetworkSuccess);
-    nc.addObserver(this, NotificationNames.kPortableNetworkError);
-  }
-
-  @override
-  void dispose() {
-    var nc = lnc.NotificationCenter();
-    nc.removeObserver(this, NotificationNames.kPortableNetworkError);
-    nc.removeObserver(this, NotificationNames.kPortableNetworkSuccess);
-    nc.removeObserver(this, NotificationNames.kPortableNetworkDecrypted);
-    nc.removeObserver(this, NotificationNames.kPortableNetworkReceived);
-    nc.removeObserver(this, NotificationNames.kPortableNetworkReceiveProgress);
-    nc.removeObserver(this, NotificationNames.kPortableNetworkStatusChanged);
-    super.dispose();
-  }
-
-  @override
-  Future<void> onReceiveNotification(lnc.Notification notification) async {
-    String name = notification.name;
-    Map? userInfo = notification.userInfo;
-    Uri? url = userInfo?['URL'];
-    if (name == NotificationNames.kPortableNetworkStatusChanged) {
-      if (url == widget.pnf.url || notification.sender == widget.loader) {
-        var previous = userInfo?['previous'];
-        var current = userInfo?['current'];
-        Log.info('[PNF] onStatusChanged: $previous -> $current, $url, $this');
-        await _reload();
-      }
-    } else if (name == NotificationNames.kPortableNetworkReceiveProgress) {
-      if (url == widget.pnf.url) {
-        // Log.info('[PNF] onReceiveProgress: $count/$total, ${pnf.url}, $this');
-        await _reload();
-      }
-    } else if (name == NotificationNames.kPortableNetworkReceived) {
-      if (url == widget.pnf.url) {
-        Uint8List? data = userInfo?['data'];
-        String? tmpPath = userInfo?['path'];
-        Log.info('[PNF] onReceived: ${data?.length} bytes into file "$tmpPath", $this');
-        await _reload();
-      }
-    } else if (name == NotificationNames.kPortableNetworkDecrypted) {
-      if (url == widget.pnf.url || notification.sender == widget.loader) {
-        Uint8List? data = userInfo?['data'];
-        String? path = userInfo?['path'];
-        Log.info('[PNF] onDecrypted: ${data?.length} bytes into file "$path", $url, $this');
-        await _reload();
-      }
-    } else if (name == NotificationNames.kPortableNetworkSuccess) {
-      if (url == widget.pnf.url || notification.sender == widget.loader) {
-        Uint8List? data = userInfo?['data'];
-        Log.info('[PNF] onSuccess: ${data?.length} bytes, $url, $this');
-        await _reload();
-      }
-    } else if (name == NotificationNames.kPortableNetworkError) {
-      if (url == widget.pnf.url || notification.sender == widget.loader) {
-        String? error = userInfo?['error'];
-        Log.error('[PNF] onError: $error, $url, $this');
-        await _reload();
-      }
-    }
-  }
-
-  Future<void> _reload() async {
-    if (mounted) {
-      setState(() {
-      });
-    }
-  }
+class _PortableImageState extends PortableNetworkState<PortableImageView> implements lnc.Observer {
 
   @override
   Widget build(BuildContext context) {
-    var loader = widget.loader;
+    var loader = widget.loader as PortableImageLoader;
     Widget? indicator = loader.getProgress(widget);
     if (indicator == null) {
       return loader.getImage(widget);

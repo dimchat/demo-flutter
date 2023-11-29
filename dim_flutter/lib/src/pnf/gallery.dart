@@ -93,7 +93,7 @@ class _ImagePreviewState extends State<_ImagePreview> {
     scrollPhysics: const BouncingScrollPhysics(),
     builder: (context, index) {
       var view = widget.info.images[index];
-      var loader = view.loader;
+      var loader = view.loader as PortableImageLoader;
       return PhotoViewGalleryPageOptions.customChild(
         child: GestureDetector(
           child: view,

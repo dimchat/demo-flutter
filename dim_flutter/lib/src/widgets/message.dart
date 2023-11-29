@@ -9,9 +9,9 @@ import '../models/chat.dart';
 import '../models/chat_contact.dart';
 import '../models/message.dart';
 import '../pnf/auto_image.dart';
+import '../pnf/net_voice.dart';
 import '../ui/styles.dart';
 
-import 'audio.dart';
 import 'browser.dart';
 import 'browse_html.dart';
 import 'name_card.dart';
@@ -94,8 +94,8 @@ abstract class ContentViewUtils {
   );
 
   static Widget getAudioContentView(BuildContext ctx, AudioContent content, ID sender) =>
-      AudioContentView(content,
-        textColor: getTextColor(ctx, sender),
+      NetworkAudioFactory().getAudioView(content,
+        color: getTextColor(ctx, sender),
         backgroundColor: getBackgroundColor(ctx, sender),
       );
 

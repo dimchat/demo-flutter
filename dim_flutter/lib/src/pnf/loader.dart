@@ -49,7 +49,7 @@ enum PortableNetworkStatus {
   error,
 }
 
-abstract class PortableNetworkLoader implements DownloadTask {
+class PortableNetworkLoader implements DownloadTask {
   PortableNetworkLoader(this.pnf);
 
   final PortableNetworkFile pnf;

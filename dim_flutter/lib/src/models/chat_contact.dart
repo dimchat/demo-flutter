@@ -8,7 +8,7 @@ import 'package:lnc/lnc.dart' show Log;
 import '../common/dbi/contact.dart';
 import '../common/constants.dart';
 import '../client/shared.dart';
-import '../pnf/avatar.dart';
+import '../pnf/auto_avatar.dart';
 import '../widgets/alert.dart';
 
 import 'amanuensis.dart';

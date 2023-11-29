@@ -39,10 +39,10 @@ import '../ui/styles.dart';
 
 import 'gallery.dart';
 import 'http.dart';
-import 'image.dart';
+import 'net_image.dart';
 
 
-/// preview image in chat box
+/// preview image(s) from conversation
 void previewImageContent(BuildContext context, ImageContent image, List<InstantMessage> messages) {
   int pos = messages.length;
   Content item;
@@ -71,6 +71,7 @@ void previewImageContent(BuildContext context, ImageContent image, List<InstantM
 }
 
 
+/// Save image from content
 void saveImageContent(BuildContext context, ImageContent image) {
   PortableNetworkFile? pnf = PortableNetworkFile.parse(image);
   if (pnf == null) {
@@ -83,14 +84,14 @@ void saveImageContent(BuildContext context, ImageContent image) {
 }
 
 
-/// Factory for AutoImage
+/// Factory for Auto Image
 class NetworkImageFactory {
   factory NetworkImageFactory() => _instance;
   static final NetworkImageFactory _instance = NetworkImageFactory._internal();
   NetworkImageFactory._internal();
 
   final Map<Uri, _ImageLoader> _loaders = WeakValueMap();
-  final Map<Uri, Set<_ImageView>> _views = {};
+  final Map<Uri, Set<_AutoImageView>> _views = {};
 
   PortableImageLoader getImageLoader(PortableNetworkFile pnf) {
     _ImageLoader? runner;
@@ -111,15 +112,15 @@ class NetworkImageFactory {
     Uri? url = pnf.url;
     var loader = getImageLoader(pnf);
     if (url == null) {
-      return _ImageView(loader, width: width, height: height,);
+      return _AutoImageView(loader, width: width, height: height,);
     }
-    _ImageView? img;
-    Set<_ImageView>? table = _views[url];
+    _AutoImageView? img;
+    Set<_AutoImageView>? table = _views[url];
     if (table == null) {
       table = WeakSet();
       _views[url] = table;
     } else {
-      for (_ImageView item in table) {
+      for (_AutoImageView item in table) {
         if (item.width != width || item.height != height) {
           // size not match
         } else {
@@ -130,7 +131,7 @@ class NetworkImageFactory {
       }
     }
     if (img == null) {
-      img = _ImageView(loader, width: width, height: height,);
+      img = _AutoImageView(loader, width: width, height: height,);
       table.add(img);
     }
     return img;
@@ -138,8 +139,9 @@ class NetworkImageFactory {
 
 }
 
-class _ImageView extends PortableImageView {
-  const _ImageView(super.loader, {super.width, super.height});
+/// Auto refresh image view
+class _AutoImageView extends PortableImageView {
+  const _AutoImageView(super.loader, {super.width, super.height});
 
   static Widget getNoImage({double? width, double? height}) {
     double? size = width ?? height;
@@ -183,7 +185,7 @@ class _ImageLoader extends PortableImageLoader {
     double? height = widget.height;
     var image = imageProvider;
     if (image == null) {
-      return _ImageView.getNoImage(width: width, height: height);
+      return _AutoImageView.getNoImage(width: width, height: height);
     } else if (width == null && height == null) {
       return Image(image: image,);
     } else {

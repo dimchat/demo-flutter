@@ -42,7 +42,7 @@ import '../ui/styles.dart';
 
 import 'gallery.dart';
 import 'http.dart';
-import 'image.dart';
+import 'net_image.dart';
 
 
 /// preview avatar image
@@ -52,7 +52,7 @@ void previewAvatar(BuildContext context, ID identifier, PortableNetworkFile avat
 }
 
 
-/// Factory for Avatar
+/// Factory for Auto Avatar
 class AvatarFactory {
   factory AvatarFactory() => _instance;
   static final AvatarFactory _instance = AvatarFactory._internal();
@@ -275,6 +275,7 @@ class _AutoAvatarState extends State<_AutoAvatarView> implements lnc.Observer {
 
 }
 
+/// Auto refresh image view
 class _AvatarImageView extends PortableImageView {
   const _AvatarImageView(this.identifier, super.loader, {super.width, super.height});
 

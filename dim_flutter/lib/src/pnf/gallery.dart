@@ -40,7 +40,7 @@ import '../widgets/alert.dart';
 import '../widgets/permissions.dart';
 
 import 'loader.dart';
-import 'image.dart';
+import 'net_image.dart';
 
 
 class Gallery {

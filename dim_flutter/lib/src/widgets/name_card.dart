@@ -33,7 +33,7 @@ import 'package:flutter/material.dart';
 
 import 'package:dim_client/dim_client.dart';
 
-import '../pnf/avatar.dart';
+import '../pnf/auto_avatar.dart';
 import '../ui/styles.dart';
 
 

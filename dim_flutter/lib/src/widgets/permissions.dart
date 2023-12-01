@@ -130,6 +130,9 @@ class _PermissionHandler {
     if (Platform.isIOS)
     Permission.photosAddOnly,
 
+    /// Android: External Storage
+    /// iOS: Access to folders like `Documents` or `Downloads`. Implicitly
+    /// granted.
     if (Platform.isAndroid)
     Permission.storage,
   ];

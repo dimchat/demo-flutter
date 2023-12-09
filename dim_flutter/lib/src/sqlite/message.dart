@@ -218,21 +218,23 @@ class InstantMessageTable extends DataTableHandler<InstantMessage> implements In
     return true;
   }
 
-  Future<bool> burnMessages(DateTime expired) async {
+  Future<int> burnMessages(DateTime expired) async {
     int time = expired.millisecondsSinceEpoch ~/ 1000;
     SQLConditions cond;
     cond = SQLConditions(left: 'time', comparison: '<', right: time);
-    if (await delete(_table, conditions: cond) < 0) {
+    int results = await delete(_table, conditions: cond);
+    if (results < 0) {
       Log.error('failed to remove expired messages: $expired');
-      return false;
+      return results;
     }
     // post notification
     var nc = NotificationCenter();
     nc.postNotification(NotificationNames.kMessageCleaned, this, {
       'action': 'burn',
       'expired': expired,
+      'results': results,
     });
-    return true;
+    return results;
   }
 
 }

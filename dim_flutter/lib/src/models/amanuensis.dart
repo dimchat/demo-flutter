@@ -255,6 +255,14 @@ class Amanuensis {
       }
     } else {
       // conversation exists
+      DateTime? oldTime = chatBox.lastMessageTime;
+      if (oldTime == null || time == null || time.isAfter(oldTime)) {
+        // new message
+      } else {
+        Log.warning('ignore old message: ${iMsg.sender} -> ${iMsg.receiver}'
+            ' (${iMsg['group']}), time: $time');
+        return;
+      }
       if (chatBox.widget == null) {
         chatBox.unread += increase;
       } else {

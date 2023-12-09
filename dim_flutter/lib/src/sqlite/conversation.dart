@@ -99,6 +99,16 @@ class _ConversationTable extends DataTableHandler<Conversation> implements Conve
     return await delete(_table, conditions: cond) >= 0;
   }
 
+  Future<int> burnConversations(DateTime expired) async {
+    int time = expired.millisecondsSinceEpoch ~/ 1000;
+    Map<String, dynamic> values = {
+      'last': '',
+    };
+    SQLConditions cond;
+    cond = SQLConditions(left: 'time', comparison: '<', right: time);
+    return await update(_table, values: values, conditions: cond);
+  }
+
 }
 
 class ConversationCache extends _ConversationTable {
@@ -222,6 +232,23 @@ class ConversationCache extends _ConversationTable {
       'ID': chat,
     });
     return true;
+  }
+
+  @override
+  Future<int> burnConversations(DateTime expired) async {
+    int results = await super.burnConversations(expired);
+    if (results < 0) {
+      Log.error('failed to clean expired conversations: $expired');
+      return results;
+    }
+    // post notification
+    var nc = NotificationCenter();
+    nc.postNotification(NotificationNames.kConversationCleaned, this, {
+      'action': 'burn',
+      'expired': expired,
+      'results': results,
+    });
+    return results;
   }
 
 }

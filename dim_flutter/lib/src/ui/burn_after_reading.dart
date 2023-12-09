@@ -89,13 +89,15 @@ class BurnAfterReadingDataSource {
     // 1. cleanup messages
     Log.warning('burning message before: $expired');
     GlobalVariable shared = GlobalVariable();
-    bool ok = await shared.database.burnMessages(expired);
-    Log.warning('burn expired messages: $ok, $expired');
+    int msgCount = await shared.database.burnMessages(expired);
+    Log.warning('burn expired messages: $msgCount, $expired');
+    int chatCount = await shared.database.burnConversations(expired);
+    Log.warning('burn expired conversations: $chatCount, $expired');
     // 2. TODO: cleanup files
     LocalStorage storage = LocalStorage();
-    int count = await storage.burnAll(expired);
-    Log.warning('burn expired files: $count, $expired');
-    return ok || count > 0;
+    int fileCount = await storage.burnAll(expired);
+    Log.warning('burn expired files: $fileCount, $expired');
+    return msgCount > 0 || chatCount > 0 || fileCount > 0;
   }
 
   //

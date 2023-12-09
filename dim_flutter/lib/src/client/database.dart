@@ -54,7 +54,7 @@ class SharedDatabase implements AccountDBI, SessionDBI, MessageDBI,
   final CipherKeyDBI msgKeyTable = MsgKeyCache();
   final InstantMessageTable instantMessageTable = InstantMessageTable();
   final TraceDBI traceTable = TraceTable();
-  final ConversationDBI conversationTable = ConversationCache();
+  final ConversationCache conversationTable = ConversationCache();
 
   final NotificationCenter _center = NotificationCenter();
   NotificationCenter get center => _center;
@@ -394,7 +394,7 @@ class SharedDatabase implements AccountDBI, SessionDBI, MessageDBI,
   Future<bool> removeInstantMessages(ID chat) async =>
       await instantMessageTable.removeInstantMessages(chat);
 
-  Future<bool> burnMessages(DateTime expired) async =>
+  Future<int> burnMessages(DateTime expired) async =>
       await instantMessageTable.burnMessages(expired);
 
   //
@@ -416,6 +416,9 @@ class SharedDatabase implements AccountDBI, SessionDBI, MessageDBI,
   @override
   Future<bool> removeConversation(ID chat) async =>
       await conversationTable.removeConversation(chat);
+
+  Future<int> burnConversations(DateTime expired) async =>
+      await conversationTable.burnConversations(expired);
 
   //
   //  Trace Table

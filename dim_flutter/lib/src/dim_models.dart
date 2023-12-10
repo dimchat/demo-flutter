@@ -9,3 +9,4 @@ export 'models/vestibule.dart';
 export 'models/message.dart';
 export 'models/station.dart';
 export 'models/shield.dart';
+export 'models/editing.dart';

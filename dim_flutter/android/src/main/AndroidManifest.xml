@@ -1,6 +1,8 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
   package="chat.dim.dim_flutter">
 
+<!-- https://github.com/Baseflow/flutter-permission-handler/blob/main/permission_handler/example/android/app/src/main/AndroidManifest.xml -->
+
     <!-- Internet permissions do not affect the `permission_handler` plugin,
          but are required if your app needs access to the internet. -->
     <uses-permission android:name="android.permission.INTERNET" />
@@ -13,6 +15,11 @@
     <uses-permission android:name="android.permission.CAMERA" />
     <!-- Permissions options for the `microphone` or `speech` group -->
     <uses-permission android:name="android.permission.RECORD_AUDIO" />
+<!--    <uses-permission android:name="android.permission.MODIFY_AUDIO_SETTINGS" />-->
+
+<!--    <uses-permission android:name="android.permission.CAPTURE_AUDIO_OUTPUT" />-->
+<!--    <uses-permission android:name="android.permission.CAPTURE_VIDEO_OUTPUT" />-->
+
     <uses-permission android:name="android.permission.REQUEST_INSTALL_PACKAGES"/>
 
     <application
@@ -24,7 +31,7 @@
 
         <provider
             android:name="androidx.core.content.FileProvider"
-            android:authorities="chat.dim.dim_flutter.provider"
+            android:authorities="chat.dim.tarsier.provider"
             android:grantUriPermissions="true"
             android:exported="false">
             <meta-data

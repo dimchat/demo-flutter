@@ -198,7 +198,7 @@ public class UpdateManager {
       Uri apkPath;
       if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
          apkPath = FileProvider.getUriForFile(mContext,
-                 "chat.dim.dim_flutter.provider", apkFile);
+                 "chat.dim.tarsier.provider", apkFile);
       } else {
          apkPath = Uri.fromFile(apkFile);
       }

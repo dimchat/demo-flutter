@@ -56,11 +56,13 @@ class Client extends Terminal {
     }
     Log.warning('connecting to station: $station');
     // return await connect('192.168.31.152', 9394);
+    // return await connect('129.226.12.4', 9394);
     return await connect(station.host, station.port);
   }
 
   @override
   Future<ClientMessenger> connect(String host, int port) async {
+    Log.warning('connecting to host: $host, port: $port');
     ClientMessenger messenger = await super.connect(host, port);
     // connect via session channel
     ChannelManager manager = ChannelManager();

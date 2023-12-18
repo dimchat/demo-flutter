@@ -1,4 +1,5 @@
 import 'package:dim_client/dim_client.dart';
+import 'package:lnc/lnc.dart';
 
 import '../common/dbi/network.dart';
 import '../client/shared.dart';
@@ -73,6 +74,14 @@ class NeighborInfo {
     stations.sort((a, b) {
       double? art = a.responseTime;
       double? brt = b.responseTime;
+      if (art == 0) {
+        art = null;
+        Log.error('response time error: $a');
+      }
+      if (brt == 0) {
+        brt = null;
+        Log.error('response time error: $b');
+      }
       assert(art != 0 && brt != 0, 'response time error: $a, $b');
       // filter error stations
       if (art != null && art < 0) {

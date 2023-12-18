@@ -9,13 +9,13 @@ import 'package:permission_handler/permission_handler.dart';
 import 'alert.dart';
 
 
-Future<bool> checkStoragePermissions() async =>
-    _PermissionHandler.check(_PermissionHandler.storagePermissions);
+Future<bool> checkDatabasePermissions() async =>
+    _PermissionHandler.check(_PermissionHandler.databasePermissions);
 
-void requestStoragePermissions(BuildContext context,
+void requestDatabasePermissions(BuildContext context,
     {required void Function(BuildContext context) onGranted}) =>
     _PermissionHandler.request(
-      _PermissionHandler.storagePermissions,
+      _PermissionHandler.databasePermissions,
       onDenied: (permission) => Alert.show(context, 'Permission Denied',
         'Grant to access external storage'.tr,
         callback: () => openAppSettings(),
@@ -75,7 +75,7 @@ class _PermissionHandler {
     PermissionStatus status;
     for (Permission item in permissions) {
       status = await item.status;
-      if (status == PermissionStatus.granted) {
+      if (status.isGranted) {
         // OK
         continue;
       }
@@ -97,7 +97,7 @@ class _PermissionHandler {
         assert(false, 'failed to request permission: $item');
         continue;
       }
-      if (status == PermissionStatus.granted) {
+      if (status.isGranted) {
         // OK
         continue;
       }
@@ -109,7 +109,7 @@ class _PermissionHandler {
     return true;
   }
 
-  static List<Permission> get storagePermissions => [
+  static List<Permission> get databasePermissions => [
     /// Android: External Storage
     /// iOS: Access to folders like `Documents` or `Downloads`. Implicitly
     /// granted.

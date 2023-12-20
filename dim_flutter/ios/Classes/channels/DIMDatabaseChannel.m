@@ -5,7 +5,8 @@
 //  Created by Albert Moky on 2023/5/16.
 //
 
-#import "DIMPrivateKeyStore.h"
+#import <DIMClient/DIMClient.h>
+
 #import "DIMChannelManager.h"
 
 #import "DIMDatabaseChannel.h"

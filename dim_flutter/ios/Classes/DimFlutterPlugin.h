@@ -24,11 +24,6 @@
 #import <dim_flutter/DIMSessionChannel.h>
 
 //
-//  Database
-//
-#import <dim_flutter/DIMPrivateKeyStore.h>
-
-//
 //  Others
 //
 #import <dim_flutter/DIMConstants.h>

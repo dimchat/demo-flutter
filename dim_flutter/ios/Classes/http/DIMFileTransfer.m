@@ -66,14 +66,15 @@ static inline NSData *load_downloaded_file(NSString *filename) {
  * @param password - symmetric key
  * @return decrypted data
  */
-static inline NSData *decrypt_file(NSString *path, id<MKMDecryptKey> password) {
+static inline NSData *decrypt_file(NSString *path, id<MKMDecryptKey> password,
+                                   NSDictionary *extra) {
     NSData *data = load_downloaded_file(path);
     if (!data) {
         NSLog(@"failed to load temporary file: %@", path);
         return nil;
     }
     NSLog(@"decrypting file: %@, size: %ld byte(s)", path, data.length);
-    return [password decrypt:data];
+    return [password decrypt:data params:extra];
 }
 
 static const NSString *FORM_AVATAR = @"avatar";
@@ -175,7 +176,7 @@ OKSingletonImplementations(DIMFileTransfer, sharedInstance)
         NSLog(@"password not found: %@", content);
         return nil;
     }
-    NSData *data = decrypt_file(tempPath, password);
+    NSData *data = decrypt_file(tempPath, password, content.dictionary);
     if (!data) {
         NSAssert(false, @"failed to decrypt file: %@, password: %@", tempPath, password);
         // delete to download again

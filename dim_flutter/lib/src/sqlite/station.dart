@@ -26,7 +26,7 @@ class _StationTable extends DataTableHandler<StationInfo> implements StationDBI 
   Future<List<StationInfo>> allStations({required ID provider}) async {
     SQLConditions cond;
     cond = SQLConditions(left: 'pid', comparison: '=', right: provider.toString());
-    return await select(_table, columns: _selectColumns,
+    return await select(_table, distinct: true, columns: _selectColumns,
         conditions: cond, orderBy: 'chosen DESC');
   }
 
@@ -47,6 +47,9 @@ class _StationTable extends DataTableHandler<StationInfo> implements StationDBI 
     Map<String, dynamic> values = {
       'chosen': chosen,
     };
+    if (sid == null || sid.isBroadcast) {} else {
+      // TODO: save station ID?
+    }
     return await update(_table, values: values, conditions: cond) > 0;
   }
 
@@ -123,7 +126,7 @@ class StationCache extends _StationTable {
     List<StationInfo> stations = await allStations(provider: provider);
     if (_find(host, port, stations) != null) {
       Log.warning('duplicated station: $host, $port, provider: $provider, chosen: $chosen');
-      return await updateStation(sid, host: host, port: port, provider: provider);
+      return await updateStation(sid, chosen: chosen, host: host, port: port, provider: provider);
     }
     // 2. insert as new record
     if (await super.addStation(sid, host: host, port: port, provider: provider)) {
@@ -155,7 +158,7 @@ class StationCache extends _StationTable {
       return false;
     }
     // 2. update record
-    if (await super.updateStation(sid, host: host, port: port, provider: provider)) {
+    if (await super.updateStation(sid, chosen: chosen, host: host, port: port, provider: provider)) {
       // clear for reload
       _cache.erase(provider);
     } else {

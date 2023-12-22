@@ -187,6 +187,8 @@ final Map<String, String> intlNlNl = {
   'No response': 'Geen reactie',
   'Stranded': 'Vastgelopen',
 
+  'Draft': 'Concept',
+
   //
   //  Profile
   //
@@ -288,5 +290,10 @@ final Map<String, String> intlNlNl = {
       '  1. Stel een tijdsperiode in en de app zal automatisch alle berichten en bestanden verwijderen vóór die tijd;\n'
       '  2. Verwijderde berichten en bestanden kunnen niet worden hersteld, gebruik deze functie daarom met voorzichtigheid;\n'
       '  3. Instellen op handmatige modus zal berichten en bestanden niet langer automatisch verwijderen.',
+
+  'RelayStations::Description': 'Regels:\n'
+      '  1. De station met de snelste reactie zal geselecteerd worden als het huidige relaisstation;\n'
+      '  2. Als er enkele stations zijn gekozen, zal het de snelste selecteren uit de gekozen stations;\n'
+      '  3. Als er geen stations zijn gekozen, wordt er automatisch gekozen uit alle stations.',
 
 };

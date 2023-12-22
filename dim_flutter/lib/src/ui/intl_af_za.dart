@@ -187,6 +187,8 @@ final Map<String, String> intlAfZa = {
   'No response': 'Geen reaksie',
   'Stranded': 'Vasgevang',
 
+  'Draft': 'Konsep',
+
   //
   //  Profile
   //
@@ -288,5 +290,10 @@ final Map<String, String> intlAfZa = {
       '  1. Stel \'n tydperk vas, en die app sal outomaties alle boodskappe en lêers voor daardie tydperk uitvee;\n'
       '  2. Uitgevee boodskappe en lêers kan nie herstel word nie, gebruik hierdie funksie dus met omsigtigheid;\n'
       '  3. Instelling na handleiding sal nie meer boodskappe en lêers outomaties uitvee nie.',
+
+  'RelayStations::Description': 'Reëls:\n'
+      '  1. Die stasie met die vinnigste reaksie sal gekies word as die huidige relaaisender;\n'
+      '  2. As sommige stasies gekies is, sal die vinnigste een van die gekose stasies gekies word;\n'
+      '  3. As daar geen stasies gekies is nie, kies outomaties van alle stasies.',
 
 };

@@ -187,6 +187,8 @@ final Map<String, String> intlViVN = {
   'No response': 'Không có phản hồi',
   'Stranded': 'Bị kẹt',
 
+  'Draft': 'Bản nháp',
+
   //
   //  Profile
   //
@@ -288,5 +290,10 @@ final Map<String, String> intlViVN = {
       '  1. Đặt một khoảng thời gian, và ứng dụng sẽ tự động xóa tất cả tin nhắn và tệp trước thời gian đó;\n'
       '  2. Tin nhắn và tệp đã xóa không thể khôi phục, vì vậy hãy sử dụng tính năng này cẩn thận;\n'
       '  3. Thiết lập chế độ thủ công sẽ không tự động xóa tin nhắn và tệp nữa.',
+
+  'RelayStations::Description': 'Quy tắc:\n'
+      '  1. Trạm có thời gian phản hồi nhanh nhất sẽ được chọn làm trạm trung chuyển hiện tại;\n'
+      '  2. Nếu đã chọn một số trạm, nó sẽ chọn trạm nhanh nhất từ những trạm đã chọn;\n'
+      '  3. Nếu không chọn trạm nào, sẽ tự động chọn từ tất cả các trạm.',
 
 };

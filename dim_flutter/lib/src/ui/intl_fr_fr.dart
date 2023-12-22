@@ -187,6 +187,8 @@ final Map<String, String> intlFrFr = {
   'No response': 'Pas de réponse',
   'Stranded': 'Bloqué',
 
+  'Draft': 'Brouillon',
+
   //
   //  Profile
   //
@@ -288,5 +290,10 @@ final Map<String, String> intlFrFr = {
       '  1. Définissez une période de temps, et l\'application supprimera automatiquement tous les messages et fichiers avant cette heure ;\n'
       '  2. Les messages et fichiers supprimés ne peuvent pas être récupérés, alors veuillez utiliser cette fonction avec prudence ;\n'
       '  3. En mode manuel, les messages et fichiers ne seront plus automatiquement supprimés.',
+
+  'RelayStations::Description': 'Règles :\n'
+      '  1. La station avec la réponse la plus rapide sera sélectionnée comme station relais actuelle ;\n'
+      '  2. Si des stations ont été choisies, elle sélectionnera la plus rapide parmi celles choisies ;\n'
+      '  3. Si aucune station n\'est sélectionnée, elle sera automatiquement choisie parmi toutes les stations.',
 
 };

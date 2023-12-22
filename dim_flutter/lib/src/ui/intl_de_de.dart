@@ -187,6 +187,8 @@ final Map<String, String> intlDeDe = {
   'No response': 'Keine Antwort',
   'Stranded': 'Gestrandet',
 
+  'Draft': 'Entwurf',
+
   //
   //  Profile
   //
@@ -283,5 +285,10 @@ final Map<String, String> intlDeDe = {
       '  1. Legen Sie einen Zeitraum fest, und die App wird automatisch alle Nachrichten und Dateien vor dieser Zeit löschen;\n'
       '  2. Gelöschte Nachrichten und Dateien können nicht wiederhergestellt werden, also verwenden Sie diese Funktion bitte mit Vorsicht;\n'
       '  3. Die Einstellung auf den manuellen Modus löscht Nachrichten und Dateien nicht mehr automatisch.',
+
+  'RelayStations::Description': 'Regeln:\n'
+      '  1. Die Station mit der schnellsten Antwort wird als aktuelle Relaisstation ausgewählt;\n'
+      '  2. Wenn einige Stationen ausgewählt wurden, wird die schnellste aus den ausgewählten Stationen ausgewählt;\n'
+      '  3. Wenn keine Stationen ausgewählt wurden, automatische Auswahl aus allen Stationen.',
 
 };

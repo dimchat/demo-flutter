@@ -187,6 +187,8 @@ final Map<String, String> intlMsMy = {
   'No response': 'Tiada respons',
   'Stranded': 'Terbiar',
 
+  'Draft': 'Draf',
+
   //
   //  Profile
   //
@@ -288,5 +290,10 @@ final Map<String, String> intlMsMy = {
       '  1. Tetapkan tempoh masa, dan aplikasi akan secara automatik memadam semua mesej dan fail sebelum masa itu;\n'
       '  2. Mesej dan fail yang dipadam tidak boleh dipulihkan, jadi sila gunakan ciri ini dengan berhati-hati;\n'
       '  3. Menetapkan kepada mod manual tidak akan memadam mesej dan fail secara automatik lagi.',
+
+  'RelayStations::Description': 'Peraturan:\n'
+      '  1. Stesen dengan respons paling cepat akan dipilih sebagai stesen raya semasa;\n'
+      '  2. Jika beberapa stesen telah dipilih, ia akan memilih yang paling cepat dari yang dipilih;\n'
+      '  3. Jika tiada stesen dipilih, pilih dari semua stesen secara automatik.',
 
 };

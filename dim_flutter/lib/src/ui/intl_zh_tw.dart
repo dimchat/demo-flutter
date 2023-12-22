@@ -186,6 +186,8 @@ final Map<String, String> intlZhTw = {
   'No response': '無回應',
   'Stranded': '未發送',
 
+  'Draft': '草稿',
+
   //
   //  Profile
   //
@@ -281,5 +283,11 @@ final Map<String, String> intlZhTw = {
   'BurnAfterReading::Description': '規則:\n'
       '  1. 設定一個時間段，應用將在該時間之前自動刪除所有訊息和文件；\n'
       '  2. 刪除的訊息和文件無法恢復，因此請謹慎使用此功能；\n'
-      '  3. 設定為手動模式將不再自動刪除訊息和文件。'
+      '  3. 設定為手動模式將不再自動刪除訊息和文件。',
+
+  'RelayStations::Description': '規則:\n'
+      '  1. 選擇回應速度最快的站台作為目前的中繼站;\n'
+      '  2. 如果有選擇一些站台，將會從已選擇的站台中選擇速度最快的一個;\n'
+      '  3. 如果沒有選擇站台，將會自動從所有站台中進行選擇。',
+
 };

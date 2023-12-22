@@ -187,6 +187,8 @@ final Map<String, String> intlPtPt = {
   'No response': 'Sem resposta',
   'Stranded': 'Encalhado',
 
+  'Draft': 'Rasura',
+
   //
   //  Profile
   //
@@ -288,5 +290,10 @@ final Map<String, String> intlPtPt = {
       '  1. Defina um período de tempo, e a aplicação apagará automaticamente todas as mensagens e ficheiros antes desse tempo;\n'
       '  2. Mensagens e ficheiros apagados não podem ser recuperados, portanto, utilize esta funcionalidade com precaução;\n'
       '  3. Configurar para o modo manual deixará de apagar automaticamente mensagens e ficheiros.',
+
+  'RelayStations::Description': 'Regras:\n'
+      '  1. A estação com a resposta mais rápida será selecionada como a estação de retransmissão atual;\n'
+      '  2. Se algumas estações foram escolhidas, será selecionada a mais rápida dentre as escolhidas;\n'
+      '  3. Se nenhuma estação for escolhida, selecione automaticamente de todas as estações.',
 
 };

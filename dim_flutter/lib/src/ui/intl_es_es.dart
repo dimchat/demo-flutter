@@ -188,8 +188,10 @@ final Map<String, String> intlEsEs = {
   'No response': 'Sin respuesta',
   'Stranded': 'Varado',
 
+  'Draft': 'Borrador',
+
   //
-  //  Perfil
+  //  Profile
   //
   'Remark': 'Observación',
   'Block Messages': 'Bloquear mensajes',
@@ -213,7 +215,7 @@ final Map<String, String> intlEsEs = {
   'Failed to save visa': 'Error al guardar el documento de visa.',
 
   //
-  //  Mensajes
+  //  Prompts
   //
   'Please input group name': 'Por favor, ingresa el nombre del grupo.',
   'Please input alias': 'Por favor, ingresa un alias.',
@@ -248,7 +250,7 @@ final Map<String, String> intlEsEs = {
   'Grant to access microphone': 'Debes otorgar el permiso para acceder al micrófono.',
 
   //
-  //  Pies de página
+  //  Footers
   //
 
   'ChatBox::Description': 'Esta aplicación está impulsada por DIM, una tecnología E2EE (cifrado de extremo a extremo).'
@@ -293,5 +295,10 @@ final Map<String, String> intlEsEs = {
       '  2. Los mensajes y archivos eliminados no se pueden recuperar,'
       ' así que utiliza esta función con precaución;\n'
       '  3. Configurar en modo manual ya no eliminará automáticamente mensajes y archivos.',
+
+  'RelayStations::Description': 'Reglas:\n'
+      '  1. La estación con la respuesta más rápida será seleccionada como la estación de relevo actual;\n'
+      '  2. Si se han elegido algunas estaciones, seleccionará la más rápida de entre las elegidas;\n'
+      '  3. Si no se elige ninguna estación, se seleccionará automáticamente entre todas las estaciones.',
 
 };

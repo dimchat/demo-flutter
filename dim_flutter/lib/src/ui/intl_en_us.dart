@@ -186,6 +186,8 @@ final Map<String, String> intlEnUs = {
   'No response': 'No response',
   'Stranded': 'Stranded',
 
+  'Draft': 'Draft',
+
   //
   //  Profile
   //
@@ -287,5 +289,10 @@ final Map<String, String> intlEnUs = {
       '  1. Set a time period, and the app will automatically delete all messages and files before that time;\n'
       '  2. Deleted messages and files cannot be recovered, so please use this feature with caution;\n'
       '  3. Setting to manual mode will no longer automatically delete messages and files.',
+
+  'RelayStations::Description': 'Rules:\n'
+      '  1. The station with the fastest response will be selected as the current relay station;\n'
+      '  2. If some stations were chosen, it will select the fastest one from the chosen ones;\n'
+      '  3. If no stations are chosen, select from all stations automatically.',
 
 };

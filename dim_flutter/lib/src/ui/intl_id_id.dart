@@ -187,6 +187,8 @@ final Map<String, String> intlIdId = {
   'No response': 'Tidak ada respons',
   'Stranded': 'Terdampar',
 
+  'Draft': 'Draf',
+
   //
   //  Profile
   //
@@ -288,5 +290,10 @@ final Map<String, String> intlIdId = {
       '  1. Tetapkan periode waktu, dan aplikasi akan secara otomatis menghapus semua pesan dan file sebelum waktu tersebut;\n'
       '  2. Pesan dan file yang dihapus tidak dapat dipulihkan, jadi gunakan fitur ini dengan hati-hati;\n'
       '  3. Menetapkan mode manual tidak akan lagi menghapus pesan dan file secara otomatis.',
+
+  'RelayStations::Description': 'Aturan:\n'
+      '  1. Stasiun dengan respons tercepat akan dipilih sebagai stasiun relay saat ini;\n'
+      '  2. Jika beberapa stasiun telah dipilih, akan memilih yang paling cepat dari yang dipilih;\n'
+      '  3. Jika tidak ada stasiun yang dipilih, akan dipilih secara otomatis dari semua stasiun.',
 
 };

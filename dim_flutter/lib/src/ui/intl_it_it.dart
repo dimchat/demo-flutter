@@ -187,6 +187,8 @@ final Map<String, String> intlItIt = {
   'No response': 'Nessuna risposta',
   'Stranded': 'Bloccato',
 
+  'Draft': 'Bozza',
+
   //
   //  Profile
   //
@@ -288,5 +290,10 @@ final Map<String, String> intlItIt = {
       '  1. Imposta un periodo di tempo, e l\'app cancellerà automaticamente tutti i messaggi e i file prima di quel momento;\n'
       '  2. I messaggi e i file eliminati non possono essere recuperati, quindi usa questa funzione con cautela;\n'
       '  3. Impostando la modalità manuale, i messaggi e i file non verranno più eliminati automaticamente.',
+
+  'RelayStations::Description': 'Regole:\n'
+      '  1. La stazione con la risposta più veloce sarà selezionata come stazione di rilancio attuale;\n'
+      '  2. Se sono state scelte alcune stazioni, verrà selezionata la più veloce tra quelle scelte;\n'
+      '  3. Se non sono state scelte stazioni, verrà selezionata automaticamente tra tutte le stazioni.',
 
 };

@@ -33,7 +33,7 @@ class SharedMessenger extends ClientMessenger {
       // get client IP from handshake response
       if (content is HandshakeCommand) {
         var remote = content['remote_address'];
-        Log.warning('socket address: $remote');
+        Log.warning('socket address: $remote in $content, msg: ${sMsg.sender} -> ${sMsg.receiver}');
       }
     }
     return content;

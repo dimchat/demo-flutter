@@ -1,9 +1,6 @@
 import 'package:dim_client/dim_client.dart';
 import 'package:lnc/lnc.dart';
 
-import '../channels/manager.dart';
-import '../widgets/browse_html.dart';
-
 import 'shared.dart';
 import 'group.dart';
 
@@ -34,18 +31,6 @@ class SharedFacebook extends ClientFacebook {
     Visa? doc = await getVisa(user);
     return doc?.avatar;
   }
-
-  // Future<Pair<String?, Uri?>> getAvatarPair(ID user) async {
-  //   Visa? doc = await getVisa(user);
-  //   String? urlString = doc?.avatar?.toString();
-  //   String? path;
-  //   Uri? url = HtmlUri.parseUri(urlString);
-  //   if (url == null) {} else {
-  //     ChannelManager man = ChannelManager();
-  //     path = await man.ftpChannel.downloadAvatar(url);
-  //   }
-  //   return Pair(path, url);
-  // }
 
 }
 
@@ -112,13 +97,13 @@ class SharedArchivist extends ClientArchivist {
   }
 
   @override
-  Future<bool> queryMembers(ID identifier, List<ID> members) async {
+  Future<bool> queryMembers(ID group, List<ID> members) async {
     Session? session = messenger?.session;
     if (session?.identifier == null) {
-      Log.warning('querying members cancel, waiting to connect: $identifier');
+      Log.warning('querying members cancel, waiting to connect: $group');
       return false;
     }
-    return await super.queryMembers(identifier, members);
+    return await super.queryMembers(group, members);
   }
 
 }

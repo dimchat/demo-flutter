@@ -188,6 +188,7 @@ final Map<String, String> intlFrFr = {
   'Stranded': 'Bloqué',
 
   'Draft': 'Brouillon',
+  'Mentioned': 'Mentionné',
 
   //
   //  Profile

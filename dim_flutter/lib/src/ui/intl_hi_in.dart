@@ -188,6 +188,7 @@ final Map<String, String> intlHiIn = {
   'Stranded': 'फंसा हुआ',
 
   'Draft': 'मसौदा',
+  'Mentioned': 'उल्लेखित',
 
   //
   //  Profile

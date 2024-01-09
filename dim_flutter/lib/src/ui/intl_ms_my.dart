@@ -188,6 +188,7 @@ final Map<String, String> intlMsMy = {
   'Stranded': 'Terbiar',
 
   'Draft': 'Draf',
+  'Mentioned': 'Dinyatakan',
 
   //
   //  Profile

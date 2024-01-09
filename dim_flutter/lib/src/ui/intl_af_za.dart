@@ -188,6 +188,7 @@ final Map<String, String> intlAfZa = {
   'Stranded': 'Vasgevang',
 
   'Draft': 'Konsep',
+  'Mentioned': 'Genoem',
 
   //
   //  Profile

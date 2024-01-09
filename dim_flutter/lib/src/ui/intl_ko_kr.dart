@@ -188,6 +188,7 @@ final Map<String, String> intlKoKr = {
   'Stranded': '고립됨',
 
   'Draft': '초안',
+  'Mentioned': '언급됨',
 
   //
   //  Profile

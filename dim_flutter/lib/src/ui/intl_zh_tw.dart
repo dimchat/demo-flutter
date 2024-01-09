@@ -187,6 +187,7 @@ final Map<String, String> intlZhTw = {
   'Stranded': '未發送',
 
   'Draft': '草稿',
+  'Mentioned': '提及',
 
   //
   //  Profile

@@ -188,6 +188,7 @@ final Map<String, String> intlIdId = {
   'Stranded': 'Terdampar',
 
   'Draft': 'Draf',
+  'Mentioned': 'Disebutkan',
 
   //
   //  Profile

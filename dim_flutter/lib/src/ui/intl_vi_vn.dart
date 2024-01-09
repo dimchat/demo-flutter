@@ -188,6 +188,7 @@ final Map<String, String> intlViVN = {
   'Stranded': 'Bị kẹt',
 
   'Draft': 'Bản nháp',
+  'Mentioned': 'Đã đề cập',
 
   //
   //  Profile

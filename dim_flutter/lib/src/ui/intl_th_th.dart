@@ -188,6 +188,7 @@ final Map<String, String> intlThTh = {
   'Stranded': 'ติดอยู่',
 
   'Draft': 'ร่าง',
+  'Mentioned': 'กล่าวถึง',
 
   //
   //  Profile

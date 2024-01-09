@@ -20,6 +20,7 @@ import 'intl_nl_nl.dart';   // Dutch-Netherlands
 import 'intl_pt_pt.dart';   // Portuguese-Portugal
 import 'intl_ru_ru.dart';   // Russian-Russia
 import 'intl_th_th.dart';   // Thai-Thailand
+import 'intl_tr_tr.dart';   // Turkish-Turkey
 import 'intl_vi_vn.dart';   // Vietnamese-Vietnam
 import 'intl_zh_cn.dart';
 import 'intl_zh_tw.dart';
@@ -53,6 +54,7 @@ class LanguageDataSource {
     LanguageItem('ru_RU', langRussian, 'Russian'),
     LanguageItem('ar', langArabic, 'Arabic'),
     LanguageItem('af_ZA', langAfrikaans, 'Afrikaans'),
+    LanguageItem('tr_TR', langTurkish, 'Turkish'),
 
     LanguageItem('hi_IN', langHindi, 'Hindi'),
     LanguageItem('bn_BD', langBengali, 'Bengali'),
@@ -202,6 +204,9 @@ class _Translations extends Translations {
 
     'th': intlThTh,
     'th_TH': intlThTh,  // Thai-Thailand
+
+    'tr': intlTrTr,
+    'tr_TR': intlTrTr,  // Turkish-Turkey
 
     'vi': intlViVN,
     'vi_VN': intlViVN,  // Vietnamese-Vietnam

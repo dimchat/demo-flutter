@@ -24,7 +24,7 @@ void openImagePicker(BuildContext context, {OnImagePicked? onPicked, required On
             onGranted: (context) => _openImagePicker(context, true, onPicked, onRead),
           ),
       Alert.action(AppIcons.albumIcon, 'Album'),
-          () => requestPhotosPermissions(context,
+          () => requestPhotoReadingPermissions(context,
             onGranted: (context) => _openImagePicker(context, false, onPicked, onRead),
           ),
     );

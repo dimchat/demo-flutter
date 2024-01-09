@@ -1,10 +1,11 @@
 import 'dart:io';
 
+import 'package:device_info_plus/device_info_plus.dart';
+import 'package:flutter/widgets.dart';
 import 'package:get/get.dart';
-
-import 'package:flutter/cupertino.dart';
-import 'package:lnc/lnc.dart';
 import 'package:permission_handler/permission_handler.dart';
+
+import 'package:lnc/lnc.dart';
 
 import 'alert.dart';
 
@@ -26,10 +27,24 @@ void requestDatabasePermissions(BuildContext context,
       }
     });
 
-void requestPhotosPermissions(BuildContext context,
+void requestPhotoReadingPermissions(BuildContext context,
     {required void Function(BuildContext context) onGranted}) =>
     _PermissionHandler.request(
-      _PermissionHandler.photosPermissions,
+      _PermissionHandler.photoReadingPermissions,
+      onDenied: (permission) => Alert.show(context, 'Permission Denied',
+        'Grant to access photo album'.tr,
+        callback: () => openAppSettings(),
+      ),
+    ).then((granted) {
+      if (granted) {
+        onGranted(context);
+      }
+    });
+
+void requestPhotoAccessingPermissions(BuildContext context,
+    {required void Function(BuildContext context) onGranted}) =>
+    _PermissionHandler.request(
+      _PermissionHandler.photoAccessingPermissions,
       onDenied: (permission) => Alert.show(context, 'Permission Denied',
         'Grant to access photo album'.tr,
         callback: () => openAppSettings(),
@@ -89,6 +104,7 @@ class _PermissionHandler {
   static Future<bool> request(List<Permission> permissions,
       {required void Function(Permission permission) onDenied}) async {
     PermissionStatus status;
+    Log.info('request permissions: $permissions');
     for (Permission item in permissions) {
       try {
         status = await item.request();
@@ -99,6 +115,7 @@ class _PermissionHandler {
       }
       if (status.isGranted) {
         // OK
+        Log.info('permission granted: $item');
         continue;
       }
       Log.warning('permission status: $status, $item');
@@ -116,7 +133,18 @@ class _PermissionHandler {
     // Permission.storage,
   ];
 
-  static List<Permission> get photosPermissions => [
+  static List<Permission> get photoReadingPermissions => _photoReadingPermissions;
+  static final List<Permission> _photoReadingPermissions = [
+    /// When running on Android T and above: Read image files from external storage
+    /// When running on Android < T: Nothing
+    /// iOS: Photos
+    /// iOS 14+ read & write access level
+    if (Platform.isIOS)
+    Permission.photos,
+  ];
+
+  static List<Permission> get photoAccessingPermissions => _photoAccessingPermissions;
+  static final List<Permission> _photoAccessingPermissions = [
     /// When running on Android T and above: Read image files from external storage
     /// When running on Android < T: Nothing
     /// iOS: Photos
@@ -151,6 +179,26 @@ class _PermissionHandler {
     Permission.microphone,
   ];
 
+}
+
+bool _fixedForAndroid = false;
+
+Future<void> fixPhotoPermissions() async {
+  if (_fixedForAndroid) {
+    return;
+  }
+  if (Platform.isAndroid) {
+    AndroidDeviceInfo info = await DeviceInfoPlugin().androidInfo;
+    int sdkInt = info.version.sdkInt;
+    Log.warning('fixing photo permissions: $sdkInt');
+    if (sdkInt > 32) {
+      _PermissionHandler._photoAccessingPermissions.add(Permission.photos);
+      _PermissionHandler._photoReadingPermissions.add(Permission.photos);
+    } else {
+      _PermissionHandler._photoReadingPermissions.add(Permission.storage);
+    }
+  }
+  _fixedForAndroid = true;
 }
 
 

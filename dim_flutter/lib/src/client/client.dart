@@ -13,6 +13,8 @@ import '../channels/session.dart';
 import '../common/constants.dart';
 import '../models/station.dart';
 import '../network/neighbor.dart';
+import '../widgets/permissions.dart';
+
 import 'messenger.dart';
 import 'packer.dart';
 import 'processor.dart';
@@ -199,6 +201,8 @@ class _DeviceInfo {
       assert(false, 'unknown platform');
     }
     language = Platform.localeName;
+    // fix for android
+    fixPhotoPermissions();
   }
 
   void _loadAndroid(AndroidDeviceInfo info) {

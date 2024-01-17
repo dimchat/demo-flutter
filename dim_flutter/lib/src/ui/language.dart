@@ -80,28 +80,17 @@ class LanguageDataSource {
   }
 
   void _updateLanguage(String code) {
-    List<String> pair = code.split('_');
-    Locale? locale;
-    if (pair.length > 1) {
-      assert(pair.first.isNotEmpty, 'language code error: $code');
-      locale = Locale(pair.first, pair.last);
-    } else if (pair.length == 1 && pair.first.isNotEmpty) {
-      locale = Locale(pair.first);
-    } else {
+    Locale? locale = parseLocale(code);
+    if (locale == null) {
       locale = Get.deviceLocale;
-      // patch for Chinese (Traditional)
-      var code = locale?.scriptCode?.toLowerCase();
-      if (code == 'hans') {
-        // zh_Hans_XX
-        locale = const Locale('zh', 'CN');
-      } else if (code == 'hant') {
-        // zh_Hant_XX
-        locale = const Locale('zh', 'TW');
+      if (locale == null) {
+        // assert(false, 'failed to get device locale');
+        return;
       }
+      locale = _patchLocale(locale);
     }
-    if (locale != null) {
-      Get.updateLocale(locale);
-    }
+    // update language setting
+    Get.updateLocale(locale);
   }
 
   Future<bool> setLanguage(String code) async {
@@ -217,4 +206,81 @@ class _Translations extends Translations {
 
   };
 
+}
+
+
+LanguageItem? getLanguageItem(String? code) {
+  Locale? locale = parseLocale(code);
+  if (locale == null) {
+    return null;
+  }
+  // remove script code
+  String? languageCode = locale.languageCode;
+  String? countryCode = locale.countryCode;
+  if (countryCode == null || countryCode.isEmpty) {
+    code = languageCode;
+  } else {
+    code = '${languageCode}_$countryCode';
+  }
+  // check language items
+  LanguageItem? candidate;
+  List<String> pair;
+  var lds = LanguageDataSource();
+  for (LanguageItem item in lds._items) {
+    if (item.code == code) {
+      // exactly
+      return item;
+    }
+    pair = item.code.split('_');
+    if (pair.length == 1) {
+      continue;
+    }
+    if (pair.first == code) {
+      // language code matched
+      return item;
+    } else if (pair.first == languageCode) {
+      // language code matched, but
+      // country code not matched
+      candidate = item;
+    }
+  }
+  return candidate;
+}
+
+
+Locale? parseLocale(String? code) {
+  if (code == null || code.isEmpty) {
+    return null;
+  }
+  List<String> pair = code.split('_');
+  String languageCode = pair.first;
+  assert(languageCode.isNotEmpty, 'language code error: $code');
+  if (pair.length == 1) {
+    return Locale(languageCode);
+  }
+  String countryCode = pair.last;
+  assert(countryCode.isNotEmpty, 'country code error: $code');
+  if (pair.length == 2) {
+    return Locale(languageCode, countryCode);
+  }
+  String scriptCode = pair[1];
+  assert(scriptCode.isNotEmpty, 'script code error: $code');
+  return _patchLocale(Locale.fromSubtags(
+    languageCode: languageCode,
+    scriptCode: scriptCode,
+    countryCode: countryCode,)
+  );
+}
+
+Locale _patchLocale(Locale locale) {
+  // patch for Chinese (Traditional)
+  var code = locale.scriptCode?.toLowerCase();
+  if (code == 'hans') {
+    // zh_Hans_XX
+    return const Locale('zh', 'CN');
+  } else if (code == 'hant') {
+    // zh_Hant_XX
+    return const Locale('zh', 'TW');
+  }
+  return locale;
 }

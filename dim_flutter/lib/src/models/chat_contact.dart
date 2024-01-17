@@ -9,6 +9,7 @@ import '../common/dbi/contact.dart';
 import '../common/constants.dart';
 import '../client/shared.dart';
 import '../pnf/auto_avatar.dart';
+import '../ui/language.dart';
 import '../widgets/alert.dart';
 
 import 'amanuensis.dart';
@@ -42,6 +43,12 @@ class ContactInfo extends Conversation {
 
   // null means checking
   bool? _friendFlag;
+
+  String? _language;
+  String? _clientInfo;
+
+  String? get language => _language;
+  String? get clientInfo => _clientInfo;
 
   bool get isFriend => _friendFlag == true;
   bool get isNotFriend => _friendFlag == false;
@@ -108,6 +115,67 @@ class ContactInfo extends Conversation {
       List<ID> contacts = await shared.facebook.getContacts(user.identifier);
       _friendFlag = contacts.contains(identifier);
     }
+    // parse language & client info
+    _language = _parseLanguage(visa);
+    _clientInfo = _parseClient(visa);
+  }
+
+  String? _getStringProperty(Visa? visa, String section, String key) {
+    var info = visa?.getProperty(section);
+    String? text = info?[key];
+    if (text == null) {
+      return null;
+    }
+    text = text.trim();
+    if (text.isEmpty) {
+      return null;
+    }
+    return text;
+  }
+  String? _parseLanguage(Visa? visa) {
+    LanguageItem? item;
+    // check 'app.language'
+    String? code1 = _getStringProperty(visa, 'app', 'language');
+    item = getLanguageItem(code1);
+    if (item != null) {
+      return '${item.name} ($code1)';
+    }
+    // check 'sys.locale'
+    String? code2 = _getStringProperty(visa, 'sys', 'locale');
+    item = getLanguageItem(code2);
+    if (item != null) {
+      return '${item.name} ($code2)';
+    }
+    // not found
+    return code1 ?? code2;
+  }
+  String? _parseClient(Visa? visa) {
+    String? name;
+    String? version;
+    String? os;
+    // check 'app.id'
+    // check 'app.name'
+    // check 'app.version'
+    var app = visa?.getProperty('app');
+    if (app is Map) {
+      name = app['name'];
+      name ??= app['id'];
+      version = app['version'];
+    }
+    // check 'sys.os'
+    var sys = visa?.getProperty('sys');
+    if (sys is Map) {
+      os = sys['os'];
+      if (os == 'android') {
+        os = 'Android';
+      } else if (os == 'ios') {
+        os = 'iOS';
+      }
+    }
+    if (name == null && version == null && os == null) {
+      return null;
+    }
+    return '$name ($os) $version';
   }
 
   void add({required BuildContext context}) {

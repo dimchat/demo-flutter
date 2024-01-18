@@ -24,6 +24,7 @@ class MessageDatabase extends DatabaseConnector {
           "unread INTEGER",     // count of unread messages
           "last VARCHAR(128)",  // desc of last message
           "time INTEGER",       // time of last message (seconds)
+          "mentioned INTEGER",  // sn
         ]);
         // instant message
         DatabaseConnector.createTable(db, tInstantMessage, fields: [
@@ -52,11 +53,14 @@ class MessageDatabase extends DatabaseConnector {
             name: 'trace_index', fields: ['sender']);
         // reliable message
       }, onUpgrade: (db, oldVersion, newVersion) {
-        // TODO:
+        if (oldVersion < 2) {
+          // add column for conversation
+          DatabaseConnector.addColumn(db, tChatBox, name: 'mentioned', type: 'INTEGER');
+        }
       });
 
   static const String dbName = 'msg.db';
-  static const int dbVersion = 1;
+  static const int dbVersion = 2;
 
   static const String tChatBox         = 't_conversation';
 

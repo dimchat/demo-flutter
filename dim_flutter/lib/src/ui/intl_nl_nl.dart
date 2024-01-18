@@ -188,7 +188,7 @@ final Map<String, String> intlNlNl = {
   'Stranded': 'Vastgelopen',
 
   'Draft': 'Concept',
-  'Mentioned': 'Vermeld',
+  'Mentioned': 'Je werd genoemd',
 
   //
   //  Profile

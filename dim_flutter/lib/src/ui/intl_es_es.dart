@@ -189,7 +189,7 @@ final Map<String, String> intlEsEs = {
   'Stranded': 'Varado',
 
   'Draft': 'Borrador',
-  'Mentioned': 'Mencionado',
+  'Mentioned': 'Fuiste mencionado',
 
   //
   //  Profile

@@ -188,7 +188,7 @@ final Map<String, String> intlDeDe = {
   'Stranded': 'Gestrandet',
 
   'Draft': 'Entwurf',
-  'Mentioned': 'Erwähnt',
+  'Mentioned': 'Du wurdest erwähnt',
 
   //
   //  Profile

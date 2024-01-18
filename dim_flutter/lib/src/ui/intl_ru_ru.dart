@@ -188,7 +188,7 @@ final Map<String, String> intlRuRu = {
   'Stranded': 'Заблокировано',
 
   'Draft': 'Черновик',
-  'Mentioned': 'Упомянуто',
+  'Mentioned': 'Вас упомянули',
 
   //
   //  Profile

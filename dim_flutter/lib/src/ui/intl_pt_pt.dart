@@ -188,7 +188,7 @@ final Map<String, String> intlPtPt = {
   'Stranded': 'Encalhado',
 
   'Draft': 'Rasura',
-  'Mentioned': 'Mencionado',
+  'Mentioned': 'Você foi mencionado',
 
   //
   //  Profile

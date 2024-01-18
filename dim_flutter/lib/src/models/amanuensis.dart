@@ -107,6 +107,7 @@ class Amanuensis {
       chat.unread = 0;
       chat.lastMessage = null;
       chat.lastMessageTime = null;
+      chat.mentionedSerialNumber = 0;
       // 3. update database
       if (await shared.database.updateConversation(chat)) {} else {
         Log.error('failed to update conversation: $chat');
@@ -171,21 +172,23 @@ class Amanuensis {
   Future<bool> clearUnread(Conversation chatBox) async {
     ID cid = chatBox.identifier;
     int unread = chatBox.unread;
-    if (unread == 0) {
+    int mentioned = chatBox.mentionedSerialNumber;
+    if (unread == 0 && mentioned == 0) {
       // no need to update
-      Log.info('[Badge] unread is zero: $cid');
+      Log.info('[Badge] no need to update: $cid, unread: $unread, at: $mentioned');
       return false;
     } else if (_conversationMap[cid] == null) {
       // conversation not found
-      Log.warning('[Badge] conversation not found: $cid, unread: $unread');
+      Log.warning('[Badge] conversation not found: $cid, unread: $unread, at: $mentioned');
       return false;
     }
     chatBox.unread = 0;
+    chatBox.mentionedSerialNumber = 0;
     GlobalVariable shared = GlobalVariable();
     if (await shared.database.updateConversation(chatBox)) {
-      Log.info('[Badge] unread count cleared: $chatBox, unread: $unread');
+      Log.info('[Badge] unread count cleared: $chatBox, unread: $unread, at: $mentioned');
     } else {
-      Log.error('[Badge] failed to update conversation: $chatBox, unread: $unread');
+      Log.error('[Badge] failed to update conversation: $chatBox, unread: $unread, at: $mentioned');
       return false;
     }
     var nc = lnc.NotificationCenter();
@@ -196,7 +199,7 @@ class Amanuensis {
     return true;
   }
 
-  Future<void> _update(ID cid, InstantMessage iMsg) async {
+  Future<void> _updateConversation(ID cid, InstantMessage iMsg) async {
     Shield shield = Shield();
     if (await shield.isBlocked(iMsg.sender, group: iMsg.group)) {
       // this message should have been blocked before verifying by messenger
@@ -225,12 +228,24 @@ class Amanuensis {
     GlobalVariable shared = GlobalVariable();
     User? current = await shared.facebook.currentUser;
     assert(current != null, 'failed to get current user');
+    // increase unread counter
     int increase;
     if (current?.identifier == iMsg.sender) {
       Log.debug('message from myself');
       increase = 0;
     } else {
       increase = 1;
+    }
+    // check content text for mentioned me
+    int mentioned = 0;
+    if (content is TextContent) {
+      Visa? visa = await current?.visa;
+      String? nickname = visa?.name;
+      assert(nickname != null, 'failed to get my nickname');
+      // TODO: check '@All', '@all'
+      if (content.text.contains('@$nickname')) {
+        mentioned = content.sn;
+      }
     }
 
     Conversation? chatBox = _conversationMap[cid];
@@ -244,6 +259,9 @@ class Amanuensis {
       chatBox.unread = increase;
       chatBox.lastMessage = last;
       chatBox.lastMessageTime = time;
+      if (mentioned > 0) {
+        chatBox.mentionedSerialNumber = mentioned;
+      }
       if (await shared.database.addConversation(chatBox)) {
         await chatBox.reloadData();
         // add to cache
@@ -265,9 +283,13 @@ class Amanuensis {
       }
       if (chatBox.widget == null) {
         chatBox.unread += increase;
+        if (mentioned > 0) {
+          chatBox.mentionedSerialNumber = mentioned;
+        }
       } else {
         Log.warning('chat box is opened for: $cid');
         chatBox.unread = 0;
+        chatBox.mentionedSerialNumber = 0;
       }
       chatBox.lastMessage = last;
       chatBox.lastMessageTime = time;
@@ -352,9 +374,7 @@ class Amanuensis {
     bool ok = await shared.database.saveInstantMessage(cid, iMsg);
     if (ok) {
       // TODO: save traces
-
-      // update conversation
-      await _update(cid, iMsg);
+      await _updateConversation(cid, iMsg);
     }
     return ok;
   }

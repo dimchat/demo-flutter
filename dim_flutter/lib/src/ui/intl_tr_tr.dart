@@ -187,7 +187,7 @@ final Map<String, String> intlTrTr = {
   'Stranded': 'Mahsur kaldı',
 
   'Draft': 'Taslak',
-  'Mentioned': 'Bahsedildi',
+  'Mentioned': 'Bahsedildiniz',
 
   //
   //  Profile

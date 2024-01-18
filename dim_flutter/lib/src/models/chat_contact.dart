@@ -16,7 +16,7 @@ import 'amanuensis.dart';
 import 'chat.dart';
 
 class ContactInfo extends Conversation {
-  ContactInfo(super.identifier, {super.unread = 0, super.lastMessage, super.lastMessageTime}) {
+  ContactInfo(super.identifier, {super.unread = 0, super.lastMessage, super.lastMessageTime, super.mentionedSerialNumber = 0}) {
     var nc = lnc.NotificationCenter();
     nc.addObserver(this, NotificationNames.kContactsUpdated);
   }
@@ -45,9 +45,11 @@ class ContactInfo extends Conversation {
   bool? _friendFlag;
 
   String? _language;
+  String? _locale;
   String? _clientInfo;
 
-  String? get language => _language;
+  String? get language => _language == null ? _locale : '$_language ($_locale)';
+  // String? get locale => _locale;
   String? get clientInfo => _clientInfo;
 
   bool get isFriend => _friendFlag == true;
@@ -76,13 +78,17 @@ class ContactInfo extends Conversation {
     String nickname = name;
     // check alias in remark
     ContactRemark cr = remark;
-    String alias = cr.alias;
-    if (alias.isEmpty) {
-      return nickname.isEmpty ? Anonymous.getName(identifier) : nickname;
-    } else if (nickname.length > 15) {
+    String desc = cr.alias;
+    if (desc.isEmpty) {
+      desc = _language ?? '';
+      if (desc.isEmpty) {
+        return nickname.isEmpty ? Anonymous.getName(identifier) : nickname;
+      }
+    }
+    if (nickname.length > 15) {
       nickname = '${nickname.substring(0, 12)}...';
     }
-    return '$nickname ($alias)';
+    return '$nickname ($desc)';
   }
 
   @override
@@ -116,14 +122,18 @@ class ContactInfo extends Conversation {
       _friendFlag = contacts.contains(identifier);
     }
     // parse language & client info
-    _language = _parseLanguage(visa);
-    _clientInfo = _parseClient(visa);
+    _parseLanguage(visa);
+    _parseClient(visa);
   }
 
   String? _getStringProperty(Visa? visa, String section, String key) {
     var info = visa?.getProperty(section);
-    String? text = info?[key];
-    if (text == null) {
+    if (info is Map) {} else {
+      // assert(info == null, 'property error: $section, $info');
+      return null;
+    }
+    var text = info[key];
+    if (text is String) {} else {
       return null;
     }
     text = text.trim();
@@ -132,24 +142,27 @@ class ContactInfo extends Conversation {
     }
     return text;
   }
-  String? _parseLanguage(Visa? visa) {
+  void _parseLanguage(Visa? visa) {
     LanguageItem? item;
     // check 'app.language'
     String? code1 = _getStringProperty(visa, 'app', 'language');
     item = getLanguageItem(code1);
     if (item != null) {
-      return '${item.name} ($code1)';
+      _language = item.name;
+      _locale = code1;
+      return;
     }
     // check 'sys.locale'
     String? code2 = _getStringProperty(visa, 'sys', 'locale');
     item = getLanguageItem(code2);
     if (item != null) {
-      return '${item.name} ($code2)';
+      _language = item.name;
+      _locale = code2;
     }
     // not found
-    return code1 ?? code2;
+    _locale = code1 ?? code2;
   }
-  String? _parseClient(Visa? visa) {
+  void _parseClient(Visa? visa) {
     String? name;
     String? version;
     String? os;
@@ -172,10 +185,9 @@ class ContactInfo extends Conversation {
         os = 'iOS';
       }
     }
-    if (name == null && version == null && os == null) {
-      return null;
+    if (name != null) {
+      _clientInfo = '$name ($os) $version';
     }
-    return '$name ($os) $version';
   }
 
   void add({required BuildContext context}) {

@@ -42,11 +42,14 @@ Conversation _extractConversation(ResultSet resultSet, int index) {
   int? unread = resultSet.getInt('unread');
   String? last = resultSet.getString('last');
   DateTime? time = resultSet.getDateTime('time');
+  int mentioned = resultSet.getInt('mentioned') ?? 0;
   ID identifier = ID.parse(cid)!;
   if (identifier.isGroup) {
-    return GroupInfo(identifier, unread: unread!, lastMessage: last, lastMessageTime: time);
+    return GroupInfo(identifier, unread: unread!,
+        lastMessage: last, lastMessageTime: time, mentionedSerialNumber: mentioned);
   }
-  return ContactInfo(identifier, unread: unread!, lastMessage: last, lastMessageTime: time);
+  return ContactInfo(identifier, unread: unread!,
+      lastMessage: last, lastMessageTime: time, mentionedSerialNumber: mentioned);
 }
 
 
@@ -54,8 +57,8 @@ class _ConversationTable extends DataTableHandler<Conversation> implements Conve
   _ConversationTable() : super(MessageDatabase(), _extractConversation);
 
   static const String _table = MessageDatabase.tChatBox;
-  static const List<String> _selectColumns = ["cid", "unread", "last", "time"];
-  static const List<String> _insertColumns = ["cid", "unread", "last", "time"];
+  static const List<String> _selectColumns = ["cid", "unread", "last", "time", "mentioned"];
+  static const List<String> _insertColumns = ["cid", "unread", "last", "time", "mentioned"];
 
   @override
   Future<List<Conversation>> getConversations() async {
@@ -70,7 +73,8 @@ class _ConversationTable extends DataTableHandler<Conversation> implements Conve
     if (chat.lastMessageTime != null) {
       seconds = chat.lastMessageTime!.millisecondsSinceEpoch / 1000.0;
     }
-    List values = [chat.identifier.toString(), chat.unread, chat.lastMessage, seconds];
+    List values = [chat.identifier.toString(), chat.unread,
+      chat.lastMessage, seconds, chat.mentionedSerialNumber];
     return await insert(_table, columns: _insertColumns, values: values) > 0;
   }
 
@@ -86,6 +90,7 @@ class _ConversationTable extends DataTableHandler<Conversation> implements Conve
       'unread': chat.unread,
       'last': chat.lastMessage,
       'time': time,
+      'mentioned': chat.mentionedSerialNumber,
     };
     SQLConditions cond;
     cond = SQLConditions(left: 'cid', comparison: '=', right: chat.identifier.toString());
@@ -102,7 +107,9 @@ class _ConversationTable extends DataTableHandler<Conversation> implements Conve
   Future<int> burnConversations(DateTime expired) async {
     int time = expired.millisecondsSinceEpoch ~/ 1000;
     Map<String, dynamic> values = {
+      'unread': 0,
       'last': '',
+      'mentioned': 0,
     };
     SQLConditions cond;
     cond = SQLConditions(left: 'time', comparison: '<', right: time);
@@ -193,6 +200,7 @@ class ConversationCache extends _ConversationTable {
         old.unread = chat.unread;
         old.lastMessageTime = chat.lastMessageTime;
         old.lastMessage = chat.lastMessage;
+        old.mentionedSerialNumber = chat.mentionedSerialNumber;
       }
       _sort(array);
     } else {

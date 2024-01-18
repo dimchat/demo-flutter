@@ -188,7 +188,7 @@ final Map<String, String> intlBnBd = {
   'Stranded': 'স্ট্র্যান্ডেড',
 
   'Draft': 'খসড়া',
-  'Mentioned': 'উল্লেখিত',
+  'Mentioned': 'তোমার উল্লেখ হয়েছে',
 
   //
   //  Profile

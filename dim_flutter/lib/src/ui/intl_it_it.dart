@@ -188,7 +188,7 @@ final Map<String, String> intlItIt = {
   'Stranded': 'Bloccato',
 
   'Draft': 'Bozza',
-  'Mentioned': 'Menzionato',
+  'Mentioned': 'Sei stato menzionato',
 
   //
   //  Profile

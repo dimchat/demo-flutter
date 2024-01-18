@@ -188,7 +188,7 @@ final Map<String, String> intlJaJp = {
   'Stranded': '立ち往生',
 
   'Draft': '下書き',
-  'Mentioned': '言及',
+  'Mentioned': 'あなたは言及されました',
 
   //
   //  Profile

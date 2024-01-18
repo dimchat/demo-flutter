@@ -188,7 +188,7 @@ final Map<String, String> intlAr = {
   'Stranded': 'متوقف',
 
   'Draft': 'مسودة',
-  'Mentioned': 'تم الإشارة إليه',
+  'Mentioned': 'تمت الإشارة إليك',
 
   //
   //  Profile

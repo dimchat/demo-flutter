@@ -41,8 +41,8 @@ class IconSpot extends StatelessWidget {
   @override
   Widget build(BuildContext context) => ClipOval(
     child: Container(
-      width: 8,
-      height: 8,
+      width: 10,
+      height: 10,
       color: Colors.red,
     ),
   );

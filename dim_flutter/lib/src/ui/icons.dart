@@ -48,6 +48,7 @@ abstract class AppIcons {
   static const IconData   msgExpiredIcon = CupertinoIcons.refresh;
 
   static const IconData      webpageIcon = CupertinoIcons.link;
+  static const IconData        mutedIcon = CupertinoIcons.bell_slash;
 
   // Search
   static const IconData searchIcon = CupertinoIcons.search;

@@ -161,8 +161,8 @@ class _PermissionHandler {
     /// Android: External Storage
     /// iOS: Access to folders like `Documents` or `Downloads`. Implicitly
     /// granted.
-    if (Platform.isAndroid)
-    Permission.storage,
+    // if (Platform.isAndroid)
+    // Permission.storage,
   ];
 
   static List<Permission> get cameraPermissions => [
@@ -195,6 +195,7 @@ Future<void> fixPhotoPermissions() async {
       _PermissionHandler._photoAccessingPermissions.add(Permission.photos);
       _PermissionHandler._photoReadingPermissions.add(Permission.photos);
     } else {
+      _PermissionHandler._photoAccessingPermissions.add(Permission.storage);
       _PermissionHandler._photoReadingPermissions.add(Permission.storage);
     }
   }

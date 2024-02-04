@@ -8,8 +8,6 @@ import 'package:package_info_plus/package_info_plus.dart';
 import 'package:dim_client/dim_client.dart';
 import 'package:lnc/lnc.dart';
 
-import '../channels/manager.dart';
-import '../channels/session.dart';
 import '../common/constants.dart';
 import '../models/station.dart';
 import '../network/neighbor.dart';
@@ -18,7 +16,6 @@ import '../widgets/permissions.dart';
 import 'messenger.dart';
 import 'packer.dart';
 import 'processor.dart';
-import 'session.dart';
 import 'shared.dart';
 
 
@@ -28,24 +25,23 @@ class Client extends Terminal {
   SessionState? sessionState;
 
   int get sessionStateOrder =>
-      sessionState?.index ?? SessionStateOrder.kDefault;
+      sessionState?.index ?? SessionStateOrder.init.index;
 
   String? get sessionStateText {
     int order = sessionStateOrder;
-    switch (order) {
-      case SessionStateOrder.kDefault:
-        return 'Waiting'.tr;  // waiting to connect
-      case SessionStateOrder.kConnecting:
-        return 'Connecting'.tr;
-      case SessionStateOrder.kConnected:
-        return 'Connected'.tr;
-      case SessionStateOrder.kHandshaking:
-        return 'Handshaking'.tr;
-      case SessionStateOrder.kRunning:
-        return null;  // normal running
-      default:
-        reconnect();
-        return 'Disconnected'.tr;  // error
+    if (order == SessionStateOrder.init.index) {
+      return 'Waiting'.tr;  // waiting to connect
+    } else if (order == SessionStateOrder.connecting.index) {
+      return 'Connecting'.tr;
+    } else if (order == SessionStateOrder.connected.index) {
+      return 'Connected'.tr;
+    } else if (order == SessionStateOrder.handshaking.index) {
+      return 'Handshaking'.tr;
+    } else if (order == SessionStateOrder.running.index) {
+      return null;  // normal running
+    } else {
+      reconnect();
+      return 'Disconnected'.tr;  // error
     }
   }
 
@@ -66,30 +62,17 @@ class Client extends Terminal {
   Future<ClientMessenger> connect(String host, int port) async {
     Log.warning('connecting to host: $host, port: $port');
     ClientMessenger messenger = await super.connect(host, port);
-    // connect via session channel
-    ChannelManager manager = ChannelManager();
-    SessionChannel channel = manager.sessionChannel;
-    await channel.connect(host, port).then((value) =>
-        facebook.currentUser.then((user) {
-          if (user != null) {
-            login(user.identifier);
-          }
-        }));
+    User? user = await facebook.currentUser;
+    if (user != null) {
+      login(user.identifier);
+    }
     return messenger;
   }
 
   @override
-  bool login(ID current) {
-    ChannelManager manager = ChannelManager();
-    SessionChannel channel = manager.sessionChannel;
-    channel.login(current);
-    return super.login(current);
-  }
-
-  @override
   ClientSession createSession(Station station) {
-    ClientSession session = SharedSession(station, sdb);
-    session.start();
+    ClientSession session = ClientSession(sdb, station);
+    session.start(this);
     return session;
   }
 
@@ -132,9 +115,10 @@ class Client extends Terminal {
   //
 
   @override
-  Future<void> exitState(SessionState previous, SessionStateMachine ctx, double now) async {
+  Future<void> exitState(SessionState? previous, SessionStateMachine ctx, DateTime now) async {
     await super.exitState(previous, ctx, now);
     sessionState = ctx.currentState;
+    Log.info('server state changed: $previous => $sessionState');
     var nc = NotificationCenter();
     nc.postNotification(NotificationNames.kServerStateChanged, this, {
       'previous': previous,

@@ -12,5 +12,4 @@ export 'client/group.dart';
 export 'client/messenger.dart';
 export 'client/packer.dart';
 export 'client/processor.dart';
-export 'client/session.dart';
 export 'client/shared.dart';

@@ -3,7 +3,6 @@ import 'package:lnc/lnc.dart';
 
 import 'audio.dart';
 import 'keychain.dart';
-import 'session.dart';
 import 'transfer.dart';
 
 class ChannelNames {
@@ -30,24 +29,6 @@ class ChannelMethods {
 
   static const String onRecordFinished   = "onRecordFinished";
   static const String onPlayFinished     = "onPlayFinished";
-
-  //
-  //  Session channel
-  //
-  static const String connect            = "connect";
-  static const String login              = "login";
-  static const String setSessionKey      = "setSessionKey";
-  static const String getState           = "getState";
-  static const String sendMessagePackage = "queueMessagePackage";
-
-  static const String onStateChanged     = "onStateChanged";
-  static const String onReceived         = "onReceived";
-
-  static const String sendContent        = "sendContent";
-  static const String sendCommand        = "sendCommand";
-
-  static const String packData           = "packData";
-  static const String unpackData         = "unpackData";
 
   //
   //  FTP Channel
@@ -86,7 +67,6 @@ class ChannelManager {
   //  Channels
   //
   final AudioChannel audioChannel = AudioChannel(ChannelNames.audio);
-  final SessionChannel sessionChannel = SessionChannel(ChannelNames.session);
   final FileTransferChannel ftpChannel = FileTransferChannel(ChannelNames.fileTransfer);
   final KeychainChannel dbChannel = KeychainChannel(ChannelNames.database);
 

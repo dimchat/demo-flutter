@@ -35,8 +35,6 @@ import 'package:dim_client/dim_client.dart';
 import 'package:lnc/lnc.dart';
 
 import '../common/constants.dart';
-import '../channels/manager.dart';
-import '../channels/session.dart';
 import '../models/station.dart';
 import '../client/shared.dart';
 
@@ -55,6 +53,7 @@ class VelocityMeter {
   double? get responseTime => info.responseTime;
 
   double _startTime = 0;
+  double _endTime = 0;
 
   @override
   String toString() {
@@ -69,7 +68,7 @@ class VelocityMeter {
       'state': 'start',
       'meter': meter,
     });
-    Socket? socket = await meter._connect(const Duration(seconds: 16));
+    WebSocket? socket = await meter._connect();
     if (socket == null) {
       nc.postNotification(NotificationNames.kStationSpeedUpdated, meter, {
         'state': 'failed',
@@ -94,7 +93,7 @@ class VelocityMeter {
         'state': 'finished',
         'meter': meter,
       });
-      socket.destroy();
+      socket.close();
     }
     String host = meter.host;
     int port = meter.port;
@@ -110,93 +109,70 @@ class VelocityMeter {
     return meter;
   }
 
-  Future<Socket?> _connect(Duration timeout) async {
-    Uint8List? data = await _getPack();
+  Future<WebSocket?> _connect() async {
+    StationSpeeder speeder = StationSpeeder();
+    Uint8List? data = await speeder.handshakePackage;
     if (data == null) {
       assert(false, 'failed to get message package');
       return null;
     }
     Log.debug('connecting to $host:$port ...');
-    _startTime = Time.currentTimeSeconds;
-    Socket socket;
+    // _startTime = Time.currentTimeSeconds;
+    WebSocket socket;
     try {
-      socket = await Socket.connect(host, port, timeout: timeout);
+      socket = await WebSocket.connect('ws://$host:$port/');
     } on SocketException catch (e) {
       Log.error('failed to connect $host:$port, $e');
       return null;
     }
     // prepare data handler
     socket.listen((pack) async {
+      if (_startTime > 0 && pack.length > 64) {
+        _endTime = Time.currentTimeSeconds;
+      }
+      if (pack is String) {
+        pack = Uint8List.fromList(UTF8.encode(pack));
+      }
       Log.debug('received ${pack.length} bytes from $host:$port');
-      _buffer.add(pack);
+      _caches.add(pack);
     }, onDone: () {
       Log.warning('speed task finished: $info');
-      socket.destroy();
     });
     // send
     Log.debug('connected, sending ${data.length} bytes to $host:$port ...');
+    _startTime = Time.currentTimeSeconds;
     socket.add(data);
     Log.debug('sent, waiting response from $host:$port ...');
     return socket;
   }
 
-  final BytesBuilder _buffer = BytesBuilder(copy: false);
-  int _start = 0;
-  int _end = 0;
+  final List<Uint8List> _caches = [];
 
   Future<bool> _run() async {
-    if (_end == _buffer.length) {
+    if (_caches.isEmpty) {
       // no new income data now
       return false;
     }
-    Uint8List? pack = await _extract();
+    Uint8List? pack = _caches.removeAt(0);
     while (pack != null) {
       if (await _process(pack)) {
         // done!
         return true;
       }
-      pack = await _extract();
+      pack = _caches.removeAt(0);
     }
     return false;
   }
 
-  Future<Uint8List?> _extract() async {
-    assert(_end <= _buffer.length, 'out of range: $_end, ${_buffer.length}');
-    _end = _buffer.length;
-    if (_start == _end) {
-      // buffer empty
-      return null;
-    }
-    assert(_start < _end, 'out of range: $_start, $_end');
-    Uint8List pack = _buffer.toBytes().sublist(_start, _end);
-    // MTP packing
-    ChannelManager manager = ChannelManager();
-    SessionChannel channel = manager.sessionChannel;
-    Map? info = await channel.unpackData(pack);
-    if (info == null) {
-      Log.error('failed to unpack data: ${pack.length} bytes');
-      return null;
-    }
-    int offset = info['position'];
-    Log.error('position: $offset, pack length: ${pack.length}');
-    if (offset <= 0) {
-      // incomplete, waiting for more data
-      return null;
-    } else {
-      _start += offset;
-    }
-    return info['payload'];
-  }
-
-  bool _checkMessageData(Uint8List data) {
+  static bool _checkMessageData(Uint8List data) {
     // {"sender":"","receiver":"","time":0,"data":"","signature":""}
     if (data.length < 64) {
       return false;
     }
     return data.first == _jsonStart && data.last == _jsonEnd;
   }
-  final int _jsonStart = '{'.codeUnitAt(0);
-  final int _jsonEnd   = '}'.codeUnitAt(0);
+  static final int _jsonStart = '{'.codeUnitAt(0);
+  static final int _jsonEnd   = '}'.codeUnitAt(0);
 
   Future<bool> _process(Uint8List data) async {
     if (!_checkMessageData(data)) {
@@ -214,7 +190,7 @@ class VelocityMeter {
       Log.error('sender not a station: $sender');
       return false;
     }
-    double? duration = Time.currentTimeSeconds - _startTime;
+    double? duration = _endTime - _startTime;
     // OK
     info.identifier = sender;
     info.responseTime = duration;
@@ -228,7 +204,7 @@ class VelocityMeter {
     return true;
   }
 
-  Future<String?> _decryptAddress(SecureMessage sMsg) async {
+  static Future<String?> _decryptAddress(SecureMessage sMsg) async {
     GlobalVariable shared = GlobalVariable();
     InstantMessage? iMsg = await shared.messenger?.decryptMessage(sMsg);
     assert(iMsg != null, 'failed to decrypt message: ${sMsg.sender} => ${sMsg.receiver}');
@@ -241,18 +217,4 @@ class VelocityMeter {
     return remote?.toString();
   }
 
-}
-
-Future<Uint8List?> _getPack() async {
-  StationSpeeder speeder = StationSpeeder();
-  Uint8List? data = await speeder.handshakePackage;
-  if (data == null) {
-    return null;
-  }
-  // MTP packing
-  ChannelManager manager = ChannelManager();
-  SessionChannel channel = manager.sessionChannel;
-  Uint8List? pack = await channel.packData(data);
-  Log.warning('packed ${data.length} bytes to ${pack?.length} bytes');
-  return pack;
 }

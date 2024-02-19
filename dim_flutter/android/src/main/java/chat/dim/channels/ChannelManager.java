@@ -14,8 +14,6 @@ final class ChannelNames {
 
     static final String AUDIO = "chat.dim/audio";
 
-    static final String SESSION = "chat.dim/session";
-
     static final String FILE_TRANSFER = "chat.dim/ftp";
 }
 
@@ -31,21 +29,6 @@ final class ChannelMethods {
 
     static final String ON_RECORD_FINISHED = "onRecordFinished";
     static final String ON_PLAY_FINISHED = "onPlayFinished";
-
-    //
-    //  Session channel
-    //
-    static final String CONNECT = "connect";
-    static final String LOGIN = "login";
-    static final String SET_SESSION_KEY = "setSessionKey";
-    static final String GET_STATE = "getState";
-    static final String SEND_MESSAGE_PACKAGE = "queueMessagePackage";
-
-    static final String ON_STATE_CHANGED = "onStateChanged";
-    static final String ON_RECEIVED = "onReceived";
-
-    static final String PACK_DATA = "packData";
-    static final String UNPACK_DATA = "unpackData";
 
     //
     //  FTP Channel
@@ -83,7 +66,6 @@ public enum ChannelManager {
     //  Channels
     //
     public AudioChannel audioChannel = null;
-    public SessionChannel sessionChannel = null;
     public FileTransferChannel fileChannel = null;
 
     private static class MessageCodec extends StandardMessageCodec {
@@ -99,14 +81,10 @@ public enum ChannelManager {
 
     public void initChannels(BinaryMessenger messenger) {
         System.out.println("initChannels: audioChannel=" + audioChannel);
-        System.out.println("initChannels: sessionChannel=" + sessionChannel);
         System.out.println("initChannels: fileChannel=" + fileChannel);
         StandardMethodCodec codec = new StandardMethodCodec(new MessageCodec());
         //if (audioChannel == null) {
             audioChannel = new AudioChannel(messenger, ChannelNames.AUDIO, codec);
-        //}
-        //if (sessionChannel == null) {
-            sessionChannel = new SessionChannel(messenger, ChannelNames.SESSION, codec);
         //}
         //if (fileChannel == null) {
             fileChannel = new FileTransferChannel(messenger, ChannelNames.FILE_TRANSFER, codec);

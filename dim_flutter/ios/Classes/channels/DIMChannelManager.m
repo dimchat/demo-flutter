@@ -47,8 +47,8 @@ OKSingletonImplementations(DIMChannelManager, sharedInstance)
                                       binaryMessenger:messenger
                                                 codec:codec];
     self.sessionChannel = [DIMSessionChannel channelWithName:kChannelName_Session
-                                          binaryMessenger:messenger
-                                                    codec:codec];
+                                             binaryMessenger:messenger
+                                                       codec:codec];
     self.ftpChannel = [DIMFileTransferChannel channelWithName:kChannelName_FileTransfer
                                            binaryMessenger:messenger
                                                      codec:codec];

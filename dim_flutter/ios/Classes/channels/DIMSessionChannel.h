@@ -16,12 +16,6 @@ NS_ASSUME_NONNULL_BEGIN
                 binaryMessenger:(NSObject<FlutterBinaryMessenger>*)messenger
                           codec:(NSObject<FlutterMethodCodec>*)codec;
 
-- (void)onStateChangedFrom:(nullable DIMSessionState *)previous
-                        to:(nullable DIMSessionState *)current
-                      when:(NSTimeInterval)now;
-
-- (void)onReceivedData:(NSData *)pack from:(id<NIOSocketAddress>)remote;
-
 - (void)sendCommand:(id<DKDCommand>)content;
 - (void)sendCommand:(id<DKDCommand>)content receiver:(id<MKMID>)to;
 - (void)sendContent:(id<DKDContent>)content receiver:(id<MKMID>)to;

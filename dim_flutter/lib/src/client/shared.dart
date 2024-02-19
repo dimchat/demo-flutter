@@ -16,6 +16,7 @@ class GlobalVariable {
     archivist = SharedArchivist(database);
     facebook = SharedFacebook();
     terminal = Client(facebook, database);
+    terminal.start();
   }
 
   final AccountDBI adb;

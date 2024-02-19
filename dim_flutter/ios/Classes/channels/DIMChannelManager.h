@@ -32,20 +32,8 @@ NS_ASSUME_NONNULL_BEGIN
 //
 //  Session Channel Methods
 //
-#define kChannelMethod_Connect                    @"connect"
-#define kChannelMethod_Login                      @"login"
-#define kChannelMethod_SetSessionKey              @"setSessionKey"
-#define kChannelMethod_GetState                   @"getState"
-#define kChannelMethod_SendMessagePack            @"queueMessagePackage"
-
-#define kChannelMethod_OnStateChanged             @"onStateChanged"
-#define kChannelMethod_OnReceived                 @"onReceived"
-
 #define kChannelMethod_SendContent                @"sendContent"
 #define kChannelMethod_SendCommand                @"sendCommand"
-
-#define kChannelMethod_PackData                   @"packData"
-#define kChannelMethod_UnpackData                 @"unpackData"
 
 //
 //  FTP Channel Methods

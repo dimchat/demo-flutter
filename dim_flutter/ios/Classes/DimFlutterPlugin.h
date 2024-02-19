@@ -5,11 +5,6 @@
 #import <dim_flutter/EMAudioRecordHelper.h>
 
 //
-//  Tencent/Mars
-//
-#import <dim_flutter/MarsPackage.h>
-
-//
 //  HTTP
 //
 #import <dim_flutter/DIMFileTransfer.h>

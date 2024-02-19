@@ -111,6 +111,58 @@ class Client extends Terminal {
   }
 
   //
+  //  Send message
+  //
+
+  final List<Triplet<ID, Content, int>> _outgoing = [];
+
+  void addWaitingContent(Content content, {required ID receiver, int priority = 0}) =>
+      _outgoing.add(Triplet(receiver, content, priority));
+
+  Future<int> _sendWaitingContents(ID uid, ClientMessenger messenger) async {
+    ID receiver;
+    Content content;
+    int prior;
+    Triplet<ID, Content, int> triplet;
+    Pair<InstantMessage, ReliableMessage?> res;
+    int success = 0;
+    while (_outgoing.isNotEmpty) {
+      triplet = _outgoing.removeAt(0);
+      receiver = triplet.first;
+      content = triplet.second;
+      prior = triplet.third;
+      Log.info('[safe channel] send content: $receiver, $content');
+      res = await messenger.sendContent(content, sender: uid, receiver: receiver, priority: prior);
+      if (res.second != null) {
+        success += 1;
+      }
+    }
+    return success;
+  }
+
+  @override
+  Future<bool> process() async {
+    if (_outgoing.isEmpty) {
+      return await super.process();
+    }
+    // check session state
+    ClientMessenger? transceiver = messenger;
+    if (transceiver == null) {
+      // not connect
+      return false;
+    }
+    ClientSession session = transceiver.session;
+    ID? uid = session.identifier;
+    SessionState? state = session.state;
+    if (uid == null || state?.index != SessionStateOrder.running.index) {
+      // handshake not accepted
+      return false;
+    }
+    int success = await _sendWaitingContents(uid, transceiver);
+    return success > 0;
+  }
+
+  //
   //  FSM Delegate
   //
 

@@ -33,6 +33,7 @@ import 'package:sqflite/sqflite.dart';
 import 'package:dim_client/dim_client.dart';
 import 'package:lnc/lnc.dart';
 
+import '../../common/platform.dart';
 import '../../filesys/paths.dart';
 
 
@@ -61,6 +62,7 @@ class DatabaseConnector {
   Future<String?> get path async {
     String? dir = directory;
     if (dir == null) {
+      DevicePlatform.patchSQLite();
       dir = await getDatabasesPath();
       Log.debug('internal database: $name in $dir');
       return Paths.append(dir, name);

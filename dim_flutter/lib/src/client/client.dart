@@ -1,4 +1,3 @@
-import 'dart:io';
 import 'dart:ui';
 
 import 'package:device_info_plus/device_info_plus.dart';
@@ -9,6 +8,7 @@ import 'package:dim_client/dim_client.dart';
 import 'package:lnc/lnc.dart';
 
 import '../common/constants.dart';
+import '../common/platform.dart';
 import '../models/station.dart';
 import '../network/neighbor.dart';
 import '../widgets/permissions.dart';
@@ -223,24 +223,35 @@ class _DeviceInfo {
   static final _DeviceInfo _instance = _DeviceInfo._internal();
   _DeviceInfo._internal() {
     DeviceInfoPlugin info = DeviceInfoPlugin();
-    if (Platform.isAndroid) {
+    if (DevicePlatform.isWeb) {
+      info.webBrowserInfo.then(_loadWeb);
+    } else if (DevicePlatform.isAndroid) {
       info.androidInfo.then(_loadAndroid);
-    } else if (Platform.isIOS) {
+    } else if (DevicePlatform.isIOS) {
       info.iosInfo.then(_loadIOS);
-    } else if (Platform.isMacOS) {
+    } else if (DevicePlatform.isMacOS) {
       info.macOsInfo.then(_loadMacOS);
-    } else if (Platform.isLinux) {
+    } else if (DevicePlatform.isLinux) {
       info.linuxInfo.then(_loadLinux);
-    } else if (Platform.isWindows) {
+    } else if (DevicePlatform.isWindows) {
       info.windowsInfo.then(_loadWindows);
     } else {
       assert(false, 'unknown platform');
     }
-    language = Platform.localeName;
+    language = DevicePlatform.localeName;
     // fix for android
     fixPhotoPermissions();
   }
 
+  void _loadWeb(WebBrowserInfo info) {
+    // FIXME: all
+    systemVersion = info.appVersion ?? '';
+    systemModel = info.appCodeName ?? '';
+    systemDevice = info.platform ?? '';
+    deviceBrand = info.product ?? '';
+    deviceBoard = info.productSub ?? '';
+    deviceManufacturer = info.vendor ?? '';
+  }
   void _loadAndroid(AndroidDeviceInfo info) {
     systemVersion = info.version.release;
     systemModel = info.model;

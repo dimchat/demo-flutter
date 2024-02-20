@@ -1,9 +1,8 @@
-import 'dart:io';
-
 import 'package:lnc/lnc.dart';
 
 import '../channels/manager.dart';
 import '../common/constants.dart';
+import '../common/platform.dart';
 import 'helper/sqlite.dart';
 
 
@@ -63,7 +62,7 @@ class _PrivateKeyTable extends DataTableHandler<PrivateKey> implements PrivateKe
 
   @override
   Future<List<DecryptKey>> getPrivateKeysForDecryption(ID user) async {
-    if (Platform.isIOS || Platform.isMacOS) {
+    if (DevicePlatform.isIOS || DevicePlatform.isMacOS) {
       ChannelManager man = ChannelManager();
       return await man.dbChannel.getPrivateKeysForDecryption(user);
     }
@@ -78,7 +77,7 @@ class _PrivateKeyTable extends DataTableHandler<PrivateKey> implements PrivateKe
 
   @override
   Future<PrivateKey?> getPrivateKeyForSignature(ID user) async {
-    if (Platform.isIOS || Platform.isMacOS) {
+    if (DevicePlatform.isIOS || DevicePlatform.isMacOS) {
       ChannelManager man = ChannelManager();
       return await man.dbChannel.getPrivateKeyForSignature(user);
     }
@@ -88,7 +87,7 @@ class _PrivateKeyTable extends DataTableHandler<PrivateKey> implements PrivateKe
 
   @override
   Future<PrivateKey?> getPrivateKeyForVisaSignature(ID user) async {
-    if (Platform.isIOS || Platform.isMacOS) {
+    if (DevicePlatform.isIOS || DevicePlatform.isMacOS) {
       ChannelManager man = ChannelManager();
       return await man.dbChannel.getPrivateKeyForVisaSignature(user);
     }
@@ -106,7 +105,7 @@ class _PrivateKeyTable extends DataTableHandler<PrivateKey> implements PrivateKe
   @override
   Future<bool> savePrivateKey(PrivateKey key, String type, ID user,
       {int sign = 1, required int decrypt}) async {
-    if (Platform.isIOS || Platform.isMacOS) {
+    if (DevicePlatform.isIOS || DevicePlatform.isMacOS) {
       ChannelManager man = ChannelManager();
       return await man.dbChannel.savePrivateKey(key, type, user,
           sign: sign, decrypt: decrypt);

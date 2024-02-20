@@ -1,5 +1,3 @@
-import 'dart:io';
-
 import 'package:device_info_plus/device_info_plus.dart';
 import 'package:flutter/widgets.dart';
 import 'package:get/get.dart';
@@ -7,6 +5,7 @@ import 'package:permission_handler/permission_handler.dart';
 
 import 'package:lnc/lnc.dart';
 
+import '../common/platform.dart';
 import 'alert.dart';
 
 
@@ -139,7 +138,7 @@ class _PermissionHandler {
     /// When running on Android < T: Nothing
     /// iOS: Photos
     /// iOS 14+ read & write access level
-    if (Platform.isIOS)
+    if (DevicePlatform.isIOS)
     Permission.photos,
   ];
 
@@ -149,19 +148,19 @@ class _PermissionHandler {
     /// When running on Android < T: Nothing
     /// iOS: Photos
     /// iOS 14+ read & write access level
-    if (Platform.isIOS)
+    if (DevicePlatform.isIOS)
     Permission.photos,
 
     /// Android: Nothing
     /// iOS: Photos
     /// iOS 14+ read & write access level
-    if (Platform.isIOS)
+    if (DevicePlatform.isIOS)
     Permission.photosAddOnly,
 
     /// Android: External Storage
     /// iOS: Access to folders like `Documents` or `Downloads`. Implicitly
     /// granted.
-    // if (Platform.isAndroid)
+    // if (DevicePlatform.isAndroid)
     // Permission.storage,
   ];
 
@@ -187,7 +186,7 @@ Future<void> fixPhotoPermissions() async {
   if (_fixedForAndroid) {
     return;
   }
-  if (Platform.isAndroid) {
+  if (DevicePlatform.isAndroid) {
     AndroidDeviceInfo info = await DeviceInfoPlugin().androidInfo;
     int sdkInt = info.version.sdkInt;
     Log.warning('fixing photo permissions: $sdkInt');

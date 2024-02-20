@@ -1,12 +1,11 @@
-import 'dart:io';
 import 'dart:typed_data';
 
 import 'package:dim_client/dim_client.dart';
 import 'package:lnc/lnc.dart';
 
+import '../common/platform.dart';
 import '../models/shield.dart';
 import '../network/velocity.dart';
-
 import '../ui/language.dart';
 import 'shared.dart';
 
@@ -176,7 +175,7 @@ class SharedMessenger extends ClientMessenger {
     GlobalVariable shared = GlobalVariable();
     info['locale'] = shared.terminal.language;
     info['model'] = shared.terminal.systemModel;
-    info['os'] = Platform.operatingSystem;
+    info['os'] = DevicePlatform.operatingSystem;
     return info;
   }
 

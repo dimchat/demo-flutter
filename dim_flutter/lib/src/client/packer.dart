@@ -1,5 +1,4 @@
 import 'package:dim_client/dim_client.dart';
-import 'package:lnc/lnc.dart';
 
 import '../models/vestibule.dart';
 import 'shared.dart';
@@ -45,12 +44,12 @@ class SharedPacker extends ClientMessagePacker {
       String errMsg = e.toString();
       if (errMsg.contains('failed to decrypt message key')) {
         // Exception from 'SecureMessagePacker::decrypt(sMsg, receiver)'
-        Log.warning('decrypt message error: $e, $st');
+        warning('decrypt message error: $e, $st');
         // visa.key changed?
         // push my newest visa to the sender
       } else if (errMsg.contains('receiver error')) {
         // Exception from 'MessagePacker::decryptMessage(sMsg)'
-        Log.error('decrypt message error: $e, $st');
+        error('decrypt message error: $e, $st');
         // not for you?
         // just ignore it
         return null;
@@ -88,10 +87,10 @@ class SharedPacker extends ClientMessagePacker {
     ClientArchivist archivist = shared.archivist;
     if (!archivist.isDocumentResponseExpired(contact, false)) {
       // response not expired yet
-      Log.debug('visa response not expired yet: $contact');
+      debug('visa response not expired yet: $contact');
       return false;
     }
-    Log.info('push visa to: $contact');
+    info('push visa to: $contact');
     User? user = await facebook?.currentUser;
     Visa? visa = await user?.visa;
     if (visa == null || !visa.isValid) {
@@ -112,7 +111,7 @@ class SharedPacker extends ClientMessagePacker {
     ID? group = sMsg.group;
     int? type = sMsg.type;
     if (type == ContentType.kCommand || type == ContentType.kHistory) {
-      Log.warning('ignore message unable to decrypt (type=$type) from "$sender"');
+      warning('ignore message unable to decrypt (type=$type) from "$sender"');
       return null;
     }
     // create text content

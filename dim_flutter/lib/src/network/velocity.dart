@@ -32,7 +32,9 @@ import 'dart:io';
 import 'dart:typed_data';
 
 import 'package:dim_client/dim_client.dart';
-import 'package:lnc/lnc.dart';
+import 'package:lnc/log.dart';
+import 'package:lnc/notification.dart';
+import 'package:stargate/websocket.dart';
 
 import '../common/constants.dart';
 import '../models/station.dart';
@@ -68,7 +70,7 @@ class VelocityMeter {
       'state': 'start',
       'meter': meter,
     });
-    WebSocket? socket = await meter._connect();
+    WebSocketConnector? socket = await meter._connect();
     if (socket == null) {
       nc.postNotification(NotificationNames.kStationSpeedUpdated, meter, {
         'state': 'failed',
@@ -93,7 +95,7 @@ class VelocityMeter {
         'state': 'finished',
         'meter': meter,
       });
-      socket.close();
+      await socket.close();
     }
     String host = meter.host;
     int port = meter.port;
@@ -109,40 +111,40 @@ class VelocityMeter {
     return meter;
   }
 
-  Future<WebSocket?> _connect() async {
+  Future<WebSocketConnector?> _connect() async {
     StationSpeeder speeder = StationSpeeder();
     Uint8List? data = await speeder.handshakePackage;
     if (data == null) {
       assert(false, 'failed to get message package');
       return null;
     }
-    Log.debug('connecting to $host:$port ...');
+    Log.info('connecting to $host:$port ...');
     // _startTime = Time.currentTimeSeconds;
-    WebSocket socket;
+    Uri url = Uri.parse('ws://$host:$port/');
+    WebSocketConnector socket = WebSocketConnector(url);
     try {
-      socket = await WebSocket.connect('ws://$host:$port/');
+      bool ok = await socket.connect();
+      if (!ok) {
+        Log.error('failed to connect url: $url');
+        return null;
+      }
     } on SocketException catch (e) {
       Log.error('failed to connect $host:$port, $e');
       return null;
     }
     // prepare data handler
-    socket.listen((pack) async {
-      if (_startTime > 0 && pack.length > 64) {
+    socket.listen((msg) async {
+      if (_startTime > 0 && msg.length > 64) {
         _endTime = Time.currentTimeSeconds;
       }
-      if (pack is String) {
-        pack = Uint8List.fromList(UTF8.encode(pack));
-      }
-      Log.debug('received ${pack.length} bytes from $host:$port');
-      _caches.add(pack);
-    }, onDone: () {
-      Log.warning('speed task finished: $info');
+      Log.info('received ${msg.length} bytes from $host:$port');
+      _caches.add(msg);
     });
     // send
-    Log.debug('connected, sending ${data.length} bytes to $host:$port ...');
+    Log.info('connected, sending ${data.length} bytes to $host:$port ...');
     _startTime = Time.currentTimeSeconds;
-    socket.add(data);
-    Log.debug('sent, waiting response from $host:$port ...');
+    int cnt = await socket.write(data);
+    Log.info('$cnt byte(s) sent, waiting response from $host:$port ...');
     return socket;
   }
 

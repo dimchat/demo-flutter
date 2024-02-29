@@ -31,7 +31,7 @@
 import 'package:sqflite/sqflite.dart';
 
 import 'package:dim_client/dim_client.dart';
-import 'package:lnc/lnc.dart';
+import 'package:lnc/log.dart';
 
 import '../../common/platform.dart';
 import '../../filesys/paths.dart';
@@ -66,6 +66,8 @@ class DatabaseConnector {
       dir = await getDatabasesPath();
       Log.debug('internal database: $name in $dir');
       return Paths.append(dir, name);
+    } else if (DevicePlatform.isWeb) {
+      return dir;
     }
     throw Exception('external database: $name in $dir');
   }

@@ -1,7 +1,7 @@
 library dim_flutter;
 
 export 'package:dim_client/dim_client.dart';
-export 'package:lnc/lnc.dart' show Log;
+export 'package:lnc/log.dart';
 
 export 'src/dim_channels.dart';
 export 'src/dim_client.dart';

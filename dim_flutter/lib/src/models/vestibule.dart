@@ -1,6 +1,6 @@
 import 'package:dim_client/dim_client.dart';
-import 'package:lnc/lnc.dart' as lnc;
-import 'package:lnc/lnc.dart' show Log;
+import 'package:lnc/log.dart';
+import 'package:lnc/notification.dart';
 
 import '../common/constants.dart';
 import '../client/facebook.dart';
@@ -8,11 +8,11 @@ import '../client/messenger.dart';
 import '../client/shared.dart';
 
 /// Message Waiting List
-class Vestibule implements lnc.Observer {
+class Vestibule implements Observer {
   factory Vestibule() => _instance;
   static final Vestibule _instance = Vestibule._internal();
   Vestibule._internal() {
-    var nc = lnc.NotificationCenter();
+    var nc = NotificationCenter();
     nc.addObserver(this, NotificationNames.kMetaSaved);
     nc.addObserver(this, NotificationNames.kDocumentUpdated);
     nc.addObserver(this, NotificationNames.kMembersUpdated);
@@ -22,7 +22,7 @@ class Vestibule implements lnc.Observer {
   final Map<ID, List<InstantMessage>>  _outgoingMessages = {};
 
   @override
-  Future<void> onReceiveNotification(lnc.Notification notification) async {
+  Future<void> onReceiveNotification(Notification notification) async {
     String name = notification.name;
     Map? info = notification.userInfo;
     assert(name == NotificationNames.kMembersUpdated

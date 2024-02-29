@@ -1,6 +1,6 @@
 import 'package:get/get.dart';
 
-import 'package:lnc/lnc.dart';
+import 'package:lnc/log.dart';
 
 import '../client/shared.dart';
 

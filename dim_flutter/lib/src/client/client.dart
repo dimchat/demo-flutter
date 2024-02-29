@@ -2,10 +2,10 @@ import 'dart:ui';
 
 import 'package:device_info_plus/device_info_plus.dart';
 import 'package:get/get.dart';
+import 'package:lnc/notification.dart';
 import 'package:package_info_plus/package_info_plus.dart';
 
 import 'package:dim_client/dim_client.dart';
-import 'package:lnc/lnc.dart';
 
 import '../common/constants.dart';
 import '../common/platform.dart';
@@ -49,10 +49,10 @@ class Client extends Terminal {
   Future<ClientMessenger?> reconnect() async {
     NeighborInfo? station = await getNeighborStation();
     if (station == null) {
-      Log.error('failed to get neighbor station');
+      error('failed to get neighbor station');
       return null;
     }
-    Log.warning('connecting to station: $station');
+    warning('connecting to station: $station');
     // return await connect('192.168.31.152', 9394);
     // return await connect('129.226.12.4', 9394);
     return await connect(station.host, station.port);
@@ -60,7 +60,7 @@ class Client extends Terminal {
 
   @override
   Future<ClientMessenger> connect(String host, int port) async {
-    Log.warning('connecting to host: $host, port: $port');
+    warning('connecting to host: $host, port: $port');
     ClientMessenger messenger = await super.connect(host, port);
     User? user = await facebook.currentUser;
     if (user != null) {
@@ -131,7 +131,7 @@ class Client extends Terminal {
       receiver = triplet.first;
       content = triplet.second;
       prior = triplet.third;
-      Log.info('[safe channel] send content: $receiver, $content');
+      info('[safe channel] send content: $receiver, $content');
       res = await messenger.sendContent(content, sender: uid, receiver: receiver, priority: prior);
       if (res.second != null) {
         success += 1;
@@ -170,7 +170,7 @@ class Client extends Terminal {
   Future<void> exitState(SessionState? previous, SessionStateMachine ctx, DateTime now) async {
     await super.exitState(previous, ctx, now);
     sessionState = ctx.currentState;
-    Log.info('server state changed: $previous => $sessionState');
+    info('server state changed: $previous => $sessionState');
     var nc = NotificationCenter();
     nc.postNotification(NotificationNames.kServerStateChanged, this, {
       'previous': previous,

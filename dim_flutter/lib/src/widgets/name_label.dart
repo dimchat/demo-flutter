@@ -2,7 +2,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
 import 'package:dim_client/dim_client.dart';
-import 'package:lnc/lnc.dart' as lnc;
+import 'package:lnc/notification.dart' as lnc;
 
 import '../common/constants.dart';
 import '../models/chat.dart';

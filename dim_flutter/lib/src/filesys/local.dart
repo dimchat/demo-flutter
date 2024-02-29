@@ -30,9 +30,11 @@
  */
 import 'dart:io';
 
-import 'package:lnc/lnc.dart';
+import 'package:lnc/log.dart';
+import 'package:path_provider/path_provider.dart';
 
 import '../channels/manager.dart';
+import '../common/platform.dart';
 import 'external.dart';
 import 'paths.dart';
 
@@ -116,8 +118,15 @@ class LocalStorage {
   /// Android: "/sdcard/Android/data/chat.dim.sechat/cache"
   ///     iOS: "/Application/{...}/Library/Caches"
   Future<String?> get cachesDirectory async {
-    ChannelManager man = ChannelManager();
-    return await man.ftpChannel.cachesDirectory;
+    if (DevicePlatform.isWeb) {
+      return '/cache';
+    }
+    if (DevicePlatform.isIOS || DevicePlatform.isAndroid) {
+      ChannelManager man = ChannelManager();
+      return await man.ftpChannel.cachesDirectory;
+    }
+    Directory dir = await getApplicationSupportDirectory();
+    return dir.path;
   }
 
   ///  Protected temporary directory
@@ -126,8 +135,15 @@ class LocalStorage {
   /// Android: "/data/data/chat.dim.sechat/cache"
   ///     iOS: "/Application/{...}/tmp"
   Future<String?> get temporaryDirectory async {
-    ChannelManager man = ChannelManager();
-    return await man.ftpChannel.temporaryDirectory;
+    if (DevicePlatform.isWeb) {
+      return '/tmp';
+    }
+    if (DevicePlatform.isIOS || DevicePlatform.isAndroid) {
+      ChannelManager man = ChannelManager();
+      return await man.ftpChannel.temporaryDirectory;
+    }
+    Directory dir = await getTemporaryDirectory();
+    return dir.path;
   }
 
   Future<int> burnAll(DateTime expired) async {

@@ -1,5 +1,5 @@
 import 'package:dim_client/dim_client.dart';
-import 'package:lnc/lnc.dart';
+import 'package:lnc/log.dart';
 
 import '../client/shared.dart';
 

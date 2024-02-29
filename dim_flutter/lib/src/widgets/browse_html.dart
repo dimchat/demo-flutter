@@ -32,7 +32,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter_inappwebview/flutter_inappwebview.dart';
 
 import 'package:dim_client/dim_client.dart';
-import 'package:lnc/lnc.dart';
+import 'package:lnc/log.dart';
 
 import 'browser.dart';
 

@@ -1,6 +1,8 @@
-import 'package:lnc/lnc.dart';
+import 'package:lnc/log.dart';
+import 'package:lnc/notification.dart';
 
 import '../common/constants.dart';
+import '../common/platform.dart';
 import '../filesys/local.dart';
 import '../filesys/paths.dart';
 import 'helper/sqlite.dart';
@@ -37,6 +39,9 @@ class LoginDatabase extends DatabaseConnector {
   /// returns: '{caches}/.dim/login.db'
   @override
   Future<String?> get path async {
+    if (DevicePlatform.isWeb) {
+      return await super.path;
+    }
     String? root = await LocalStorage().cachesDirectory;
     if (root == null) {
       Log.error('failed to get directory for login.db');

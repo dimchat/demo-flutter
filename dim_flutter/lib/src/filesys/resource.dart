@@ -31,6 +31,7 @@
 import 'dart:io';
 import 'dart:typed_data';
 
+import '../common/platform.dart';
 import 'paths.dart';
 
 abstract class Readable {
@@ -85,11 +86,19 @@ class Resource implements Readable {
 
   @override
   Future<bool> exists(String path) async {
+    if (DevicePlatform.isWeb) {
+      _cacheContents[path] != null;
+    }
     return await Paths.exists(path);
   }
 
   @override
   Future<int> read(String path) async {
+    if (DevicePlatform.isWeb) {
+      Uint8List? bytes = _cacheContents[path];
+      _content = bytes;
+      return bytes?.length ?? -1;
+    }
     File file = File(path);
     if (await file.exists()) {} else {
       // file not found
@@ -109,6 +118,10 @@ class Storage extends Resource implements Writable {
 
   @override
   Future<bool> remove(String path) async {
+    if (DevicePlatform.isWeb) {
+      _cacheContents.remove(path);
+      return true;
+    }
     if (await Paths.delete(path)) {
       return true;
     } else {
@@ -121,6 +134,10 @@ class Storage extends Resource implements Writable {
     Uint8List? bytes = _content;
     if (bytes == null) {
       throw Exception('content empty, failed to save file: $path');
+    }
+    if (DevicePlatform.isWeb) {
+      _cacheContents[path] = bytes;
+      return bytes.length;
     }
     File file = File(path);
     if (await file.exists()) {} else {
@@ -136,3 +153,5 @@ class Storage extends Resource implements Writable {
   }
 
 }
+
+Map<String, Uint8List> _cacheContents = {};

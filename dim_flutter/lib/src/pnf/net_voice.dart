@@ -31,7 +31,7 @@
 import 'package:dim_client/dim_client.dart';
 import 'package:flutter/cupertino.dart';
 
-import 'package:lnc/lnc.dart' as lnc;
+import 'package:lnc/notification.dart' as lnc;
 
 import '../channels/manager.dart';
 import '../common/constants.dart';

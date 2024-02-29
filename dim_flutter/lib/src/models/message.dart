@@ -1,9 +1,9 @@
 import 'package:dim_client/dim_client.dart';
-import 'package:lnc/lnc.dart';
+import 'package:lnc/log.dart';
 
 import 'chat.dart';
 
-abstract class MessageBuilder {
+abstract class MessageBuilder with Logging {
 
   // protected
   String getName(ID identifier);
@@ -39,24 +39,24 @@ abstract class MessageBuilder {
   String getText(Content content, ID sender) {
     try {
       String? template = content['template'];
-      Map? info = content['replacements'];
-      if (template != null && info != null) {
-        return _getTempText(template, info);
+      Map? replacements = content['replacements'];
+      if (template != null && replacements != null) {
+        return _getTempText(template, replacements);
       }
       if (content is Command) {
         return _getCommandText(content, sender);
       }
       return _getContentText(content);
     } catch (e, st) {
-      Log.error('content error: $e, $content, $st');
+      error('content error: $e, $content, $st');
       return e.toString();
     }
   }
 
-  String _getTempText(String template, Map info) {
-    Log.info('template: $template');
+  String _getTempText(String template, Map replacements) {
+    info('template: $template');
     String text = template;
-    info.forEach((key, value) {
+    replacements.forEach((key, value) {
       if (key == 'ID' || key == 'sender' || key == 'receiver' || key == 'group') {
         ID? identifier = ID.parse(value);
         if (identifier != null) {
@@ -147,7 +147,7 @@ class DefaultMessageBuilder extends MessageBuilder {
   String getName(ID identifier) {
     Conversation? chat = Conversation.fromID(identifier);
     if (chat == null) {
-      Log.warning('failed to get conversation: $identifier');
+      warning('failed to get conversation: $identifier');
       return Anonymous.getName(identifier);
     }
     return chat.title;

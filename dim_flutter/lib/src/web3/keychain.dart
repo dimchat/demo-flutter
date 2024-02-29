@@ -34,7 +34,7 @@ import 'package:bip32/bip32.dart';
 import 'package:bip39/bip39.dart';
 
 import 'package:dim_client/dim_client.dart';
-import 'package:lnc/lnc.dart';
+import 'package:lnc/log.dart';
 
 
 // https://iancoleman.io/bip39/#english

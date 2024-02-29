@@ -1,8 +1,8 @@
 import 'package:flutter/cupertino.dart';
 
 import 'package:dim_client/dim_client.dart';
-import 'package:lnc/lnc.dart' as lnc;
-import 'package:lnc/lnc.dart' show Log;
+import 'package:lnc/log.dart';
+import 'package:lnc/notification.dart' as lnc;
 
 import '../common/constants.dart';
 import '../models/chat_contact.dart';

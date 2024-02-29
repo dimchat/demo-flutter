@@ -1,5 +1,4 @@
 import 'package:dim_client/dim_client.dart';
-import 'package:lnc/lnc.dart';
 
 import 'shared.dart';
 import 'group.dart';
@@ -80,7 +79,7 @@ class SharedArchivist extends ClientArchivist {
   Future<bool> queryMeta(ID identifier) async {
     Session? session = messenger?.session;
     if (session?.identifier == null) {
-      Log.warning('querying meta cancel, waiting to connect: $identifier');
+      warning('querying meta cancel, waiting to connect: $identifier');
       return false;
     }
     return await super.queryMeta(identifier);
@@ -90,7 +89,7 @@ class SharedArchivist extends ClientArchivist {
   Future<bool> queryDocuments(ID identifier, List<Document> documents) async {
     Session? session = messenger?.session;
     if (session?.identifier == null) {
-      Log.warning('querying documents cancel, waiting to connect: $identifier');
+      warning('querying documents cancel, waiting to connect: $identifier');
       return false;
     }
     return await super.queryDocuments(identifier, documents);
@@ -100,7 +99,7 @@ class SharedArchivist extends ClientArchivist {
   Future<bool> queryMembers(ID group, List<ID> members) async {
     Session? session = messenger?.session;
     if (session?.identifier == null) {
-      Log.warning('querying members cancel, waiting to connect: $group');
+      warning('querying members cancel, waiting to connect: $group');
       return false;
     }
     return await super.queryMembers(group, members);

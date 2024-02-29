@@ -1,5 +1,5 @@
 import 'package:flutter/services.dart';
-import 'package:lnc/lnc.dart';
+import 'package:lnc/log.dart';
 
 import 'audio.dart';
 import 'keychain.dart';

@@ -33,7 +33,7 @@ import 'dart:typed_data';
 import 'package:dio/dio.dart';
 
 import 'package:dim_client/dim_client.dart';
-import 'package:lnc/lnc.dart';
+import 'package:lnc/log.dart';
 
 import '../client/shared.dart';
 import '../filesys/paths.dart';

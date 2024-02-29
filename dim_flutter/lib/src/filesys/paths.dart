@@ -32,6 +32,8 @@ import 'dart:io';
 
 import 'package:path/path.dart' as utils;
 
+import '../common/platform.dart';
+
 class Paths {
 
   ///  Append all components to the path with separator
@@ -124,6 +126,9 @@ class Paths {
   /// @param path - file path
   /// @return true on exists
   static Future<bool> exists(String path) async {
+    if (DevicePlatform.isWeb) {
+      return true;
+    }
     File file = File(path);
     return await file.exists();
   }
@@ -137,6 +142,9 @@ class Paths {
   /// @param path - dir path
   /// @return false on error
   static Future<bool> mkdirs(String path) async {
+    if (DevicePlatform.isWeb) {
+      return true;
+    }
     Directory dir = Directory(path);
     await dir.create(recursive: true);
     return await dir.exists();
@@ -147,6 +155,9 @@ class Paths {
   /// @param path - file path
   /// @return false on error
   static Future<bool> delete(String path) async {
+    if (DevicePlatform.isWeb) {
+      return true;
+    }
     File file = File(path);
     if (await file.exists()) {
       await file.delete();

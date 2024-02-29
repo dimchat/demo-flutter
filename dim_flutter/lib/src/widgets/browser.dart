@@ -35,7 +35,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_inappwebview/flutter_inappwebview.dart';
 
 import 'package:dim_client/dim_client.dart';
-import 'package:lnc/lnc.dart' show Log;
+import 'package:lnc/log.dart';
 
 import '../ui/icons.dart';
 import '../ui/styles.dart';

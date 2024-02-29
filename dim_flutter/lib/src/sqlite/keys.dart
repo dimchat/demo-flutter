@@ -1,4 +1,5 @@
-import 'package:lnc/lnc.dart';
+import 'package:lnc/log.dart';
+import 'package:lnc/notification.dart';
 
 import '../channels/manager.dart';
 import '../common/constants.dart';

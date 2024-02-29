@@ -1,4 +1,4 @@
-import 'package:lnc/lnc.dart';
+import 'package:lnc/notification.dart';
 
 import '../common/dbi/contact.dart';
 import '../common/constants.dart';

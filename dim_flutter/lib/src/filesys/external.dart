@@ -32,7 +32,7 @@ import 'dart:io';
 import 'dart:typed_data';
 
 import 'package:dim_client/dim_client.dart';
-import 'package:lnc/lnc.dart';
+import 'package:lnc/log.dart';
 
 import 'resource.dart';
 

@@ -2,8 +2,8 @@ import 'package:flutter/cupertino.dart';
 import 'package:get/get.dart';
 
 import 'package:dim_client/dim_client.dart';
-import 'package:lnc/lnc.dart' as lnc;
-import 'package:lnc/lnc.dart' show Log;
+import 'package:lnc/log.dart';
+import 'package:lnc/notification.dart' as lnc;
 
 import '../common/dbi/contact.dart';
 import '../common/constants.dart';
@@ -28,7 +28,7 @@ class ContactInfo extends Conversation {
     if (name == NotificationNames.kContactsUpdated) {
       ID? contact = userInfo?['contact'];
       if (contact == identifier) {
-        Log.info('contact updated: $contact');
+        info('contact updated: $contact');
         setNeedsReload();
         await reloadData();
       }
@@ -102,7 +102,7 @@ class ContactInfo extends Conversation {
     GlobalVariable shared = GlobalVariable();
     User? user = await shared.facebook.currentUser;
     if (user == null) {
-      Log.error('current user not found');
+      error('current user not found');
     }
     // get avatar
     Visa? visa = await shared.facebook.getVisa(identifier);
@@ -195,7 +195,7 @@ class ContactInfo extends Conversation {
     GlobalVariable shared = GlobalVariable();
     shared.facebook.currentUser.then((user) {
       if (user == null) {
-        Log.error('current user not found, failed to add contact: $identifier');
+        error('current user not found, failed to add contact: $identifier');
         Alert.show(context, 'Error', 'Current user not found');
       } else {
         // confirm adding
@@ -221,7 +221,7 @@ class ContactInfo extends Conversation {
     GlobalVariable shared = GlobalVariable();
     shared.facebook.currentUser.then((user) {
       if (user == null) {
-        Log.error('current user not found, failed to add contact: $identifier');
+        error('current user not found, failed to add contact: $identifier');
         Alert.show(context, 'Error', 'Current user not found');
       } else {
         String msg;
@@ -246,7 +246,7 @@ class ContactInfo extends Conversation {
     GlobalVariable shared = GlobalVariable();
     shared.database.removeContact(contact, user: user).then((ok) {
       if (ok) {
-        Log.warning('contact removed: $contact, user: $user');
+        warning('contact removed: $contact, user: $user');
       } else {
         Alert.show(ctx, 'Error', 'Failed to remove contact');
       }

@@ -4,8 +4,8 @@ import 'package:flutter/cupertino.dart';
 import 'package:get/get.dart';
 
 import 'package:dim_client/dim_client.dart';
-import 'package:lnc/lnc.dart' as lnc;
-import 'package:lnc/lnc.dart' show Log;
+import 'package:lnc/log.dart';
+import 'package:lnc/notification.dart' as lnc;
 
 import '../common/dbi/contact.dart';
 import '../common/constants.dart';
@@ -30,7 +30,7 @@ class Invitation {
 }
 
 
-class GroupInfo extends Conversation {
+class GroupInfo extends Conversation with Logging {
   GroupInfo(super.identifier, {super.unread = 0, super.lastMessage, super.lastMessageTime, super.mentionedSerialNumber = 0}) {
     var nc = lnc.NotificationCenter();
     nc.addObserver(this, NotificationNames.kGroupHistoryUpdated);
@@ -46,7 +46,7 @@ class GroupInfo extends Conversation {
       ID? gid = userInfo?['ID'];
       assert(gid != null, 'notification error: $notification');
       if (gid == identifier) {
-        Log.info('group history updated: $gid');
+        info('group history updated: $gid');
         setNeedsReload();
         await reloadData();
       }
@@ -54,7 +54,7 @@ class GroupInfo extends Conversation {
       ID? gid = userInfo?['ID'];
       assert(gid != null, 'notification error: $notification');
       if (gid == identifier) {
-        Log.info('administrators updated: $gid');
+        info('administrators updated: $gid');
         setNeedsReload();
         await reloadData();
       }
@@ -62,7 +62,7 @@ class GroupInfo extends Conversation {
       ID? gid = userInfo?['ID'];
       assert(gid != null, 'notification error: $notification');
       if (gid == identifier) {
-        Log.info('administrators updated: $gid');
+        info('administrators updated: $gid');
         setNeedsReload();
         await reloadData();
       }
@@ -177,7 +177,7 @@ class GroupInfo extends Conversation {
         for (ID item in members) {
           info = ContactInfo.fromID(item);
           if (info == null) {
-            Log.warning('failed to get contact: $item');
+            warning('failed to get contact: $item');
             continue;
           }
           users.add(info);
@@ -213,10 +213,10 @@ class GroupInfo extends Conversation {
         } else if (content is JoinCommand) {
           members = [rMsg.sender];
         } else {
-          Log.debug('ignore group command: ${content.cmd}');
+          debug('ignore group command: ${content.cmd}');
           continue;
         }
-        Log.info('${rMsg.sender} invites $members');
+        info('${rMsg.sender} invites $members');
         for (var user in members) {
           array.add(Invitation(
             sender: rMsg.sender,
@@ -333,7 +333,7 @@ class GroupInfo extends Conversation {
     GlobalVariable shared = GlobalVariable();
     shared.facebook.currentUser.then((user) {
       if (user == null) {
-        Log.error('current user not found, failed to add contact: $identifier');
+        error('current user not found, failed to add contact: $identifier');
         Alert.show(context, 'Error', 'Current user not found');
       } else {
         // confirm removing group

@@ -33,7 +33,7 @@ import 'package:get/get.dart';
 import 'package:image_gallery_saver/image_gallery_saver.dart';
 import 'package:photo_view/photo_view_gallery.dart';
 
-import 'package:lnc/lnc.dart';
+import 'package:lnc/log.dart';
 
 import '../ui/icons.dart';
 import '../widgets/alert.dart';

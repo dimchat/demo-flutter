@@ -1,4 +1,4 @@
-import 'package:lnc/lnc.dart';
+import 'package:lnc/log.dart';
 
 import 'helper/sqlite.dart';
 import 'group_admin.dart';

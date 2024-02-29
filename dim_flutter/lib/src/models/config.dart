@@ -1,7 +1,7 @@
 import 'package:flutter/services.dart';
 
 import 'package:dim_client/dim_client.dart';
-import 'package:lnc/lnc.dart';
+import 'package:lnc/log.dart';
 
 import '../channels/manager.dart';
 import '../filesys/external.dart';

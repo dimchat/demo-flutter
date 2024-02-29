@@ -2,8 +2,8 @@ import 'package:flutter/cupertino.dart';
 import 'package:get/get.dart';
 
 import 'package:dim_client/dim_client.dart';
-import 'package:lnc/lnc.dart' as lnc;
-import 'package:lnc/lnc.dart' show Log;
+import 'package:lnc/log.dart';
+import 'package:lnc/notification.dart' as lnc;
 
 import '../common/constants.dart';
 import '../common/dbi/contact.dart';
@@ -16,7 +16,7 @@ import 'chat_group.dart';
 import 'shield.dart';
 
 /// Chat Info
-abstract class Conversation implements lnc.Observer {
+abstract class Conversation with Logging implements lnc.Observer {
   Conversation(this.identifier, {this.unread = 0, this.lastMessage, this.lastMessageTime, this.mentionedSerialNumber = 0}) {
     var nc = lnc.NotificationCenter();
     nc.addObserver(this, NotificationNames.kDocumentUpdated);
@@ -33,7 +33,7 @@ abstract class Conversation implements lnc.Observer {
       ID? did = userInfo?['ID'];
       assert(did != null, 'notification error: $notification');
       if (did == identifier) {
-        Log.info('document updated: $did');
+        info('document updated: $did');
         setNeedsReload();
         await reloadData();
       }
@@ -41,7 +41,7 @@ abstract class Conversation implements lnc.Observer {
       ID? did = userInfo?['contact'];
       assert(did != null, 'notification error: $notification');
       if (did == identifier) {
-        Log.info('remark updated: $did');
+        info('remark updated: $did');
         setNeedsReload();
         await reloadData();
       }
@@ -49,11 +49,11 @@ abstract class Conversation implements lnc.Observer {
       ID? did = userInfo?['blocked'];
       did ??= userInfo?['unblocked'];
       if (did == identifier) {
-        Log.info('blocked contact updated: $did');
+        info('blocked contact updated: $did');
         setNeedsReload();
         await reloadData();
       } else if (did == null) {
-        Log.info('block-list updated');
+        info('block-list updated');
         setNeedsReload();
         await reloadData();
       }
@@ -61,11 +61,11 @@ abstract class Conversation implements lnc.Observer {
       ID? did = userInfo?['muted'];
       did ??= userInfo?['unmuted'];
       if (did == identifier) {
-        Log.info('muted contact updated: $did');
+        info('muted contact updated: $did');
         setNeedsReload();
         await reloadData();
       } else if (did == null) {
-        Log.info('mute-list updated');
+        info('mute-list updated');
         setNeedsReload();
         await reloadData();
       }
@@ -181,14 +181,14 @@ abstract class Conversation implements lnc.Observer {
     GlobalVariable shared = GlobalVariable();
     shared.facebook.currentUser.then((user) {
       if (user == null) {
-        Log.error('current user not found, failed to set remark: $cr => $identifier');
+        error('current user not found, failed to set remark: $cr => $identifier');
         Alert.show(context, 'Error', 'Current user not found');
       } else {
         shared.database.setRemark(cr!, user: user.identifier).then((ok) {
           if (ok) {
-            Log.info('set remark: $cr => $identifier, user: $user');
+            info('set remark: $cr => $identifier, user: $user');
           } else {
-            Log.error('failed to set remark: $cr => $identifier, user: $user');
+            error('failed to set remark: $cr => $identifier, user: $user');
             Alert.show(context, 'Error', 'Failed to set remark');
           }
         });
@@ -210,7 +210,7 @@ abstract class Conversation implements lnc.Observer {
     GlobalVariable shared = GlobalVariable();
     User? user = await shared.facebook.currentUser;
     if (user == null) {
-      Log.error('current user not found');
+      error('current user not found');
     }
     // get name
     _name = await shared.facebook.getName(identifier);

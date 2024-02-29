@@ -3,8 +3,8 @@ import 'dart:typed_data';
 import 'package:get/get.dart';
 import 'package:flutter/material.dart';
 
-import 'package:lnc/lnc.dart' as lnc;
-import 'package:lnc/lnc.dart' show Log;
+import 'package:lnc/log.dart';
+import 'package:lnc/notification.dart' as lnc;
 
 import '../channels/manager.dart';
 import '../common/constants.dart';

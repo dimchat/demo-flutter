@@ -81,14 +81,14 @@ class Amanuensis with Logging {
       GlobalVariable shared = GlobalVariable();
       // get ID list from database
       array = await shared.database.getConversations();
-      debug('${array.length} conversation(s) loaded');
+      logDebug('${array.length} conversation(s) loaded');
       // build conversations
       List<Conversation> temp = [...array];
       for (Conversation item in temp) {
-        debug('new conversation created: $item');
+        logDebug('new conversation created: $item');
         _conversationMap[item.identifier] = item;
       }
-      debug('${array.length} conversation(s) loaded: $array');
+      logDebug('${array.length} conversation(s) loaded: $array');
       _conversations = array;
     }
     return array;
@@ -98,7 +98,7 @@ class Amanuensis with Logging {
     GlobalVariable shared = GlobalVariable();
     // 1. clear messages
     if (await shared.database.removeInstantMessages(identifier)) {} else {
-      error('failed to clear messages in conversation: $identifier');
+      logError('failed to clear messages in conversation: $identifier');
       return false;
     }
     // 2. update cache
@@ -110,12 +110,12 @@ class Amanuensis with Logging {
       chat.mentionedSerialNumber = 0;
       // 3. update database
       if (await shared.database.updateConversation(chat)) {} else {
-        error('failed to update conversation: $chat');
+        logError('failed to update conversation: $chat');
         return false;
       }
     }
     // OK
-    warning('conversation cleared: $identifier');
+    logWarning('conversation cleared: $identifier');
     return true;
   }
 
@@ -123,12 +123,12 @@ class Amanuensis with Logging {
     GlobalVariable shared = GlobalVariable();
     // 1. clear messages
     if (await shared.database.removeInstantMessages(identifier)) {} else {
-      error('failed to clear messages in conversation: $identifier');
+      logError('failed to clear messages in conversation: $identifier');
       return false;
     }
     // 2. remove from database
     if (await shared.database.removeConversation(identifier)) {} else {
-      error('failed to remove conversation: $identifier');
+      logError('failed to remove conversation: $identifier');
       return false;
     }
     // 3. remove from cache
@@ -138,7 +138,7 @@ class Amanuensis with Logging {
       _conversationMap.remove(identifier);
     }
     // OK
-    warning('conversation cleared: $identifier');
+    logWarning('conversation cleared: $identifier');
     return true;
   }
 
@@ -175,20 +175,20 @@ class Amanuensis with Logging {
     int mentioned = chatBox.mentionedSerialNumber;
     if (unread == 0 && mentioned == 0) {
       // no need to update
-      info('[Badge] no need to update: $cid, unread: $unread, at: $mentioned');
+      logInfo('[Badge] no need to update: $cid, unread: $unread, at: $mentioned');
       return false;
     } else if (_conversationMap[cid] == null) {
       // conversation not found
-      warning('[Badge] conversation not found: $cid, unread: $unread, at: $mentioned');
+      logWarning('[Badge] conversation not found: $cid, unread: $unread, at: $mentioned');
       return false;
     }
     chatBox.unread = 0;
     chatBox.mentionedSerialNumber = 0;
     GlobalVariable shared = GlobalVariable();
     if (await shared.database.updateConversation(chatBox)) {
-      info('[Badge] unread count cleared: $chatBox, unread: $unread, at: $mentioned');
+      logInfo('[Badge] unread count cleared: $chatBox, unread: $unread, at: $mentioned');
     } else {
-      error('[Badge] failed to update conversation: $chatBox, unread: $unread, at: $mentioned');
+      logError('[Badge] failed to update conversation: $chatBox, unread: $unread, at: $mentioned');
       return false;
     }
     var nc = NotificationCenter();
@@ -203,18 +203,18 @@ class Amanuensis with Logging {
     Shield shield = Shield();
     if (await shield.isBlocked(iMsg.sender, group: iMsg.group)) {
       // this message should have been blocked before verifying by messenger
-      error('contact is blocked: ${iMsg.sender}, group: ${iMsg.group}');
+      logError('contact is blocked: ${iMsg.sender}, group: ${iMsg.group}');
       return;
     }
     Content content = iMsg.content;
     DefaultMessageBuilder mb = DefaultMessageBuilder();
     if (mb.isCommand(content, iMsg.sender)) {
-      debug('ignore command for conversation updating');
+      logDebug('ignore command for conversation updating');
       return;
     }
     String last = mb.getText(content, iMsg.sender);
     if (last.isEmpty) {
-      warning('content text empty: $content');
+      logWarning('content text empty: $content');
       return;
     } else {
       last = last.replaceAll(RegExp('[\r\n]+'), ' ').trim();
@@ -223,7 +223,7 @@ class Amanuensis with Logging {
       }
     }
     DateTime? time = iMsg.time;
-    warning('update last message: $last for conversation: $cid');
+    logWarning('update last message: $last for conversation: $cid');
 
     GlobalVariable shared = GlobalVariable();
     User? current = await shared.facebook.currentUser;
@@ -231,7 +231,7 @@ class Amanuensis with Logging {
     // increase unread counter
     int increase;
     if (current?.identifier == iMsg.sender) {
-      debug('message from myself');
+      logDebug('message from myself');
       increase = 0;
     } else {
       increase = 1;
@@ -253,7 +253,7 @@ class Amanuensis with Logging {
       // new conversation
       chatBox = Conversation.fromID(cid);
       if (chatBox == null) {
-        error('failed to get conversation: $cid');
+        logError('failed to get conversation: $cid');
         return;
       }
       chatBox.unread = increase;
@@ -268,7 +268,7 @@ class Amanuensis with Logging {
         _conversationMap[cid] = chatBox;
         // _conversations?.insert(0, chatBox);
       } else {
-        error('failed to add conversation: $chatBox');
+        logError('failed to add conversation: $chatBox');
         return;
       }
     } else {
@@ -277,7 +277,7 @@ class Amanuensis with Logging {
       if (oldTime == null || time == null || time.isAfter(oldTime)) {
         // new message
       } else {
-        warning('ignore old message: ${iMsg.sender} -> ${iMsg.receiver}'
+        logWarning('ignore old message: ${iMsg.sender} -> ${iMsg.receiver}'
             ' (${iMsg['group']}), time: $time');
         return;
       }
@@ -287,14 +287,14 @@ class Amanuensis with Logging {
           chatBox.mentionedSerialNumber = mentioned;
         }
       } else {
-        warning('chat box is opened for: $cid');
+        logWarning('chat box is opened for: $cid');
         chatBox.unread = 0;
         chatBox.mentionedSerialNumber = 0;
       }
       chatBox.lastMessage = last;
       chatBox.lastMessageTime = time;
       if (await shared.database.updateConversation(chatBox)) {} else {
-        error('failed to update conversation: $chatBox');
+        logError('failed to update conversation: $chatBox');
         return;
       }
     }
@@ -388,7 +388,7 @@ class Amanuensis with Logging {
     }
     Envelope? env = content.originalEnvelope;
     if (env == null) {
-      error('original envelope not found: $content');
+      logError('original envelope not found: $content');
       return false;
     }
     Map mta = {'ID': iMsg.sender.toString(), 'time': content['time']};
@@ -400,13 +400,13 @@ class Amanuensis with Logging {
     String? signature = content.originalSignature;
     if (sn == null) {
       sn = 0;
-      error('original sn not found: $content, sender: ${iMsg.sender}');
+      logError('original sn not found: $content, sender: ${iMsg.sender}');
     }
     // save trace
     GlobalVariable shared = GlobalVariable();
     if (await shared.database.addTrace(trace, cid,
         sender: sender, sn: sn, signature: signature)) {} else {
-      error('failed to add message trace: ${iMsg.sender} ($sender -> $cid)');
+      logError('failed to add message trace: ${iMsg.sender} ($sender -> $cid)');
       return false;
     }
     var nc = NotificationCenter();

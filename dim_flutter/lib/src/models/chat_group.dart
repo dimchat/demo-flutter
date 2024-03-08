@@ -46,7 +46,7 @@ class GroupInfo extends Conversation with Logging {
       ID? gid = userInfo?['ID'];
       assert(gid != null, 'notification error: $notification');
       if (gid == identifier) {
-        info('group history updated: $gid');
+        logInfo('group history updated: $gid');
         setNeedsReload();
         await reloadData();
       }
@@ -54,7 +54,7 @@ class GroupInfo extends Conversation with Logging {
       ID? gid = userInfo?['ID'];
       assert(gid != null, 'notification error: $notification');
       if (gid == identifier) {
-        info('administrators updated: $gid');
+        logInfo('administrators updated: $gid');
         setNeedsReload();
         await reloadData();
       }
@@ -62,7 +62,7 @@ class GroupInfo extends Conversation with Logging {
       ID? gid = userInfo?['ID'];
       assert(gid != null, 'notification error: $notification');
       if (gid == identifier) {
-        info('administrators updated: $gid');
+        logInfo('administrators updated: $gid');
         setNeedsReload();
         await reloadData();
       }
@@ -177,7 +177,7 @@ class GroupInfo extends Conversation with Logging {
         for (ID item in members) {
           info = ContactInfo.fromID(item);
           if (info == null) {
-            warning('failed to get contact: $item');
+            logWarning('failed to get contact: $item');
             continue;
           }
           users.add(info);
@@ -213,10 +213,10 @@ class GroupInfo extends Conversation with Logging {
         } else if (content is JoinCommand) {
           members = [rMsg.sender];
         } else {
-          debug('ignore group command: ${content.cmd}');
+          logDebug('ignore group command: ${content.cmd}');
           continue;
         }
-        info('${rMsg.sender} invites $members');
+        logInfo('${rMsg.sender} invites $members');
         for (var user in members) {
           array.add(Invitation(
             sender: rMsg.sender,
@@ -333,7 +333,7 @@ class GroupInfo extends Conversation with Logging {
     GlobalVariable shared = GlobalVariable();
     shared.facebook.currentUser.then((user) {
       if (user == null) {
-        error('current user not found, failed to add contact: $identifier');
+        logError('current user not found, failed to add contact: $identifier');
         Alert.show(context, 'Error', 'Current user not found');
       } else {
         // confirm removing group

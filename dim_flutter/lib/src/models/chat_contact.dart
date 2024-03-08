@@ -28,7 +28,7 @@ class ContactInfo extends Conversation {
     if (name == NotificationNames.kContactsUpdated) {
       ID? contact = userInfo?['contact'];
       if (contact == identifier) {
-        info('contact updated: $contact');
+        logInfo('contact updated: $contact');
         setNeedsReload();
         await reloadData();
       }
@@ -102,7 +102,7 @@ class ContactInfo extends Conversation {
     GlobalVariable shared = GlobalVariable();
     User? user = await shared.facebook.currentUser;
     if (user == null) {
-      error('current user not found');
+      logError('current user not found');
     }
     // get avatar
     Visa? visa = await shared.facebook.getVisa(identifier);
@@ -195,7 +195,7 @@ class ContactInfo extends Conversation {
     GlobalVariable shared = GlobalVariable();
     shared.facebook.currentUser.then((user) {
       if (user == null) {
-        error('current user not found, failed to add contact: $identifier');
+        logError('current user not found, failed to add contact: $identifier');
         Alert.show(context, 'Error', 'Current user not found');
       } else {
         // confirm adding
@@ -221,7 +221,7 @@ class ContactInfo extends Conversation {
     GlobalVariable shared = GlobalVariable();
     shared.facebook.currentUser.then((user) {
       if (user == null) {
-        error('current user not found, failed to add contact: $identifier');
+        logError('current user not found, failed to add contact: $identifier');
         Alert.show(context, 'Error', 'Current user not found');
       } else {
         String msg;
@@ -246,7 +246,7 @@ class ContactInfo extends Conversation {
     GlobalVariable shared = GlobalVariable();
     shared.database.removeContact(contact, user: user).then((ok) {
       if (ok) {
-        warning('contact removed: $contact, user: $user');
+        logWarning('contact removed: $contact, user: $user');
       } else {
         Alert.show(ctx, 'Error', 'Failed to remove contact');
       }

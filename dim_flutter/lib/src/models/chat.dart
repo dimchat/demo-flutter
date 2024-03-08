@@ -33,7 +33,7 @@ abstract class Conversation with Logging implements lnc.Observer {
       ID? did = userInfo?['ID'];
       assert(did != null, 'notification error: $notification');
       if (did == identifier) {
-        info('document updated: $did');
+        logInfo('document updated: $did');
         setNeedsReload();
         await reloadData();
       }
@@ -41,7 +41,7 @@ abstract class Conversation with Logging implements lnc.Observer {
       ID? did = userInfo?['contact'];
       assert(did != null, 'notification error: $notification');
       if (did == identifier) {
-        info('remark updated: $did');
+        logInfo('remark updated: $did');
         setNeedsReload();
         await reloadData();
       }
@@ -49,11 +49,11 @@ abstract class Conversation with Logging implements lnc.Observer {
       ID? did = userInfo?['blocked'];
       did ??= userInfo?['unblocked'];
       if (did == identifier) {
-        info('blocked contact updated: $did');
+        logInfo('blocked contact updated: $did');
         setNeedsReload();
         await reloadData();
       } else if (did == null) {
-        info('block-list updated');
+        logInfo('block-list updated');
         setNeedsReload();
         await reloadData();
       }
@@ -61,11 +61,11 @@ abstract class Conversation with Logging implements lnc.Observer {
       ID? did = userInfo?['muted'];
       did ??= userInfo?['unmuted'];
       if (did == identifier) {
-        info('muted contact updated: $did');
+        logInfo('muted contact updated: $did');
         setNeedsReload();
         await reloadData();
       } else if (did == null) {
-        info('mute-list updated');
+        logInfo('mute-list updated');
         setNeedsReload();
         await reloadData();
       }
@@ -181,14 +181,14 @@ abstract class Conversation with Logging implements lnc.Observer {
     GlobalVariable shared = GlobalVariable();
     shared.facebook.currentUser.then((user) {
       if (user == null) {
-        error('current user not found, failed to set remark: $cr => $identifier');
+        logError('current user not found, failed to set remark: $cr => $identifier');
         Alert.show(context, 'Error', 'Current user not found');
       } else {
         shared.database.setRemark(cr!, user: user.identifier).then((ok) {
           if (ok) {
-            info('set remark: $cr => $identifier, user: $user');
+            logInfo('set remark: $cr => $identifier, user: $user');
           } else {
-            error('failed to set remark: $cr => $identifier, user: $user');
+            logError('failed to set remark: $cr => $identifier, user: $user');
             Alert.show(context, 'Error', 'Failed to set remark');
           }
         });
@@ -210,7 +210,7 @@ abstract class Conversation with Logging implements lnc.Observer {
     GlobalVariable shared = GlobalVariable();
     User? user = await shared.facebook.currentUser;
     if (user == null) {
-      error('current user not found');
+      logError('current user not found');
     }
     // get name
     _name = await shared.facebook.getName(identifier);

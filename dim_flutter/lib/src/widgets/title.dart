@@ -43,7 +43,7 @@ class _TitleState extends State<StatedTitleView> implements lnc.Observer {
     if (name == NotificationNames.kServerStateChanged) {
       GlobalVariable shared = GlobalVariable();
       int state = shared.terminal.sessionStateOrder;
-      Log.debug('session state: $state');
+      Log.info('session state: $state');
       if (mounted) {
         setState(() {
         });
@@ -54,7 +54,7 @@ class _TitleState extends State<StatedTitleView> implements lnc.Observer {
   Future<void> _reload() async {
     GlobalVariable shared = GlobalVariable();
     int state = shared.terminal.sessionStateOrder;
-    Log.debug('session state: $state');
+    Log.info('session state: $state');
     if (mounted) {
       setState(() {
       });

@@ -36,7 +36,7 @@ class _GroupHistoryTable extends DataTableHandler<Pair<GroupCommand, ReliableMes
   Future<List<Pair<GroupCommand, ReliableMessage>>> getGroupHistories({required ID group}) async {
     SQLConditions cond;
     cond = SQLConditions(left: 'gid', comparison: '=', right: group.toString());
-    return await select(_table, columns: _selectColumns, conditions: cond);
+    return await select(_table, distinct: true, columns: _selectColumns, conditions: cond);
   }
 
   @override

@@ -17,8 +17,8 @@ class SharedMessenger extends ClientMessenger {
       return await super.encryptKey(key, receiver, iMsg);
     } catch (e, st) {
       // FIXME:
-      error('failed to encrypt key for receiver: $receiver, error: $e');
-      debug('failed to encrypt key for receiver: $receiver, error: $e, $st');
+      logError('failed to encrypt key for receiver: $receiver, error: $e');
+      logDebug('failed to encrypt key for receiver: $receiver, error: $e, $st');
       return null;
     }
   }
@@ -31,7 +31,7 @@ class SharedMessenger extends ClientMessenger {
       // get client IP from handshake response
       if (content is HandshakeCommand) {
         var remote = content['remote_address'];
-        warning('socket address: $remote in $content, msg: ${sMsg.sender} -> ${sMsg.receiver}');
+        logWarning('socket address: $remote in $content, msg: ${sMsg.sender} -> ${sMsg.receiver}');
       }
     }
     return content;
@@ -41,7 +41,7 @@ class SharedMessenger extends ClientMessenger {
   Future<SecureMessage?> verifyMessage(ReliableMessage rMsg) async {
     Shield shield = Shield();
     if (await shield.isBlocked(rMsg.sender, group: rMsg.group)) {
-      warning('contact is blocked: ${rMsg.sender}, group: ${rMsg.group}');
+      logWarning('contact is blocked: ${rMsg.sender}, group: ${rMsg.group}');
       // TODO: upload blocked-list to current station?
       return null;
     }
@@ -60,10 +60,10 @@ class SharedMessenger extends ClientMessenger {
           aid = ClientFacebook.ans?.identifier(name);
         }
         if (aid == null) {
-          info('broadcast message with receiver: $receiver');
+          logInfo('broadcast message with receiver: $receiver');
           // TODO: wrap it by ForwardContent
         } else {
-          info('convert receiver: $receiver => $aid');
+          logInfo('convert receiver: $receiver => $aid');
           receiver = aid;
         }
       }
@@ -77,8 +77,8 @@ class SharedMessenger extends ClientMessenger {
     try {
       rMsg = await super.sendInstantMessage(iMsg, priority: priority);
     } catch (e, st) {
-      error('failed to send message to: ${iMsg.receiver}, error: $e');
-      debug('failed to send message to: ${iMsg.receiver}, error: $e, $st');
+      logError('failed to send message to: ${iMsg.receiver}, error: $e');
+      logDebug('failed to send message to: ${iMsg.receiver}, error: $e, $st');
       return null;
     }
     if (rMsg != null) {
@@ -135,7 +135,7 @@ class SharedMessenger extends ClientMessenger {
     // 5. save it
     bool ok = await facebook.saveDocument(visa);
     assert(ok, 'failed to save document: $visa');
-    info('visa updated: $ok, $visa');
+    logInfo('visa updated: $ok, $visa');
     return ok;
   }
   Map _getAppInfo(Visa visa) {
@@ -184,7 +184,7 @@ class SharedMessenger extends ClientMessenger {
     try {
       await super.handshakeSuccess();
     } catch (e, st) {
-      error('failed to broadcast document: $e, $st');
+      logError('failed to broadcast document: $e, $st');
     }
     GlobalVariable shared = GlobalVariable();
     User? user = await shared.facebook.currentUser;
@@ -196,7 +196,7 @@ class SharedMessenger extends ClientMessenger {
     try {
       await broadcastLogin(user.identifier, shared.terminal.userAgent);
     } catch (e, st) {
-      error('failed to broadcast login command: $e, $st');
+      logError('failed to broadcast login command: $e, $st');
     }
     // 3. broadcast block/mute list
     try {
@@ -204,14 +204,14 @@ class SharedMessenger extends ClientMessenger {
       await shield.broadcastBlockList();
       await shield.broadcastMuteList();
     } catch (e, st) {
-      error('failed to broadcast block/mute list: $e, $st');
+      logError('failed to broadcast block/mute list: $e, $st');
     }
     // 4. report station speeds to master after tested speeds
   }
 
   Future<void> reportSpeeds(List<VelocityMeter> meters, ID provider) async {
     if (meters.isEmpty) {
-      warning('meters empty');
+      logWarning('meters empty');
       return;
     }
     List stations = [];

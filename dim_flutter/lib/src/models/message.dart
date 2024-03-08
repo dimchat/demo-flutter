@@ -48,13 +48,13 @@ abstract class MessageBuilder with Logging {
       }
       return _getContentText(content);
     } catch (e, st) {
-      error('content error: $e, $content, $st');
+      logError('content error: $e, $content, $st');
       return e.toString();
     }
   }
 
   String _getTempText(String template, Map replacements) {
-    info('template: $template');
+    logInfo('template: $template');
     String text = template;
     replacements.forEach((key, value) {
       if (key == 'ID' || key == 'sender' || key == 'receiver' || key == 'group') {
@@ -147,7 +147,7 @@ class DefaultMessageBuilder extends MessageBuilder {
   String getName(ID identifier) {
     Conversation? chat = Conversation.fromID(identifier);
     if (chat == null) {
-      warning('failed to get conversation: $identifier');
+      logWarning('failed to get conversation: $identifier');
       return Anonymous.getName(identifier);
     }
     return chat.title;

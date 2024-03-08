@@ -22,7 +22,7 @@ import 'shared.dart';
 class Client extends Terminal {
   Client(super.facebook, super.sdb);
 
-  SessionState? sessionState;
+  SessionState? get sessionState => session?.state;
 
   int get sessionStateOrder =>
       sessionState?.index ?? SessionStateOrder.init.index;
@@ -49,24 +49,14 @@ class Client extends Terminal {
   Future<ClientMessenger?> reconnect() async {
     NeighborInfo? station = await getNeighborStation();
     if (station == null) {
-      error('failed to get neighbor station');
+      logError('failed to get neighbor station');
       return null;
     }
-    warning('connecting to station: $station');
+    logWarning('connecting to station: $station');
     // return await connect('192.168.31.152', 9394);
+    // return await connect('170.106.141.194', 9394);
     // return await connect('129.226.12.4', 9394);
     return await connect(station.host, station.port);
-  }
-
-  @override
-  Future<ClientMessenger> connect(String host, int port) async {
-    warning('connecting to host: $host, port: $port');
-    ClientMessenger messenger = await super.connect(host, port);
-    User? user = await facebook.currentUser;
-    if (user != null) {
-      login(user.identifier);
-    }
-    return messenger;
   }
 
   @override
@@ -131,7 +121,7 @@ class Client extends Terminal {
       receiver = triplet.first;
       content = triplet.second;
       prior = triplet.third;
-      info('[safe channel] send content: $receiver, $content');
+      logInfo('[safe channel] send content: $receiver, $content');
       res = await messenger.sendContent(content, sender: uid, receiver: receiver, priority: prior);
       if (res.second != null) {
         success += 1;
@@ -169,12 +159,12 @@ class Client extends Terminal {
   @override
   Future<void> exitState(SessionState? previous, SessionStateMachine ctx, DateTime now) async {
     await super.exitState(previous, ctx, now);
-    sessionState = ctx.currentState;
-    info('server state changed: $previous => $sessionState');
+    SessionState? current = ctx.currentState;
+    logInfo('server state changed: $previous => $current');
     var nc = NotificationCenter();
     nc.postNotification(NotificationNames.kServerStateChanged, this, {
       'previous': previous,
-      'current': sessionState,
+      'current': current,
     });
   }
 

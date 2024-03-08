@@ -51,9 +51,17 @@ dependencies:
   dio: ^5.3.3
   mutex: ^3.1.0
 
-  lnc: ^0.1.1
-  stargate: ^0.2.2
-  dim_client: ^0.4.3
+# object_key: 0.1.1
+  lnc: 0.1.2
+# startrek: 0.4.0
+  stargate: 0.4.0
+
+# mkm: 0.3.2
+# dkd: 0.3.2
+# dimp: 0.3.3
+# dimsdk: 0.3.3
+# dim_plugins: 0.3.3
+  dim_client: 0.4.6
 
 dev_dependencies:
   flutter_test:

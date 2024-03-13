@@ -157,13 +157,6 @@ class FileTransferChannel extends SafeChannel {
   Future<String?> downloadAvatar(Uri url) async =>
       await _doDownload(ChannelMethods.downloadAvatar, url);
 
-  ///  Download encrypted file data for user
-  ///
-  /// @param url      - relay URL
-  /// @return temporary path if same file downloaded before
-  Future<String?> downloadFile(Uri url) async =>
-      await _doDownload(ChannelMethods.downloadFile, url);
-
   Future<Uri?> _doUpload(String method, Uint8List data, String filename, ID sender) async {
     await _prepare();
     // 1. check old task

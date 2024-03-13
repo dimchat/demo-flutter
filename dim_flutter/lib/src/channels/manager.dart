@@ -45,7 +45,6 @@ class ChannelMethods {
   static const String uploadAvatar       = "uploadAvatar";
   static const String uploadFile         = "uploadEncryptFile";
   static const String downloadAvatar     = "downloadAvatar";
-  static const String downloadFile       = "downloadEncryptedFile";
 
   static const String onUploadSuccess    = "onUploadSuccess";
   static const String onUploadFailure    = "onUploadFailed";

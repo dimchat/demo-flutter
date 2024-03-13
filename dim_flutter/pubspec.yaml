@@ -53,8 +53,8 @@ dependencies:
 
 # object_key: 0.1.1
   lnc: 0.1.2
-# startrek: 0.4.0
-  stargate: 0.4.0
+# startrek: 0.4.1
+  stargate: 0.4.1
 
 # mkm: 0.3.2
 # dkd: 0.3.2

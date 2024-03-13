@@ -2,12 +2,71 @@ import 'package:flutter/services.dart';
 
 import 'package:dim_client/dim_client.dart';
 import 'package:lnc/log.dart';
+import 'package:lnc/notification.dart' as lnc;
 
-import '../channels/manager.dart';
+import '../common/constants.dart';
 import '../filesys/external.dart';
 import '../filesys/local.dart';
 import '../filesys/paths.dart';
+import '../pnf/loader.dart';
+import '../pnf/net_base.dart';
 import '../widgets/browse_html.dart';
+
+
+class _ConfigLoader implements lnc.Observer {
+  _ConfigLoader() {
+    var nc = lnc.NotificationCenter();
+    nc.addObserver(this, NotificationNames.kPortableNetworkStatusChanged);
+    nc.addObserver(this, NotificationNames.kPortableNetworkReceiveProgress);
+    nc.addObserver(this, NotificationNames.kPortableNetworkReceived);
+    nc.addObserver(this, NotificationNames.kPortableNetworkDecrypted);
+    nc.addObserver(this, NotificationNames.kPortableNetworkSuccess);
+    nc.addObserver(this, NotificationNames.kPortableNetworkError);
+  }
+
+  PortableNetworkLoader? _pnfLoader;
+
+  Map? info;
+
+  void download(Uri url) {
+    PortableNetworkFile pnf = PortableNetworkFile.createFromURL(url, null);
+    _pnfLoader = PortableNetworkFactory().getLoader(pnf);
+  }
+
+  @override
+  Future<void> onReceiveNotification(lnc.Notification notification) async {
+    String name = notification.name;
+    Map? userInfo = notification.userInfo;
+    if (notification.sender != _pnfLoader) {
+      return;
+    } else if (name == NotificationNames.kPortableNetworkSuccess) {
+      Uri? url = userInfo?['URL'];
+      Uint8List? data = userInfo?['data'];
+      String? path = await _pnfLoader?.cacheFilePath;
+      Log.info('[PNF] onSuccess: ${data?.length} bytes, $url');
+      await _refresh(data, path);
+    }
+  }
+
+  Future<bool> _refresh(Uint8List? data, String? path) async {
+    String? configPath = await _path();
+    if (data == null || configPath == null || configPath == path) {
+      assert(false, 'should not happen: ${data?.length} bytes, $path -> $configPath');
+      return false;
+    }
+    int cnt = await ExternalStorage.saveBinary(data, configPath);
+    assert(cnt == data.length, 'failed to save config file: $cnt/${data.length}, $configPath');
+    String? text = UTF8.decode(data);
+    if (text == null) {
+      assert(false, 'data error :${data.length} bytes');
+      return false;
+    }
+    info = JSON.decode(text);
+    Log.info('new config: $text');
+    return true;
+  }
+
+}
 
 class Config {
   factory Config() => _instance;
@@ -18,10 +77,10 @@ class Config {
   //       for updating configurations
   static String entrance = 'http://tarsier.dim.chat/v1/config.json';
 
-  Map? _info;
+  final _cfgLoader = _ConfigLoader();
 
   Future<Map?> get info async {
-    Map? conf = _info;
+    Map? conf = _cfgLoader.info;
     if (conf == null) {
       String? path = await _path();
       if (path == null) {
@@ -39,17 +98,7 @@ class Config {
       } else {
         Log.info('try to refresh config: $url -> $path');
         entrance = '';
-        _refresh(url, path).then((value) {
-          if (value == null) {
-            Log.error('failed to refresh config: $url, $path');
-          } else {
-            Log.info('config reloaded: $path');
-            _info = value;
-          }
-        }).onError((error, stackTrace) {
-          Log.error('failed to update config: $entrance, $error, $stackTrace');
-          return null;
-        });
+        _cfgLoader.download(url);
       }
     }
     return conf;
@@ -113,50 +162,6 @@ Future<Map?> _init(String path) async {
     Log.warning('initialize config: $path, $conf');
     await ExternalStorage.saveJsonMap(conf, path);
   }
-  return conf;
-}
-
-/// refresh config info to caches path from remote URL
-Future<Map?> _refresh(Uri url, String path) async {
-  // 1. download from remote URL
-  ChannelManager man = ChannelManager();
-  String? tmp = await man.ftpChannel.downloadFile(url);  // FIXME: replace with dio
-  if (tmp == null) {
-    Log.error('failed to download config: $url');
-    return null;
-  } else {
-    Log.debug('download config: $url -> $tmp');
-  }
-  // get config from temporary file
-  Map? conf;
-  try {
-    conf = await ExternalStorage.loadJsonMap(tmp);
-  } catch (e, st) {
-    Log.error('downloaded config error: $e, $st');
-    conf = null;
-  }
-  // remove temporary file
-  if (await Paths.delete(tmp)) {
-    Log.debug('temporary config file removed: $tmp');
-  }
-  // 2. check config
-  if (conf == null) {
-    Log.warning('failed to load config: $tmp');
-    return null;
-  }
-  ID? provider = ID.parse(conf['ID']);
-  List? stations = conf['stations'];
-  List? uploads = conf['uploads'];
-  if (provider == null || stations == null || uploads == null) {
-    Log.error('not a config: $conf');
-    return null;
-  } else if (stations.isEmpty || uploads.isEmpty) {
-    Log.error('config error: $conf');
-    return null;
-  }
-  // 3. replace config
-  Log.warning('replace config file: $path, $conf');
-  await ExternalStorage.saveJsonMap(conf, path);
   return conf;
 }
 

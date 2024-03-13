@@ -38,9 +38,6 @@ import '../channels/manager.dart';
 import '../common/constants.dart';
 import '../filesys/external.dart';
 import '../filesys/local.dart';
-import '../filesys/paths.dart';
-import '../pnf/http.dart';
-import '../widgets/browse_html.dart';
 
 
 class FileTransfer {
@@ -72,107 +69,6 @@ class FileTransfer {
     return await man.ftpChannel.uploadEncryptData(data, filename, sender);
   }
 
-  //
-  //  Decryption process
-  //  ~~~~~~~~~~~~~~~~~~
-  //
-  //  1. get 'filename' from file content and call 'getCacheFilePath(filename)',
-  //     if not null, means this file is already downloaded an decrypted;
-  //
-  //  2. get 'URL' from file content and call 'downloadEncryptedFile(url)',
-  //     if not null, means this file is already downloaded but not decrypted yet,
-  //     this step will get a temporary path for encrypted data, continue step 3;
-  //     if the return path is null, then let the delegate waiting for response;
-  //
-  //  3. get 'password' from file content and call 'decryptFileData(path, password)',
-  //     this step will get the decrypted file data, you should save it to cache path
-  //     by calling 'cacheFileData(data, filename)', notice that this filename is in
-  //     hex format by hex(md5(data)), which is the same string with content.filename.
-  //
-
-  /// cache filename for PNF
-  static String? _getCacheName(Map info) {
-    PortableNetworkFile? pnf = PortableNetworkFile.parse(info);
-    if (pnf == null) {
-      assert(false, 'PNF error: $info');
-      return null;
-    }
-    String? filename = pnf.filename;
-    Uri? url = pnf.url;
-    if (url == null) {
-      return filename;
-    } else {
-      return URLHelper.filenameFromURL(url, filename);
-    }
-  }
-
-  Future<String?> getFilePath(FileContent content) async {
-    String? filename = _getCacheName(content);
-    if (filename == null) {
-      Log.error('file content error: $content');
-      return null;
-    }
-    // check decrypted file
-    String? cachePath = await _getCacheFilePath(filename);
-    if (cachePath == null) {
-      Log.error('failed to get caches directory for file: $filename');
-      return null;
-    } else if (await Paths.exists(cachePath)) {
-      return cachePath;
-    }
-    // get download URL
-    String? urlString = content.url?.toString();
-    if (urlString == null) {
-      Log.error('file URL not found: $content');
-      return null;
-    }
-    Uri? url = HtmlUri.parseUri(urlString);
-    if (url == null) {
-      Log.error('URL error: $urlString');
-      return null;
-    }
-    // try download file from remote URL
-    String? tempPath = await _downloadEncryptedFile(url);
-    if (tempPath == null) {
-      Log.info('not download yet: $url');
-      // TODO: post notification?
-      return null;
-    }
-    // decrypt with message password
-    DecryptKey? password = content.password;
-    if (password == null) {
-      Log.error('password not found: $content');
-      return null;
-    }
-    Uint8List? data = await _decryptFileData(tempPath, password, content);
-    if (data == null) {
-      Log.error('failed to decrypt file: $tempPath, password: $password');
-      // delete to download again
-      try {
-        await Paths.delete(tempPath);
-      } catch (e, st) {
-        Log.error('failed to delete file: $tempPath, error: $e, $st');
-      }
-      return null;
-    }
-    // save decrypted file data
-    int len = await cacheFileData(data, cachePath);
-    if (len == data.length) {
-      Log.info('store decrypted file data: $filename -> $url => $cachePath');
-    } else {
-      Log.error('failed to cache file: $cachePath');
-      return null;
-    }
-    // post notification async
-    var nc = NotificationCenter();
-    nc.postNotification(NotificationNames.kFileDownloadSuccess, this, {
-      'url': url,
-      'path': cachePath,
-    });
-    // success
-    return cachePath;
-  }
-
   ///  Download avatar image file
   ///
   /// @param url      - avatar URL
@@ -195,47 +91,6 @@ class FileTransfer {
     return path;
   }
 
-  ///  Download encrypted file data for user
-  ///
-  /// @param url      - relay URL
-  /// @return temporary path if same file downloaded before
-  Future<String?> _downloadEncryptedFile(Uri url) async {
-    ChannelManager man = ChannelManager();
-    return await man.ftpChannel.downloadFile(url);
-  }
-
-  ///  Decrypt temporary file with password from received message
-  ///
-  /// @param path     - temporary path
-  /// @param password - symmetric key
-  /// @return decrypted data
-  static Future<Uint8List?> _decryptFileData(String path, DecryptKey password, FileContent content) async {
-    Uint8List? data = await _loadDownloadedFileData(path);
-    if (data == null) {
-      Log.warning('failed to load temporary file: $path');
-      return null;
-    }
-    Log.info('decrypting file: $path, size: ${data.length}');
-    try {
-      return password.decrypt(data, content);
-    } catch (e, st) {
-      Log.error('failed to decrypt file data: $path, $password, error: $e, $st');
-      return null;
-    }
-  }
-
-  static Future<Uint8List?> _loadDownloadedFileData(String filename) async {
-    String? path = await _getDownloadFilePath(filename);
-    if (path == null) {
-      Log.error('failed to get caches directory for downloaded file: $filename');
-      return null;
-    }
-    if (await Paths.exists(path)) {
-      return await ExternalStorage.loadBinary(path);
-    }
-    return null;
-  }
-
   static Future<int> cacheFileData(Uint8List data, String filename) async {
     String? path = await _getCacheFilePath(filename);
     if (path == null) {
@@ -254,44 +109,6 @@ class FileTransfer {
       LocalStorage cache = LocalStorage();
       return await cache.getCacheFilePath(filename);
     }
-  }
-
-  static Future<String?> _getDownloadFilePath(String filename) async {
-    if (filename.contains('/') || filename.contains('\\')) {
-      // full path?
-      return filename;
-    } else {
-      // relative path?
-      LocalStorage cache = LocalStorage();
-      return await cache.getDownloadFilePath(filename);
-    }
-  }
-
-  ///  Get entity file path: "/sdcard/chat.dim.sechat/mkm/{AA}/{BB}/{address}/{filename}"
-  ///
-  /// @param entity   - user or group ID
-  /// @param filename - entity file name
-  /// @return entity file path
-  Future<String?> getEntityFilePath(ID entity, String filename) async {
-    String? dir = await _getEntityDirectory(entity.address);
-    if (dir == null) {
-      Log.error('failed to get directory for entity: $entity, $filename');
-      return null;
-    }
-    return Paths.append(dir, filename);
-  }
-
-  Future<String?> _getEntityDirectory(Address address) async {
-    LocalStorage cache = LocalStorage();
-    String? dir = await cache.cachesDirectory;
-    if (dir == null) {
-      Log.error('failed to get directory for address: $address');
-      return null;
-    }
-    String string = address.toString();
-    String aa = string.substring(0, 2);
-    String bb = string.substring(2, 4);
-    return Paths.append(dir, 'mkm', aa, bb, string);
   }
 
 }

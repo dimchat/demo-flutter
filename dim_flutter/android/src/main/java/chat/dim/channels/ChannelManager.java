@@ -33,18 +33,6 @@ final class ChannelMethods {
     //
     //  FTP Channel
     //
-    static final String SET_UPLOAD_API = "setUploadAPI";
-
-    static final String UPLOAD_AVATAR = "uploadAvatar";
-    static final String UPLOAD_FILE = "uploadEncryptFile";
-    static final String DOWNLOAD_AVATAR = "downloadAvatar";
-    static final String DOWNLOAD_FILE = "downloadEncryptedFile";
-
-    static final String ON_UPLOAD_SUCCESS = "onUploadSuccess";
-    static final String ON_UPLOAD_FAILURE = "onUploadFailed";
-    static final String ON_DOWNLOAD_SUCCESS = "onDownloadSuccess";
-    static final String ON_DOWNLOAD_FAILURE = "onDownloadFailed";
-
     static final String GET_CACHES_DIRECTORY = "getCachesDirectory";
     static final String GET_TEMPORARY_DIRECTORY = "getTemporaryDirectory";
 

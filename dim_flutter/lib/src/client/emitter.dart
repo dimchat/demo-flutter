@@ -4,8 +4,6 @@ import 'package:dim_client/dim_client.dart';
 import 'package:lnc/log.dart';
 import 'package:lnc/notification.dart';
 
-import '../channels/manager.dart';
-import '../channels/transfer.dart';
 import '../common/constants.dart';
 import '../filesys/paths.dart';
 import '../models/amanuensis.dart';
@@ -142,8 +140,7 @@ class Emitter implements Observer {
     // 2. add upload task with encrypted data
     Uint8List encrypted = password.encrypt(data, content);
     filename = URLHelper.filenameFromData(encrypted, filename);
-    ChannelManager man = ChannelManager();
-    FileTransferChannel ftp = man.ftpChannel;
+    FileTransfer ftp = FileTransfer();
     Uri? url = await ftp.uploadEncryptData(encrypted, filename, sender);
     if (url == null) {
       Log.error('failed to upload: ${content.filename} -> $filename');

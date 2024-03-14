@@ -265,14 +265,17 @@ class _HTTPHelper {
   }
 
   static Future<Uint8List?> download(Uri url, ProgressCallback? onReceiveProgress) async {
-    Response response;
+    Response<Uint8List> response;
     try {
-      response = await Dio().getUri(url, onReceiveProgress: onReceiveProgress, options: Options(
+      response = await Dio().getUri<Uint8List>(url,
+        onReceiveProgress: onReceiveProgress,
+        options: Options(
           responseType: ResponseType.bytes,
           headers: {
             'User-Agent': userAgent,
-          }
-      )).onError((error, stackTrace) {
+          },
+        ),
+      ).onError((error, stackTrace) {
         Log.error('[DIO] failed to download $url: $error');
         throw Exception(error);
       });
@@ -282,9 +285,8 @@ class _HTTPHelper {
       return null;
     }
     int? statusCode = response.statusCode;
-    String? statusMessage = response.statusMessage;
     if (statusCode != 200) {
-      Log.error('failed to download $url, status: $statusCode - $statusMessage');
+      Log.error('failed to download $url, status: $statusCode - ${response.statusMessage}');
       return null;
     }
     int? contentLength = getContentLength(response);

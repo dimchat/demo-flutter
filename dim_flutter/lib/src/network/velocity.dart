@@ -133,7 +133,7 @@ class VelocityMeter {
       return null;
     }
     // prepare data handler
-    socket.listen((msg) async {
+    socket.listen((msg) {
       if (_startTime > 0 && msg.length > 64) {
         _endTime = Time.currentTimeSeconds;
       }

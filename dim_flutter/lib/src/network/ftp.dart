@@ -28,22 +28,70 @@
  * SOFTWARE.
  * =============================================================================
  */
+import 'dart:math';
 import 'dart:typed_data';
+
+import 'package:dio/dio.dart';
 
 import 'package:dim_client/dim_client.dart';
 import 'package:lnc/log.dart';
 import 'package:lnc/notification.dart';
 
-import '../channels/manager.dart';
+import '../client/shared.dart';
 import '../common/constants.dart';
 import '../filesys/external.dart';
 import '../filesys/local.dart';
+import '../models/config.dart';
 
 
 class FileTransfer {
   factory FileTransfer() => _instance;
   static final FileTransfer _instance = FileTransfer._internal();
   FileTransfer._internal();
+
+  bool _apiUpdated = false;
+
+  String? _api;
+  Uint8List? _secret;
+
+  Future<void> _prepare() async {
+    if (_apiUpdated) {
+      return;
+    }
+    // config for upload
+    Config config = Config();
+    List api = await config.uploadAPI;
+    String url;
+    String enigma;
+    // TODO: pick up the fastest API for upload
+    var chosen = api[0];
+    if (chosen is Map) {
+      url = chosen['url'];
+      enigma = chosen['enigma'];
+    } else {
+      assert(chosen is String, 'API error: $api');
+      url = chosen;
+      enigma = '';
+    }
+    if (url.isEmpty) {
+      assert(false, 'config error: $api');
+      return;
+    }
+    String? secret = await Enigma().getSecret(enigma);
+    if (secret == null || secret.isEmpty) {
+      assert(false, 'failed to get MD5 secret: $enigma');
+      return;
+    }
+    Log.warning('setUploadConfig: $secret (enigma: $enigma), $url');
+    await _setUploadConfig(api: url, secret: secret);
+    _apiUpdated = true;
+  }
+
+  /// set upload API & secret key
+  Future<void> _setUploadConfig({required String api, required String secret}) async {
+    _api = api;
+    _secret = Hex.decode(secret);
+  }
 
   ///  Upload avatar image data for user
   ///
@@ -53,8 +101,20 @@ class FileTransfer {
   /// @return remote URL if same file uploaded before
   /// @throws IOException on failed to create temporary file
   Future<Uri?> uploadAvatar(Uint8List data, String filename, ID sender) async {
-    ChannelManager man = ChannelManager();
-    return await man.ftpChannel.uploadAvatar(data, filename, sender);
+    Uri? url = await _upload('avatar', data, filename, sender);
+    String notification;
+    if (url == null) {
+      notification = NotificationNames.kFileUploadFailure;
+    } else {
+      notification = NotificationNames.kFileUploadSuccess;
+    }
+    // post notification async
+    var nc = NotificationCenter();
+    nc.postNotification(notification, this, {
+      'filename': filename,
+      'url': url,
+    });
+    return url;
   }
 
   ///  Upload encrypted file data for user
@@ -65,30 +125,59 @@ class FileTransfer {
   /// @return remote URL if same file uploaded before
   /// @throws IOException on failed to create temporary file
   Future<Uri?> uploadEncryptData(Uint8List data, String filename, ID sender) async {
-    ChannelManager man = ChannelManager();
-    return await man.ftpChannel.uploadEncryptData(data, filename, sender);
-  }
-
-  ///  Download avatar image file
-  ///
-  /// @param url      - avatar URL
-  /// @return local path if same file downloaded before
-  Future<String?> downloadAvatar(Uri url) async {
-    ChannelManager man = ChannelManager();
-    String? path = await man.ftpChannel.downloadAvatar(url);
+    Uri? url = await _upload('file', data, filename, sender);
     String notification;
-    if (path == null) {
-      notification = NotificationNames.kFileDownloadFailure;
+    if (url == null) {
+      notification = NotificationNames.kFileUploadFailure;
     } else {
-      notification = NotificationNames.kFileDownloadSuccess;
+      notification = NotificationNames.kFileUploadSuccess;
     }
     // post notification async
     var nc = NotificationCenter();
     nc.postNotification(notification, this, {
+      'filename': filename,
       'url': url,
-      'path': path,
     });
-    return path;
+    return url;
+  }
+
+  final Map<String, Uri> _uploads = {};    // filename => download url
+
+  Future<Uri?> _upload(String varName, Uint8List data, String filename, ID sender) async {
+    await _prepare();
+    // 1. check old task
+    Uri? url = _uploads[filename];
+    if (url != null) {
+      Log.info('this file had already been uploaded: $filename -> $url');
+      return url;
+    }
+    // hash: md5(data + secret + salt)
+    Uint8List secret = _secret!;
+    Uint8List salt = _random(16);
+    Uint8List hash = MD5.digest(_concat(data, secret, salt));
+    // build task
+    String urlString = _api!;
+    Address address = sender.address;
+    urlString = _replace(urlString, 'ID', address.toString());
+    urlString = _replace(urlString, 'MD5', Hex.encode(hash));
+    urlString = _replace(urlString, 'SALT', Hex.encode(salt));
+    Log.info('upload encrypted data: $filename -> $urlString');
+    String? json = await _FTPHelper.post(Uri.parse(urlString), varName, filename, data);
+    if (json == null) {
+      Log.error('failed to upload file: $filename -> $urlString');
+      return null;
+    }
+    Map? info = JSONMap.decode(json);
+    int code = info?['code'];
+    assert(code == 200, 'response error: $info');
+    String? download = info?['url'];
+    if (download == null) {
+      return null;
+    }
+    Log.info('encrypted data uploaded: $filename -> $download');
+    url = Uri.parse(download);
+    _uploads[filename] = url;
+    return url;
   }
 
   static Future<int> cacheFileData(Uint8List data, String filename) async {
@@ -109,6 +198,69 @@ class FileTransfer {
       LocalStorage cache = LocalStorage();
       return await cache.getCacheFilePath(filename);
     }
+  }
+
+}
+
+String _replace(String template, String key, String value) =>
+    template.replaceAll(RegExp('\\{$key\\}'), value);
+
+Uint8List _concat(Uint8List a, Uint8List b, Uint8List c) =>
+    Uint8List.fromList(a + b + c);
+
+Uint8List _random(int size) {
+  Uint8List data = Uint8List(size);
+  Random r = Random();
+  for (int i = 0; i < size; ++i) {
+    data[i] = r.nextInt(256);
+  }
+  return data;
+}
+
+class _FTPHelper {
+
+  static String get userAgent {
+    // return 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7)'
+    //     ' AppleWebKit/537.36 (KHTML, like Gecko)'
+    //     ' Chrome/118.0.0.0 Safari/537.36';
+    GlobalVariable shared = GlobalVariable();
+    return shared.terminal.userAgent;
+  }
+
+  static Future<String?> post(Uri url, String varName, String filename, Uint8List fileData,
+      {ProgressCallback? onSendProgress, ProgressCallback? onReceiveProgress,}) async {
+    Response<String> response;
+    try {
+      FormData formData = FormData.fromMap({
+        varName: MultipartFile.fromBytes(fileData,
+          filename: filename,
+          // contentType: MediaType.parse('application/octet-stream'),
+        ),
+      });
+      response = await Dio().postUri(url, data: formData,
+        onSendProgress: onSendProgress,
+        onReceiveProgress: onReceiveProgress,
+        options: Options(
+          responseType: ResponseType.plain,
+          headers: {
+            'User-Agent': userAgent,
+          },
+        ),
+      );
+    } catch (e, st) {
+      Log.error('failed to upload $url: $varName, $filename, error: $e');
+      Log.debug('failed to upload $url: $varName, $filename, error: $e, $st');
+      return null;
+    }
+    int? statusCode = response.statusCode;
+    if (statusCode != 200) {
+      Log.error('failed to upload $url, status: $statusCode - ${response.statusMessage}');
+      return null;
+    }
+    String? data = response.data;
+    Log.info('response data: $data');
+    assert(data is String, 'response text error: $response');
+    return data;
   }
 
 }

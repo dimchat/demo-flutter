@@ -40,17 +40,6 @@ class ChannelMethods {
   //
   //  FTP Channel
   //
-  static const String setUploadAPI       = "setUploadAPI";
-
-  static const String uploadAvatar       = "uploadAvatar";
-  static const String uploadFile         = "uploadEncryptFile";
-  static const String downloadAvatar     = "downloadAvatar";
-
-  static const String onUploadSuccess    = "onUploadSuccess";
-  static const String onUploadFailure    = "onUploadFailed";
-  static const String onDownloadSuccess  = "onDownloadSuccess";
-  static const String onDownloadFailure  = "onDownloadFailed";
-
   static const String getCachesDirectory    = "getCachesDirectory";
   static const String getTemporaryDirectory = "getTemporaryDirectory";
 

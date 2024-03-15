@@ -6,7 +6,7 @@
 //
 
 #import <Flutter/Flutter.h>
-#import <DIMClient/DIMClient.h>
+#import <DIMCore/DIMCore.h>
 
 NS_ASSUME_NONNULL_BEGIN
 

@@ -5,7 +5,7 @@
 //  Created by Albert Moky on 2023/5/7.
 //
 
-#import <DIMClient/DIMClient.h>
+#import "DIMConstants.h"
 
 #import "DIMFileTransfer.h"
 #import "DIMChannelManager.h"

@@ -5,7 +5,7 @@
 //  Created by Albert Moky on 2023/5/16.
 //
 
-#import <DIMClient/DIMClient.h>
+#import "DIMConstants.h"
 
 #import "DIMChannelManager.h"
 
@@ -53,7 +53,8 @@ static inline void onMethodCall(FlutterMethodCall* call, FlutterResult success) 
     } else if ([method isEqualToString:kChannelMethod_PrivateKeysForDecryption]) {
         // privateKeysForDecryption
         id keys = [db privateKeysForDecryption:user];
-        success(DIMRevertPrivateKeys(keys));
+        //success(DIMRevertPrivateKeys(keys));
+        success(keys);
     } else {
         NSLog(@"not implemented: %@", method);
         assert(false);

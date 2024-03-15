@@ -6,7 +6,8 @@
 //
 
 #import <AVFoundation/AVFoundation.h>
-#import <DIMClient/DIMClient.h>
+
+#import "DIMConstants.h"
 
 #import "EMAudioPlayerHelper.h"
 #import "EMAudioRecordHelper.h"

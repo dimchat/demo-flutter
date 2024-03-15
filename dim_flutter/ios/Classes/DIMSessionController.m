@@ -5,7 +5,7 @@
 //  Created by Albert Moky on 2023/5/7.
 //
 
-#import <DIMClient/DIMClient.h>
+#import <ObjectKey/ObjectKey.h>
 
 #import "DIMChannelManager.h"
 #import "DIMSessionChannel.h"
@@ -35,6 +35,10 @@ static inline BOOL is_sandbox(void) {
     return [receiptURL.path hasSuffix:@"sandboxReceipt"];
 #endif
 }
+
+#define DIMCommand_Report  @"report"
+#define DIMCommand_Online  @"online"
+#define DIMCommand_Offline @"offline"
 
 @interface DIMPushNotificationController () {
     
@@ -67,7 +71,9 @@ OKSingletonImplementations(DIMPushNotificationController, sharedInstance)
         return;
     }
     NSString *hex = MKMHexEncode(token);
-    DIMReportCommand *content = [[DIMReportCommand alloc] initWithTitle:@"apns"];
+    //DIMReportCommand *content = [[DIMReportCommand alloc] initWithTitle:@"apns"];
+    DIMCommand *content = [[DIMCommand alloc] initWithCommandName:DIMCommand_Report];
+    [content setObject:@"apns" forKey:@"title"];
     [content setObject:hex forKey:@"device_token"];
     [content setObject:@"iOS" forKey:@"platform"];
     [content setObject:device_system() forKey:@"system"];

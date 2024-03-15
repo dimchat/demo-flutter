@@ -6,11 +6,10 @@
 //
 
 #import <Flutter/Flutter.h>
-#import <DIMClient/DIMClient.h>
 
 NS_ASSUME_NONNULL_BEGIN
 
-@interface DIMFileTransferChannel : FlutterMethodChannel <DIMUploadDelegate, DIMDownloadDelegate>
+@interface DIMFileTransferChannel : FlutterMethodChannel
 
 + (instancetype)channelWithName:(NSString*)name
                 binaryMessenger:(NSObject<FlutterBinaryMessenger>*)messenger

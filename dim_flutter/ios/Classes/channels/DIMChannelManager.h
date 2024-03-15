@@ -38,18 +38,6 @@ NS_ASSUME_NONNULL_BEGIN
 //
 //  FTP Channel Methods
 //
-#define kChannelMethod_SetUploadAPI               @"setUploadAPI"
-
-#define kChannelMethod_UploadAvatar               @"uploadAvatar"
-#define kChannelMethod_UploadFile                 @"uploadEncryptFile"
-#define kChannelMethod_DownloadAvatar             @"downloadAvatar"
-#define kChannelMethod_DownloadFile               @"downloadEncryptedFile"
-
-#define kChannelMethod_OnUploadSuccess            @"onUploadSuccess"
-#define kChannelMethod_OnUploadFailure            @"onUploadFailed"
-#define kChannelMethod_OnDownloadSuccess          @"onDownloadSuccess"
-#define kChannelMethod_OnDownloadFailure          @"onDownloadFailed"
-
 #define kChannelMethod_GetCachesDirectory         @"getCachesDirectory"
 #define kChannelMethod_GetTemporaryDirectory      @"getTemporaryDirectory"
 

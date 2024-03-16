@@ -233,6 +233,9 @@ class Amanuensis with Logging {
     if (current?.identifier == iMsg.sender) {
       logDebug('message from myself');
       increase = 0;
+    } else if (content is Command) {
+      logDebug('ignore command');
+      increase = 0;
     } else {
       increase = 1;
     }

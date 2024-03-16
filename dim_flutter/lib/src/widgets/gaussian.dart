@@ -38,7 +38,7 @@ class GaussianPage extends StatelessWidget {
       padding: const EdgeInsets.all(12),
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(8),
-        color: CupertinoColors.white,
+        color: CupertinoColors.systemFill,
       ),
       child: child,
     ),

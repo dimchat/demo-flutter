@@ -28,8 +28,21 @@ class _ConfigLoader implements lnc.Observer {
 
   Map? info;
 
-  void download(Uri url) {
+  Future<void> download(Uri url) async {
     PortableNetworkFile pnf = PortableNetworkFile.createFromURL(url, null);
+    // 1. remove cached files
+    PortableNetworkLoader loader = PortableNetworkLoader(pnf);
+    String? path = await loader.cacheFilePath;
+    if (path != null) {
+      Log.info('remove cached config file: $path');
+      await Paths.delete(path);
+    }
+    path = await loader.downloadFilePath;
+    if (path != null) {
+      Log.info('remove cached config file: $path');
+      await Paths.delete(path);
+    }
+    // 2. download again
     _pnfLoader = PortableNetworkFactory().getLoader(pnf);
   }
 
@@ -98,7 +111,7 @@ class Config {
       } else {
         Log.info('try to refresh config: $url -> $path');
         entrance = '';
-        _cfgLoader.download(url);
+        /*await */_cfgLoader.download(url);
       }
     }
     return conf;

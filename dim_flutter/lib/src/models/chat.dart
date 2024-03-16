@@ -182,14 +182,14 @@ abstract class Conversation with Logging implements lnc.Observer {
     shared.facebook.currentUser.then((user) {
       if (user == null) {
         logError('current user not found, failed to set remark: $cr => $identifier');
-        Alert.show(context, 'Error', 'Current user not found');
+        Alert.show(context, 'Error', 'Current user not found'.tr);
       } else {
         shared.database.setRemark(cr!, user: user.identifier).then((ok) {
           if (ok) {
             logInfo('set remark: $cr => $identifier, user: $user');
           } else {
             logError('failed to set remark: $cr => $identifier, user: $user');
-            Alert.show(context, 'Error', 'Failed to set remark');
+            Alert.show(context, 'Error', 'Failed to set remark'.tr);
           }
         });
       }

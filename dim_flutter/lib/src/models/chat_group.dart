@@ -261,7 +261,7 @@ class GroupInfo extends Conversation with Logging {
     // save into document
     _updateGroupName(identifier, name).then((message) {
       if (message != null) {
-        Alert.show(context, 'Error', message);
+        Alert.show(context, 'Error', message.tr);
       }
     });
   }
@@ -334,7 +334,7 @@ class GroupInfo extends Conversation with Logging {
     shared.facebook.currentUser.then((user) {
       if (user == null) {
         logError('current user not found, failed to add contact: $identifier');
-        Alert.show(context, 'Error', 'Current user not found');
+        Alert.show(context, 'Error', 'Current user not found'.tr);
       } else {
         // confirm removing group
         Alert.confirm(context, 'Confirm', 'Sure to remove this group?'.tr,

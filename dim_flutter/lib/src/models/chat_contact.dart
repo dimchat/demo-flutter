@@ -196,7 +196,7 @@ class ContactInfo extends Conversation {
     shared.facebook.currentUser.then((user) {
       if (user == null) {
         logError('current user not found, failed to add contact: $identifier');
-        Alert.show(context, 'Error', 'Current user not found');
+        Alert.show(context, 'Error', 'Current user not found'.tr);
       } else {
         // confirm adding
         Alert.confirm(context, 'Confirm Add', 'Sure to add this friend?'.tr,
@@ -211,7 +211,7 @@ class ContactInfo extends Conversation {
       if (ok) {
         // Navigator.pop(context);
       } else {
-        Alert.show(ctx, 'Error', 'Failed to add contact');
+        Alert.show(ctx, 'Error', 'Failed to add contact'.tr);
       }
     });
   }
@@ -222,7 +222,7 @@ class ContactInfo extends Conversation {
     shared.facebook.currentUser.then((user) {
       if (user == null) {
         logError('current user not found, failed to add contact: $identifier');
-        Alert.show(context, 'Error', 'Current user not found');
+        Alert.show(context, 'Error', 'Current user not found'.tr);
       } else {
         String msg;
         if (identifier.isUser) {
@@ -240,7 +240,7 @@ class ContactInfo extends Conversation {
   void _doRemove(BuildContext ctx, ID contact, ID user) {
     Amanuensis clerk = Amanuensis();
     clerk.removeConversation(contact).onError((error, stackTrace) {
-      Alert.show(ctx, 'Error', 'Failed to remove conversation');
+      Alert.show(ctx, 'Error', 'Failed to remove conversation'.tr);
       return false;
     });
     GlobalVariable shared = GlobalVariable();
@@ -248,7 +248,7 @@ class ContactInfo extends Conversation {
       if (ok) {
         logWarning('contact removed: $contact, user: $user');
       } else {
-        Alert.show(ctx, 'Error', 'Failed to remove contact');
+        Alert.show(ctx, 'Error', 'Failed to remove contact'.tr);
       }
     });
   }

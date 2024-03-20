@@ -1,4 +1,6 @@
 
+import 'package:pnf/pnf.dart' as pnf show NotificationNames;
+
 abstract class NotificationNames {
 
   static const String kServiceProviderUpdated = 'ServiceProviderUpdated';
@@ -58,12 +60,17 @@ abstract class NotificationNames {
   //  PNF
   //
 
-  static const String kPortableNetworkStatusChanged = 'PNF_OnStatusChanged';
-  static const String kPortableNetworkReceiveProgress = 'PNF_OnReceiveProgress';
-  static const String kPortableNetworkReceived = 'PNF_OnReceived';
-  static const String kPortableNetworkDecrypted = 'PNF_OnDecrypted';
-  static const String kPortableNetworkSuccess = 'PNF_OnSuccess';
-  static const String kPortableNetworkError = 'PNF_OnError';
-
+  static const String       kPortableNetworkStatusChanged =
+      pnf.NotificationNames.kPortableNetworkStatusChanged;
+  static const String       kPortableNetworkReceiveProgress =
+      pnf.NotificationNames.kPortableNetworkReceiveProgress;
+  static const String       kPortableNetworkReceived =
+      pnf.NotificationNames.kPortableNetworkReceived;
+  static const String       kPortableNetworkDecrypted =
+      pnf.NotificationNames.kPortableNetworkDecrypted;
+  static const String       kPortableNetworkSuccess =
+      pnf.NotificationNames.kPortableNetworkSuccess;
+  static const String       kPortableNetworkError =
+      pnf.NotificationNames.kPortableNetworkError;
 
 }

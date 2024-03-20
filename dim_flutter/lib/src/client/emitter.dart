@@ -3,12 +3,12 @@ import 'dart:typed_data';
 import 'package:dim_client/dim_client.dart';
 import 'package:lnc/log.dart';
 import 'package:lnc/notification.dart';
+import 'package:pnf/dos.dart';
+import 'package:pnf/pnf.dart' show URLHelper;
 
 import '../common/constants.dart';
-import '../filesys/paths.dart';
 import '../models/amanuensis.dart';
 import '../network/ftp.dart';
-import '../pnf/http.dart';
 
 import 'group.dart';
 import 'shared.dart';
@@ -132,7 +132,7 @@ class Emitter implements Observer {
     // 1. save origin file data
     String? filename = content.filename;
     assert(filename != null, 'content filename should not empty: $content');
-    int len = await FileTransfer.cacheFileData(data, filename!);
+    int len = await FileUploader.cacheFileData(data, filename!);
     if (len != data.length) {
       Log.error('failed to save file data (len=${data.length}): $filename');
       return false;
@@ -140,7 +140,7 @@ class Emitter implements Observer {
     // 2. add upload task with encrypted data
     Uint8List encrypted = password.encrypt(data, content);
     filename = URLHelper.filenameFromData(encrypted, filename);
-    FileTransfer ftp = FileTransfer();
+    FileUploader ftp = FileUploader();
     Uri? url = await ftp.uploadEncryptData(encrypted, filename, sender);
     if (url == null) {
       Log.error('failed to upload: ${content.filename} -> $filename');

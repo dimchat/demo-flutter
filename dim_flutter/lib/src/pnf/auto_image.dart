@@ -33,12 +33,12 @@ import 'dart:typed_data';
 import 'package:flutter/cupertino.dart';
 
 import 'package:dim_client/dim_client.dart';
+import 'package:pnf/http.dart';
 
 import '../ui/icons.dart';
 import '../ui/styles.dart';
 
 import 'gallery.dart';
-import 'http.dart';
 import 'net_image.dart';
 
 
@@ -199,7 +199,7 @@ class _ImageLoader extends PortableImageLoader {
   static _ImageLoader from(PortableNetworkFile pnf) {
     _ImageLoader loader = _ImageLoader(pnf);
     if (pnf.url != null && pnf.data == null) {
-      SharedDownloader().addTask(loader);
+      FileTransfer().addDownloadTask(loader);
     }
     return loader;
   }

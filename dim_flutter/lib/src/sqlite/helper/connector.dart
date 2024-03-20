@@ -28,13 +28,13 @@
  * SOFTWARE.
  * =============================================================================
  */
+import 'package:pnf/dos.dart';
 import 'package:sqflite/sqflite.dart';
 
 import 'package:dim_client/dim_client.dart';
 import 'package:lnc/log.dart';
 
 import '../../common/platform.dart';
-import '../../filesys/paths.dart';
 
 
 ///

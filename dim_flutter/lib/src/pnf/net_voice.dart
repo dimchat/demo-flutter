@@ -32,14 +32,14 @@ import 'package:dim_client/dim_client.dart';
 import 'package:flutter/cupertino.dart';
 
 import 'package:lnc/notification.dart' as lnc;
+import 'package:pnf/dos.dart';
+import 'package:pnf/pnf.dart' show PortableNetworkStatus;
 
 import '../channels/manager.dart';
 import '../common/constants.dart';
-import '../filesys/paths.dart';
 import '../ui/icons.dart';
 
 import '../ui/styles.dart';
-import 'loader.dart';
 import 'net_base.dart';
 
 

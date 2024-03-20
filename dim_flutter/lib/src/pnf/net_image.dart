@@ -33,6 +33,7 @@ import 'dart:typed_data';
 import 'package:flutter/cupertino.dart';
 
 import 'package:lnc/notification.dart' as lnc;
+import 'package:pnf/pnf.dart';
 
 import '../ui/icons.dart';
 
@@ -74,7 +75,7 @@ class _PortableImageState extends PortableNetworkState<PortableImageView> implem
 }
 
 
-abstract class PortableImageLoader extends PortableNetworkLoader {
+abstract class PortableImageLoader extends PortableFileLoader {
   PortableImageLoader(super.pnf);
 
   ImageProvider<Object>? _provider;

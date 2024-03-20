@@ -28,7 +28,6 @@
  * SOFTWARE.
  * =============================================================================
  */
-import 'dart:io';
 import 'dart:typed_data';
 
 import 'package:dim_client/dim_client.dart';
@@ -128,7 +127,7 @@ class VelocityMeter {
         Log.error('failed to connect url: $url');
         return null;
       }
-    } on SocketException catch (e) {
+    } on Exception catch (e) {
       Log.error('failed to connect $host:$port, $e');
       return null;
     }

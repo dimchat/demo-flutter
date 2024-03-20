@@ -31,23 +31,21 @@
 import 'dart:math';
 import 'dart:typed_data';
 
-import 'package:dio/dio.dart';
-
 import 'package:dim_client/dim_client.dart';
 import 'package:lnc/log.dart';
 import 'package:lnc/notification.dart';
+import 'package:pnf/dos.dart';
+import 'package:pnf/http.dart';
 
-import '../client/shared.dart';
 import '../common/constants.dart';
-import '../filesys/external.dart';
 import '../filesys/local.dart';
 import '../models/config.dart';
 
 
-class FileTransfer {
-  factory FileTransfer() => _instance;
-  static final FileTransfer _instance = FileTransfer._internal();
-  FileTransfer._internal();
+class FileUploader {
+  factory FileUploader() => _instance;
+  static final FileUploader _instance = FileUploader._internal();
+  FileUploader._internal();
 
   bool _apiUpdated = false;
 
@@ -162,7 +160,8 @@ class FileTransfer {
     urlString = _replace(urlString, 'MD5', Hex.encode(hash));
     urlString = _replace(urlString, 'SALT', Hex.encode(salt));
     Log.info('upload encrypted data: $filename -> $urlString');
-    String? json = await _FTPHelper.post(Uri.parse(urlString), varName, filename, data);
+    FileTransfer ftp = FileTransfer();
+    String? json = await ftp.uploadFile(Uri.parse(urlString), varName, filename, data);
     if (json == null) {
       Log.error('failed to upload file: $filename -> $urlString');
       return null;
@@ -182,14 +181,10 @@ class FileTransfer {
 
   static Future<int> cacheFileData(Uint8List data, String filename) async {
     String? path = await _getCacheFilePath(filename);
-    if (path == null) {
-      Log.error('failed to get caches directory for saving: $filename');
-      return -1;
-    }
     return await ExternalStorage.saveBinary(data, path);
   }
 
-  static Future<String?> _getCacheFilePath(String filename) async {
+  static Future<String> _getCacheFilePath(String filename) async {
     if (filename.contains('/') || filename.contains('\\')) {
       // full path?
       return filename;
@@ -215,52 +210,4 @@ Uint8List _random(int size) {
     data[i] = r.nextInt(256);
   }
   return data;
-}
-
-class _FTPHelper {
-
-  static String get userAgent {
-    // return 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7)'
-    //     ' AppleWebKit/537.36 (KHTML, like Gecko)'
-    //     ' Chrome/118.0.0.0 Safari/537.36';
-    GlobalVariable shared = GlobalVariable();
-    return shared.terminal.userAgent;
-  }
-
-  static Future<String?> post(Uri url, String varName, String filename, Uint8List fileData,
-      {ProgressCallback? onSendProgress, ProgressCallback? onReceiveProgress,}) async {
-    Response<String> response;
-    try {
-      FormData formData = FormData.fromMap({
-        varName: MultipartFile.fromBytes(fileData,
-          filename: filename,
-          // contentType: MediaType.parse('application/octet-stream'),
-        ),
-      });
-      response = await Dio().postUri(url, data: formData,
-        onSendProgress: onSendProgress,
-        onReceiveProgress: onReceiveProgress,
-        options: Options(
-          responseType: ResponseType.plain,
-          headers: {
-            'User-Agent': userAgent,
-          },
-        ),
-      );
-    } catch (e, st) {
-      Log.error('failed to upload $url: $varName, $filename, error: $e');
-      Log.debug('failed to upload $url: $varName, $filename, error: $e, $st');
-      return null;
-    }
-    int? statusCode = response.statusCode;
-    if (statusCode != 200) {
-      Log.error('failed to upload $url, status: $statusCode - ${response.statusMessage}');
-      return null;
-    }
-    String? data = response.data;
-    Log.info('response data: $data');
-    assert(data is String, 'response text error: $response');
-    return data;
-  }
-
 }

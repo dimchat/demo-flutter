@@ -34,12 +34,12 @@ import 'package:image_gallery_saver/image_gallery_saver.dart';
 import 'package:photo_view/photo_view_gallery.dart';
 
 import 'package:lnc/log.dart';
+import 'package:pnf/pnf.dart';
 
 import '../ui/icons.dart';
 import '../widgets/alert.dart';
 import '../widgets/permissions.dart';
 
-import 'loader.dart';
 import 'net_image.dart';
 
 

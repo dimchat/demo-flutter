@@ -19,7 +19,7 @@ class SharedProcessor extends ClientMessageProcessor with Logging {
     } catch (e, st) {
       // RangeError: Value not in range: 3
       logInfo('error message signature: ${rMsg['debug-sig']}');
-      logError('failed to process message: ${rMsg.sender} -> ${rMsg.receiver}: $e, st');
+      logError('failed to process message: ${rMsg.sender} -> ${rMsg.receiver}: $e, $st');
       // assert(false, 'failed to process message: ${rMsg.sender} -> ${rMsg.receiver}: $e');
       return [];
     }

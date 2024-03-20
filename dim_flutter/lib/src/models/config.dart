@@ -3,11 +3,11 @@ import 'package:flutter/services.dart';
 import 'package:dim_client/dim_client.dart';
 import 'package:lnc/log.dart';
 import 'package:lnc/notification.dart' as lnc;
+import 'package:pnf/dos.dart';
+import 'package:pnf/pnf.dart' show PortableNetworkLoader;
 
 import '../common/constants.dart';
-import '../filesys/external.dart';
 import '../filesys/local.dart';
-import '../filesys/paths.dart';
 import '../pnf/loader.dart';
 import '../pnf/net_base.dart';
 import '../widgets/browse_html.dart';
@@ -31,7 +31,7 @@ class _ConfigLoader implements lnc.Observer {
   Future<void> download(Uri url) async {
     PortableNetworkFile pnf = PortableNetworkFile.createFromURL(url, null);
     // 1. remove cached files
-    PortableNetworkLoader loader = PortableNetworkLoader(pnf);
+    PortableNetworkLoader loader = PortableFileLoader(pnf);
     String? path = await loader.cacheFilePath;
     if (path != null) {
       Log.info('remove cached config file: $path');
@@ -62,8 +62,8 @@ class _ConfigLoader implements lnc.Observer {
   }
 
   Future<bool> _refresh(Uint8List? data, String? path) async {
-    String? configPath = await _path();
-    if (data == null || configPath == null || configPath == path) {
+    String configPath = await _path();
+    if (data == null || configPath == path) {
       assert(false, 'should not happen: ${data?.length} bytes, $path -> $configPath');
       return false;
     }
@@ -95,11 +95,7 @@ class Config {
   Future<Map?> get info async {
     Map? conf = _cfgLoader.info;
     if (conf == null) {
-      String? path = await _path();
-      if (path == null) {
-        Log.error('failed to get path for config.json');
-        return null;
-      }
+      String path = await _path();
       conf = await _load(path);
       conf ??= await _init(path);
       // update for next reading
@@ -142,11 +138,8 @@ class Config {
 
 
 /// get caches path for 'config.json'
-Future<String?> _path() async {
-  String? dir = await LocalStorage().cachesDirectory;
-  if (dir == null) {
-    return null;
-  }
+Future<String> _path() async {
+  String dir = await LocalStorage().cachesDirectory;
   return Paths.append(dir, 'config.json');
 }
 

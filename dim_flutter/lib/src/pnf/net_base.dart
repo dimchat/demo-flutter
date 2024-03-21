@@ -35,10 +35,10 @@ import 'package:flutter/cupertino.dart';
 import 'package:dim_client/dim_client.dart';
 import 'package:lnc/log.dart';
 import 'package:lnc/notification.dart' as lnc;
-import 'package:pnf/http.dart';
 import 'package:pnf/pnf.dart' show PortableNetworkLoader;
 
 import '../common/constants.dart';
+import '../filesys/upload.dart';
 
 import 'loader.dart';
 
@@ -69,7 +69,7 @@ class PortableNetworkFactory {
   PortableNetworkLoader _createLoader(PortableNetworkFile pnf) {
     PortableNetworkLoader loader = PortableFileLoader(pnf);
     if (pnf.url != null && pnf.data == null) {
-      FileTransfer().addDownloadTask(loader);
+      FileUploader().addDownloadTask(loader);
     }
     return loader;
   }

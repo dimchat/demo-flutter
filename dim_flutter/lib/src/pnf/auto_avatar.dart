@@ -33,11 +33,11 @@ import 'package:flutter/cupertino.dart';
 import 'package:dim_client/dim_client.dart';
 import 'package:lnc/log.dart';
 import 'package:lnc/notification.dart' as lnc;
-import 'package:pnf/http.dart';
 
 import '../client/shared.dart';
 import '../common/constants.dart';
 import '../filesys/local.dart';
+import '../filesys/upload.dart';
 import '../ui/icons.dart';
 import '../ui/styles.dart';
 
@@ -337,7 +337,7 @@ class _AvatarImageLoader extends PortableImageLoader {
   static _AvatarImageLoader from(PortableNetworkFile pnf) {
     _AvatarImageLoader loader = _AvatarImageLoader(pnf);
     if (pnf.url != null && pnf.data == null) {
-      FileTransfer().addDownloadTask(loader);
+      FileUploader().addDownloadTask(loader);
     }
     return loader;
   }

@@ -8,7 +8,7 @@ import 'package:pnf/pnf.dart' show URLHelper;
 
 import '../common/constants.dart';
 import '../models/amanuensis.dart';
-import '../network/ftp.dart';
+import '../filesys/upload.dart';
 
 import 'group.dart';
 import 'shared.dart';

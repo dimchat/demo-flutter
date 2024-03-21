@@ -28,44 +28,101 @@
  * SOFTWARE.
  * =============================================================================
  */
-import 'dart:math';
-import 'dart:typed_data';
-
 import 'package:dim_client/dim_client.dart';
+import 'package:flutter/services.dart';
 import 'package:lnc/log.dart';
 import 'package:lnc/notification.dart';
 import 'package:pnf/dos.dart';
+import 'package:pnf/enigma.dart';
 import 'package:pnf/http.dart';
 
 import '../common/constants.dart';
-import '../filesys/local.dart';
 import '../models/config.dart';
+
+import 'local.dart';
 
 
 class FileUploader {
   factory FileUploader() => _instance;
   static final FileUploader _instance = FileUploader._internal();
-  FileUploader._internal();
+  FileUploader._internal() {
+    _ftp = FileTransfer(HTTPClient());
+    _enigma = Enigma();
+  }
+
+  late final FileTransfer _ftp;
+  late final Enigma _enigma;
 
   bool _apiUpdated = false;
 
   String? _api;
-  Uint8List? _secret;
+
+  //  'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7)'
+  //  + ' AppleWebKit/537.36 (KHTML, like Gecko)'
+  //  + ' Chrome/118.0.0.0 Safari/537.36'
+  void setUserAgent(String userAgent) =>
+      _ftp.setUserAgent(userAgent);
+
+  /// Append download task with URL
+  Future<bool> addDownloadTask(DownloadTask task) async =>
+      _ftp.addDownloadTask(task);
+
+  /// Upload a file to URL
+  ///
+  /// @return response text
+  Future<String?> uploadFile(Uri url, String key, String filename, Uint8List fileData) async =>
+      _ftp.uploadFile(url, key, filename, fileData);
+
+  /// Update secrets
+  bool updateSecrets(dynamic secrets) {
+    if (secrets == null) {
+      return false;
+    }
+    Log.info('set enigma secrets: $secrets');
+    List<String> lines = [];
+    for (var element in secrets) {
+      if (element is String && element.isNotEmpty) {
+        lines.add(element);
+      }
+    }
+    _enigma.update(lines);
+    return lines.isNotEmpty;
+  }
+
+  /// Get enigma secret for this API
+  Pair<String, Uint8List>? fetchEnigma(String api) =>
+      _enigma.fetch(api);
+
+  /// Build upload URL
+  String buildURL(String api, ID sender,
+      {required Uint8List data, required Uint8List secret, required String enigma}) =>
+      _enigma.build(api, sender, data: data, secret: secret, enigma: enigma);
 
   Future<void> _prepare() async {
     if (_apiUpdated) {
       return;
     }
-    // config for upload
+    //
+    //  1. load enigma secrets
+    String json = await rootBundle.loadString('assets/enigma.json');
+    Map? info = JSONMap.decode(json);
+    bool ok = updateSecrets(info?['secrets']);
+    assert(ok, 'failed to update enigma secrets: $json');
+    //
+    //  2. config for upload API
+    //
     Config config = Config();
     List api = await config.uploadAPI;
     String url;
-    String enigma;
+    String? enigma;
     // TODO: pick up the fastest API for upload
-    var chosen = api[0];
+    var chosen = api.first;
     if (chosen is Map) {
       url = chosen['url'];
       enigma = chosen['enigma'];
+      if (enigma != null) {
+        url = '$url&enigma=$enigma';
+      }
     } else {
       assert(chosen is String, 'API error: $api');
       url = chosen;
@@ -75,20 +132,9 @@ class FileUploader {
       assert(false, 'config error: $api');
       return;
     }
-    String? secret = await Enigma().getSecret(enigma);
-    if (secret == null || secret.isEmpty) {
-      assert(false, 'failed to get MD5 secret: $enigma');
-      return;
-    }
-    Log.warning('setUploadConfig: $secret (enigma: $enigma), $url');
-    await _setUploadConfig(api: url, secret: secret);
+    Log.warning('set upload API: $url (enigma: $enigma)');
+    _api = url;
     _apiUpdated = true;
-  }
-
-  /// set upload API & secret key
-  Future<void> _setUploadConfig({required String api, required String secret}) async {
-    _api = api;
-    _secret = Hex.decode(secret);
   }
 
   ///  Upload avatar image data for user
@@ -149,19 +195,21 @@ class FileUploader {
       Log.info('this file had already been uploaded: $filename -> $url');
       return url;
     }
-    // hash: md5(data + secret + salt)
-    Uint8List secret = _secret!;
-    Uint8List salt = _random(16);
-    Uint8List hash = MD5.digest(_concat(data, secret, salt));
-    // build task
-    String urlString = _api!;
-    Address address = sender.address;
-    urlString = _replace(urlString, 'ID', address.toString());
-    urlString = _replace(urlString, 'MD5', Hex.encode(hash));
-    urlString = _replace(urlString, 'SALT', Hex.encode(salt));
-    Log.info('upload encrypted data: $filename -> $urlString');
-    FileTransfer ftp = FileTransfer();
-    String? json = await ftp.uploadFile(Uri.parse(urlString), varName, filename, data);
+    String? api = _api;
+    if (api == null) {
+      assert(false, 'failed to get upload API');
+      return null;
+    }
+    Pair<String, Uint8List>? pair = fetchEnigma(api);
+    if (pair == null) {
+      assert(false, 'failed to fetch enigma: $_api');
+      return null;
+    }
+    String enigma = pair.first;
+    Uint8List secret = pair.second;
+    String urlString = buildURL(api, sender, data: data, secret: secret, enigma: enigma);
+    Log.info('upload encrypted data: $filename (enigma: $enigma) -> $urlString');
+    String? json = await uploadFile(Uri.parse(urlString), varName, filename, data);
     if (json == null) {
       Log.error('failed to upload file: $filename -> $urlString');
       return null;
@@ -195,19 +243,4 @@ class FileUploader {
     }
   }
 
-}
-
-String _replace(String template, String key, String value) =>
-    template.replaceAll(RegExp('\\{$key\\}'), value);
-
-Uint8List _concat(Uint8List a, Uint8List b, Uint8List c) =>
-    Uint8List.fromList(a + b + c);
-
-Uint8List _random(int size) {
-  Uint8List data = Uint8List(size);
-  Random r = Random();
-  for (int i = 0; i < size; ++i) {
-    data[i] = r.nextInt(256);
-  }
-  return data;
 }

@@ -38,6 +38,7 @@ import 'package:flutter/material.dart';
 import '../ui/icons.dart';
 import 'loader.dart';
 import 'net_base.dart';
+import 'video_player.dart';
 
 
 /// Factory for Remote Video
@@ -96,7 +97,7 @@ class _PortableVideoState extends PortableNetworkState<_PortableVideoView> {
   @override
   Widget build(BuildContext context) {
     var loader = widget.loader as _PortableVideoLoader;
-    Widget? indicator = loader.getProgress(widget);
+    Widget? indicator = loader.getProgress(context, widget);
     if (indicator == null) {
       return loader.getImage(widget);
     }
@@ -152,7 +153,7 @@ class _PortableVideoLoader extends PortableFileLoader {
     }
   }
 
-  Widget? getProgress(_PortableVideoView widget) {
+  Widget? getProgress(BuildContext ctx, _PortableVideoView widget) {
     var url = widget.pnf.url;
     if (url == null) {
       return _showError('URL not found', null, CupertinoColors.systemRed);
@@ -164,9 +165,7 @@ class _PortableVideoLoader extends PortableFileLoader {
     var icon = const Icon(AppIcons.playVideoIcon, color: CupertinoColors.white);
     var button = IconButton(
       icon: icon,
-      onPressed: () {
-        // TODO: play video
-      },
+      onPressed: () => VideoPlayerPage.open(ctx, url),
     );
     return ClipRRect(
       borderRadius: const BorderRadius.all(

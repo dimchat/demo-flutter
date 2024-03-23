@@ -39,6 +39,8 @@ abstract class AppIcons {
   static const IconData    waitAudioIcon = CupertinoIcons.cloud_download;
   static const IconData    playAudioIcon = CupertinoIcons.play;
   static const IconData playingAudioIcon = CupertinoIcons.volume_up;
+  // Video
+  static const IconData    playVideoIcon = CupertinoIcons.play;
   // Msg Status
   static const IconData   msgDefaultIcon = CupertinoIcons.ellipsis;
   static const IconData   msgWaitingIcon = CupertinoIcons.ellipsis;

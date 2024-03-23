@@ -43,6 +43,9 @@ class LocalStorage extends FileCache with Logging {
 
   @override
   Future<String> get cachesDirectory async {
+    if (DevicePlatform.isWeb) {
+      return '/var/caches';
+    }
     if (DevicePlatform.isIOS || DevicePlatform.isAndroid) {
       ChannelManager man = ChannelManager();
       String? path = await man.ftpChannel.cachesDirectory;
@@ -56,6 +59,9 @@ class LocalStorage extends FileCache with Logging {
 
   @override
   Future<String> get temporaryDirectory async {
+    if (DevicePlatform.isWeb) {
+      return '/tmp';
+    }
     if (DevicePlatform.isIOS || DevicePlatform.isAndroid) {
       ChannelManager man = ChannelManager();
       String? path = await man.ftpChannel.temporaryDirectory;

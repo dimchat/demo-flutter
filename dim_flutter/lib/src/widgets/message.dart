@@ -9,6 +9,7 @@ import '../models/chat.dart';
 import '../models/chat_contact.dart';
 import '../models/message.dart';
 import '../pnf/auto_image.dart';
+import '../pnf/net_video.dart';
 import '../pnf/net_voice.dart';
 import '../ui/styles.dart';
 
@@ -100,8 +101,9 @@ abstract class ContentViewUtils {
       );
 
   // TODO:
-  static Widget getVideoContentView(BuildContext ctx, VideoContent content, ID sender) =>
-      Text('Movie[${content.filename}]: ${content.url}');
+  static Widget getVideoContentView(BuildContext ctx,
+      VideoContent content, ID sender, {GestureLongPressCallback? onLongPress}) =>
+      NetworkVideoFactory().getVideoView(content);
 
   static Widget getImageContentView(BuildContext ctx,
       ImageContent content, ID sender, List<InstantMessage> messages,

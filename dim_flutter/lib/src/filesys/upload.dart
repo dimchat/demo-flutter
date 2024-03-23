@@ -36,6 +36,7 @@ import 'package:pnf/dos.dart';
 import 'package:pnf/enigma.dart';
 import 'package:pnf/http.dart';
 
+import '../client/shared.dart';
 import '../common/constants.dart';
 import '../models/config.dart';
 
@@ -64,8 +65,10 @@ class FileUploader {
       _ftp.setUserAgent(userAgent);
 
   /// Append download task with URL
-  Future<bool> addDownloadTask(DownloadTask task) async =>
-      _ftp.addDownloadTask(task);
+  Future<bool> addDownloadTask(DownloadTask task) async {
+    await _prepare();
+    return await _ftp.addDownloadTask(task);
+  }
 
   /// Upload a file to URL
   ///
@@ -103,7 +106,15 @@ class FileUploader {
       return;
     }
     //
+    //  0. set user agent
+    //
+    GlobalVariable shared = GlobalVariable();
+    String ua = shared.terminal.userAgent;
+    Log.info('update user-agent: $ua');
+    _ftp.setUserAgent(ua);
+    //
     //  1. load enigma secrets
+    //
     String json = await rootBundle.loadString('assets/enigma.json');
     Map? info = JSONMap.decode(json);
     bool ok = updateSecrets(info?['secrets']);

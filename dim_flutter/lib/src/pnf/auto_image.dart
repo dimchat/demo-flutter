@@ -166,13 +166,18 @@ class _ImageLoader extends PortableImageLoader {
     // check thumbnail
     image = _thumbnail;
     if (image == null) {
-      var base64 = pnf['thumbnail'];
-      if (base64 is String) {
-        Uint8List? bytes = Base64.decode(base64);
+      var small = pnf['thumbnail'];
+      if (small is! String) {
+        assert(small == null, 'snapshot error: $small');
+      } else if (small.contains('://')) {
+        image = _thumbnail = NetworkImage(small);
+      } else {
+        var ted = TransportableData.parse(small);
+        Uint8List? bytes = ted?.data;
         if (bytes != null && bytes.isNotEmpty) {
           image = _thumbnail = MemoryImage(bytes);
         } else {
-          assert(false, 'thumbnail error: $base64');
+          assert(false, 'thumbnail error: $small');
         }
       }
     }

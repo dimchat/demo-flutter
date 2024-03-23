@@ -28,9 +28,9 @@
  * SOFTWARE.
  * =============================================================================
  */
-import 'package:dim_client/dim_client.dart';
 import 'package:flutter/cupertino.dart';
 
+import 'package:dim_client/dim_client.dart';
 import 'package:lnc/notification.dart' as lnc;
 import 'package:pnf/dos.dart';
 import 'package:pnf/pnf.dart' show PortableNetworkStatus;

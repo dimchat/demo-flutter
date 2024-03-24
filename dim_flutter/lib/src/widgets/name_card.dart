@@ -132,7 +132,7 @@ class NameCardView extends StatelessWidget {
 //         color: Styles.colors.avatarDefaultColor,
 //       );
 //     }
-//     return Image(image: img,
+//     return ImageUtils.image(img,
 //       width: widget.width, height: widget.height,
 //       fit: BoxFit.cover,
 //     );

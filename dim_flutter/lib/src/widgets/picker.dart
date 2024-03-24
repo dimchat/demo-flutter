@@ -8,6 +8,7 @@ import 'package:image_picker/image_picker.dart';
 
 import 'package:lnc/log.dart';
 
+import '../pnf/image.dart';
 import '../ui/icons.dart';
 
 import 'alert.dart';
@@ -38,7 +39,7 @@ void _openImagePicker(BuildContext context, bool camera, OnImagePicked? onPicked
       String path = file.path;
       file.readAsBytes().then((data) {
         Log.debug('image file length: ${data.length}, path: $path');
-        Image body = Image.memory(data);
+        Image body = ImageUtils.memoryImage(data);
         Alert.confirm(context, 'Pick Image', body,
           okAction: () {
             if (onPicked != null) {
@@ -106,6 +107,6 @@ const int _threshold = 1 << 19;  // 1024 * 512
 
 /// fetch size info from image data
 void _resolveImage(Uint8List jpeg, void Function(ui.Image image) onResolved) =>
-    MemoryImage(jpeg).resolve(const ImageConfiguration()).addListener(
+    ImageUtils.memoryImageProvider(jpeg).resolve(const ImageConfiguration()).addListener(
         ImageStreamListener((info, _) => onResolved(info.image))
     );

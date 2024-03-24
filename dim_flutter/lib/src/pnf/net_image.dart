@@ -37,6 +37,7 @@ import 'package:pnf/pnf.dart';
 
 import '../ui/icons.dart';
 
+import 'image.dart';
 import 'loader.dart';
 import 'net_base.dart';
 
@@ -86,7 +87,7 @@ abstract class PortableImageLoader extends PortableFileLoader {
       // check file content
       Uint8List? bytes = content;
       if (bytes != null && bytes.isNotEmpty) {
-        image = _provider = MemoryImage(bytes);
+        image = _provider = ImageUtils.memoryImageProvider(bytes);
       // } else {
       //   // waiting to download & decrypt
       }

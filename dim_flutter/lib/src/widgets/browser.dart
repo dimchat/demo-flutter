@@ -37,6 +37,7 @@ import 'package:flutter_inappwebview/flutter_inappwebview.dart';
 import 'package:dim_client/dim_client.dart';
 import 'package:lnc/log.dart';
 
+import '../pnf/image.dart';
 import '../ui/icons.dart';
 import '../ui/styles.dart';
 
@@ -168,7 +169,7 @@ class PageContentView extends StatelessWidget {
     try {
       Uint8List? icon = content.icon;
       if (icon != null) {
-        return Image(image: MemoryImage(icon));
+        return ImageUtils.memoryImage(icon);
       }
     } catch (e, st) {
       Log.error('web page icon error: $e, $st');

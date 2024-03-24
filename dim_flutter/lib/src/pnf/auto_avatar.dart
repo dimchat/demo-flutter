@@ -42,6 +42,7 @@ import '../ui/icons.dart';
 import '../ui/styles.dart';
 
 import 'gallery.dart';
+import 'image.dart';
 import 'net_image.dart';
 
 
@@ -314,9 +315,9 @@ class _AvatarImageLoader extends PortableImageLoader {
     if (image == null) {
       return _AvatarImageView.getNoImage(identifier, width: width, height: height);
     } else if (width == null && height == null) {
-      return Image(image: image,);
+      return ImageUtils.image(image,);
     } else {
-      return Image(image: image, width: width, height: height, fit: BoxFit.cover,);
+      return ImageUtils.image(image, width: width, height: height, fit: BoxFit.cover,);
     }
   }
 

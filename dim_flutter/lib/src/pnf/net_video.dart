@@ -36,6 +36,7 @@ import 'package:flutter/material.dart';
 import '../ui/icons.dart';
 import '../widgets/video_player.dart';
 import 'gallery.dart';
+import 'image.dart';
 import 'loader.dart';
 import 'net_base.dart';
 
@@ -126,9 +127,9 @@ class _PortableVideoLoader extends PortableFileLoader {
     if (image == null) {
       return _PortableVideoView.getNoImage(width: width, height: height);
     } else if (width == null && height == null) {
-      return Image(image: image,);
+      return ImageUtils.image(image,);
     } else {
-      return Image(image: image, width: width, height: height, fit: BoxFit.cover,);
+      return ImageUtils.image(image, width: width, height: height, fit: BoxFit.cover,);
     }
   }
 

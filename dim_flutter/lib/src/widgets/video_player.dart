@@ -28,27 +28,37 @@
  * SOFTWARE.
  * =============================================================================
  */
+import 'package:dim_client/dim_client.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:video_player/video_player.dart';
 
 import '../ui/icons.dart';
+import '../ui/styles.dart';
+
+
+typedef OnVideoShare = void Function(Uri url);
 
 
 /// Stateful widget to fetch and then display video content.
 class VideoPlayerPage extends StatefulWidget {
-  const VideoPlayerPage(this.url, {this.title, super.key});
+  const VideoPlayerPage(this.url, this.pnf, {this.onShare, super.key,});
 
   final Uri url;
-  final String? title;
+  final PortableNetworkFile pnf;
+
+  String? get title => pnf['title'];
+
+  final OnVideoShare? onShare;
 
   final Color color = CupertinoColors.white;
   final Color bgColor = CupertinoColors.black;
 
-  static void open(BuildContext context, Uri url, String? title) => showCupertinoDialog(
+  static void open(BuildContext context, Uri url, PortableNetworkFile pnf,
+      {OnVideoShare? onShare,}) => showCupertinoDialog(
     context: context,
-    builder: (context) => VideoPlayerPage(url, title: title,),
+    builder: (context) => VideoPlayerPage(url, pnf, onShare: onShare,),
   );
 
   @override
@@ -105,6 +115,7 @@ class _VideoAppState extends State<VideoPlayerPage> {
           color: widget.color,
         ),
       ),
+      trailing: _shareButton(),
     ),
     body: Center(
       child: SingleChildScrollView(
@@ -113,6 +124,21 @@ class _VideoAppState extends State<VideoPlayerPage> {
     ),
     // floatingActionButton: _button(),
   );
+
+  Widget? _shareButton() {
+    OnVideoShare? onShare = widget.onShare;
+    if (onShare == null) {
+      return null;
+    }
+    return IconButton(
+      icon: Icon(
+        AppIcons.shareIcon,
+        size: Styles.navigationBarIconSize,
+        color: widget.color,
+      ),
+      onPressed: () => onShare(widget.url),
+    );
+  }
 
   Widget _loading() {
     Widget indicator;
@@ -148,6 +174,7 @@ class _VideoAppState extends State<VideoPlayerPage> {
           onTap: () => setState(() {
             _showProgress = !_showProgress;
           }),
+          onDoubleTap: () => setState(() => _togglePlaying()),
         ),
       ),
       SizedBox(
@@ -189,24 +216,29 @@ class _VideoAppState extends State<VideoPlayerPage> {
     );
   }
 
+  void _togglePlaying() {
+    if (_playing == true) {
+      _playing = false;
+      _controller.pause();
+    } else if (_playing == false) {
+      _playing = true;
+      _controller.play();
+    } else {
+      // initializing
+    }
+  }
+
   Widget _button() {
     if (_controller.value.isCompleted) {
       _playing = false;
     }
-    return IconButton(onPressed: () {
-      setState(() {
-        if (_playing == true) {
-          _playing = false;
-          _controller.pause();
-        } else {
-          _playing = true;
-          _controller.play();
-        }
-      });
-    }, icon: Icon(
-      _playing == false ? Icons.play_arrow : Icons.pause,
-      color: widget.color,
-    ));
+    return IconButton(
+      onPressed: () => setState(() => _togglePlaying()),
+      icon: Icon(
+        _playing == false ? Icons.play_arrow : Icons.pause,
+        color: widget.color,
+      ),
+    );
   }
 
 }

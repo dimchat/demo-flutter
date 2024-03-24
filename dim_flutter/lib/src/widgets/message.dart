@@ -16,6 +16,7 @@ import '../ui/styles.dart';
 import 'browser.dart';
 import 'browse_html.dart';
 import 'name_card.dart';
+import 'video_player.dart';
 
 
 abstract class ContentViewUtils {
@@ -100,11 +101,11 @@ abstract class ContentViewUtils {
         backgroundColor: getBackgroundColor(ctx, sender),
       );
 
-  static Widget getVideoContentView(BuildContext ctx,
-      VideoContent content, ID sender, {GestureLongPressCallback? onLongPress}) =>
+  static Widget getVideoContentView(BuildContext ctx, VideoContent content, ID sender,
+      {GestureLongPressCallback? onLongPress, OnVideoShare? onVideoShare}) =>
       GestureDetector(
         onLongPress: onLongPress,
-        child: NetworkVideoFactory().getVideoView(content),
+        child: NetworkVideoFactory().getVideoView(content, onVideoShare: onVideoShare),
       );
 
   static Widget getImageContentView(BuildContext ctx,

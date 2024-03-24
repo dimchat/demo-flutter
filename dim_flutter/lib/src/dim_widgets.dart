@@ -15,3 +15,4 @@ export 'widgets/recorder.dart';
 export 'widgets/table.dart';
 export 'widgets/time.dart';
 export 'widgets/title.dart';
+export 'widgets/video_player.dart';

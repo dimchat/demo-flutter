@@ -34,10 +34,10 @@ import 'package:dim_client/dim_client.dart';
 import 'package:flutter/material.dart';
 
 import '../ui/icons.dart';
+import '../widgets/video_player.dart';
 import 'gallery.dart';
 import 'loader.dart';
 import 'net_base.dart';
-import 'video_player.dart';
 
 
 /// Factory for Remote Video
@@ -46,14 +46,15 @@ class NetworkVideoFactory {
   static final NetworkVideoFactory _instance = NetworkVideoFactory._internal();
   NetworkVideoFactory._internal();
 
-  PortableNetworkView getVideoView(VideoContent content, {double? width, double? height}) {
+  PortableNetworkView getVideoView(VideoContent content,
+      {double? width, double? height, OnVideoShare? onVideoShare}) {
     PortableNetworkFile? pnf = PortableNetworkFile.parse(content);
     Uri? url = pnf?.url;
     if (url == null || pnf == null) {
       throw FormatException('PNF error: $content');
     }
     _PortableVideoLoader loader = _PortableVideoLoader.from(pnf);
-    return _PortableVideoView(loader, width: width, height: height,);
+    return _PortableVideoView(loader, width: width, height: height, onVideoShare: onVideoShare,);
   }
 
 }
@@ -61,12 +62,14 @@ class NetworkVideoFactory {
 
 /// View for show Video Content
 class _PortableVideoView extends PortableNetworkView {
-  const _PortableVideoView(super.loader, {this.width, this.height});
+  const _PortableVideoView(super.loader, {this.width, this.height, this.onVideoShare});
+
+  Uri? get url => pnf.url;
 
   final double? width;
   final double? height;
 
-  Uri? get url => pnf.url;
+  final OnVideoShare? onVideoShare;
 
   @override
   State<StatefulWidget> createState() => _PortableVideoState();
@@ -131,7 +134,6 @@ class _PortableVideoLoader extends PortableFileLoader {
 
   Widget? getProgress(BuildContext ctx, _PortableVideoView widget) {
     PortableNetworkFile pnf = widget.pnf;
-    var title = pnf['title'];
     var url = pnf.url;
     if (url == null) {
       return _showError('URL not found', null, CupertinoColors.systemRed);
@@ -143,7 +145,7 @@ class _PortableVideoLoader extends PortableFileLoader {
     var icon = const Icon(AppIcons.playVideoIcon, color: CupertinoColors.white);
     var button = IconButton(
       icon: icon,
-      onPressed: () => VideoPlayerPage.open(ctx, url, title),
+      onPressed: () => VideoPlayerPage.open(ctx, url, pnf, onShare: widget.onVideoShare),
     );
     return ClipRRect(
       borderRadius: const BorderRadius.all(

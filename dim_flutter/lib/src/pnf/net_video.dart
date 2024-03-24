@@ -47,22 +47,14 @@ class NetworkVideoFactory {
   static final NetworkVideoFactory _instance = NetworkVideoFactory._internal();
   NetworkVideoFactory._internal();
 
-  final Map<Uri, _PortableVideoView> _views = WeakValueMap();
-
   PortableNetworkView getVideoView(VideoContent content, {double? width, double? height}) {
     PortableNetworkFile? pnf = PortableNetworkFile.parse(content);
     Uri? url = pnf?.url;
     if (url == null || pnf == null) {
       throw FormatException('PNF error: $content');
     }
-    // get view from cache
-    _PortableVideoView? view = _views[url];
-    if (view == null) {
-      _PortableVideoLoader loader = _PortableVideoLoader.from(pnf);
-      view = _PortableVideoView(loader, width: width, height: height,);
-      _views[url] = view;
-    }
-    return view;
+    _PortableVideoLoader loader = _PortableVideoLoader.from(pnf);
+    return _PortableVideoView(loader, width: width, height: height,);
   }
 
 }
@@ -154,18 +146,20 @@ class _PortableVideoLoader extends PortableFileLoader {
   }
 
   Widget? getProgress(BuildContext ctx, _PortableVideoView widget) {
-    var url = widget.pnf.url;
+    PortableNetworkFile pnf = widget.pnf;
+    var title = pnf['title'];
+    var url = pnf.url;
     if (url == null) {
       return _showError('URL not found', null, CupertinoColors.systemRed);
     }
-    var password = widget.pnf.password;
+    var password = pnf.password;
     if (password != null) {
       return _showError('Download not supported', null, CupertinoColors.systemRed);
     }
     var icon = const Icon(AppIcons.playVideoIcon, color: CupertinoColors.white);
     var button = IconButton(
       icon: icon,
-      onPressed: () => VideoPlayerPage.open(ctx, url),
+      onPressed: () => VideoPlayerPage.open(ctx, url, title),
     );
     return ClipRRect(
       borderRadius: const BorderRadius.all(

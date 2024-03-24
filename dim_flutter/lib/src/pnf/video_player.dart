@@ -34,18 +34,21 @@ import 'package:get/get.dart';
 import 'package:video_player/video_player.dart';
 
 import '../ui/icons.dart';
-import '../ui/styles.dart';
 
 
 /// Stateful widget to fetch and then display video content.
 class VideoPlayerPage extends StatefulWidget {
-  const VideoPlayerPage(this.url, {super.key});
+  const VideoPlayerPage(this.url, {this.title, super.key});
 
   final Uri url;
+  final String? title;
 
-  static void open(BuildContext context, Uri url) => showCupertinoDialog(
+  final Color color = CupertinoColors.white;
+  final Color bgColor = CupertinoColors.black;
+
+  static void open(BuildContext context, Uri url, String? title) => showCupertinoDialog(
     context: context,
-    builder: (context) => VideoPlayerPage(url),
+    builder: (context) => VideoPlayerPage(url, title: title,),
   );
 
   @override
@@ -56,6 +59,7 @@ class VideoPlayerPage extends StatefulWidget {
 class _VideoAppState extends State<VideoPlayerPage> {
   late VideoPlayerController _controller;
   bool? _playing;
+  bool _showProgress = false;
   double _currentPosition = 0.0;
   String? _error;
 
@@ -89,12 +93,16 @@ class _VideoAppState extends State<VideoPlayerPage> {
 
   @override
   Widget build(BuildContext context) => Scaffold(
-    backgroundColor: Styles.colors.scaffoldBackgroundColor,
+    // backgroundColor: Styles.colors.scaffoldBackgroundColor,
+    backgroundColor: widget.bgColor,
+    // extendBodyBehindAppBar: true,
     appBar: CupertinoNavigationBar(
-      backgroundColor: Styles.colors.appBardBackgroundColor,
-      middle: Text('Video Player'.tr,
+      // backgroundColor: Styles.colors.appBardBackgroundColor,
+      backgroundColor: widget.bgColor,
+      middle: Text(widget.title ?? 'Video Player'.tr,
         style: TextStyle(
-          color: Styles.colors.primaryTextColor,
+          // color: Styles.colors.primaryTextColor,
+          color: widget.color,
         ),
       ),
     ),
@@ -110,15 +118,15 @@ class _VideoAppState extends State<VideoPlayerPage> {
     Widget indicator;
     Widget message;
     if (_error == null) {
-      indicator = const CupertinoActivityIndicator();
+      indicator = CupertinoActivityIndicator(color: widget.color,);
       message = Text('Loading "@url" ...'.trParams({
         'url': widget.url.toString(),
-      }));
+      }), style: TextStyle(color: widget.color),);
     } else {
       indicator = const Icon(AppIcons.decryptErrorIcon, color: CupertinoColors.systemRed,);
       message = Text('Failed to load "@url".'.trParams({
         'url': widget.url.toString(),
-      }));
+      }), style: TextStyle(color: widget.color),);
     }
     return Column(
       mainAxisAlignment: MainAxisAlignment.center,
@@ -130,22 +138,30 @@ class _VideoAppState extends State<VideoPlayerPage> {
     );
   }
 
-  Widget _body() => Column(
-    // alignment: AlignmentDirectional.bottomCenter,
+  Widget _body() => Stack(
+    alignment: AlignmentDirectional.bottomCenter,
     children: [
       AspectRatio(
         aspectRatio: _controller.value.aspectRatio,
-        child: VideoPlayer(_controller),
+        child: GestureDetector(
+          child: VideoPlayer(_controller),
+          onTap: () => setState(() {
+            _showProgress = !_showProgress;
+          }),
+        ),
       ),
-      Container(
-        // color: CupertinoColors.systemFill,
-        // height: 48,
+      SizedBox(
+        height: 48,
         child: _slider(),
       ),
     ],
   );
 
   Widget _slider() {
+    TextStyle textStyle = TextStyle(color: widget.color);
+    var bufferedEnd = _controller.value.buffered.map((range) => range.end).toList();
+    var maxBufferedEnd = bufferedEnd.isNotEmpty ? bufferedEnd.reduce((a, b) => a > b ? a : b) : Duration.zero;
+    final buf = maxBufferedEnd.inSeconds.toDouble();
     double pos = _currentPosition;
     double len = _controller.value.duration.inSeconds.toDouble();
     return Row(
@@ -153,16 +169,21 @@ class _VideoAppState extends State<VideoPlayerPage> {
       children: [
         if (_playing != null)
           _button(),
-        Text(_time(pos)),
+        Text(_time(pos), style: textStyle),
+        if (!_showProgress)
+        Expanded(child: Container(),),
+        if (_showProgress)
         Expanded(child: Slider(onChanged: (value) {
           setState(() => _currentPosition = value);
           _controller.seekTo(Duration(seconds: value.toInt()));
         }, value: pos, max: len, min: 0.0,
+          secondaryTrackValue: buf,
+          thumbColor: CupertinoColors.inactiveGray,
           activeColor: CupertinoColors.systemFill,
           inactiveColor: CupertinoColors.secondarySystemFill,
-          thumbColor: CupertinoColors.inactiveGray,
+          secondaryActiveColor: CupertinoColors.systemYellow,
         )),
-        Text(_time(len)),
+        Text(_time(len), style: textStyle),
         const SizedBox(width: 16,),
       ],
     );
@@ -184,6 +205,7 @@ class _VideoAppState extends State<VideoPlayerPage> {
       });
     }, icon: Icon(
       _playing == false ? Icons.play_arrow : Icons.pause,
+      color: widget.color,
     ));
   }
 

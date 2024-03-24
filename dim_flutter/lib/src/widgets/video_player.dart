@@ -32,6 +32,7 @@ import 'package:dim_client/dim_client.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:lnc/log.dart';
 import 'package:video_player/video_player.dart';
 
 import '../ui/icons.dart';
@@ -69,13 +70,14 @@ class VideoPlayerPage extends StatefulWidget {
 class _VideoAppState extends State<VideoPlayerPage> {
   late VideoPlayerController _controller;
   bool? _playing;
-  bool _showProgress = false;
+  bool? _showProgress;
   double _currentPosition = 0.0;
   String? _error;
 
   @override
   void initState() {
     super.initState();
+    Log.info('[Video Player] remote url: ${widget.url}');
     _controller = VideoPlayerController.networkUrl(widget.url);
     _controller.initialize().then((_) {
       // ensure the first frame is shown after the video is initialized,
@@ -105,8 +107,8 @@ class _VideoAppState extends State<VideoPlayerPage> {
   Widget build(BuildContext context) => Scaffold(
     // backgroundColor: Styles.colors.scaffoldBackgroundColor,
     backgroundColor: widget.bgColor,
-    // extendBodyBehindAppBar: true,
-    appBar: CupertinoNavigationBar(
+    extendBodyBehindAppBar: true,
+    appBar: _showProgress == false ? null : CupertinoNavigationBar(
       // backgroundColor: Styles.colors.appBardBackgroundColor,
       backgroundColor: widget.bgColor,
       middle: Text(widget.title ?? 'Video Player'.tr,
@@ -158,8 +160,10 @@ class _VideoAppState extends State<VideoPlayerPage> {
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
         indicator,
-        const SizedBox(height: 16,),
-        message,
+        Container(
+          padding: const EdgeInsets.fromLTRB(32, 16, 32, 16),
+          child: message,
+        ),
       ],
     );
   }
@@ -172,7 +176,7 @@ class _VideoAppState extends State<VideoPlayerPage> {
         child: GestureDetector(
           child: VideoPlayer(_controller),
           onTap: () => setState(() {
-            _showProgress = !_showProgress;
+            _showProgress = _showProgress == false;
           }),
           onDoubleTap: () => setState(() => _togglePlaying()),
         ),
@@ -197,9 +201,9 @@ class _VideoAppState extends State<VideoPlayerPage> {
         if (_playing != null)
           _button(),
         Text(_time(pos), style: textStyle),
-        if (!_showProgress)
+        if (_showProgress == false)
         Expanded(child: Container(),),
-        if (_showProgress)
+        if (_showProgress != false)
         Expanded(child: Slider(onChanged: (value) {
           setState(() => _currentPosition = value);
           _controller.seekTo(Duration(seconds: value.toInt()));

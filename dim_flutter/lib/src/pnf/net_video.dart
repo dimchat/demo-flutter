@@ -139,7 +139,7 @@ class _PortableVideoLoader extends PortableFileLoader {
       return _showError('URL not found', null, CupertinoColors.systemRed);
     }
     var password = pnf.password;
-    if (password != null) {
+    if (password != null && password.algorithm != PlainKey.kPLAIN) {
       return _showError('Download not supported', null, CupertinoColors.systemRed);
     }
     var icon = const Icon(AppIcons.playVideoIcon, color: CupertinoColors.white);

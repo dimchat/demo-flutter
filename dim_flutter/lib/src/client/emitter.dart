@@ -219,7 +219,10 @@ class Emitter implements Observer {
   Future<void> sendVideo(Uri url,
       {String? filename, String? title, String? snapshot,
         Map<String, Object>? extra, required ID receiver}) async {
-    VideoContent content = FileContent.video(url: url, filename: filename);
+    VideoContent content = FileContent.video(url: url,
+      filename: filename,
+      password: PlainKey.getInstance(),
+    );
     content['title'] = title;
     content['snapshot'] = snapshot;
     if (extra != null) {

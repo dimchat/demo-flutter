@@ -28,14 +28,13 @@
  * SOFTWARE.
  * =============================================================================
  */
-import 'dart:typed_data';
-
 import 'package:flutter/cupertino.dart';
 
 import 'package:dim_client/dim_client.dart';
 import 'package:flutter/material.dart';
 
 import '../ui/icons.dart';
+import 'gallery.dart';
 import 'loader.dart';
 import 'net_base.dart';
 import 'video_player.dart';
@@ -113,22 +112,7 @@ class _PortableVideoLoader extends PortableFileLoader {
 
   ImageProvider<Object>? get imageProvider {
     var image = _snapshot;
-    if (image == null) {
-      var small = pnf['snapshot'];
-      if (small is! String) {
-        assert(small == null, 'snapshot error: $small');
-      } else if (small.contains('://')) {
-        image = _snapshot = NetworkImage(small);
-      } else {
-        var ted = TransportableData.parse(small);
-        Uint8List? bytes = ted?.data;
-        if (bytes != null && bytes.isNotEmpty) {
-          image = _snapshot = MemoryImage(bytes);
-        } else {
-          assert(false, 'snapshot error: $small');
-        }
-      }
-    }
+    image ??= _snapshot = Gallery.getSnapshotProvider(pnf);
     return image;
   }
 

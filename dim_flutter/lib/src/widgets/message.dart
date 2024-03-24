@@ -100,10 +100,12 @@ abstract class ContentViewUtils {
         backgroundColor: getBackgroundColor(ctx, sender),
       );
 
-  // TODO:
   static Widget getVideoContentView(BuildContext ctx,
       VideoContent content, ID sender, {GestureLongPressCallback? onLongPress}) =>
-      NetworkVideoFactory().getVideoView(content);
+      GestureDetector(
+        onLongPress: onLongPress,
+        child: NetworkVideoFactory().getVideoView(content),
+      );
 
   static Widget getImageContentView(BuildContext ctx,
       ImageContent content, ID sender, List<InstantMessage> messages,

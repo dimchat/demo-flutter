@@ -28,11 +28,14 @@
  * SOFTWARE.
  * =============================================================================
  */
+import 'dart:typed_data';
+
 import 'package:flutter/cupertino.dart';
 import 'package:get/get.dart';
 import 'package:image_gallery_saver/image_gallery_saver.dart';
 import 'package:photo_view/photo_view_gallery.dart';
 
+import 'package:dim_client/dim_common.dart';
 import 'package:lnc/log.dart';
 import 'package:pnf/pnf.dart';
 
@@ -58,6 +61,58 @@ class Gallery {
       requestPhotoAccessingPermissions(context,
         onGranted: (context) => _confirmToSave(context, loader),
       );
+
+  static Image? getThumbnail(Map content) {
+    String? small = content['thumbnail'];
+    return small == null ? null : _ImageHelper.getImage(small);
+  }
+  static Image? getSnapshot(Map content) {
+    String? small = content['snapshot'];
+    return small == null ? null : _ImageHelper.getImage(small);
+  }
+
+  static ImageProvider? getThumbnailProvider(Map content) {
+    String? small = content['thumbnail'];
+    return small == null ? null : _ImageHelper.getProvider(small);
+  }
+  static ImageProvider? getSnapshotProvider(Map content) {
+    String? small = content['snapshot'];
+    return small == null ? null : _ImageHelper.getProvider(small);
+  }
+
+}
+
+abstract class _ImageHelper {
+
+  static Image? getImage(String small) {
+    if (small.contains('://')) {
+      return Image.network(small);
+    } else {
+      var ted = TransportableData.parse(small);
+      Uint8List? bytes = ted?.data;
+      if (bytes != null && bytes.isNotEmpty) {
+        return Image.memory(bytes);
+      } else {
+        assert(false, 'thumbnail error: $small');
+      }
+    }
+    return null;
+  }
+
+  static ImageProvider? getProvider(String small) {
+    if (small.contains('://')) {
+      return NetworkImage(small);
+    } else {
+      var ted = TransportableData.parse(small);
+      Uint8List? bytes = ted?.data;
+      if (bytes != null && bytes.isNotEmpty) {
+        return MemoryImage(bytes);
+      } else {
+        assert(false, 'thumbnail error: $small');
+      }
+    }
+    return null;
+  }
 
 }
 

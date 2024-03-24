@@ -162,7 +162,7 @@ class Emitter implements Observer {
   /// @param text     - text message
   /// @param receiver - receiver ID
   /// @throws IOException on failed to save message
-  Future<void> sendText(String text, ID receiver) async {
+  Future<void> sendText(String text, {required ID receiver}) async {
     TextContent content = TextContent.create(text);
     await sendContent(content, receiver);
   }
@@ -173,8 +173,9 @@ class Emitter implements Observer {
   /// @param thumbnail - image thumbnail
   /// @param receiver  - receiver ID
   /// @throws IOException on failed to save message
-  Future<void> sendImage(Uint8List jpeg, String filename, Uint8List? thumbnail,
-      ID receiver, [Map<String, Object>? extra]) async {
+  Future<void> sendImage(Uint8List jpeg,
+      {required String filename, String? thumbnail,
+        Map<String, Object>? extra, required ID receiver}) async {
     assert(jpeg.isNotEmpty, 'image data should not empty');
     // rebuild filename
     String ext = Paths.extension(filename) ?? 'jpeg';
@@ -185,7 +186,7 @@ class Emitter implements Observer {
     ImageContent content = FileContent.image(filename: filename, data: ted);
     // add image data length & thumbnail into message content
     content['length'] = jpeg.length;
-    content.thumbnail = thumbnail;
+    content['thumbnail'] = thumbnail;
     if (extra != null) {
       content.addAll(extra);
     }
@@ -198,7 +199,9 @@ class Emitter implements Observer {
   /// @param duration - length
   /// @param receiver - receiver ID
   /// @throws IOException on failed to save message
-  Future<void> sendVoice(Uint8List mp4, String filename, double duration, ID receiver) async {
+  Future<void> sendVoice(Uint8List mp4,
+      {required String filename, required double duration,
+        required ID receiver}) async {
     assert(mp4.isNotEmpty, 'voice data should not empty');
     // rebuild filename
     String ext = Paths.extension(filename) ?? 'mp4';
@@ -210,6 +213,18 @@ class Emitter implements Observer {
     // add voice data length & duration into message content
     content['length'] = mp4.length;
     content['duration'] = duration;
+    await sendContent(content, receiver);
+  }
+
+  Future<void> sendVideo(Uri url,
+      {String? filename, String? title, String? snapshot,
+        Map<String, Object>? extra, required ID receiver}) async {
+    VideoContent content = FileContent.video(url: url, filename: filename);
+    content['title'] = title;
+    content['snapshot'] = snapshot;
+    if (extra != null) {
+      content.addAll(extra);
+    }
     await sendContent(content, receiver);
   }
 

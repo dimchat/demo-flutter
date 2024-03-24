@@ -156,12 +156,19 @@ final Map<String, String> intlJaJp = {
   'Image Not Found': '画像が見つかりません',
   'Failed to load image @filename': '画像 "@filename" の読み込みに失敗しました。',
 
+  'Loading "@url" ...': '"@url" を読み込んでいます...',
+  'Failed to load "@url".' : '"@url" の読み込みに失敗しました。',
+
   'Forward Image': '画像を転送',
+  'Forward Video': 'ビデオを転送',
   'Forward Web Page': 'ウェブページを転送',
   'Forward Name Card': '名刺を転送',
 
   'Image message forwarded to @chat': '画像メッセージを"@chat"に転送しました。',
   'Failed to share image with @chat': '"@chat"との画像共有に失敗しました。',
+
+  'Video message forwarded to @chat': 'ビデオメッセージが"@chat"に転送されました。',
+  'Failed to share video with @chat': 'ビデオを"@chat"と共有できませんでした。',
 
   'Web Page @title forwarded to @chat': 'ウェブページ"@title"が"@chat"に転送されました。',
   'Failed to share Web Page @title with @chat': '"@chat"とのウェブページ"@title"の共有に失敗しました。',

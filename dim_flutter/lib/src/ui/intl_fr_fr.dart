@@ -156,12 +156,19 @@ final Map<String, String> intlFrFr = {
   'Image Not Found': 'Image non trouvée',
   'Failed to load image @filename': 'Échec du chargement de l\'image "@filename".',
 
+  'Loading "@url" ...': 'Chargement de "@url" ...',
+  'Failed to load "@url".' : 'Échec du chargement de "@url".',
+
   'Forward Image': 'Transmettre l\'image',
+  'Forward Video': 'Vidéo en avant',
   'Forward Web Page': 'Transmettre la page Web',
   'Forward Name Card': 'Transmettre la carte de visite',
 
   'Image message forwarded to @chat': 'Message image transmis à "@chat".',
   'Failed to share image with @chat': 'Échec du partage de l\'image avec "@chat".',
+
+  'Video message forwarded to @chat': 'Message vidéo a été transféré à "@chat".',
+  'Failed to share video with @chat': 'Impossible de partager la vidéo avec "@chat".',
 
   'Web Page @title forwarded to @chat': 'Page Web "@title" transmise à "@chat".',
   'Failed to share Web Page @title with @chat': 'Échec du partage de la page Web "@title" avec "@chat".',

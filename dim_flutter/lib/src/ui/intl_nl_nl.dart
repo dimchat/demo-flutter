@@ -156,12 +156,19 @@ final Map<String, String> intlNlNl = {
   'Image Not Found': 'Afbeelding Niet Gevonden',
   'Failed to load image @filename': 'Laden van afbeelding "@filename" mislukt.',
 
+  'Loading "@url" ...': 'Laden van "@url" ...',
+  'Failed to load "@url".' : 'Kon "@url" niet laden.',
+
   'Forward Image': 'Afbeelding doorsturen',
+  'Forward Video': 'Video doorsturen',
   'Forward Web Page': 'Webpagina doorsturen',
   'Forward Name Card': 'Naamkaart doorsturen',
 
   'Image message forwarded to @chat': 'Afbeeldingsbericht is doorgestuurd naar "@chat".',
   'Failed to share image with @chat': 'Kan afbeelding niet delen met "@chat".',
+
+  'Video message forwarded to @chat': 'Videoboodschap is doorgestuurd naar "@chat".',
+  'Failed to share video with @chat': 'Kon video niet delen met "@chat".',
 
   'Web Page @title forwarded to @chat': 'Webpagina "@title" is doorgestuurd naar "@chat".',
   'Failed to share Web Page @title with @chat': 'Kan webpagina "@title" niet delen met "@chat".',

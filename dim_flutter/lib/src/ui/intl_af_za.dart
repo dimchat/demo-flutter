@@ -156,12 +156,19 @@ final Map<String, String> intlAfZa = {
   'Image Not Found': 'Beeld Nie Gevind Nie',
   'Failed to load image @filename': 'Kon nie beeld "@filename" laai nie.',
 
+  'Loading "@url" ...': 'Laai "@url" ...',
+  'Failed to load "@url".' : 'Kon nie "@url" laai nie.',
+
   'Forward Image': 'Stuur Beeld Voort',
+  'Forward Video': 'Stuur video',
   'Forward Web Page': 'Stuur Webblad Voort',
   'Forward Name Card': 'Stuur Naamkaartjie Voort',
 
   'Image message forwarded to @chat': 'Beeldboodskap is na "@chat" deurgestuur.',
   'Failed to share image with @chat': 'Kon nie beeld deel met "@chat" nie.',
+
+  'Video message forwarded to @chat': 'Videoboodskap is na "@chat" gestuur.',
+  'Failed to share video with @chat': 'Kon nie video deel met "@chat".',
 
   'Web Page @title forwarded to @chat': 'Webblad "@title" is na "@chat" deurgestuur.',
   'Failed to share Web Page @title with @chat': 'Kon nie webblad "@title" deel met "@chat" nie.',

@@ -156,12 +156,19 @@ final Map<String, String> intlIdId = {
   'Image Not Found': 'Gambar Tidak Ditemukan',
   'Failed to load image @filename': 'Gagal memuat gambar "@filename".',
 
+  'Loading "@url" ...': 'Memuat "@url" ...',
+  'Failed to load "@url".' : 'Gagal memuat "@url".',
+
   'Forward Image': 'Teruskan Gambar',
+  'Forward Video': 'Teruskan Video',
   'Forward Web Page': 'Teruskan Halaman Web',
   'Forward Name Card': 'Teruskan Kartu Nama',
 
   'Image message forwarded to @chat': 'Pesan gambar telah diteruskan ke "@chat".',
   'Failed to share image with @chat': 'Gagal membagikan gambar dengan "@chat".',
+
+  'Video message forwarded to @chat': 'Pesan video telah diteruskan ke "@chat".',
+  'Failed to share video with @chat': 'Gagal membagikan video dengan "@chat".',
 
   'Web Page @title forwarded to @chat': 'Halaman web "@title" telah diteruskan ke "@chat".',
   'Failed to share Web Page @title with @chat': 'Gagal membagikan halaman web "@title" dengan "@chat".',

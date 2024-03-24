@@ -156,12 +156,19 @@ final Map<String, String> intlDeDe = {
   'Image Not Found': 'Bild nicht gefunden',
   'Failed to load image @filename': 'Fehler beim Laden des Bildes "@filename".',
 
+  'Loading "@url" ...': 'Lade "@url" ...',
+  'Failed to load "@url".' : 'Konnte "@url" nicht laden.',
+
   'Forward Image': 'Bild weiterleiten',
+  'Forward Video': 'Video weiterleiten',
   'Forward Web Page': 'Webseite weiterleiten',
   'Forward Name Card': 'Namenskarte weiterleiten',
 
   'Image message forwarded to @chat': 'Bildnachricht wurde an "@chat" weitergeleitet.',
   'Failed to share image with @chat': 'Fehler beim Teilen des Bildes mit "@chat".',
+
+  'Video message forwarded to @chat': 'Videonachricht wurde an "@chat" weitergeleitet.',
+  'Failed to share video with @chat': 'Fehler beim Teilen des Videos mit "@chat".',
 
   'Web Page @title forwarded to @chat': 'Webseite "@title" wurde an "@chat" weitergeleitet.',
   'Failed to share Web Page @title with @chat': 'Fehler beim Teilen der Webseite "@title" mit "@chat".',

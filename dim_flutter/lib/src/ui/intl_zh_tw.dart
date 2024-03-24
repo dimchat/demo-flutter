@@ -155,12 +155,19 @@ final Map<String, String> intlZhTw = {
   'Image Not Found': '找不到圖片',
   'Failed to load image @filename': '無法載入圖片 "@filename"。',
 
+  'Loading "@url" ...': '載入中 "@url" ...',
+  'Failed to load "@url".': '無法載入 "@url"。',
+
   'Forward Image': '轉發圖片',
+  'Forward Video': '轉發視頻',
   'Forward Web Page': '轉發網頁',
   'Forward Name Card': '轉發名片',
 
   'Image message forwarded to @chat': '圖片訊息已轉發至 "@chat"。',
   'Failed to share image with @chat': '無法與 "@chat" 分享圖片。',
+
+  'Video message forwarded to @chat': '視頻消息已轉發至"@chat"。',
+  'Failed to share video with @chat': '無法與"@chat"分享視頻。',
 
   'Web Page @title forwarded to @chat': '網頁 "@title" 已轉發至 "@chat"。',
   'Failed to share Web Page @title with @chat': '無法與 "@chat" 分享網頁 "@title"。',

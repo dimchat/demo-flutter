@@ -156,12 +156,19 @@ final Map<String, String> intlThTh = {
   'Image Not Found': 'ไม่พบรูปภา��',
   'Failed to load image @filename': 'ไม่สามารถโหลดรูป "@filename" ได้',
 
+  'Loading "@url" ...': 'กำลังโหลด "@url" ...',
+  'Failed to load "@url".' : 'โหลด "@url" ไม่สำเร็จ',
+
   'Forward Image': 'ส่งต่อรูปภาพ',
+  'Forward Video': 'ส่งวิดีโอต่อ',
   'Forward Web Page': 'ส่งต่อหน้าเว็บ',
   'Forward Name Card': 'ส่งต่อบัตรชื่อ',
 
   'Image message forwarded to @chat': 'ข้อความรูปภาพถูกส่งต่อไปยัง "@chat"',
   'Failed to share image with @chat': 'การแชร์รูปภาพกับ "@chat" ล้มเหลว',
+
+  'Video message forwarded to @chat': 'ข้อความวิดีโอถูกส่งต่อไปยัง "@chat"',
+  'Failed to share video with @chat': 'การแชร์วิดีโอกับ "@chat" ไม่สำเร็จ',
 
   'Web Page @title forwarded to @chat': 'หน้าเว็บ "@title" ถูกส่งต่อไปยัง "@chat"',
   'Failed to share Web Page @title with @chat': 'การแชร์หน้าเว็บ "@title" กับ "@chat" ล้มเหลว',

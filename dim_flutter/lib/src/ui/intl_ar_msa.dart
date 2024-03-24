@@ -156,12 +156,19 @@ final Map<String, String> intlAr = {
   'Image Not Found': 'الصورة غير موجودة',
   'Failed to load image @filename': 'فشل في تحميل الصورة "@filename".',
 
+  'Loading "@url" ...': 'جار التحميل "@url" ...',
+  'Failed to load "@url".' : 'فشل في التحميل "@url".',
+
   'Forward Image': 'إعادة توجيه الصورة',
+  'Forward Video': 'توجيه الفيديو',
   'Forward Web Page': 'إعادة توجيه صفحة الويب',
   'Forward Name Card': 'إعادة توجيه بطاقة الاسم',
 
   'Image message forwarded to @chat': 'تم إعادة توجيه رسالة الصورة إلى "@chat".',
   'Failed to share image with @chat': 'فشلت في مشاركة الصورة مع "@chat".',
+
+  'Video message forwarded to @chat': 'تم توجيه رسالة الفيديو إلى "@chat".',
+  'Failed to share video with @chat': 'فشل في مشاركة الفيديو مع "@chat".',
 
   'Web Page @title forwarded to @chat': 'تم إعادة توجيه صفحة الويب "@title" إلى "@chat".',
   'Failed to share Web Page @title with @chat': 'فشلت في مشاركة صفحة الويب "@title" مع "@chat".',

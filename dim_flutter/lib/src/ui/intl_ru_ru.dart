@@ -156,12 +156,19 @@ final Map<String, String> intlRuRu = {
   'Image Not Found': 'Изображение не найдено',
   'Failed to load image @filename': 'Не удалось загрузить изображение "@filename".',
 
+  'Loading "@url" ...': 'Загрузка "@url" ...',
+  'Failed to load "@url".' : 'Не удалось загрузить "@url".',
+
   'Forward Image': 'Переслать изображение',
+  'Forward Video': 'Переслать видео',
   'Forward Web Page': 'Переслать веб-страницу',
   'Forward Name Card': 'Переслать визитку',
 
   'Image message forwarded to @chat': 'Изображение переслано в "@chat".',
   'Failed to share image with @chat': 'Не удалось поделиться изображением с "@chat".',
+
+  'Video message forwarded to @chat': 'Видео переслано в "@chat".',
+  'Failed to share video with @chat': 'Не удалось поделиться видео с "@chat".',
 
   'Web Page @title forwarded to @chat': 'Веб-страница "@title" переслана в "@chat".',
   'Failed to share Web Page @title with @chat': 'Не удалось поделиться веб-страницей "@title" с "@chat".',

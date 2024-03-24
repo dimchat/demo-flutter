@@ -155,12 +155,19 @@ final Map<String, String> intlEnUs = {
   'Image Not Found': 'Image Not Found',
   'Failed to load image @filename': 'Failed to load image "@filename".',
 
+  'Loading "@url" ...': 'Loading "@url" ...',
+  'Failed to load "@url".': 'Failed to load "@url".',
+
   'Forward Image': 'Forward Image',
+  'Forward Video': 'Forward Video',
   'Forward Web Page': 'Forward Web Page',
   'Forward Name Card': 'Forward Name Card',
 
   'Image message forwarded to @chat': 'Image message has been forwarded to "@chat".',
   'Failed to share image with @chat': 'Failed to share image with "@chat".',
+
+  'Video message forwarded to @chat': 'Video message has been forwarded to "@chat".',
+  'Failed to share video with @chat': 'Failed to share video with "@chat".',
 
   'Web Page @title forwarded to @chat': 'Web page "@title" has been forwarded to "@chat".',
   'Failed to share Web Page @title with @chat': 'Failed to share web page "@title" with "@chat".',

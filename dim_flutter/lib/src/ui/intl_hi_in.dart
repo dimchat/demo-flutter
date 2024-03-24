@@ -156,12 +156,19 @@ final Map<String, String> intlHiIn = {
   'Image Not Found': 'तस्वीर नहीं मिली',
   'Failed to load image @filename': 'तस्वीर लोड करने में विफल "@filename"।',
 
+  'Loading "@url" ...': '"@url" लोड हो रहा है ...',
+  'Failed to load "@url".' : '"@url" लोड करने में विफल रहा।',
+
   'Forward Image': 'छवि आगे भेजें',
+  'Forward Video': 'वीडियो अग्रेषित करें',
   'Forward Web Page': 'वेब पृष्ठ आगे भेजें',
   'Forward Name Card': 'नाम कार्ड आगे भेजें',
 
   'Image message forwarded to @chat': 'छवि संदेश को "@chat" को आगे भेज दिया गया है।',
   'Failed to share image with @chat': '"@chat" के साथ छवि साझा करने में विफल रहा।',
+
+  'Video message forwarded to @chat': 'वीडियो संदेश को "@chat" को अग्रेषित किया गया है।',
+  'Failed to share video with @chat': 'वीडियो को "@chat" के साथ साझा करने में विफल रहा।',
 
   'Web Page @title forwarded to @chat': 'वेब पृष्ठ "@title" को "@chat" को आगे भेज दिया गया है।',
   'Failed to share Web Page @title with @chat': '"@chat" के साथ वेब पृष्ठ "@title" को साझा करने में विफल रहा।',

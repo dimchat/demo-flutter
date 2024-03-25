@@ -186,7 +186,9 @@ class Emitter implements Observer {
     ImageContent content = FileContent.image(filename: filename, data: ted);
     // add image data length & thumbnail into message content
     content['length'] = jpeg.length;
-    content['thumbnail'] = thumbnail;
+    if (thumbnail != null) {
+      content['thumbnail'] = thumbnail;
+    }
     if (extra != null) {
       content.addAll(extra);
     }

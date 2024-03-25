@@ -3,7 +3,6 @@ import 'dart:typed_data';
 import 'dart:ui' as ui;
 
 import 'package:flutter/cupertino.dart';
-import 'package:flutter_image_compress/flutter_image_compress.dart';
 import 'package:image_picker/image_picker.dart';
 
 import 'package:lnc/log.dart';
@@ -57,15 +56,6 @@ void _openImagePicker(BuildContext context, bool camera, OnImagePicked? onPicked
     });
 
 
-/// compress image for thumbnail (128*128) low quality
-Future<Uint8List> compressThumbnail(Uint8List jpeg) async =>
-    await FlutterImageCompress.compressWithList(jpeg,
-      minHeight: 128,
-      minWidth: 128,
-      quality: 20,
-    );
-
-
 ///  Check whether needs resize down a large image
 ///
 /// @param jpeg   - image data
@@ -84,7 +74,7 @@ void adjustImage(Uint8List jpeg, int size, void Function(Uint8List small) onSank
       double width = image.width * ratio;
       double height = image.height * ratio;
       // zoom out
-      Uint8List small = await FlutterImageCompress.compressWithList(jpeg,
+      Uint8List? small = await ImageUtils.compress(jpeg,
         minWidth: width.toInt(),
         minHeight: height.toInt(),
       );
@@ -92,11 +82,11 @@ void adjustImage(Uint8List jpeg, int size, void Function(Uint8List small) onSank
           ? fileSize - (fileSize >> 2)     // size * 0.75
           : fileSize - _threshold;         // size - 0.5 MB
       Log.info('resized: ${image.width} * ${image.height} => $width * $height,'
-          ' $fileSize => ${small.length} bytes');
-      if (small.length < borderline) {
+          ' $fileSize => ${small?.length} bytes');
+      if (small != null && small.length < borderline) {
         onSank(small);
       } else {
-        Log.warning('unworthy compression: $fileSize -> ${small.length}, borderline: $borderline');
+        Log.warning('unworthy compression: $fileSize -> ${small?.length}, borderline: $borderline');
         onSank(jpeg);
       }
     });

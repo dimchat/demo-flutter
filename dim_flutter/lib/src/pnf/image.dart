@@ -32,6 +32,7 @@ import 'dart:io';
 import 'dart:typed_data';
 
 import 'package:flutter/cupertino.dart';
+import 'package:flutter_image_compress/flutter_image_compress.dart';
 
 import 'package:dim_client/dim_common.dart';
 import 'package:lnc/log.dart';
@@ -111,6 +112,25 @@ abstract class ImageUtils {
 
   static ImageProvider fileImageProvider(String path) =>
       FileImage(File(path));
+
+  //
+  //  Compression
+  //
+
+  /// compress image for thumbnail (128*128) low quality
+  static Future<Uint8List?> compressThumbnail(Uint8List jpeg) async =>
+      await compress(jpeg, minHeight: 128, minWidth: 128, quality: 20,);
+
+  static Future<Uint8List?> compress(Uint8List image,
+      {required int minWidth, required int minHeight, int quality = 95}) async {
+    try {
+      return await FlutterImageCompress.compressWithList(image,
+        minWidth: minWidth, minHeight: minHeight, quality: quality,);
+    } catch (e, st) {
+      Log.error('[JPEG] failed to compress image: $minWidth x $minHeight, q: $quality, $e, $st');
+      return null;
+    }
+  }
 
 }
 

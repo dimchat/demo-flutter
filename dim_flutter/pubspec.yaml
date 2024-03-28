@@ -30,7 +30,7 @@ dependencies:
   image_gallery_saver: ^2.0.3
   flutter_image_compress: ^1.1.3
   flutter_inappwebview: ^5.7.2+3
-  flutter_linkify: ^6.0.0
+  flutter_markdown: ^0.6.19
 
   flutter_section_list: ^1.1.1
   #  flutter_tableview: ^1.0.1

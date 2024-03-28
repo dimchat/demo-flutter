@@ -1,7 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_markdown/flutter_markdown.dart';
-import 'package:flutter_linkify/flutter_linkify.dart';
 
 import 'package:dim_client/dim_client.dart';
 import 'package:lnc/log.dart';
@@ -80,19 +79,16 @@ abstract class ContentViewUtils {
 
   static Widget getTextContentView(BuildContext ctx, Content content, ID sender, {OnWebShare? onWebShare}) {
     String text = DefaultMessageBuilder().getText(content, sender);
-    Color color = getTextColor(ctx, sender);
-    Color bgColor = getBackgroundColor(ctx, sender);
-    return Container(
-      color: bgColor,
-      padding: Styles.textMessagePadding,
-      // child: SelectableText(
-      //   DefaultMessageBuilder().getText(content, sender),
-      //   style: TextStyle(color: getTextColor(ctx, sender)),
-      // ),
-      child: GestureDetector(
-        child: _textView(ctx, text, color: color, onWebShare: onWebShare),
-        onDoubleTap: () => _showFullText(ctx, text, sender),
+    Widget textView = sender == currentUser?.identifier
+        ? SelectableText(text, style: TextStyle(color: getTextColor(ctx, sender)),)
+        : _richTextView(ctx, text, onWebShare);
+    return GestureDetector(
+      child: Container(
+        color: getBackgroundColor(ctx, sender),
+        padding: Styles.textMessagePadding,
+        child: textView,
       ),
+      onDoubleTap: () => _showFullText(ctx, text, sender, onWebShare),
     );
   }
 
@@ -138,31 +134,21 @@ abstract class ContentViewUtils {
 }
 
 
-Widget _textView(BuildContext ctx, String text,
-    {required Color color, required OnWebShare? onWebShare}) => SelectableLinkify(
-  text: text,
-  style: TextStyle(color: color),
-  linkStyle: const TextStyle(decoration: TextDecoration.none, color: CupertinoColors.link),
-  options: const LinkifyOptions(humanize: false),
-  linkifiers: const [UrlLinkifier(),],
-  contextMenuBuilder: (context, state) => AdaptiveTextSelectionToolbar.editableText(
-    editableTextState: state,
-  ),
-  onOpen: (link) => Browser.open(ctx, url: link.url, onShare: onWebShare,),
-);
-
-
-void _showFullText(BuildContext ctx, String text, ID sender) => showPage(
+void _showFullText(BuildContext ctx, String text, ID sender, OnWebShare? onWebShare) => showPage(
   context: ctx,
-  builder: (context) => _TextContentViewer(text: text, sender: sender,),
+  builder: (context) => _TextContentViewer(text: text,
+    sender: sender,
+    onWebShare: onWebShare,
+  ),
 );
 
 
 class _TextContentViewer extends StatefulWidget {
-  const _TextContentViewer({required this.text, required this.sender});
+  const _TextContentViewer({required this.text, required this.sender, this.onWebShare});
 
   final ID sender;
   final String text;
+  final OnWebShare? onWebShare;
 
   @override
   State<StatefulWidget> createState() => _TextContentViewerState();
@@ -177,7 +163,7 @@ class _TextContentViewerState extends State<_TextContentViewer> {
   @override
   void initState() {
     super.initState();
-    _text = '\n${widget.text}\n';
+    _text = widget.text;
     _refresh();
   }
 
@@ -200,17 +186,12 @@ class _TextContentViewerState extends State<_TextContentViewer> {
     ),
     body: GestureDetector(
       child: Container(
-        padding: const EdgeInsets.only(left: 32, right: 32),
+        padding: const EdgeInsets.only(left: 32, top: 2, right: 32, bottom: 16),
         alignment: AlignmentDirectional.centerStart,
         color: Styles.colors.textMessageBackgroundColor,
         child: SingleChildScrollView(
+          // child: _richTextView(context, _text, widget.onWebShare),
           child: SelectableText(_text,
-            style: TextStyle(
-              fontSize: 18,
-              fontWeight: FontWeight.normal,
-              color: Styles.colors.textMessageColor,
-              decoration: TextDecoration.none,
-            ),
             onTap: () => closePage(context),
           ),
         ),
@@ -220,3 +201,14 @@ class _TextContentViewerState extends State<_TextContentViewer> {
   );
 
 }
+
+
+Widget _richTextView(BuildContext context, String text, OnWebShare? onWebShare) => MarkdownBody(
+  data: text,
+  selectable: true,
+  onTapLink: (text, href, title) {
+    if (href != null) {
+      Browser.open(context, url: href, onShare: onWebShare,);
+    }
+  },
+);

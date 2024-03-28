@@ -28,7 +28,7 @@ Future<void> forceAppUpdate() async => await Get.forceAppUpdate();
 
 Future<void> showPage({required BuildContext context, required WidgetBuilder builder}) async {
   // await showCupertinoDialog(context: context, builder: builder);
-  Get.to(() => builder(context));
+  Get.to(builder(context));
 }
 
 

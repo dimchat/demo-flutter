@@ -1,6 +1,5 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_markdown/flutter_markdown.dart';
 
 import 'package:dim_client/dim_client.dart';
 import 'package:lnc/log.dart';
@@ -14,6 +13,7 @@ import '../pnf/net_video.dart';
 import '../pnf/net_voice.dart';
 import '../ui/nav.dart';
 import '../ui/styles.dart';
+import '../ui/syntax.dart';
 
 import 'browser.dart';
 import 'browse_html.dart';
@@ -81,7 +81,7 @@ abstract class ContentViewUtils {
     String text = DefaultMessageBuilder().getText(content, sender);
     Widget textView = sender == currentUser?.identifier
         ? SelectableText(text, style: TextStyle(color: getTextColor(ctx, sender)),)
-        : _richTextView(ctx, text, onWebShare);
+        : RichTextView(text: text, onWebShare: onWebShare);
     return GestureDetector(
       child: Container(
         color: getBackgroundColor(ctx, sender),
@@ -157,13 +157,11 @@ class _TextContentViewer extends StatefulWidget {
 
 class _TextContentViewerState extends State<_TextContentViewer> {
 
-  String _back = '';
-  String _text = '';
+  String? _back;
 
   @override
   void initState() {
     super.initState();
-    _text = widget.text;
     _refresh();
   }
 
@@ -186,12 +184,15 @@ class _TextContentViewerState extends State<_TextContentViewer> {
     ),
     body: GestureDetector(
       child: Container(
-        padding: const EdgeInsets.only(left: 32, top: 2, right: 32, bottom: 16),
+        padding: const EdgeInsets.only(left: 32, right: 32),
         alignment: AlignmentDirectional.centerStart,
         color: Styles.colors.textMessageBackgroundColor,
         child: SingleChildScrollView(
           // child: _richTextView(context, _text, widget.onWebShare),
-          child: SelectableText(_text,
+          child: SelectableText('\n${widget.text}\n\n',
+            style: const TextStyle(
+              fontSize: 18,
+            ),
             onTap: () => closePage(context),
           ),
         ),
@@ -201,14 +202,3 @@ class _TextContentViewerState extends State<_TextContentViewer> {
   );
 
 }
-
-
-Widget _richTextView(BuildContext context, String text, OnWebShare? onWebShare) => MarkdownBody(
-  data: text,
-  selectable: true,
-  onTapLink: (text, href, title) {
-    if (href != null) {
-      Browser.open(context, url: href, onShare: onWebShare,);
-    }
-  },
-);

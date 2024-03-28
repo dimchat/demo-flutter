@@ -292,7 +292,7 @@ class _DarkThemeColors extends ThemeColors {
   //  Text Message
   //
   @override
-  Color get textMessageBackgroundColor => CupertinoColors.systemFill;
+  Color get textMessageBackgroundColor => Color(0xFF303030);
 
   @override
   Color get textMessageColor => CupertinoColors.white;

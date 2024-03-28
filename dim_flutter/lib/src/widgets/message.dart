@@ -5,6 +5,7 @@ import 'package:flutter_linkify/flutter_linkify.dart';
 import 'package:dim_client/dim_client.dart';
 import 'package:lnc/log.dart';
 
+import '../client/shared.dart';
 import '../models/chat.dart';
 import '../models/chat_contact.dart';
 import '../models/message.dart';
@@ -75,25 +76,23 @@ abstract class ContentViewUtils {
     ),
   );
 
-  static Widget getTextContentView(BuildContext ctx, Content content, ID sender, {OnWebShare? onWebShare}) => Container(
-    color: getBackgroundColor(ctx, sender),
-    padding: Styles.textMessagePadding,
-    // child: SelectableText(
-    //   DefaultMessageBuilder().getText(content, sender),
-    //   style: TextStyle(color: getTextColor(ctx, sender)),
-    // ),
-    child: SelectableLinkify(
-      text: DefaultMessageBuilder().getText(content, sender),
-      style: TextStyle(color: getTextColor(ctx, sender)),
-      linkStyle: const TextStyle(decoration: TextDecoration.none, color: CupertinoColors.link),
-      options: const LinkifyOptions(humanize: false),
-      linkifiers: const [UrlLinkifier(),],
-      contextMenuBuilder: (context, state) => AdaptiveTextSelectionToolbar.editableText(
-        editableTextState: state,
+  static Widget getTextContentView(BuildContext ctx, Content content, ID sender, {OnWebShare? onWebShare}) {
+    String text = DefaultMessageBuilder().getText(content, sender);
+    Color color = getTextColor(ctx, sender);
+    Color bgColor = getBackgroundColor(ctx, sender);
+    return Container(
+      color: bgColor,
+      padding: Styles.textMessagePadding,
+      // child: SelectableText(
+      //   DefaultMessageBuilder().getText(content, sender),
+      //   style: TextStyle(color: getTextColor(ctx, sender)),
+      // ),
+      child: GestureDetector(
+        child: _textView(ctx, text, color: color, onWebShare: onWebShare),
+        onDoubleTap: () => _showFullText(ctx, text, sender),
       ),
-      onOpen: (link) => Browser.open(ctx, url: link.url, onShare: onWebShare,),
-    ),
-  );
+    );
+  }
 
   static Widget getAudioContentView(BuildContext ctx, AudioContent content, ID sender) =>
       NetworkAudioFactory().getAudioView(content,
@@ -133,5 +132,89 @@ abstract class ContentViewUtils {
         onTap: onTap,
         onLongPress: onLongPress,
       );
+
+}
+
+
+Widget _textView(BuildContext ctx, String text,
+    {required Color color, required OnWebShare? onWebShare}) => SelectableLinkify(
+  text: text,
+  style: TextStyle(color: color),
+  linkStyle: const TextStyle(decoration: TextDecoration.none, color: CupertinoColors.link),
+  options: const LinkifyOptions(humanize: false),
+  linkifiers: const [UrlLinkifier(),],
+  contextMenuBuilder: (context, state) => AdaptiveTextSelectionToolbar.editableText(
+    editableTextState: state,
+  ),
+  onOpen: (link) => Browser.open(ctx, url: link.url, onShare: onWebShare,),
+);
+
+
+void _showFullText(BuildContext ctx, String text, ID sender) => showCupertinoDialog(
+  context: ctx,
+  builder: (context) => _TextContentViewer(text: text, sender: sender,),
+);
+
+
+class _TextContentViewer extends StatefulWidget {
+  const _TextContentViewer({required this.text, required this.sender});
+
+  final ID sender;
+  final String text;
+
+  @override
+  State<StatefulWidget> createState() => _TextContentViewerState();
+
+}
+
+class _TextContentViewerState extends State<_TextContentViewer> {
+
+  String _back = '';
+  String _text = '';
+
+  @override
+  void initState() {
+    super.initState();
+    _text = '\n${widget.text}\n';
+    _refresh();
+  }
+
+  void _refresh() async {
+    GlobalVariable shared = GlobalVariable();
+    String name = await shared.facebook.getName(widget.sender);
+    if (mounted) {
+      setState(() {
+        _back = name;
+      });
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) => Scaffold(
+    backgroundColor: Styles.colors.scaffoldBackgroundColor,
+    appBar: CupertinoNavigationBar(
+      backgroundColor: Styles.colors.appBardBackgroundColor,
+      previousPageTitle: _back,
+    ),
+    body: GestureDetector(
+      child: Container(
+        padding: const EdgeInsets.only(left: 32, right: 32),
+        alignment: AlignmentDirectional.centerStart,
+        color: Styles.colors.textMessageBackgroundColor,
+        child: SingleChildScrollView(
+          child: SelectableText(_text,
+            style: TextStyle(
+              fontSize: 18,
+              fontWeight: FontWeight.normal,
+              color: Styles.colors.textMessageColor,
+              decoration: TextDecoration.none,
+            ),
+            onTap: () => Navigator.pop(context),
+          ),
+        ),
+      ),
+      onTap: () => Navigator.pop(context),
+    ),
+  );
 
 }

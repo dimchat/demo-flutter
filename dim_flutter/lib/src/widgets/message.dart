@@ -1,5 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_markdown/flutter_markdown.dart';
 import 'package:flutter_linkify/flutter_linkify.dart';
 
 import 'package:dim_client/dim_client.dart';
@@ -12,6 +13,7 @@ import '../models/message.dart';
 import '../pnf/auto_image.dart';
 import '../pnf/net_video.dart';
 import '../pnf/net_voice.dart';
+import '../ui/nav.dart';
 import '../ui/styles.dart';
 
 import 'browser.dart';
@@ -150,7 +152,7 @@ Widget _textView(BuildContext ctx, String text,
 );
 
 
-void _showFullText(BuildContext ctx, String text, ID sender) => showCupertinoDialog(
+void _showFullText(BuildContext ctx, String text, ID sender) => showPage(
   context: ctx,
   builder: (context) => _TextContentViewer(text: text, sender: sender,),
 );
@@ -209,11 +211,11 @@ class _TextContentViewerState extends State<_TextContentViewer> {
               color: Styles.colors.textMessageColor,
               decoration: TextDecoration.none,
             ),
-            onTap: () => Navigator.pop(context),
+            onTap: () => closePage(context),
           ),
         ),
       ),
-      onTap: () => Navigator.pop(context),
+      onTap: () => closePage(context),
     ),
   );
 

@@ -37,6 +37,7 @@ import 'package:lnc/log.dart';
 import 'package:pnf/pnf.dart';
 
 import '../ui/icons.dart';
+import '../ui/nav.dart';
 import '../widgets/alert.dart';
 import '../widgets/permissions.dart';
 
@@ -50,7 +51,7 @@ class Gallery {
   final List<PortableImageView> images;
   final int index;
 
-  void show(BuildContext context) => showCupertinoDialog(
+  void show(BuildContext context) => showPage(
     context: context,
     builder: (context) => _ImagePreview(this),
   );
@@ -117,7 +118,7 @@ class _ImagePreviewState extends State<_ImagePreview> {
         child: GestureDetector(
           child: view,
           onTap: () {
-            Navigator.pop(context);
+            closePage(context);
           },
           onLongPress: () {
             Alert.actionSheet(context, null, null,

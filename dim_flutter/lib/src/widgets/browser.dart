@@ -28,8 +28,6 @@
  * SOFTWARE.
  * =============================================================================
  */
-import 'dart:typed_data';
-
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_inappwebview/flutter_inappwebview.dart';
@@ -39,13 +37,14 @@ import 'package:lnc/log.dart';
 
 import '../pnf/image.dart';
 import '../ui/icons.dart';
+import '../ui/nav.dart';
 import '../ui/styles.dart';
 
 import 'alert.dart';
 import 'browse_html.dart';
 
 
-typedef OnWebShare = void Function(Uri url, {required String title, String? desc, Uint8List? icon});
+typedef OnWebShare = void Function(Uri url, {required String title, String? desc, String? icon});
 
 
 class Browser extends StatefulWidget {
@@ -60,7 +59,7 @@ class Browser extends StatefulWidget {
     if (uri == null) {
       Alert.show(context, 'Error', 'Failed to open URL: $url');
     } else {
-      showCupertinoDialog(context: context,
+      showPage(context: context,
         builder: (context) => Browser(uri: uri, onShare: onShare,),
       );
     }
@@ -166,14 +165,11 @@ class PageContentView extends StatelessWidget {
   final GestureLongPressCallback? onLongPress;
 
   Widget? get icon {
-    try {
-      Uint8List? icon = content.icon;
-      if (icon != null) {
-        return ImageUtils.memoryImage(icon);
-      }
-    } catch (e, st) {
-      Log.error('web page icon error: $e, $st');
+    var small = content['icon'];
+    if (small is String) {
+      return ImageUtils.getImage(small);
     }
+    assert(small == null, 'page icon error: %small');
     return null;
   }
 

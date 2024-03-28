@@ -36,6 +36,7 @@ import 'package:lnc/log.dart';
 import 'package:video_player/video_player.dart';
 
 import '../ui/icons.dart';
+import '../ui/nav.dart';
 import '../ui/styles.dart';
 
 
@@ -57,7 +58,7 @@ class VideoPlayerPage extends StatefulWidget {
   final Color bgColor = CupertinoColors.black;
 
   static void open(BuildContext context, Uri url, PortableNetworkFile pnf,
-      {OnVideoShare? onShare,}) => showCupertinoDialog(
+      {OnVideoShare? onShare,}) => showPage(
     context: context,
     builder: (context) => VideoPlayerPage(url, pnf, onShare: onShare,),
   );

@@ -7,13 +7,14 @@ import 'package:dim_client/dim_client.dart';
 import 'package:lnc/log.dart';
 import 'package:lnc/notification.dart' as lnc;
 
+import '../client/group.dart';
+import '../client/shared.dart';
 import '../common/dbi/contact.dart';
 import '../common/constants.dart';
 import '../network/group_image.dart';
-import '../client/group.dart';
-import '../client/shared.dart';
-
+import '../ui/nav.dart';
 import '../widgets/alert.dart';
+
 import 'amanuensis.dart';
 import 'chat.dart';
 import 'chat_contact.dart';
@@ -354,7 +355,7 @@ class GroupInfo extends Conversation with Logging {
       GlobalVariable shared = GlobalVariable();
       shared.database.removeContact(group, user: user);
       // OK
-      Navigator.pop(ctx);
+      closePage(ctx);
     }).onError((error, stackTrace) {
       Alert.show(ctx, 'Error', '$error');
     });

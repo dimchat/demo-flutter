@@ -1,11 +1,4 @@
-import 'package:flutter/material.dart';
-import 'package:flutter_localizations/flutter_localizations.dart';
-import 'package:get/get.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-
-import 'burn_after_reading.dart';
-import 'brightness.dart';
-import 'language.dart';
 
 
 /// Shared Preferences
@@ -54,39 +47,3 @@ class AppSettings {
 // Future<void> reload() async => await _preferences.reload();
 
 }
-
-
-Future<void> initFacade() async {
-  // 0. load settings
-  AppSettings settings = AppSettings();
-  await settings.load();
-  // 1. init brightness
-  var bright = BrightnessDataSource();
-  await bright.init(settings);
-  // 2. init language
-  var language = LanguageDataSource();
-  await language.init(settings);
-  // 3. init 'burn after reading'
-  var burn = BurnAfterReadingDataSource();
-  await burn.init(settings);
-}
-
-void launchApp(Widget home) => runApp(GetMaterialApp(
-  // debugShowCheckedModeBanner: false,
-  theme: BrightnessDataSource.light,
-  darkTheme: BrightnessDataSource.dark,
-  themeMode: BrightnessDataSource().themeMode,
-  home: home,
-  localizationsDelegates: const [
-    GlobalMaterialLocalizations.delegate,
-  ],
-  translations: LanguageDataSource.translations,
-  // locale: const Locale('zh', 'CN'),
-  fallbackLocale: const Locale('en', 'US'),
-));
-
-Future<void> forceAppUpdate() async => await Get.forceAppUpdate();
-
-Future<void> openPage(Widget pop) async => await Get.to(pop);
-
-void closePage() => Get.back();

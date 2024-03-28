@@ -209,7 +209,7 @@ class ContactInfo extends Conversation {
     GlobalVariable shared = GlobalVariable();
     shared.database.addContact(contact, user: user).then((ok) {
       if (ok) {
-        // Navigator.pop(context);
+        // closePage(context);
       } else {
         Alert.show(ctx, 'Error', 'Failed to add contact'.tr);
       }

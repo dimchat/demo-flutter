@@ -11,6 +11,7 @@ import 'package:lnc/log.dart';
 import '../models/chat.dart';
 import '../models/chat_contact.dart';
 import '../ui/icons.dart';
+import '../ui/nav.dart';
 import '../ui/styles.dart';
 
 import 'table.dart';
@@ -27,7 +28,7 @@ class MemberPicker extends StatefulWidget {
   final MemberPickerCallback onPicked;
 
   static void open(BuildContext context, Set<ID> candidates, {required MemberPickerCallback onPicked}) =>
-      showCupertinoDialog(
+      showPage(
         context: context,
         builder: (context) => MemberPicker(candidates, onPicked: onPicked),
       );
@@ -80,7 +81,7 @@ class _MemberPickerState extends State<MemberPicker> {
       middle: StatedTitleView.from(context, () => 'Select Participants'.tr),
       trailing: TextButton(child: Text('OK'.tr),
         onPressed: () {
-          Navigator.pop(context);
+          closePage(context);
           widget.onPicked(_selected);
         },
       ),

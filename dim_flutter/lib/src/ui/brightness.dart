@@ -23,9 +23,6 @@ class BrightnessDataSource {
   static const int kLight = 1;
   static const int kDark = 2;
 
-  static ThemeData get light => ThemeData.light(useMaterial3: true);
-  static ThemeData get dark => ThemeData.dark(useMaterial3: true);
-
   final List<String> _names = [
     'System',
     'Light',
@@ -36,18 +33,13 @@ class BrightnessDataSource {
     _settings = settings;
   }
 
-  void _updateBrightness(int order) {
-    if (isDarkMode) {
-      Get.changeTheme(dark);
-    } else {
-      Get.changeTheme(light);
-    }
-  }
+  Brightness get current => isDarkMode ? Brightness.dark : Brightness.light;
 
   Future<bool> setBrightness(int order) async {
+    // update setting
     bool ok = await _settings!.setValue('brightness', order);
     assert(ok, 'failed to set brightness: $order');
-    _updateBrightness(order);
+    // refresh app
     await forceAppUpdate();
     return ok;
   }

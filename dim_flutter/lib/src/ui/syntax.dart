@@ -1,6 +1,4 @@
-import 'dart:ui';
-
-import 'package:flutter/widgets.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter_markdown/flutter_markdown.dart';
 import 'package:syntax_highlight/syntax_highlight.dart';
 import 'package:markdown/markdown.dart' as md;
@@ -47,10 +45,10 @@ class _SyntaxManager {
   _SyntaxManager._internal();
 
   bool _loaded = false;
-  bool? _darkMode;
-  _DefaultSyntaxHighlighter? _highlighter;
+  _DefaultSyntaxHighlighter? _dark;
+  _DefaultSyntaxHighlighter? _light;
 
-  Future<HighlighterTheme> getTheme(bool isDarkMode) async {
+  Future<HighlighterTheme> getTheme(Brightness brightness) async {
     // 1. load grammars
     if (!_loaded) {
       _loaded = true;
@@ -62,32 +60,34 @@ class _SyntaxManager {
       ]);
     }
     // 2. load theme with brightness
-    HighlighterTheme theme = await HighlighterTheme.loadForBrightness(
-      isDarkMode ? Brightness.dark : Brightness.light,
-    );
-    _darkMode = isDarkMode;
-    return theme;
+    return await HighlighterTheme.loadForBrightness(brightness);
   }
 
   SyntaxHighlighter getHighlighter() {
-    _DefaultSyntaxHighlighter? wrapper = _highlighter;
-    bool isDarkMode = BrightnessDataSource().isDarkMode;
-    if (wrapper == null || _darkMode != isDarkMode) {
-      wrapper = _highlighter = _DefaultSyntaxHighlighter();
-      getTheme(isDarkMode).then((theme) => wrapper?._inner = Highlighter(
-        language: 'dart',
-        theme: theme,
-      ));
+    Brightness brightness = BrightnessDataSource().current;
+    var pipe = brightness == Brightness.dark ? _dark : _light;
+    if (pipe != null) {
+      return pipe;
+    } else if (brightness == Brightness.dark) {
+      return _dark = _DefaultSyntaxHighlighter(brightness);
+    } else {
+      return _light = _DefaultSyntaxHighlighter(brightness);
     }
-    return wrapper;
   }
 
 }
 
 class _DefaultSyntaxHighlighter with Logging implements SyntaxHighlighter {
-  _DefaultSyntaxHighlighter();
+  _DefaultSyntaxHighlighter(Brightness brightness) {
+    _initialize(brightness);
+  }
 
   Highlighter? _inner;
+
+  void _initialize(Brightness brightness) async {
+    HighlighterTheme theme = await _SyntaxManager().getTheme(brightness);
+    _inner = Highlighter(language: 'dart', theme: theme);
+  }
 
   @override
   TextSpan format(String source) {

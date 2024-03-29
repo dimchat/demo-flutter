@@ -52,6 +52,9 @@ abstract class AppIcons {
   static const IconData      webpageIcon = CupertinoIcons.link;
   static const IconData        mutedIcon = CupertinoIcons.bell_slash;
 
+  static const IconData    plainTextIcon = CupertinoIcons.doc_plaintext;
+  static const IconData     richTextIcon = CupertinoIcons.doc_richtext;
+
   // Search
   static const IconData searchIcon = CupertinoIcons.search;
 

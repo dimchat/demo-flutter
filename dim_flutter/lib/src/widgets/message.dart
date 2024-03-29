@@ -4,20 +4,18 @@ import 'package:flutter/material.dart';
 import 'package:dim_client/dim_client.dart';
 import 'package:lnc/log.dart';
 
-import '../client/shared.dart';
 import '../models/chat.dart';
 import '../models/chat_contact.dart';
 import '../models/message.dart';
 import '../pnf/auto_image.dart';
 import '../pnf/net_video.dart';
 import '../pnf/net_voice.dart';
-import '../ui/nav.dart';
 import '../ui/styles.dart';
-import '../ui/syntax.dart';
 
 import 'browser.dart';
 import 'browse_html.dart';
 import 'name_card.dart';
+import 'text.dart';
 import 'video_player.dart';
 
 
@@ -79,7 +77,8 @@ abstract class ContentViewUtils {
 
   static Widget getTextContentView(BuildContext ctx, Content content, ID sender, {OnWebShare? onWebShare}) {
     String text = DefaultMessageBuilder().getText(content, sender);
-    Widget textView = sender == currentUser?.identifier
+    bool mine = sender == currentUser?.identifier;
+    Widget textView = mine
         ? SelectableText(text, style: TextStyle(color: getTextColor(ctx, sender)),)
         : RichTextView(text: text, onWebShare: onWebShare);
     return GestureDetector(
@@ -88,7 +87,10 @@ abstract class ContentViewUtils {
         padding: Styles.textMessagePadding,
         child: textView,
       ),
-      onDoubleTap: () => _showFullText(ctx, text, sender, onWebShare),
+      onDoubleTap: () => TextPreviewPage.open(ctx,
+        text: text, sender: sender, onWebShare: onWebShare,
+        previewing: mine,
+      ),
     );
   }
 
@@ -130,75 +132,5 @@ abstract class ContentViewUtils {
         onTap: onTap,
         onLongPress: onLongPress,
       );
-
-}
-
-
-void _showFullText(BuildContext ctx, String text, ID sender, OnWebShare? onWebShare) => showPage(
-  context: ctx,
-  builder: (context) => _TextContentViewer(text: text,
-    sender: sender,
-    onWebShare: onWebShare,
-  ),
-);
-
-
-class _TextContentViewer extends StatefulWidget {
-  const _TextContentViewer({required this.text, required this.sender, this.onWebShare});
-
-  final ID sender;
-  final String text;
-  final OnWebShare? onWebShare;
-
-  @override
-  State<StatefulWidget> createState() => _TextContentViewerState();
-
-}
-
-class _TextContentViewerState extends State<_TextContentViewer> {
-
-  String? _back;
-
-  @override
-  void initState() {
-    super.initState();
-    _refresh();
-  }
-
-  void _refresh() async {
-    GlobalVariable shared = GlobalVariable();
-    String name = await shared.facebook.getName(widget.sender);
-    if (mounted) {
-      setState(() {
-        _back = name;
-      });
-    }
-  }
-
-  @override
-  Widget build(BuildContext context) => Scaffold(
-    backgroundColor: Styles.colors.scaffoldBackgroundColor,
-    appBar: CupertinoNavigationBar(
-      backgroundColor: Styles.colors.appBardBackgroundColor,
-      previousPageTitle: _back,
-    ),
-    body: GestureDetector(
-      child: Container(
-        padding: const EdgeInsets.only(left: 32, right: 32),
-        alignment: AlignmentDirectional.centerStart,
-        color: Styles.colors.textMessageBackgroundColor,
-        child: SingleChildScrollView(
-          // child: _richTextView(context, _text, widget.onWebShare),
-          child: SelectableText('\n${widget.text}\n\n',
-            style: const TextStyle(
-              fontSize: 18,
-            ),
-            onTap: () => closePage(context),
-          ),
-        ),
-      ),
-      onTap: () => closePage(context),
-    ),
-  );
 
 }

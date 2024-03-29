@@ -8,11 +8,12 @@ import 'package:dim_client/dim_common.dart';
 import 'package:lnc/log.dart';
 
 import '../client/shared.dart';
+import '../pnf/auto_image.dart';
 import '../ui/brightness.dart';
-
 import '../ui/icons.dart';
 import '../ui/nav.dart';
 import '../ui/styles.dart';
+
 import 'browser.dart';
 
 
@@ -77,20 +78,25 @@ class _TextPreviewState extends State<TextPreviewPage> {
       trailing: _previewing ? _richButton() : _plainButton(),
     ),
     body: GestureDetector(
-      child: Container(
-        padding: const EdgeInsets.only(left: 32, right: 32),
-        alignment: AlignmentDirectional.centerStart,
-        color: Styles.colors.textMessageBackgroundColor,
-        child: SingleChildScrollView(
-          // child: _richTextView(context, _text, widget.onWebShare),
-          child: Container(
-            padding: const EdgeInsets.only(top: 16, bottom: 32),
-            child: _previewing ? _richText(context) : _plainText(context),
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Expanded(
+            child: SingleChildScrollView(
+              child: _body(),
+            ),
           ),
-        ),
+        ],
       ),
       onTap: () => closePage(context),
     ),
+  );
+
+  Widget _body() => Container(
+    padding: const EdgeInsets.all(32),
+    alignment: AlignmentDirectional.centerStart,
+    color: Styles.colors.textMessageBackgroundColor,
+    child: _previewing ? _richText(context) : _plainText(context),
   );
 
   Widget _plainButton() => IconButton(
@@ -149,7 +155,30 @@ class _RichTextState extends State<RichTextView> {
         Browser.open(context, url: href, onShare: widget.onWebShare,);
       }
     },
+    imageBuilder: (url, title, alt) => _buildImage(context, url)
+        ?? Text('<img src="$url" title="$title" alt="$alt" />'),
   );
+
+  static Widget? _buildImage(BuildContext context, Uri url) {
+    if (url.scheme != 'http' && url.scheme != 'https') {
+      return null;
+    }
+    var plain = PlainKey.getInstance();
+    var content = FileContent.image(url: url, password: plain);
+    var pnf = PortableNetworkFile.parse(content);
+    if (pnf == null) {
+      return null;
+    }
+    var head = Envelope.create(sender: ID.kAnyone, receiver: ID.kAnyone);
+    var msg = InstantMessage.create(head, content);
+    return GestureDetector(
+      onTap: () => previewImageContent(context, content, [msg]),
+      child: Container(
+        constraints: const BoxConstraints(maxWidth: 256, maxHeight: 256),
+        child: NetworkImageFactory().getImageView(pnf),
+      ),
+    );
+  }
 
 }
 

@@ -9,33 +9,44 @@ import 'package:lnc/log.dart';
 
 import '../client/shared.dart';
 import '../pnf/auto_image.dart';
+import '../pnf/image.dart';
 import '../ui/brightness.dart';
 import '../ui/icons.dart';
 import '../ui/nav.dart';
 import '../ui/styles.dart';
 
+import 'browse_html.dart';
 import 'browser.dart';
+import 'video_player.dart';
 
 
 class TextPreviewPage extends StatefulWidget {
   const TextPreviewPage({super.key,
-    required this.sender, required this.text, this.onWebShare, this.previewing = false});
+    required this.sender,
+    required this.text,
+    required this.onWebShare,
+    required this.onVideoShare,
+    this.previewing = false,
+  });
 
   final ID sender;
   final String text;
   final OnWebShare? onWebShare;
+  final OnVideoShare? onVideoShare;
   final bool previewing;
 
   static void open(BuildContext ctx, {
     required String text,
     required ID sender,
-    OnWebShare? onWebShare,
+    required OnWebShare? onWebShare,
+    required OnVideoShare? onVideoShare,
     bool previewing = false
   }) => showPage(
     context: ctx,
     builder: (context) => TextPreviewPage(text: text,
       sender: sender,
       onWebShare: onWebShare,
+      onVideoShare: onVideoShare,
       previewing: previewing,
     ),
   );
@@ -124,6 +135,7 @@ class _TextPreviewState extends State<TextPreviewPage> {
   Widget _richText(BuildContext context) => GestureDetector(
     child: RichTextView(text: widget.text,
       onWebShare: widget.onWebShare,
+      onVideoShare: widget.onVideoShare,
     ),
     onTap: () => closePage(context),
   );
@@ -132,10 +144,15 @@ class _TextPreviewState extends State<TextPreviewPage> {
 
 
 class RichTextView extends StatefulWidget {
-  const RichTextView({required this.text, this.onWebShare, super.key});
+  const RichTextView({super.key,
+    required this.text,
+    required this.onWebShare,
+    required this.onVideoShare,
+  });
 
   final String text;
   final OnWebShare? onWebShare;
+  final OnVideoShare? onVideoShare;
 
   @override
   State<StatefulWidget> createState() => _RichTextState();
@@ -150,34 +167,185 @@ class _RichTextState extends State<RichTextView> {
     selectable: true,
     extensionSet: md.ExtensionSet.gitHubWeb,
     syntaxHighlighter: _SyntaxManager().getHighlighter(),
-    onTapLink: (text, href, title) {
-      if (href != null) {
-        Browser.open(context, url: href, onShare: widget.onWebShare,);
-      }
-    },
-    imageBuilder: (url, title, alt) => _buildImage(context, url)
-        ?? Text('<img src="$url" title="$title" alt="$alt" />'),
+    onTapLink: (text, href, title) => _MarkdownUtils.openLink(context,
+      text: text, href: href, title: title,
+      onWebShare: widget.onWebShare,
+      onVideoShare: widget.onVideoShare,
+    ),
+    imageBuilder: (url, title, alt) => _MarkdownUtils.buildImage(context,
+      url: url, title: title, alt: alt,
+    ),
   );
 
-  static Widget? _buildImage(BuildContext context, Uri url) {
+}
+
+
+enum _MimeType {
+  image,
+  video,
+  other,
+}
+final List<String> _imageTypes = [
+  'jpg', 'jpeg',
+  'png',
+  // 'gif',
+  // 'bmp',
+];
+final List<String> _videoTypes = [
+  'mp4',
+  'mov',
+  'avi',
+  // 'wmv',
+  // 'mkv',
+  'mpg', 'mpeg',
+  // '3gp', '3gpp',
+  // 'rm', 'rmvb',
+  'm3u', 'm3u8',
+];
+
+_MimeType? _checkUriType(String urlString) {
+  if (urlString.startsWith('https://')) {
+  } else if (urlString.startsWith('http://')) {
+  } else {
+    Log.error('unknown url: $urlString');
+    return null;
+  }
+  // check extension
+  int pos = urlString.lastIndexOf('.');
+  if (pos > 0) {
+    String ext = urlString.substring(pos + 1).toLowerCase();
+    if (_imageTypes.contains(ext)) {
+      return _MimeType.image;
+    } else if (_videoTypes.contains(ext)) {
+      return _MimeType.video;
+    }
+  }
+  return null;
+}
+Future<_MimeType> _checkRemoteType(String urlString) async {
+  _MimeType? type = _checkUriType(urlString);
+  if (type != null) {
+    return type;
+  }
+  // TODO: check from HTTP head
+  return _MimeType.other;
+}
+
+
+abstract class _MarkdownUtils {
+
+  static void openLink(BuildContext context, {
+    required String text,
+    required String? href,
+    required String title,
+    required OnWebShare? onWebShare,
+    required OnVideoShare? onVideoShare,
+  }) {
+    Log.info('openLink: text="$text" href="$href" title="$title"');
+    if (href == null || href.isEmpty) {
+      return;
+    }
+    Uri? url = HtmlUri.parseUri(href);
+    if (url == null || url.scheme != 'http' && url.scheme != 'https') {
+      return;
+    }
+    _checkRemoteType(href).then((type) {
+      if (type == _MimeType.image) {
+        Log.info('preview image: $url');
+        var imageContent = FileContent.image(url: url,
+          password: PlainKey.getInstance(),
+        );
+        _previewImage(context, imageContent);
+      } else if (type == _MimeType.video) {
+        Log.info('play video: "$title" $url, text: "$text"');
+        var pnf = PortableNetworkFile.createFromURL(url,
+          PlainKey.getInstance(),
+        );
+        pnf['title'] = title;
+        pnf['snapshot'] = _getSnapshot(text);
+        VideoPlayerPage.open(context, url, pnf, onShare: onVideoShare);
+      } else {
+        // others
+        Browser.open(context, url: url.toString(), onShare: onWebShare,);
+      }
+    });
+  }
+
+  static String? _getSnapshot(String text) {
+    // Snapshot in alt text:
+    //      [http://files.dim.chat/images/snapshot.jpg]
+    //      [video-url=http://files.dim.chat/images/snapshot.jpg]
+    //      [video src="http://files.dim.chat/images/snapshot.jpg"]
+    int pos = text.indexOf('https://');
+    if (pos < 0) {
+      pos = text.indexOf('http://');
+      if (pos < 0) {
+        return null;
+      }
+    }
+    String urlString = pos > 0 ? text.substring(pos) : text;
+    // trim the tail
+    pos = urlString.indexOf('"');
+    if (pos < 0) {
+      pos = urlString.indexOf(' ');
+    }
+    if (pos > 0) {
+      urlString = urlString.substring(0, pos);
+    }
+    _MimeType? type = _checkUriType(urlString);
+    if (type == _MimeType.image) {
+      return urlString;
+    }
+    // TODO:
+    return null;
+  }
+
+  //
+  //  Image
+  //
+
+  static Widget buildImage(BuildContext context, {
+    required Uri url,
+    required String? title,
+    required String? alt,
+  }) {
     if (url.scheme != 'http' && url.scheme != 'https') {
-      return null;
+      return _errorImage(url: url, title: title, alt: alt);
+    }
+    _MimeType? type = _checkUriType(url.toString());
+    if (type != _MimeType.image) {
+      Log.warning('unknown image url: $url');
+      return ImageUtils.networkImage(url.toString());
     }
     var plain = PlainKey.getInstance();
-    var content = FileContent.image(url: url, password: plain);
-    var pnf = PortableNetworkFile.parse(content);
+    var imageContent = FileContent.image(url: url, password: plain);
+    var pnf = PortableNetworkFile.parse(imageContent);
     if (pnf == null) {
-      return null;
+      assert(false, 'should not happen: $url => $imageContent');
+      return ImageUtils.networkImage(url.toString());
     }
-    var head = Envelope.create(sender: ID.kAnyone, receiver: ID.kAnyone);
-    var msg = InstantMessage.create(head, content);
     return GestureDetector(
-      onTap: () => previewImageContent(context, content, [msg]),
+      onDoubleTap: () => _previewImage(context, imageContent),
       child: Container(
         constraints: const BoxConstraints(maxWidth: 256, maxHeight: 256),
         child: NetworkImageFactory().getImageView(pnf),
       ),
     );
+  }
+
+  static Widget _errorImage({
+    required Uri url,
+    required String? title,
+    required String? alt,
+  }) => Text(
+    '<img src="$url" title="$title" alt="$alt" />',
+    style: const TextStyle(color: CupertinoColors.systemRed),
+  );
+
+  static void _previewImage(BuildContext ctx, ImageContent imageContent) {
+    var head = Envelope.create(sender: ID.kAnyone, receiver: ID.kAnyone);
+    var msg = InstantMessage.create(head, imageContent);
+    previewImageContent(ctx, imageContent, [msg]);
   }
 
 }

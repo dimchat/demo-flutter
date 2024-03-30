@@ -75,12 +75,15 @@ abstract class ContentViewUtils {
     ),
   );
 
-  static Widget getTextContentView(BuildContext ctx, Content content, ID sender, {OnWebShare? onWebShare}) {
+  static Widget getTextContentView(BuildContext ctx, Content content, ID sender, {
+    required OnWebShare? onWebShare,
+    required OnVideoShare? onVideoShare,
+  }) {
     String text = DefaultMessageBuilder().getText(content, sender);
     bool mine = sender == currentUser?.identifier;
     Widget textView = mine
         ? SelectableText(text, style: TextStyle(color: getTextColor(ctx, sender)),)
-        : RichTextView(text: text, onWebShare: onWebShare);
+        : RichTextView(text: text, onWebShare: onWebShare, onVideoShare: onVideoShare,);
     return GestureDetector(
       child: Container(
         color: getBackgroundColor(ctx, sender),
@@ -88,7 +91,9 @@ abstract class ContentViewUtils {
         child: textView,
       ),
       onDoubleTap: () => TextPreviewPage.open(ctx,
-        text: text, sender: sender, onWebShare: onWebShare,
+        text: text, sender: sender,
+        onWebShare: onWebShare,
+        onVideoShare: onVideoShare,
         previewing: mine,
       ),
     );

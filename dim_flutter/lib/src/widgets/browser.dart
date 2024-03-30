@@ -44,7 +44,9 @@ import 'alert.dart';
 import 'browse_html.dart';
 
 
-typedef OnWebShare = void Function(Uri url, {required String title, String? desc, String? icon});
+typedef OnWebShare = void Function(Uri url, {
+  required String title, required String? desc, required String? icon,
+});
 
 
 class Browser extends StatefulWidget {
@@ -116,13 +118,14 @@ class _BrowserState extends State<Browser> {
     if (target.toString() == 'about:blank') {
       target = widget.uri;
     }
+    // TODO: get page desc & icon
     return IconButton(
       icon: const Icon(
         AppIcons.shareIcon,
         size: Styles.navigationBarIconSize,
         // color: Styles.avatarColor,
       ),
-      onPressed: () => onShare(target, title: title),
+      onPressed: () => onShare(target, title: title, desc: null, icon: null),
     );
   }
 

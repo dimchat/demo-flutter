@@ -40,7 +40,9 @@ import '../ui/nav.dart';
 import '../ui/styles.dart';
 
 
-typedef OnVideoShare = void Function(Uri url);
+typedef OnVideoShare = void Function(Uri url, {
+  required String title, required String? filename, required String? snapshot,
+});
 
 
 /// Stateful widget to fetch and then display video content.
@@ -51,6 +53,8 @@ class VideoPlayerPage extends StatefulWidget {
   final PortableNetworkFile pnf;
 
   String? get title => pnf['title'];
+  String? get snapshot => pnf['snapshot'];
+  String? get filename => pnf.filename;
 
   final OnVideoShare? onShare;
 
@@ -139,7 +143,11 @@ class _VideoAppState extends State<VideoPlayerPage> {
         size: Styles.navigationBarIconSize,
         color: widget.color,
       ),
-      onPressed: () => onShare(widget.url),
+      onPressed: () => onShare(widget.url,
+        title: widget.title ?? '',
+        filename: widget.filename,
+        snapshot: widget.snapshot,
+      ),
     );
   }
 

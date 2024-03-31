@@ -15,6 +15,7 @@ import '../ui/icons.dart';
 import '../ui/nav.dart';
 import '../ui/styles.dart';
 
+import 'alert.dart';
 import 'browse_html.dart';
 import 'browser.dart';
 import 'video_player.dart';
@@ -203,14 +204,8 @@ final List<String> _videoTypes = [
   'm3u', 'm3u8',
 ];
 
-_MimeType? _checkUriType(String urlString) {
-  if (urlString.startsWith('https://')) {
-  } else if (urlString.startsWith('http://')) {
-  } else {
-    Log.error('unknown url: $urlString');
-    return null;
-  }
-  // check extension
+_MimeType? _checkFileType(String urlString) {
+  // check extension (maybe the tail of query string)
   int pos = urlString.lastIndexOf('.');
   if (pos > 0) {
     String ext = urlString.substring(pos + 1).toLowerCase();
@@ -222,13 +217,13 @@ _MimeType? _checkUriType(String urlString) {
   }
   return null;
 }
-Future<_MimeType> _checkRemoteType(String urlString) async {
-  _MimeType? type = _checkUriType(urlString);
-  if (type != null) {
-    return type;
+Future<_MimeType> _checkUrlType(Uri url) async {
+  _MimeType? type = _checkFileType(url.path);
+  if (type == null && (url.hasQuery || url.hasFragment)) {
+    type ??= _checkFileType(url.toString());
   }
-  // TODO: check from HTTP head
-  return _MimeType.other;
+  type ??= _MimeType.other;  // TODO: check from HTTP head
+  return type;
 }
 
 
@@ -247,16 +242,19 @@ abstract class _MarkdownUtils {
     }
     Uri? url = HtmlUri.parseUri(href);
     if (url == null || url.scheme != 'http' && url.scheme != 'https') {
+      Log.error('link href invalid: $href');
       return;
     }
-    _checkRemoteType(href).then((type) {
+    _checkUrlType(url).then((type) {
       if (type == _MimeType.image) {
+        // show image
         Log.info('preview image: $url');
         var imageContent = FileContent.image(url: url,
           password: PlainKey.getInstance(),
         );
         _previewImage(context, imageContent);
       } else if (type == _MimeType.video) {
+        // show video
         Log.info('play video: "$title" $url, text: "$text"');
         var pnf = PortableNetworkFile.createFromURL(url,
           PlainKey.getInstance(),
@@ -265,7 +263,7 @@ abstract class _MarkdownUtils {
         pnf['snapshot'] = _getSnapshot(text);
         VideoPlayerPage.open(context, url, pnf, onShare: onVideoShare);
       } else {
-        // others
+        // open other link
         Browser.open(context, url: url.toString(), onShare: onWebShare,);
       }
     });
@@ -292,7 +290,7 @@ abstract class _MarkdownUtils {
     if (pos > 0) {
       urlString = urlString.substring(0, pos);
     }
-    _MimeType? type = _checkUriType(urlString);
+    _MimeType? type = _checkFileType(urlString);
     if (type == _MimeType.image) {
       return urlString;
     }
@@ -312,23 +310,34 @@ abstract class _MarkdownUtils {
     if (url.scheme != 'http' && url.scheme != 'https') {
       return _errorImage(url: url, title: title, alt: alt);
     }
-    _MimeType? type = _checkUriType(url.toString());
-    if (type != _MimeType.image) {
-      Log.warning('unknown image url: $url');
-      return ImageUtils.networkImage(url.toString());
-    }
     var plain = PlainKey.getInstance();
     var imageContent = FileContent.image(url: url, password: plain);
     var pnf = PortableNetworkFile.parse(imageContent);
-    if (pnf == null) {
+    // check file type
+    _MimeType? type = _checkFileType(url.path);
+    if (type == null && (url.hasQuery || url.hasFragment)) {
+      type ??= _checkFileType(url.toString());
+    }
+    Widget imageView;
+    if (type != _MimeType.image) {
+      Log.warning('unknown image url: $url');
+      imageView = ImageUtils.networkImage(url.toString());
+    } else if (pnf == null) {
       assert(false, 'should not happen: $url => $imageContent');
-      return ImageUtils.networkImage(url.toString());
+      imageView = ImageUtils.networkImage(url.toString());
+    } else {
+      imageView = NetworkImageFactory().getImageView(pnf);
     }
     return GestureDetector(
       onDoubleTap: () => _previewImage(context, imageContent),
+      onLongPress: () => Alert.actionSheet(context, null, null,
+        Alert.action(AppIcons.saveFileIcon, 'Save to Album'),
+            () => saveImageContent(context, imageContent),
+        // 'Save Image', () { },
+      ),
       child: Container(
-        constraints: const BoxConstraints(maxWidth: 256, maxHeight: 256),
-        child: NetworkImageFactory().getImageView(pnf),
+        constraints: const BoxConstraints(maxHeight: 256),
+        child: imageView,
       ),
     );
   }

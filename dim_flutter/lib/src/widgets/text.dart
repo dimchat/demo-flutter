@@ -241,8 +241,14 @@ abstract class _MarkdownUtils {
       return;
     }
     Uri? url = HtmlUri.parseUri(href);
-    if (url == null || url.scheme != 'http' && url.scheme != 'https') {
+    if (url == null) {
       Log.error('link href invalid: $href');
+      return;
+    } else if (url.scheme != 'http' && url.scheme != 'https') {
+      assert(url.scheme == 'data', 'unknown link href: $href');
+      // - data:text/html;charset=UTF-8;base64,
+      Log.info('open data link: $url');
+      Browser.open(context, url: href, onShare: onWebShare,);
       return;
     }
     _checkUrlType(url).then((type) {

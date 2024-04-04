@@ -28,12 +28,14 @@
  * SOFTWARE.
  * =============================================================================
  */
-import 'package:dim_client/dim_client.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:lnc/log.dart';
 import 'package:video_player/video_player.dart';
+import 'package:chewie/chewie.dart';
+
+import 'package:dim_client/dim_client.dart';
+import 'package:lnc/log.dart';
 
 import '../ui/icons.dart';
 import '../ui/nav.dart';
@@ -73,47 +75,48 @@ class VideoPlayerPage extends StatefulWidget {
 }
 
 class _VideoAppState extends State<VideoPlayerPage> {
-  late VideoPlayerController _controller;
-  bool? _playing;
-  bool? _showProgress;
-  double _currentPosition = 0.0;
+
+  late VideoPlayerController _videoPlayerController;
+  late ChewieController _chewieController;
+
   String? _error;
 
   @override
   void initState() {
     super.initState();
     Log.info('[Video Player] remote url: ${widget.url}');
-    _controller = VideoPlayerController.networkUrl(widget.url);
-    _controller.initialize().then((_) {
-      // ensure the first frame is shown after the video is initialized,
-      // even before the play button has been pressed.
-      setState(() {
-        _playing = true;
-      });
+    // preparing video player controller
+    _videoPlayerController = VideoPlayerController.networkUrl(widget.url);
+    _videoPlayerController.initialize().then((_) {
+      setState(() {});
       // auto start playing
-      _controller.play();
+      _videoPlayerController.play();
     }).onError((error, stackTrace) {
       setState(() {
         _error = '$error';
       });
     });
-    _controller.addListener(() => setState(() {
-      _currentPosition = _controller.value.position.inSeconds.toDouble();
-    }));
+    // preparing chewie controller
+    _chewieController = ChewieController(
+      videoPlayerController: _videoPlayerController,
+      autoPlay: true,
+      showOptions: false,
+      allowedScreenSleep: false,
+    );
   }
 
   @override
   void dispose() {
+    _videoPlayerController.dispose();
+    _chewieController.dispose();
     super.dispose();
-    _controller.dispose();
   }
 
   @override
-  Widget build(BuildContext context) => Scaffold(
+  Widget build(BuildContext context) => CupertinoPageScaffold(
     // backgroundColor: Styles.colors.scaffoldBackgroundColor,
     backgroundColor: widget.bgColor,
-    extendBodyBehindAppBar: true,
-    appBar: _showProgress == false ? null : CupertinoNavigationBar(
+    navigationBar: CupertinoNavigationBar(
       // backgroundColor: Styles.colors.appBardBackgroundColor,
       backgroundColor: widget.bgColor,
       middle: Text(widget.title ?? 'Video Player'.tr,
@@ -124,12 +127,11 @@ class _VideoAppState extends State<VideoPlayerPage> {
       ),
       trailing: _shareButton(),
     ),
-    body: Center(
-      child: SingleChildScrollView(
-        child: _controller.value.isInitialized ? _body() : _loading(),
-      ),
+    child: Center(
+      child: _videoPlayerController.value.isInitialized ? Chewie(
+        controller: _chewieController,
+      ) : _loading(),
     ),
-    // floatingActionButton: _button(),
   );
 
   Widget? _shareButton() {
@@ -154,16 +156,21 @@ class _VideoAppState extends State<VideoPlayerPage> {
   Widget _loading() {
     Widget indicator;
     Widget message;
+    TextStyle textStyle = TextStyle(
+      color: widget.color,
+      fontSize: 14,
+      decoration: TextDecoration.none,
+    );
     if (_error == null) {
       indicator = CupertinoActivityIndicator(color: widget.color,);
       message = Text('Loading "@url" ...'.trParams({
         'url': widget.url.toString(),
-      }), style: TextStyle(color: widget.color),);
+      }), style: textStyle,);
     } else {
       indicator = const Icon(AppIcons.decryptErrorIcon, color: CupertinoColors.systemRed,);
       message = Text('Failed to load "@url".'.trParams({
         'url': widget.url.toString(),
-      }), style: TextStyle(color: widget.color),);
+      }), style: textStyle,);
     }
     return Column(
       mainAxisAlignment: MainAxisAlignment.center,
@@ -177,96 +184,4 @@ class _VideoAppState extends State<VideoPlayerPage> {
     );
   }
 
-  Widget _body() => Stack(
-    alignment: AlignmentDirectional.bottomCenter,
-    children: [
-      AspectRatio(
-        aspectRatio: _controller.value.aspectRatio,
-        child: GestureDetector(
-          child: VideoPlayer(_controller),
-          onTap: () => setState(() {
-            _showProgress = _showProgress == false;
-          }),
-          onDoubleTap: () => setState(() => _togglePlaying()),
-        ),
-      ),
-      SizedBox(
-        height: 48,
-        child: _slider(),
-      ),
-    ],
-  );
-
-  Widget _slider() {
-    TextStyle textStyle = TextStyle(color: widget.color);
-    var bufferedEnd = _controller.value.buffered.map((range) => range.end).toList();
-    var maxBufferedEnd = bufferedEnd.isNotEmpty ? bufferedEnd.reduce((a, b) => a > b ? a : b) : Duration.zero;
-    final buf = maxBufferedEnd.inSeconds.toDouble();
-    double pos = _currentPosition;
-    double len = _controller.value.duration.inSeconds.toDouble();
-    return Row(
-      crossAxisAlignment: CrossAxisAlignment.center,
-      children: [
-        if (_playing != null)
-          _button(),
-        Text(_time(pos), style: textStyle),
-        if (_showProgress == false)
-        Expanded(child: Container(),),
-        if (_showProgress != false)
-        Expanded(child: Slider(onChanged: (value) {
-          setState(() => _currentPosition = value);
-          _controller.seekTo(Duration(seconds: value.toInt()));
-        }, value: pos, max: len, min: 0.0,
-          secondaryTrackValue: buf,
-          thumbColor: CupertinoColors.inactiveGray,
-          activeColor: CupertinoColors.systemFill,
-          inactiveColor: CupertinoColors.secondarySystemFill,
-          secondaryActiveColor: CupertinoColors.systemYellow,
-        )),
-        Text(_time(len), style: textStyle),
-        const SizedBox(width: 16,),
-      ],
-    );
-  }
-
-  void _togglePlaying() {
-    if (_playing == true) {
-      _playing = false;
-      _controller.pause();
-    } else if (_playing == false) {
-      _playing = true;
-      _controller.play();
-    } else {
-      // initializing
-    }
-  }
-
-  Widget _button() {
-    if (_controller.value.isCompleted) {
-      _playing = false;
-    }
-    return IconButton(
-      onPressed: () => setState(() => _togglePlaying()),
-      icon: Icon(
-        _playing == false ? Icons.play_arrow : Icons.pause,
-        color: widget.color,
-      ),
-    );
-  }
-
-}
-
-String _time(double value) {
-  int timestamp = value.toInt();
-  int seconds = timestamp % 60;
-  int minutes = timestamp ~/ 60 % 60;
-  int hours = timestamp ~/ 3600;
-  String mm = minutes.toString().padLeft(2, '0');
-  String ss = seconds.toString().padLeft(2, '0');
-  if (hours > 0) {
-    String hh = hours.toString().padLeft(2, '0');
-    return '$hh:$mm:$ss';
-  } else {
-    return '$mm:$ss';
-  }
 }

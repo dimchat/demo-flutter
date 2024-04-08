@@ -66,7 +66,7 @@ dependencies:
 # dimp: 0.3.3
 # dimsdk: 0.3.3
 # dim_plugins: 0.3.3
-  dim_client: 0.4.7
+  dim_client: 0.4.8
 
   pnf: 0.1.3
 

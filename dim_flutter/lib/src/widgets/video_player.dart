@@ -41,6 +41,8 @@ import '../ui/icons.dart';
 import '../ui/nav.dart';
 import '../ui/styles.dart';
 
+import 'video_controls.dart';
+
 
 typedef OnVideoShare = void Function(Uri url, {
   required String title, required String? filename, required String? snapshot,
@@ -102,6 +104,7 @@ class _VideoAppState extends State<VideoPlayerPage> {
       autoPlay: true,
       showOptions: false,
       allowedScreenSleep: false,
+      customControls: const CustomControls(),
     );
   }
 

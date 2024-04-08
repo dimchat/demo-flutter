@@ -41,6 +41,7 @@ import '../ui/icons.dart';
 import '../ui/nav.dart';
 import '../ui/styles.dart';
 
+import 'video_cast.dart';
 import 'video_controls.dart';
 
 
@@ -128,7 +129,7 @@ class _VideoAppState extends State<VideoPlayerPage> {
           color: widget.color,
         ),
       ),
-      trailing: _shareButton(),
+      trailing: _trailing(context),
     ),
     child: Center(
       child: _videoPlayerController.value.isInitialized ? Chewie(
@@ -136,6 +137,40 @@ class _VideoAppState extends State<VideoPlayerPage> {
       ) : _loading(),
     ),
   );
+
+  Widget? _trailing(BuildContext context) {
+    Widget? castBtn = _castButton(context);
+    Widget? shareBtn = _shareButton();
+    if (castBtn == null) {
+      return shareBtn;
+    } else if (shareBtn == null) {
+      return castBtn;
+    }
+    return Row(
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        castBtn,
+        shareBtn,
+      ],
+    );
+  }
+
+  Widget? _castButton(BuildContext context) {
+    if (!_videoPlayerController.value.isInitialized) {
+      return null;
+    }
+    return IconButton(
+      icon: Icon(
+        AppIcons.airPlayIcon,
+        size: Styles.navigationBarIconSize,
+        color: widget.color,
+      ),
+      onPressed: () {
+        _videoPlayerController.pause();
+        AirPlayPicker.open(context, widget.url);
+      },
+    );
+  }
 
   Widget? _shareButton() {
     OnVideoShare? onShare = widget.onShare;

@@ -41,6 +41,7 @@ abstract class AppIcons {
   static const IconData playingAudioIcon = CupertinoIcons.volume_up;
   // Video
   static const IconData    playVideoIcon = CupertinoIcons.play;
+  static const IconData      airPlayIcon = Icons.airplay;
   // Msg Status
   static const IconData   msgDefaultIcon = CupertinoIcons.ellipsis;
   static const IconData   msgWaitingIcon = CupertinoIcons.ellipsis;
@@ -48,6 +49,8 @@ abstract class AppIcons {
   static const IconData   msgBlockedIcon = Icons.block;
   static const IconData  msgReceivedIcon = Icons.done_all;
   static const IconData   msgExpiredIcon = CupertinoIcons.refresh;
+
+  static const IconData    encryptedIcon = CupertinoIcons.padlock_solid;
 
   static const IconData      webpageIcon = CupertinoIcons.link;
   static const IconData        mutedIcon = CupertinoIcons.bell_slash;

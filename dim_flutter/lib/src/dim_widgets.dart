@@ -16,4 +16,5 @@ export 'widgets/table.dart';
 export 'widgets/text.dart';
 export 'widgets/time.dart';
 export 'widgets/title.dart';
+export 'widgets/video_controls.dart';
 export 'widgets/video_player.dart';

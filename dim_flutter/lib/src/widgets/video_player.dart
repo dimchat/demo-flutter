@@ -37,11 +37,13 @@ import 'package:chewie/chewie.dart';
 import 'package:dim_client/dim_client.dart';
 import 'package:lnc/log.dart';
 
+import '../screens/cast.dart';
+import '../screens/device.dart';
+import '../screens/picker.dart';
 import '../ui/icons.dart';
 import '../ui/nav.dart';
 import '../ui/styles.dart';
 
-import 'video_cast.dart';
 import 'video_controls.dart';
 
 
@@ -93,7 +95,7 @@ class _VideoAppState extends State<VideoPlayerPage> {
     _videoPlayerController.initialize().then((_) {
       setState(() {});
       // auto start playing
-      _videoPlayerController.play();
+      _chewieController.play();
     }).onError((error, stackTrace) {
       setState(() {
         _error = '$error';
@@ -102,11 +104,14 @@ class _VideoAppState extends State<VideoPlayerPage> {
     // preparing chewie controller
     _chewieController = ChewieController(
       videoPlayerController: _videoPlayerController,
-      autoPlay: true,
+      // autoPlay: true,
       showOptions: false,
       allowedScreenSleep: false,
       customControls: const CustomControls(),
     );
+    // prepare screen manager
+    var man = ScreenManager();
+    man.addDiscoverer(CastScreenDiscoverer());
   }
 
   @override
@@ -166,7 +171,7 @@ class _VideoAppState extends State<VideoPlayerPage> {
         color: widget.color,
       ),
       onPressed: () {
-        _videoPlayerController.pause();
+        _chewieController.pause();
         AirPlayPicker.open(context, widget.url);
       },
     );

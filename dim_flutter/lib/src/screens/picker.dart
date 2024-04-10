@@ -1,6 +1,6 @@
 /* license: https://mit-license.org
  *
- *  PNF : Portable Network File
+ *  Cast Screen
  *
  *                               Written in 2024 by Moky <albert.moky@gmail.com>
  *
@@ -28,15 +28,14 @@
  * SOFTWARE.
  * =============================================================================
  */
-import 'package:castscreen/castscreen.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
-import 'package:lnc/log.dart';
-
 import '../ui/nav.dart';
 import '../ui/styles.dart';
+
+import 'device.dart';
 
 
 class AirPlayPicker extends StatefulWidget {
@@ -62,9 +61,14 @@ class _AirPlayState extends State<AirPlayPicker> {
     _refresh();
   }
 
-  Future<void> _refresh() async {
-    setState(() {});
-    await _CastDeviceManager().search();
+  void _refresh() {
+    var man = ScreenManager();
+    man.getDevices(true).then((_) {
+      if (mounted) {
+        setState(() {
+        });
+      }
+    });
     setState(() {});
   }
 
@@ -86,15 +90,15 @@ class _AirPlayState extends State<AirPlayPicker> {
 
   List<Widget> _deviceList(BuildContext context) {
     List<Widget> buttons = [];
-    var man = _CastDeviceManager();
-    Set<Device> devices = man.devices;
+    var man = ScreenManager();
+    var devices = man.devices;
     for (var tv in devices) {
       buttons.add(TextButton(
-        onPressed: () => _cast(context, tv),
-        child: Text(tv.spec.friendlyName),
+        onPressed: () => tv.castURL(widget.url).then((_) => closePage(context)),
+        child: Text(tv.friendlyName),
       ));
     }
-    if (man.refreshing) {
+    if (man.scanning) {
       buttons.add(const CupertinoActivityIndicator());
     } else if (devices.isEmpty) {
       buttons.add(Text('TV not found'.tr));
@@ -102,51 +106,13 @@ class _AirPlayState extends State<AirPlayPicker> {
         onPressed: () => _refresh(),
         child: Text('Search again'.tr),
       ));
+    } else {
+      buttons.add(TextButton(
+        onPressed: () => _refresh(),
+        child: Text('Refresh'.tr),
+      ));
     }
     return buttons;
-  }
-
-  void _cast(BuildContext context, Device tv) {
-    tv.alive().then((alive) {
-      if (alive) {
-        tv.setAVTransportURI(SetAVTransportURIInput(widget.url.toString()));
-      }
-    });
-    closePage(context);
-  }
-
-}
-
-
-class _CastDeviceManager {
-  factory _CastDeviceManager() => _instance;
-  static final _CastDeviceManager _instance = _CastDeviceManager._internal();
-  _CastDeviceManager._internal() {
-    search();
-  }
-
-  List<Device> _devices = [];
-  bool _refreshing = false;
-  int _expired = 0;
-
-  Set<Device> get devices => _devices.toSet();
-  bool get refreshing => _refreshing;
-
-  Future<Set<Device>> search() async {
-    List<Device> candidates = _devices;
-    int now = DateTime.now().millisecondsSinceEpoch;
-    if (candidates.isEmpty || now > _expired) {
-      _expired = now + 60 * 1000;
-      // try to refresh devices
-      _refreshing = true;
-      candidates = await CastScreen.discoverDevice(
-        timeout: const Duration(seconds: 16),
-      );
-      Log.info('cast devices: $candidates');
-      _devices = candidates;
-      _refreshing = false;
-    }
-    return candidates.toSet();
   }
 
 }

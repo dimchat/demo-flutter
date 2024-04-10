@@ -1,3 +1,5 @@
+import 'dart:typed_data';
+
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_markdown/flutter_markdown.dart';
@@ -134,7 +136,9 @@ class _TextPreviewState extends State<TextPreviewPage> {
   );
 
   Widget _richText(BuildContext context) => GestureDetector(
-    child: RichTextView(text: widget.text,
+    child: RichTextView(
+      sender: widget.sender,
+      text: widget.text,
       onWebShare: widget.onWebShare,
       onVideoShare: widget.onVideoShare,
     ),
@@ -146,11 +150,13 @@ class _TextPreviewState extends State<TextPreviewPage> {
 
 class RichTextView extends StatefulWidget {
   const RichTextView({super.key,
+    required this.sender,
     required this.text,
     required this.onWebShare,
     required this.onVideoShare,
   });
 
+  final ID sender;
   final String text;
   final OnWebShare? onWebShare;
   final OnVideoShare? onVideoShare;
@@ -169,6 +175,7 @@ class _RichTextState extends State<RichTextView> {
     extensionSet: md.ExtensionSet.gitHubWeb,
     syntaxHighlighter: _SyntaxManager().getHighlighter(),
     onTapLink: (text, href, title) => _MarkdownUtils.openLink(context,
+      sender: widget.sender,
       text: text, href: href, title: title,
       onWebShare: widget.onWebShare,
       onVideoShare: widget.onVideoShare,
@@ -230,6 +237,7 @@ Future<_MimeType> _checkUrlType(Uri url) async {
 abstract class _MarkdownUtils {
 
   static void openLink(BuildContext context, {
+    required ID sender,
     required String text,
     required String? href,
     required String title,
@@ -243,12 +251,30 @@ abstract class _MarkdownUtils {
     Uri? url = HtmlUri.parseUri(href);
     if (url == null) {
       Log.error('link href invalid: $href');
+      Alert.show(context, 'Error', 'URL error: "$href"');
       return;
     } else if (url.scheme != 'http' && url.scheme != 'https') {
       assert(url.scheme == 'data', 'unknown link href: $href');
-      // - data:text/html;charset=UTF-8;base64,
       Log.info('open data link: $url');
-      Browser.open(context, url: href, onShare: onWebShare,);
+      // - data:text/html;charset=UTF-8;base64,
+      // - data:text/plain;charset=UTF-8;base64,
+      String path = url.path;
+      if (path.startsWith('text/plain;')) {
+        String? plain = _parseText(href);
+        if (plain == null) {
+          Log.error('text url error: $href');
+          Alert.show(context, 'Error', 'Data error: "$href"');
+        } else {
+          TextPreviewPage.open(context,
+            text: plain, sender: sender,
+            onWebShare: onWebShare, onVideoShare: onVideoShare,
+            previewing: true,
+          );
+        }
+      } else {
+        assert(path.startsWith('text/html;'), 'data url error: $href');
+        Browser.open(context, url: href, onShare: onWebShare,);
+      }
       return;
     }
     _checkUrlType(url).then((type) {
@@ -273,6 +299,30 @@ abstract class _MarkdownUtils {
         Browser.open(context, url: url.toString(), onShare: onWebShare,);
       }
     });
+  }
+
+  // - data:text/plain;charset=UTF-8;base64,
+  static String? _parseText(String href) {
+    Uint8List? data = _parseData(href);
+    if (data == null) {
+      assert(false, 'failed to decode text body: $href');
+      return null;
+    }
+    return UTF8.decode(data);
+  }
+  static Uint8List? _parseData(String href) {
+    int pos = href.indexOf(',');
+    if (pos > 6) {
+      assert(href.substring(pos - 6, pos) == 'base64', 'data url error: $href');
+    } else {
+      pos = href.lastIndexOf(';');
+      if (pos < 0) {
+        Log.error('data url error: $href');
+        return null;
+      }
+    }
+    String body = href.substring(pos + 1);
+    return Base64.decode(body);
   }
 
   static String? _getSnapshot(String text) {
@@ -313,7 +363,17 @@ abstract class _MarkdownUtils {
     required String? title,
     required String? alt,
   }) {
-    if (url.scheme != 'http' && url.scheme != 'https') {
+    String scheme = url.scheme;
+    if (scheme == 'data') {
+      // - data:image/png;base64,
+      Uint8List? data = _parseData(url.toString());
+      if (data == null) {
+        Log.error('failed to decode text body: $url');
+        return _errorImage(url: url, title: title, alt: alt);
+      }
+      return ImageUtils.memoryImage(data);
+    } else if (scheme != 'http' && scheme != 'https') {
+      Log.error('image url error: $url');
       return _errorImage(url: url, title: title, alt: alt);
     }
     var plain = PlainKey.getInstance();

@@ -83,7 +83,7 @@ abstract class ContentViewUtils {
     bool mine = sender == currentUser?.identifier;
     Widget textView = mine
         ? SelectableText(text, style: TextStyle(color: getTextColor(ctx, sender)),)
-        : RichTextView(text: text, onWebShare: onWebShare, onVideoShare: onVideoShare,);
+        : RichTextView(sender: sender, text: text, onWebShare: onWebShare, onVideoShare: onVideoShare,);
     return GestureDetector(
       child: Container(
         color: getBackgroundColor(ctx, sender),

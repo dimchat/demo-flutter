@@ -369,12 +369,16 @@ abstract class _MarkdownUtils {
       Uint8List? data = _parseData(url.toString());
       if (data == null) {
         Log.error('failed to decode text body: $url');
-        return _errorImage(url: url, title: title, alt: alt);
+        return _errorImage(url, title: title, alt: alt);
       }
-      return ImageUtils.memoryImage(data);
+      Widget imageView = ImageUtils.memoryImage(data);
+      return Container(
+        constraints: const BoxConstraints(maxHeight: 256),
+        child: imageView,
+      );
     } else if (scheme != 'http' && scheme != 'https') {
       Log.error('image url error: $url');
-      return _errorImage(url: url, title: title, alt: alt);
+      return _errorImage(url, title: title, alt: alt);
     }
     var plain = PlainKey.getInstance();
     var imageContent = FileContent.image(url: url, password: plain);
@@ -408,14 +412,18 @@ abstract class _MarkdownUtils {
     );
   }
 
-  static Widget _errorImage({
-    required Uri url,
-    required String? title,
-    required String? alt,
-  }) => Text(
-    '<img src="$url" title="$title" alt="$alt" />',
-    style: const TextStyle(color: CupertinoColors.systemRed),
-  );
+  static Widget _errorImage(Uri url, {required String? title, required String? alt}) {
+    String src = url.toString();
+    if (src.length > 128) {
+      String head = src.substring(0, 120);
+      String tail = src.substring(src.length - 5);
+      src = '$head...$tail';
+    }
+    return Text(
+      '<img src="$src" title="$title" alt="$alt" />',
+      style: const TextStyle(color: CupertinoColors.systemRed),
+    );
+  }
 
   static void _previewImage(BuildContext ctx, ImageContent imageContent) {
     var head = Envelope.create(sender: ID.kAnyone, receiver: ID.kAnyone);

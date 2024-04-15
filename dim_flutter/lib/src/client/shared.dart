@@ -4,8 +4,8 @@ import 'client.dart';
 import 'database.dart';
 import 'emitter.dart';
 import 'facebook.dart';
-import 'group.dart';
 import 'messenger.dart';
+
 
 class GlobalVariable {
   factory GlobalVariable() => _instance;

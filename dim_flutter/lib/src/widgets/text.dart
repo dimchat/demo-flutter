@@ -107,10 +107,10 @@ class _TextPreviewState extends State<TextPreviewPage> {
   );
 
   Widget _body() => Container(
-    padding: const EdgeInsets.all(32),
+    padding: const EdgeInsets.fromLTRB(32, 32, 32, 64),
     alignment: AlignmentDirectional.centerStart,
     color: Styles.colors.textMessageBackgroundColor,
-    child: _previewing ? _richText(context) : _plainText(context),
+    child: _previewing ? _richText() : _plainText(),
   );
 
   Widget _plainButton() => IconButton(
@@ -128,21 +128,17 @@ class _TextPreviewState extends State<TextPreviewPage> {
     onPressed: () => setState(() => _previewing = false),
   );
 
-  Widget _plainText(BuildContext context) => SelectableText(widget.text,
+  Widget _plainText() => SelectableText(
+    widget.text,
     style: const TextStyle(
       fontSize: 18,
     ),
-    onTap: () => closePage(context),
   );
-
-  Widget _richText(BuildContext context) => GestureDetector(
-    child: RichTextView(
-      sender: widget.sender,
-      text: widget.text,
-      onWebShare: widget.onWebShare,
-      onVideoShare: widget.onVideoShare,
-    ),
-    onTap: () => closePage(context),
+  Widget _richText() => RichTextView(
+    sender: widget.sender,
+    text: widget.text,
+    onWebShare: widget.onWebShare,
+    onVideoShare: widget.onVideoShare,
   );
 
 }

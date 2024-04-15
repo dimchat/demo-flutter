@@ -79,7 +79,7 @@ class LocalStorage extends FileCache with Logging {
   /// @return "{caches}/avatar/{AA}/{BB}/{filename}"
   Future<String> getAvatarFilePath(String filename) async {
     if (filename.indexOf('.') < 4) {
-      assert(false, 'invalid filename: $filename');
+      logError('invalid filename: $filename');
       return Paths.append(await cachesDirectory, filename);
     }
     String aa = filename.substring(0, 2);

@@ -7,7 +7,6 @@ import 'package:dim_client/dim_client.dart';
 import 'package:lnc/log.dart';
 import 'package:lnc/notification.dart' as lnc;
 
-import '../client/group.dart';
 import '../client/shared.dart';
 import '../common/dbi/contact.dart';
 import '../common/constants.dart';
@@ -319,7 +318,7 @@ class GroupInfo extends Conversation with Logging {
       assert(false, 'failed to save group document: $bulletin');
       return 'failed to save group document';
     }
-    if (await man.broadcastDocument(bulletin)) {
+    if (await man.broadcastGroupDocument(bulletin)) {
       Log.warning('group document broadcast: $group');
     } else {
       assert(false, 'failed to broadcast group document: $bulletin');

@@ -10,8 +10,8 @@ import '../common/constants.dart';
 import '../models/amanuensis.dart';
 import '../filesys/upload.dart';
 
-import 'group.dart';
 import 'shared.dart';
+
 
 class Emitter implements Observer {
   Emitter() {

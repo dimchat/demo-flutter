@@ -1,7 +1,7 @@
 import 'package:dim_client/dim_client.dart';
 
 import 'shared.dart';
-import 'group.dart';
+
 
 class SharedFacebook extends ClientFacebook {
   SharedFacebook();

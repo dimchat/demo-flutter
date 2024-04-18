@@ -1,9 +1,8 @@
 import 'dart:io' show Platform;
 
 import 'package:flutter/foundation.dart';
-import 'package:sqflite/sqflite.dart';
+import 'package:sqflite_common_ffi/sqflite_ffi.dart';
 import 'package:sqflite_common_ffi_web/sqflite_ffi_web.dart';
-// import 'package:sqflite_common_ffi/sqflite_ffi.dart';
 
 class DevicePlatform {
 
@@ -37,11 +36,11 @@ class DevicePlatform {
     if (DevicePlatform.isWeb) {
       // Change default factory on the web
       databaseFactory = databaseFactoryFfiWeb;
-    // } else if (DevicePlatform.isWindows || DevicePlatform.isLinux) {
-    //   // Initialize FFI
-    //   sqfliteFfiInit();
-    //   // Change the default factory
-    //   databaseFactory = databaseFactoryFfi;
+    } else if (DevicePlatform.isWindows || DevicePlatform.isLinux) {
+      // Initialize FFI
+      sqfliteFfiInit();
+      // Change the default factory
+      databaseFactory = databaseFactoryFfi;
     }
     _sqlitePatched = true;
   }

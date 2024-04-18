@@ -119,8 +119,15 @@ class Config {
     return array == null ? [] : ID.convert(array);
   }
 
+  /// Common assistants for group
+  Future<List<ID>?> get assistants async {
+    var bots = (await info)?['assistants'];
+    return bots == null ? null : ID.convert(bots);
+  }
+
   Future<ID?> get provider async => ID.parse((await info)?['ID']);
 
+  /// Base stations
   Future<List?> get stations async => (await info)?['stations'];
 
   // 'http://106.52.25.169:8081/{ID}/upload?md5={MD5}&salt={SALT}'

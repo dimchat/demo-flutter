@@ -1,5 +1,7 @@
 import 'package:dim_client/dim_client.dart';
 
+import '../models/config.dart';
+
 import 'client.dart';
 import 'database.dart';
 import 'emitter.dart';
@@ -17,6 +19,14 @@ class GlobalVariable {
     facebook = SharedFacebook();
     terminal = Client(facebook, database);
     terminal.start();
+    // get common assistants
+    Config config = Config();
+    config.assistants.then((bots) {
+      if (bots != null && bots.isNotEmpty) {
+        SharedGroupManager man = SharedGroupManager();
+        man.delegate.setCommonAssistants(bots);
+      }
+    });
   }
 
   final AccountDBI adb;

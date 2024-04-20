@@ -156,9 +156,6 @@ final Map<String, String> intlMsMy = {
   'Image Not Found': 'Imej Tidak Ditemui',
   'Failed to load image @filename': 'Gagal memuatkan imej "@filename".',
 
-  'Loading "@url" ...': 'Memuat "@url" ...',
-  'Failed to load "@url".' : 'Gagal memuat "@url".',
-
   'Forward Image': 'Hantar Imej',
   'Forward Video': 'Hantar Video',
   'Forward Web Page': 'Hantar Laman Web',
@@ -187,15 +184,28 @@ final Map<String, String> intlMsMy = {
   'Select a Chat': 'Pilih Sembang',
 
   'Waiting to send': 'Menunggu untuk dihantar',
-  'Sent to relay station': 'Dihantar ke stesen relay',
+  'Encrypted and sent to relay station': 'Dienkripsi dan dihantar ke stesen ralat',
   'Message is rejected': 'Mesej ditolak',
-  'Your friend received': 'Rakan anda menerima',
-  '@count members received': '@count ahli menerima',
+  'Safely delivered': 'Berjaya dihantar',
+  'Safely delivered to @count members': 'Berjaya dihantar kepada @count ahli',
   'No response': 'Tiada respons',
   'Stranded': 'Terbiar',
 
   'Draft': 'Draf',
   'Mentioned': 'Anda telah disebutkan',
+
+  //
+  //  Video Player
+  //
+  'Video Player': 'Pemain Video',
+
+  'Loading "@url" ...': 'Memuatkan "@url" ...',
+  'Failed to load "@url".': 'Gagal memuatkan "@url".',
+
+  'Select TV': 'Pilih TV',
+  'TV not found': 'TV tidak dijumpai',
+  'Search again': 'Cari lagi',
+  'Refresh': 'Segar semula',
 
   //
   //  Profile

@@ -156,9 +156,6 @@ final Map<String, String> intlKoKr = {
   'Image Not Found': '이미지를 찾을 수 없음',
   'Failed to load image @filename': '"@filename" 이미지 로드 실패',
 
-  'Loading "@url" ...': '"@url" 로딩 중...',
-  'Failed to load "@url".' : '"@url" 로드 실패.',
-
   'Forward Image': '이미지 전송',
   'Forward Video': '비디오 전송',
   'Forward Web Page': '웹 페이지 전송',
@@ -187,15 +184,28 @@ final Map<String, String> intlKoKr = {
   'Select a Chat': '채팅 선택',
 
   'Waiting to send': '전송 대기 중',
-  'Sent to relay station': '릴레이 스테이션에 전송됨',
+  'Encrypted and sent to relay station': '암호화되어 릴레이 스테이션으로 전송됨',
   'Message is rejected': '메시지가 거부되었습니다',
-  'Your friend received': '친구가 받음',
-  '@count members received': '@count 명의 회원이 받음',
+  'Safely delivered': '안전하게 전달됨',
+  'Safely delivered to @count members': '@count 명에게 안전하게 전달됨',
   'No response': '응답 없음',
   'Stranded': '고립됨',
 
   'Draft': '초안',
   'Mentioned': '당신은 언급되었습니다',
+
+  //
+  //  Video Player
+  //
+  'Video Player': '비디오 플레이어',
+
+  'Loading "@url" ...': '"@url" 로딩 중...',
+  'Failed to load "@url".': '"@url" 로드 실패.',
+
+  'Select TV': 'TV 선택',
+  'TV not found': 'TV를 찾을 수 없음',
+  'Search again': '다시 검색',
+  'Refresh': '새로 고침',
 
   //
   //  Profile

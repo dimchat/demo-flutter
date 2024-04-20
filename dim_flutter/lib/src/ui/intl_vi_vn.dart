@@ -156,9 +156,6 @@ final Map<String, String> intlViVN = {
   'Image Not Found': 'Không tìm thấy ảnh',
   'Failed to load image @filename': 'Không thể tải ảnh "@filename".',
 
-  'Loading "@url" ...': 'Đang tải "@url" ...',
-  'Failed to load "@url".' : 'Không thể tải "@url".',
-
   'Forward Image': 'Chuyển tiếp Hình ảnh',
   'Forward Video': 'Chuyển tiếp Video',
   'Forward Web Page': 'Chuyển tiếp Trang web',
@@ -186,16 +183,29 @@ final Map<String, String> intlViVN = {
   'Select Participants': 'Chọn Người tham gia',
   'Select a Chat': 'Chọn Một Cuộc trò chuyện',
 
-  'Waiting to send': 'Đang đợi để gửi',
-  'Sent to relay station': 'Đã gửi đến trạm truyền tải',
+  'Waiting to send': 'Đợi để gửi',
+  'Encrypted and sent to relay station': 'Đã mã hóa và gửi đến trạm relay',
   'Message is rejected': 'Tin nhắn bị từ chối',
-  'Your friend received': 'Người bạn của bạn đã nhận được',
-  '@count members received': '@count thành viên đã nhận',
+  'Safely delivered': 'Giao hàng an toàn',
+  'Safely delivered to @count members': 'Giao hàng an toàn cho @count thành viên',
   'No response': 'Không có phản hồi',
   'Stranded': 'Bị kẹt',
 
-  'Draft': 'Bản nháp',
+  'Draft': 'Nháp',
   'Mentioned': 'Bạn đã được đề cập',
+
+  //
+  //  Video Player
+  //
+  'Video Player': 'Trình phát video',
+
+  'Loading "@url" ...': 'Đang tải "@url" ...',
+  'Failed to load "@url".': 'Không thể tải "@url" lên.',
+
+  'Select TV': 'Chọn TV',
+  'TV not found': 'Không tìm thấy TV',
+  'Search again': 'Tìm kiếm lại',
+  'Refresh': 'Làm mới',
 
   //
   //  Profile

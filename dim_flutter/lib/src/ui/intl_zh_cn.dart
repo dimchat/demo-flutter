@@ -155,9 +155,6 @@ final Map<String, String> intlZhCn = {
   'Image Not Found': '图片不存在',
   'Failed to load image @filename': '无法读取图片"@filename"。',
 
-  'Loading "@url" ...': '加载中 "@url" ...',
-  'Failed to load "@url".': '无法加载 "@url"。',
-
   'Forward Image': '转发图片',
   'Forward Video': '转发视频',
   'Forward Web Page': '转发网页',
@@ -186,15 +183,28 @@ final Map<String, String> intlZhCn = {
   'Select a Chat': '选择一个会话',
 
   'Waiting to send': '等待发送',
-  'Sent to relay station': '已送至中继站',
+  'Encrypted and sent to relay station': '已加密并发送到中继站',
   'Message is rejected': '消息被拒收',
-  'Your friend received': '已接收',
-  '@count members received': '@count 位成员已接收',
+  'Safely delivered': '已安全送达',
+  'Safely delivered to @count members': '已安全送达 @count 位成员',
   'No response': '无应答',
   'Stranded': '未发送',
 
   'Draft': '草稿',
   'Mentioned': '有人@我',
+
+  //
+  //  Video Player
+  //
+  'Video Player': '视频播放器',
+
+  'Loading "@url" ...': '正在加载 "@url" ...',
+  'Failed to load "@url".': '无法加载 "@url"。',
+
+  'Select TV': '选择电视',
+  'TV not found': '未找到电视',
+  'Search again': '重新搜索',
+  'Refresh': '刷新',
 
   //
   //  Profile

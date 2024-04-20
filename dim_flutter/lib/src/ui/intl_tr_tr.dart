@@ -155,9 +155,6 @@ final Map<String, String> intlTrTr = {
   'Image Not Found': 'Resim Bulunamadı',
   'Failed to load image @filename': 'Resim yüklenemedi: "@filename".',
 
-  'Loading "@url" ...': '"@url" yükleniyor...',
-  'Failed to load "@url".' : '"@url" yüklenemedi.',
-
   'Forward Image': 'Resmi İleri Gönder',
   'Forward Video': 'Videoyu İleriye Taşı',
   'Forward Web Page': 'Web Sayfasını İleri Gönder',
@@ -185,16 +182,29 @@ final Map<String, String> intlTrTr = {
   'Select Participants': 'Katılımcıları Seç',
   'Select a Chat': 'Bir Sohbet Seç',
 
-  'Waiting to send': 'Gönderilmeyi Bekliyor',
-  'Sent to relay station': 'Röle istasyonuna gönderildi',
+  'Waiting to send': 'Gönderilmeyi bekliyor',
+  'Encrypted and sent to relay station': 'Şifrelenmiş ve röle istasyonuna gönderilmiş',
   'Message is rejected': 'Mesaj reddedildi',
-  'Your friend received': 'Arkadaşınız aldı',
-  '@count members received': '@count üye/üyeler aldı',
+  'Safely delivered': 'Güvenli bir şekilde teslim edildi',
+  'Safely delivered to @count members': '@count üye(ler)e güvenli bir şekilde teslim edildi',
   'No response': 'Cevap yok',
-  'Stranded': 'Mahsur kaldı',
+  'Stranded': 'Mahsur kalmış',
 
   'Draft': 'Taslak',
   'Mentioned': 'Bahsedildiniz',
+
+  //
+  //  Video Player
+  //
+  'Video Player': 'Video Oynatıcı',
+
+  'Loading "@url" ...': '"@url" yükleniyor...',
+  'Failed to load "@url".': '"@url" yüklenemedi.',
+
+  'Select TV': 'TV Seç',
+  'TV not found': 'TV bulunamadı',
+  'Search again': 'Tekrar ara',
+  'Refresh': 'Yenile',
 
   //
   //  Profile

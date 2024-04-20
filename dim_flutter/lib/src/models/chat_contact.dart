@@ -179,10 +179,18 @@ class ContactInfo extends Conversation {
     var sys = visa?.getProperty('sys');
     if (sys is Map) {
       os = sys['os'];
-      if (os == 'android') {
-        os = 'Android';
+      if (os == null) {
+        os = 'Unknown';
       } else if (os == 'ios') {
         os = 'iOS';
+      } else if (os == 'android') {
+        os = 'Android';
+      } else if (os == 'macos') {
+        os = 'MacOS';
+      } else if (os == 'windows') {
+        os = 'Windows';
+      } else if (os == 'linux') {
+        os = 'Linux';
       }
     }
     if (name != null) {

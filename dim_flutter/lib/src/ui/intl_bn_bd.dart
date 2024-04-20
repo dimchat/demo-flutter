@@ -156,9 +156,6 @@ final Map<String, String> intlBnBd = {
   'Image Not Found': 'চিত্র পাওয়া যায়নি',
   'Failed to load image @filename': 'চিত্র "@filename" লোড করতে ব্যর্থ।',
 
-  'Loading "@url" ...': '"@url" লোড হচ্ছে ...',
-  'Failed to load "@url".' : '"@url" লোড করা ব্যর্থ।',
-
   'Forward Image': 'ছবি পুনরায় প্রেরণ করুন',
   'Forward Video': 'ভিডিও প্রেরিত করুন',
   'Forward Web Page': 'ওয়েব পৃষ্ঠা পুনরায় প্রেরণ করুন',
@@ -186,16 +183,29 @@ final Map<String, String> intlBnBd = {
   'Select Participants': 'অংশগ্রহণকারী নির্বাচন করুন',
   'Select a Chat': 'একটি চ্যাট নির্বাচন করুন',
 
-  'Waiting to send': 'প্রেরণ করতে অপেক্ষা করছে',
-  'Sent to relay station': 'রিলে স্টেশনে প্রেরিত',
-  'Message is rejected': 'বার্তা বাতিল হয়েছে',
-  'Your friend received': 'আপনার বন্ধু পেয়েছে',
-  '@count members received': '@count সদস্য(গুলি) পেয়েছে',
-  'No response': 'কোনও প্রতিক্রিয়া নেই',
-  'Stranded': 'স্ট্র্যান্ডেড',
+  'Waiting to send': 'পাঠানোর জন্য অপেক্ষা করছে',
+  'Encrypted and sent to relay station': 'এনক্রিপ্ট এবং রিলে স্টেশনে প্রেরিত',
+  'Message is rejected': 'বার্তা প্রত্যাখ্যান',
+  'Safely delivered': 'নিরাপদে পৌঁছেছে',
+  'Safely delivered to @count members': 'নিরাপদে @count সদস্যদের কাছে পৌঁছেছে',
+  'No response': 'কোনো প্রতিক্রিয়া নেই',
+  'Stranded': 'অনুদানিত',
 
   'Draft': 'খসড়া',
   'Mentioned': 'তোমার উল্লেখ হয়েছে',
+
+  //
+  //  Video Player
+  //
+  'Video Player': 'ভিডিও প্লেয়ার',
+
+  'Loading "@url" ...': '"@url" লোড হচ্ছে ...',
+  'Failed to load "@url".': '"@url" লোড করা ব্যর্থ হয়েছে।',
+
+  'Select TV': 'টিভি নির্বাচন করুন',
+  'TV not found': 'টিভি পাওয়া যায়নি',
+  'Search again': 'আবার অনুসন্ধান করুন',
+  'Refresh': 'রিফ্রেশ করুন',
 
   //
   //  Profile

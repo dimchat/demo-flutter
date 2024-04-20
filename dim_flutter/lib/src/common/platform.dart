@@ -1,8 +1,11 @@
 import 'dart:io' show Platform;
 
 import 'package:flutter/foundation.dart';
-import 'package:sqflite_common_ffi/sqflite_ffi.dart';
-import 'package:sqflite_common_ffi_web/sqflite_ffi_web.dart';
+// import 'package:sqflite_common_ffi/sqflite_ffi.dart';
+// import 'package:sqflite_common_ffi_web/sqflite_ffi_web.dart';
+// import 'package:fvp/fvp.dart';
+
+import 'package:lnc/log.dart';
 
 class DevicePlatform {
 
@@ -28,22 +31,47 @@ class DevicePlatform {
 
   static String get operatingSystem => kIsWeb ? 'Web Browser' : Platform.operatingSystem;
 
-  /// patch for sqlite
+  /// patch for SQLite
   static void patchSQLite() {
     if (_sqlitePatched) {
       return;
     }
-    if (DevicePlatform.isWeb) {
-      // Change default factory on the web
-      databaseFactory = databaseFactoryFfiWeb;
-    } else if (DevicePlatform.isWindows || DevicePlatform.isLinux) {
-      // Initialize FFI
-      sqfliteFfiInit();
-      // Change the default factory
-      databaseFactory = databaseFactoryFfi;
+    if (isWeb) {
+      // TODO: open for Web
+      // // Change default factory on the web
+      // databaseFactory = databaseFactoryFfiWeb;
+    } else if (isWindows || isLinux) {
+      // TODO: open for Windows & Linux
+      // // Initialize FFI
+      // sqfliteFfiInit();
+      // // Change the default factory
+      // databaseFactory = databaseFactoryFfi;
     }
     _sqlitePatched = true;
   }
   static bool _sqlitePatched = false;
+
+  /// patch for Video Player
+  static void patchVideoPlayer() {
+    if (_videoPlayerPatched) {
+      return;
+    }
+    if (isAndroid || isIOS || isMacOS || isWeb) {
+      // Video Player support:
+      // - Android SDK 16+
+      // - iOS 12.0+
+      // - macOS 10.14+
+      // - Web Any*
+    } else {
+      // - Windows
+      // - Linux
+      // ...
+      Log.info('register video player for Windows, Linux, ...');
+      // TODO: open for windows
+      // registerWith();
+    }
+    _videoPlayerPatched = true;
+  }
+  static bool _videoPlayerPatched = false;
 
 }

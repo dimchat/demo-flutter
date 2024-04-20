@@ -156,9 +156,6 @@ final Map<String, String> intlJaJp = {
   'Image Not Found': '画像が見つかりません',
   'Failed to load image @filename': '画像 "@filename" の読み込みに失敗しました。',
 
-  'Loading "@url" ...': '"@url" を読み込んでいます...',
-  'Failed to load "@url".' : '"@url" の読み込みに失敗しました。',
-
   'Forward Image': '画像を転送',
   'Forward Video': 'ビデオを転送',
   'Forward Web Page': 'ウェブページを転送',
@@ -187,15 +184,28 @@ final Map<String, String> intlJaJp = {
   'Select a Chat': 'チャットを選択',
 
   'Waiting to send': '送信待ち',
-  'Sent to relay station': 'リレーステーションに送信済み',
+  'Encrypted and sent to relay station': '暗号化して中継局に送信されました',
   'Message is rejected': 'メッセージが拒否されました',
-  'Your friend received': '友達が受け取りました',
-  '@count members received': 'メンバー（@count 人）が受け取りました',
-  'No response': '返答なし',
+  'Safely delivered': '安全に配信されました',
+  'Safely delivered to @count members': '安全に @count 人のメンバーに配信されました',
+  'No response': '返信なし',
   'Stranded': '立ち往生',
 
   'Draft': '下書き',
   'Mentioned': 'あなたは言及されました',
+
+  //
+  //  Video Player
+  //
+  'Video Player': 'ビデオプレーヤー',
+
+  'Loading "@url" ...': '"@url" を読み込んでいます...',
+  'Failed to load "@url".': '"@url" の読み込みに失敗しました。',
+
+  'Select TV': 'テレビを選択',
+  'TV not found': 'テレビが見つかりません',
+  'Search again': '再検索',
+  'Refresh': '更新',
 
   //
   //  Profile

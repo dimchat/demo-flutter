@@ -156,9 +156,6 @@ final Map<String, String> intlHiIn = {
   'Image Not Found': 'तस्वीर नहीं मिली',
   'Failed to load image @filename': 'तस्वीर लोड करने में विफल "@filename"।',
 
-  'Loading "@url" ...': '"@url" लोड हो रहा है ...',
-  'Failed to load "@url".' : '"@url" लोड करने में विफल रहा।',
-
   'Forward Image': 'छवि आगे भेजें',
   'Forward Video': 'वीडियो अग्रेषित करें',
   'Forward Web Page': 'वेब पृष्ठ आगे भेजें',
@@ -186,16 +183,29 @@ final Map<String, String> intlHiIn = {
   'Select Participants': 'सहभागियों का चयन करें',
   'Select a Chat': 'एक चैट का चयन करें',
 
-  'Waiting to send': 'भेजने के लिए प्रतीक्षा कर रहा है',
-  'Sent to relay station': 'रिले स्टेशन को भेजा गया है',
-  'Message is rejected': 'संदेश को अस्वीकार किया गया है',
-  'Your friend received': 'आपका दोस्त प्राप्त करने वाला है',
-  '@count members received': '@count सदस्य(ए) ने प्राप्त किया है',
-  'No response': 'कोई प्रतिक्रिया नहीं',
-  'Stranded': 'फंसा हुआ',
+  'Waiting to send': 'भेजने की प्रतीक्षा कर रहा है',
+  'Encrypted and sent to relay station': 'एन्क्रिप्ट किया और रिले स्टेशन को भेजा गया',
+  'Message is rejected': 'संदेश अस्वीकृत है',
+  'Safely delivered': 'सुरक्षित रूप से डिलीवर किया गया',
+  'Safely delivered to @count members': 'सुरक्षित रूप से @count सदस्यों को डिलीवर किया गया',
+  'No response': 'कोई प्रतिक्रिया नहीं है',
+  'Stranded': 'अवरुद्ध',
 
   'Draft': 'मसौदा',
-  'Mentioned': 'आपका उल्लेख किया गया था',
+  'Mentioned': 'आपका उल्लेख किया गया',
+
+  //
+  //  Video Player
+  //
+  'Video Player': 'वीडियो प्लेयर',
+
+  'Loading "@url" ...': '"@url" लोड हो रहा है ...',
+  'Failed to load "@url".': '"@url" लोड करने में विफल रहा।',
+
+  'Select TV': 'टीवी चुनें',
+  'TV not found': 'टीवी नहीं मिला',
+  'Search again': 'फिर से खोजें',
+  'Refresh': 'ताज़ा करें',
 
   //
   //  Profile

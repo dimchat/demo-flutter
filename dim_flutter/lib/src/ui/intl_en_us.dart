@@ -155,9 +155,6 @@ final Map<String, String> intlEnUs = {
   'Image Not Found': 'Image Not Found',
   'Failed to load image @filename': 'Failed to load image "@filename".',
 
-  'Loading "@url" ...': 'Loading "@url" ...',
-  'Failed to load "@url".': 'Failed to load "@url".',
-
   'Forward Image': 'Forward Image',
   'Forward Video': 'Forward Video',
   'Forward Web Page': 'Forward Web Page',
@@ -186,15 +183,28 @@ final Map<String, String> intlEnUs = {
   'Select a Chat': 'Select a Chat',
 
   'Waiting to send': 'Waiting to send',
-  'Sent to relay station': 'Sent to relay station',
+  'Encrypted and sent to relay station': 'Encrypted and sent to relay station',
   'Message is rejected': 'Message is rejected',
-  'Your friend received': 'Your friend received',
-  '@count members received': '@count member(s) received',
+  'Safely delivered': 'Safely delivered',
+  'Safely delivered to @count members': 'Safely delivered to @count member(s)',
   'No response': 'No response',
   'Stranded': 'Stranded',
 
   'Draft': 'Draft',
   'Mentioned': 'You were mentioned',
+
+  //
+  //  Video Player
+  //
+  'Video Player': 'Video Player',
+
+  'Loading "@url" ...': 'Loading "@url" ...',
+  'Failed to load "@url".': 'Failed to load "@url".',
+
+  'Select TV': 'Select TV',
+  'TV not found': 'TV not found',
+  'Search again': 'Search again',
+  'Refresh': 'Refresh',
 
   //
   //  Profile

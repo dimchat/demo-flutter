@@ -156,9 +156,6 @@ final Map<String, String> intlNlNl = {
   'Image Not Found': 'Afbeelding Niet Gevonden',
   'Failed to load image @filename': 'Laden van afbeelding "@filename" mislukt.',
 
-  'Loading "@url" ...': 'Laden van "@url" ...',
-  'Failed to load "@url".' : 'Kon "@url" niet laden.',
-
   'Forward Image': 'Afbeelding doorsturen',
   'Forward Video': 'Video doorsturen',
   'Forward Web Page': 'Webpagina doorsturen',
@@ -187,15 +184,28 @@ final Map<String, String> intlNlNl = {
   'Select a Chat': 'Selecteer een Chat',
 
   'Waiting to send': 'Wachten om te verzenden',
-  'Sent to relay station': 'Verzonden naar relaisstation',
-  'Message is rejected': 'Bericht is afgewezen',
-  'Your friend received': 'Jouw vriend heeft ontvangen',
-  '@count members received': '@count lid/leden hebben ontvangen',
+  'Encrypted and sent to relay station': 'Gecodeerd en verzonden naar het relaisstation',
+  'Message is rejected': 'Bericht wordt afgewezen',
+  'Safely delivered': 'Veilig afgeleverd',
+  'Safely delivered to @count members': 'Veilig afgeleverd aan @count lid(den)',
   'No response': 'Geen reactie',
   'Stranded': 'Vastgelopen',
 
   'Draft': 'Concept',
   'Mentioned': 'Je werd genoemd',
+
+  //
+  //  Video Player
+  //
+  'Video Player': 'Videospeler',
+
+  'Loading "@url" ...': 'Laden van "@url" ...',
+  'Failed to load "@url".': 'Kan "@url" niet laden.',
+
+  'Select TV': 'Selecteer TV',
+  'TV not found': 'TV niet gevonden',
+  'Search again': 'Opnieuw zoeken',
+  'Refresh': 'Vernieuwen',
 
   //
   //  Profile

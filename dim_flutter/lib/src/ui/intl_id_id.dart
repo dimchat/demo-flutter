@@ -156,9 +156,6 @@ final Map<String, String> intlIdId = {
   'Image Not Found': 'Gambar Tidak Ditemukan',
   'Failed to load image @filename': 'Gagal memuat gambar "@filename".',
 
-  'Loading "@url" ...': 'Memuat "@url" ...',
-  'Failed to load "@url".' : 'Gagal memuat "@url".',
-
   'Forward Image': 'Teruskan Gambar',
   'Forward Video': 'Teruskan Video',
   'Forward Web Page': 'Teruskan Halaman Web',
@@ -187,15 +184,28 @@ final Map<String, String> intlIdId = {
   'Select a Chat': 'Pilih Obrolan',
 
   'Waiting to send': 'Menunggu untuk mengirim',
-  'Sent to relay station': 'Terkirim ke stasiun relay',
+  'Encrypted and sent to relay station': 'Dienkripsi dan dikirim ke stasiun relay',
   'Message is rejected': 'Pesan ditolak',
-  'Your friend received': 'Teman Anda menerima',
-  '@count members received': '@count anggota menerima',
+  'Safely delivered': 'Terkirim dengan aman',
+  'Safely delivered to @count members': 'Terkirim dengan aman kepada @count anggota',
   'No response': 'Tidak ada respons',
   'Stranded': 'Terdampar',
 
   'Draft': 'Draf',
   'Mentioned': 'Anda disebutkan',
+
+  //
+  //  Video Player
+  //
+  'Video Player': 'Pemutar Video',
+
+  'Loading "@url" ...': 'Memuat "@url" ...',
+  'Failed to load "@url".': 'Gagal memuat "@url".',
+
+  'Select TV': 'Pilih TV',
+  'TV not found': 'TV tidak ditemukan',
+  'Search again': 'Cari lagi',
+  'Refresh': 'Segarkan',
 
   //
   //  Profile

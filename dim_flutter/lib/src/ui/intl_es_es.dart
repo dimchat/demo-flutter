@@ -157,9 +157,6 @@ final Map<String, String> intlEsEs = {
   'Image Not Found': 'Imagen no Encontrada',
   'Failed to load image @filename': 'Error al cargar la imagen "@filename".',
 
-  'Loading "@url" ...': 'Cargando "@url" ...',
-  'Failed to load "@url".': 'No se pudo cargar "@url".',
-
   'Forward Image': 'Reenviar Imagen',
   'Forward Video': 'Reenviar Video',
   'Forward Web Page': 'Reenviar Página Web',
@@ -188,15 +185,28 @@ final Map<String, String> intlEsEs = {
   'Select a Chat': 'Seleccionar un Chat',
 
   'Waiting to send': 'Esperando para enviar',
-  'Sent to relay station': 'Enviado a la estación de retransmisión',
+  'Encrypted and sent to relay station': 'Encriptado y enviado a la estación de retransmisión',
   'Message is rejected': 'Mensaje rechazado',
-  'Your friend received': 'Tu amigo recibió',
-  '@count members received': '@count miembro(s) recibido(s)',
+  'Safely delivered': 'Entregado con seguridad',
+  'Safely delivered to @count members': 'Entregado con seguridad a @count miembro(s)',
   'No response': 'Sin respuesta',
   'Stranded': 'Varado',
 
   'Draft': 'Borrador',
   'Mentioned': 'Fuiste mencionado',
+
+  //
+  //  Video Player
+  //
+  'Video Player': 'Reproductor de video',
+
+  'Loading "@url" ...': 'Cargando "@url" ...',
+  'Failed to load "@url".': 'Error al cargar "@url".',
+
+  'Select TV': 'Seleccionar TV',
+  'TV not found': 'TV no encontrado',
+  'Search again': 'Buscar de nuevo',
+  'Refresh': 'Actualizar',
 
   //
   //  Profile

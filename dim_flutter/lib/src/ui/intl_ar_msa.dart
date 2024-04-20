@@ -156,9 +156,6 @@ final Map<String, String> intlAr = {
   'Image Not Found': 'الصورة غير موجودة',
   'Failed to load image @filename': 'فشل في تحميل الصورة "@filename".',
 
-  'Loading "@url" ...': 'جار التحميل "@url" ...',
-  'Failed to load "@url".' : 'فشل في التحميل "@url".',
-
   'Forward Image': 'إعادة توجيه الصورة',
   'Forward Video': 'توجيه الفيديو',
   'Forward Web Page': 'إعادة توجيه صفحة الويب',
@@ -187,15 +184,28 @@ final Map<String, String> intlAr = {
   'Select a Chat': 'تحديد دردشة',
 
   'Waiting to send': 'في انتظار الإرسال',
-  'Sent to relay station': 'تم الإرسال إلى محطة الإرسال',
+  'Encrypted and sent to relay station': 'تم تشفيره وإرساله إلى محطة الوسيلة',
   'Message is rejected': 'تم رفض الرسالة',
-  'Your friend received': 'تلقى صديقك',
-  '@count members received': 'تلقى @count عضو(أعضاء)',
-  'No response': 'لا يوجد رد',
-  'Stranded': 'متوقف',
+  'Safely delivered': 'تم التوصيل بأمان',
+  'Safely delivered to @count members': 'تم التوصيل بأمان لـ @count عضو',
+  'No response': 'لا توجد استجابة',
+  'Stranded': 'عالق',
 
   'Draft': 'مسودة',
   'Mentioned': 'تمت الإشارة إليك',
+
+  //
+  //  Video Player
+  //
+  'Video Player': 'مشغل الفيديو',
+
+  'Loading "@url" ...': 'جاري تحميل "@url" ...',
+  'Failed to load "@url".': 'فشل في تحميل "@url".',
+
+  'Select TV': 'اختر التلفزيون',
+  'TV not found': 'التلفزيون غير موجود',
+  'Search again': 'ابحث مرة أخرى',
+  'Refresh': 'تحديث',
 
   //
   //  Profile

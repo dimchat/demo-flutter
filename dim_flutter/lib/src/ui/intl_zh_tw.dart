@@ -155,9 +155,6 @@ final Map<String, String> intlZhTw = {
   'Image Not Found': '找不到圖片',
   'Failed to load image @filename': '無法載入圖片 "@filename"。',
 
-  'Loading "@url" ...': '載入中 "@url" ...',
-  'Failed to load "@url".': '無法載入 "@url"。',
-
   'Forward Image': '轉發圖片',
   'Forward Video': '轉發視頻',
   'Forward Web Page': '轉發網頁',
@@ -186,15 +183,28 @@ final Map<String, String> intlZhTw = {
   'Select a Chat': '選擇一個聊天',
 
   'Waiting to send': '等待發送',
-  'Sent to relay station': '已發送至中繼站',
+  'Encrypted and sent to relay station': '已加密並發送到中繼站',
   'Message is rejected': '訊息被拒絕',
-  'Your friend received': '你的朋友已收到',
-  '@count members received': '已有 @count 名成員收到',
+  'Safely delivered': '已安全送達',
+  'Safely delivered to @count members': '已安全送達 @count 位成員',
   'No response': '無回應',
   'Stranded': '未發送',
 
   'Draft': '草稿',
   'Mentioned': '有人@我',
+
+  //
+  //  Video Player
+  //
+  'Video Player': '影片播放器',
+
+  'Loading "@url" ...': '正在載入 "@url" ...',
+  'Failed to load "@url".': '無法載入 "@url"。',
+
+  'Select TV': '選擇電視',
+  'TV not found': '未找到電視',
+  'Search again': '重新搜尋',
+  'Refresh': '重新整理',
 
   //
   //  Profile

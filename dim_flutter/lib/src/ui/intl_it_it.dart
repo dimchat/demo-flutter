@@ -156,9 +156,6 @@ final Map<String, String> intlItIt = {
   'Image Not Found': 'Immagine Non Trovata',
   'Failed to load image @filename': 'Impossibile caricare l\'immagine "@filename".',
 
-  'Loading "@url" ...': 'Caricamento di "@url" ...',
-  'Failed to load "@url".' : 'Errore durante il caricamento di "@url".',
-
   'Forward Image': 'Inoltra Immagine',
   'Forward Video': 'Inoltra Video',
   'Forward Web Page': 'Inoltra Pagina Web',
@@ -186,16 +183,29 @@ final Map<String, String> intlItIt = {
   'Select Participants': 'Seleziona Partecipanti',
   'Select a Chat': 'Seleziona una Chat',
 
-  'Waiting to send': 'In attesa di invio',
-  'Sent to relay station': 'Inviato alla stazione di rilancio',
-  'Message is rejected': 'Il messaggio è stato respinto',
-  'Your friend received': 'Il tuo amico ha ricevuto',
-  '@count members received': '@count membri hanno ricevuto',
+  'Waiting to send': 'In attesa di inviare',
+  'Encrypted and sent to relay station': 'Criptato e inviato alla stazione di rilancio',
+  'Message is rejected': 'Messaggio rifiutato',
+  'Safely delivered': 'Consegnato in modo sicuro',
+  'Safely delivered to @count members': 'Consegnato in modo sicuro a @count membri',
   'No response': 'Nessuna risposta',
   'Stranded': 'Bloccato',
 
   'Draft': 'Bozza',
   'Mentioned': 'Sei stato menzionato',
+
+  //
+  //  Video Player
+  //
+  'Video Player': 'Lettore video',
+
+  'Loading "@url" ...': 'Caricamento di "@url" ...',
+  'Failed to load "@url".': 'Caricamento di "@url" non riuscito.',
+
+  'Select TV': 'Seleziona TV',
+  'TV not found': 'TV non trovata',
+  'Search again': 'Cerca di nuovo',
+  'Refresh': 'Aggiorna',
 
   //
   //  Profile

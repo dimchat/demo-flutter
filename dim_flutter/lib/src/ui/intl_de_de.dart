@@ -156,9 +156,6 @@ final Map<String, String> intlDeDe = {
   'Image Not Found': 'Bild nicht gefunden',
   'Failed to load image @filename': 'Fehler beim Laden des Bildes "@filename".',
 
-  'Loading "@url" ...': 'Lade "@url" ...',
-  'Failed to load "@url".' : 'Konnte "@url" nicht laden.',
-
   'Forward Image': 'Bild weiterleiten',
   'Forward Video': 'Video weiterleiten',
   'Forward Web Page': 'Webseite weiterleiten',
@@ -186,16 +183,29 @@ final Map<String, String> intlDeDe = {
   'Select Participants': 'Teilnehmer auswählen',
   'Select a Chat': 'Einen Chat auswählen',
 
-  'Waiting to send': 'Warten, um zu senden',
-  'Sent to relay station': 'An Relaisstation gesendet',
+  'Waiting to send': 'Warten auf Senden',
+  'Encrypted and sent to relay station': 'Verschlüsselt und an Relaisstation gesendet',
   'Message is rejected': 'Nachricht wurde abgelehnt',
-  'Your friend received': 'Ihr Freund hat die Nachricht erhalten',
-  '@count members received': '@count Mitglied(er) haben die Nachricht erhalten',
+  'Safely delivered': 'Sicher zugestellt',
+  'Safely delivered to @count members': 'Sicher an @count Mitglieder zugestellt',
   'No response': 'Keine Antwort',
   'Stranded': 'Gestrandet',
 
   'Draft': 'Entwurf',
   'Mentioned': 'Du wurdest erwähnt',
+
+  //
+  //  Video Player
+  //
+  'Video Player': 'Videoplayer',
+
+  'Loading "@url" ...': 'Laden von "@url" ...',
+  'Failed to load "@url".': 'Fehler beim Laden von "@url".',
+
+  'Select TV': 'TV auswählen',
+  'TV not found': 'TV nicht gefunden',
+  'Search again': 'Erneut suchen',
+  'Refresh': 'Aktualisieren',
 
   //
   //  Profile

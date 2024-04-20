@@ -156,9 +156,6 @@ final Map<String, String> intlFrFr = {
   'Image Not Found': 'Image non trouvée',
   'Failed to load image @filename': 'Échec du chargement de l\'image "@filename".',
 
-  'Loading "@url" ...': 'Chargement de "@url" ...',
-  'Failed to load "@url".' : 'Échec du chargement de "@url".',
-
   'Forward Image': 'Transmettre l\'image',
   'Forward Video': 'Vidéo en avant',
   'Forward Web Page': 'Transmettre la page Web',
@@ -187,15 +184,28 @@ final Map<String, String> intlFrFr = {
   'Select a Chat': 'Sélectionner un chat',
 
   'Waiting to send': 'En attente d\'envoi',
-  'Sent to relay station': 'Envoyé à la station relais',
-  'Message is rejected': 'Le message est rejeté',
-  'Your friend received': 'Votre ami a reçu',
-  '@count members received': '@count membre(s) reçu(s)',
+  'Encrypted and sent to relay station': 'Crypté et envoyé à la station relais',
+  'Message is rejected': 'Message rejeté',
+  'Safely delivered': 'Livré en toute sécurité',
+  'Safely delivered to @count members': 'Livré en toute sécurité à @count membre(s)',
   'No response': 'Pas de réponse',
-  'Stranded': 'Bloqué',
+  'Stranded': 'Échoué',
 
   'Draft': 'Brouillon',
   'Mentioned': 'Tu as été mentionné',
+
+  //
+  //  Video Player
+  //
+  'Video Player': 'Lecteur vidéo',
+
+  'Loading "@url" ...': 'Chargement de "@url" ...',
+  'Failed to load "@url".': 'Échec du chargement de "@url".',
+
+  'Select TV': 'Sélectionner la TV',
+  'TV not found': 'TV non trouvée',
+  'Search again': 'Rechercher à nouveau',
+  'Refresh': 'Actualiser',
 
   //
   //  Profile

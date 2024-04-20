@@ -156,9 +156,6 @@ final Map<String, String> intlAfZa = {
   'Image Not Found': 'Beeld Nie Gevind Nie',
   'Failed to load image @filename': 'Kon nie beeld "@filename" laai nie.',
 
-  'Loading "@url" ...': 'Laai "@url" ...',
-  'Failed to load "@url".' : 'Kon nie "@url" laai nie.',
-
   'Forward Image': 'Stuur Beeld Voort',
   'Forward Video': 'Stuur video',
   'Forward Web Page': 'Stuur Webblad Voort',
@@ -187,15 +184,28 @@ final Map<String, String> intlAfZa = {
   'Select a Chat': 'Kies \'n Geselskap',
 
   'Waiting to send': 'Wag om te stuur',
-  'Sent to relay station': 'Gestuur na koppelstasie',
-  'Message is rejected': 'Boodskap is verwerp',
-  'Your friend received': 'Jou vriend het dit ontvang',
-  '@count members received': '@count lede het dit ontvang',
+  'Encrypted and sent to relay station': 'Versleutel en gestuur na relaaisender',
+  'Message is rejected': 'Boodskap word afgekeur',
+  'Safely delivered': 'Veilig afgelewer',
+  'Safely delivered to @count members': 'Veilig afgelewer aan @count lid/lidmate',
   'No response': 'Geen reaksie',
   'Stranded': 'Vasgevang',
 
   'Draft': 'Konsep',
   'Mentioned': 'Jy is genoem',
+
+  //
+  //  Video Player
+  //
+  'Video Player': 'Video Speler',
+
+  'Loading "@url" ...': 'Laai "@url" ...',
+  'Failed to load "@url".': 'Kon nie "@url" laai nie.',
+
+  'Select TV': 'Kies TV',
+  'TV not found': 'TV nie gevind nie',
+  'Search again': 'Soek weer',
+  'Refresh': 'Herlaai',
 
   //
   //  Profile

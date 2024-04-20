@@ -156,9 +156,6 @@ final Map<String, String> intlRuRu = {
   'Image Not Found': 'Изображение не найдено',
   'Failed to load image @filename': 'Не удалось загрузить изображение "@filename".',
 
-  'Loading "@url" ...': 'Загрузка "@url" ...',
-  'Failed to load "@url".' : 'Не удалось загрузить "@url".',
-
   'Forward Image': 'Переслать изображение',
   'Forward Video': 'Переслать видео',
   'Forward Web Page': 'Переслать веб-страницу',
@@ -187,15 +184,28 @@ final Map<String, String> intlRuRu = {
   'Select a Chat': 'Выберите чат',
 
   'Waiting to send': 'Ожидание отправки',
-  'Sent to relay station': 'Отправлено на ретрансляцию',
+  'Encrypted and sent to relay station': 'Зашифровано и отправлено на ретрансляционную станцию',
   'Message is rejected': 'Сообщение отклонено',
-  'Your friend received': 'Ваш друг получил',
-  '@count members received': '@count участник(ов) получил(и)',
+  'Safely delivered': 'Безопасно доставлено',
+  'Safely delivered to @count members': 'Безопасно доставлено @count участникам',
   'No response': 'Нет ответа',
-  'Stranded': 'Заблокировано',
+  'Stranded': 'Заблудившийся',
 
   'Draft': 'Черновик',
   'Mentioned': 'Вас упомянули',
+
+  //
+  //  Video Player
+  //
+  'Video Player': 'Видео плеер',
+
+  'Loading "@url" ...': 'Загрузка "@url" ...',
+  'Failed to load "@url".': 'Не удалось загрузить "@url".',
+
+  'Select TV': 'Выбрать ТВ',
+  'TV not found': 'ТВ не найден',
+  'Search again': 'Искать снова',
+  'Refresh': 'Обновить',
 
   //
   //  Profile

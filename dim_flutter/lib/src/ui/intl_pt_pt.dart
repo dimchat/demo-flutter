@@ -156,9 +156,6 @@ final Map<String, String> intlPtPt = {
   'Image Not Found': 'Imagem Não Encontrada',
   'Failed to load image @filename': 'Falha ao carregar a imagem "@filename".',
 
-  'Loading "@url" ...': 'Carregando "@url" ...',
-  'Failed to load "@url".' : 'Falha ao carregar "@url".',
-
   'Forward Image': 'Encaminhar Imagem',
   'Forward Video': 'Encaminhar Vídeo',
   'Forward Web Page': 'Encaminhar Página da Web',
@@ -187,15 +184,28 @@ final Map<String, String> intlPtPt = {
   'Select a Chat': 'Selecionar uma Conversa',
 
   'Waiting to send': 'A aguardar para enviar',
-  'Sent to relay station': 'Enviado para estação de retransmissão',
-  'Message is rejected': 'A mensagem foi rejeitada',
-  'Your friend received': 'O seu amigo recebeu',
-  '@count members received': '@count membro(s) recebeu(ram)',
+  'Encrypted and sent to relay station': 'Encriptado e enviado para a estação de retransmissão',
+  'Message is rejected': 'Mensagem foi rejeitada',
+  'Safely delivered': 'Entregue com segurança',
+  'Safely delivered to @count members': 'Entregue com segurança a @count membro(s)',
   'No response': 'Sem resposta',
   'Stranded': 'Encalhado',
 
   'Draft': 'Rasura',
   'Mentioned': 'Você foi mencionado',
+
+  //
+  //  Video Player
+  //
+  'Video Player': 'Reprodutor de Vídeo',
+
+  'Loading "@url" ...': 'A carregar "@url" ...',
+  'Failed to load "@url".': 'Falha ao carregar "@url".',
+
+  'Select TV': 'Selecionar TV',
+  'TV not found': 'TV não encontrado',
+  'Search again': 'Pesquisar novamente',
+  'Refresh': 'Atualizar',
 
   //
   //  Profile

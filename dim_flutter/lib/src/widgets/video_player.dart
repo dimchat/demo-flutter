@@ -30,6 +30,7 @@
  */
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 import 'package:video_player/video_player.dart';
 import 'package:chewie/chewie.dart';
@@ -37,6 +38,7 @@ import 'package:chewie/chewie.dart';
 import 'package:dim_client/dim_client.dart';
 import 'package:lnc/log.dart';
 
+import '../common/platform.dart';
 import '../screens/cast.dart';
 import '../screens/device.dart';
 import '../screens/picker.dart';
@@ -79,10 +81,97 @@ class VideoPlayerPage extends StatefulWidget {
 
 }
 
+
+class _VideoHolder {
+
+  /// Video Player Controller
+  VideoPlayerController? _videoPlayerController;
+  VideoPlayerController? get videoPlayerController => _videoPlayerController;
+  Future<void> setVideoPlayerController(VideoPlayerController? controller) async {
+    var old = _videoPlayerController;
+    if (old != null && old != controller) {
+      if (old.value.isPlaying) {
+        await old.pause();
+      }
+      await old.dispose();
+    }
+    _videoPlayerController = controller;
+  }
+
+  /// Chewie Controller
+  ChewieController? _chewieController;
+  ChewieController? get chewieController => _chewieController;
+  Future<void> setChewieController(ChewieController? controller) async {
+    var old = _chewieController;
+    if (old != null && old != controller) {
+      if (old.isPlaying) {
+        await old.pause();
+      }
+      old.dispose();
+    }
+    _chewieController = controller;
+  }
+
+  Chewie? get chewie {
+    var controller = _chewieController;
+    return controller == null ? null : Chewie(controller: controller);
+  }
+
+  Future<void> destroy() async {
+    await setVideoPlayerController(null);
+    await setChewieController(null);
+    SystemChrome.setPreferredOrientations(DeviceOrientation.values);
+  }
+
+  /// Start playing URL
+  Future<ChewieController> openVideo(Uri url) async {
+    // patch for Windows
+    DevicePlatform.patchVideoPlayer();
+    //
+    //  1. create video player controller with network URL
+    //
+    var videoPlayerController = VideoPlayerController.networkUrl(url);
+    await setVideoPlayerController(videoPlayerController);
+    //
+    //  2. create chewie controller
+    //
+    ChewieController chewieController = ChewieController(
+      videoPlayerController: videoPlayerController,
+      // autoPlay: true,
+      showOptions: false,
+      allowedScreenSleep: false,
+      customControls: const CustomControls(),
+      // fullScreenByDefault: true,
+      deviceOrientationsAfterFullScreen: _deviceOrientations(),
+    );
+    await setChewieController(chewieController);
+    //
+    //  3. load & play
+    //
+    await videoPlayerController.initialize();
+    await chewieController.play();
+    return chewieController;
+  }
+
+  static List<DeviceOrientation> _deviceOrientations() {
+    Size size = Get.size;
+    if (size.width <= 0 || size.height <= 0) {
+      Log.error('window size error: $size');
+    } else if (size.width < 640 || size.height < 640) {
+      Log.info('window size: $size, this is a phone');
+      return [DeviceOrientation.portraitUp];
+    } else {
+      Log.info('window size: $size, this is a tablet?');
+    }
+    return DeviceOrientation.values;
+  }
+
+}
+
+
 class _VideoAppState extends State<VideoPlayerPage> {
 
-  late VideoPlayerController _videoPlayerController;
-  late ChewieController _chewieController;
+  final _VideoHolder _videoHolder = _VideoHolder();
 
   String? _error;
 
@@ -91,24 +180,12 @@ class _VideoAppState extends State<VideoPlayerPage> {
     super.initState();
     Log.info('[Video Player] remote url: ${widget.url}');
     // preparing video player controller
-    _videoPlayerController = VideoPlayerController.networkUrl(widget.url);
-    _videoPlayerController.initialize().then((_) {
-      setState(() {});
+    _videoHolder.openVideo(widget.url).then((chewie) {
       // auto start playing
-      _chewieController.play();
+      setState(() {});
     }).onError((error, stackTrace) {
-      setState(() {
-        _error = '$error';
-      });
+      setState(() => _error = '$error');
     });
-    // preparing chewie controller
-    _chewieController = ChewieController(
-      videoPlayerController: _videoPlayerController,
-      // autoPlay: true,
-      showOptions: false,
-      allowedScreenSleep: false,
-      customControls: const CustomControls(),
-    );
     // prepare screen manager
     var man = ScreenManager();
     man.addDiscoverer(CastScreenDiscoverer());
@@ -116,8 +193,7 @@ class _VideoAppState extends State<VideoPlayerPage> {
 
   @override
   void dispose() {
-    _videoPlayerController.dispose();
-    _chewieController.dispose();
+    _videoHolder.destroy();
     super.dispose();
   }
 
@@ -137,9 +213,7 @@ class _VideoAppState extends State<VideoPlayerPage> {
       trailing: _trailing(context),
     ),
     child: Center(
-      child: _videoPlayerController.value.isInitialized ? Chewie(
-        controller: _chewieController,
-      ) : _loading(),
+      child: _videoHolder.chewie ?? _loading(),
     ),
   );
 
@@ -161,7 +235,8 @@ class _VideoAppState extends State<VideoPlayerPage> {
   }
 
   Widget? _castButton(BuildContext context) {
-    if (!_videoPlayerController.value.isInitialized) {
+    var chewie = _videoHolder.chewieController;
+    if (chewie == null) {
       return null;
     }
     return IconButton(
@@ -171,7 +246,7 @@ class _VideoAppState extends State<VideoPlayerPage> {
         color: widget.color,
       ),
       onPressed: () {
-        _chewieController.pause();
+        chewie.pause();
         AirPlayPicker.open(context, widget.url);
       },
     );

@@ -156,9 +156,6 @@ final Map<String, String> intlThTh = {
   'Image Not Found': 'ไม่พบรูปภา��',
   'Failed to load image @filename': 'ไม่สามารถโหลดรูป "@filename" ได้',
 
-  'Loading "@url" ...': 'กำลังโหลด "@url" ...',
-  'Failed to load "@url".' : 'โหลด "@url" ไม่สำเร็จ',
-
   'Forward Image': 'ส่งต่อรูปภาพ',
   'Forward Video': 'ส่งวิดีโอต่อ',
   'Forward Web Page': 'ส่งต่อหน้าเว็บ',
@@ -187,15 +184,28 @@ final Map<String, String> intlThTh = {
   'Select a Chat': 'เลือกแชท',
 
   'Waiting to send': 'กำลังรอการส่ง',
-  'Sent to relay station': 'ส่งไปยังสถานีถ่ายทอด',
+  'Encrypted and sent to relay station': 'เข้ารหัสและส่งไปยังสถานีรีเลย์',
   'Message is rejected': 'ข้อความถูกปฏิเสธ',
-  'Your friend received': 'เพื่อนของคุณได้รับ',
-  '@count members received': 'สมาชิก @count คนได้รับ',
-  'No response': 'ไม่มีการตอบสนอง',
+  'Safely delivered': 'ส่งสำเร็จ',
+  'Safely delivered to @count members': 'ส่งสำเร็จถึงสมาชิก @count คน',
+  'No response': 'ไม่มีการตอบกลับ',
   'Stranded': 'ติดอยู่',
 
   'Draft': 'ร่าง',
   'Mentioned': 'คุณถูกกล่าวถึง',
+
+  //
+  //  Video Player
+  //
+  'Video Player': 'เครื่องเล่นวิดีโอ',
+
+  'Loading "@url" ...': 'กำลังโหลด "@url" ...',
+  'Failed to load "@url".': 'โหลด "@url" ล้มเหลว',
+
+  'Select TV': 'เลือกทีวี',
+  'TV not found': 'ไม่พบทีวี',
+  'Search again': 'ค้นหาอีกครั้ง',
+  'Refresh': 'รีเฟรช',
 
   //
   //  Profile

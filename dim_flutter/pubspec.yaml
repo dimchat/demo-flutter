@@ -23,6 +23,19 @@ dependencies:
   device_info_plus: ^9.0.1
   package_info_plus: ^4.0.1
 
+  permission_handler: ^10.1.0
+  permission_handler_android: ^10.1.0
+  path: ^1.8.3
+  path_provider: ^2.1.2
+
+  shared_preferences: ^2.2.2
+  get: ^4.6.6
+
+  sqflite: ^2.2.6
+#  sqflite_common_ffi: ^2.3.3
+#  sqflite_common_ffi_web: ^0.4.2
+
+#  fvp: ^0.16.1
   video_player: ^2.8.3
   chewie: ^1.7.5
   castscreen: ^1.0.2
@@ -42,18 +55,6 @@ dependencies:
   #  tableview: ^0.0.3
 
   #  wakelock_plus: 1.1.6
-
-  permission_handler: ^10.1.0
-  permission_handler_android: ^10.1.0
-  path: ^1.8.3
-  path_provider: ^2.1.2
-
-  sqflite: ^2.2.6
-  sqflite_common_ffi: ^2.3.3
-  sqflite_common_ffi_web: ^0.4.2
-
-  shared_preferences: ^2.2.2
-  get: ^4.6.6
 
   bip32: ^2.0.0
   bip39: ^1.0.6

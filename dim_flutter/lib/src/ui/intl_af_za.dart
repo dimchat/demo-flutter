@@ -267,6 +267,41 @@ final Map<String, String> intlAfZa = {
   'Grant to access microphone': 'Jy moet die toestemming gee om die mikrofoon toegang te kry.',
 
   //
+  //  Cache Files Management
+  //
+
+  'Storage': 'Stoorplek',
+  'Cache Files Management': 'Cache-lêerbestuur',
+
+  'Total Cached Data': 'Totale Gestoorde Data',
+  'Cache Files': 'Cache-lêers',
+  'Avatars': 'Avatarre',
+  'Message Files': 'Boodskap-lêers',
+  'Temporary Files': 'Tydelike Lêers',
+  'Upload Directory': 'Oplaai-gids',
+  'Download Directory': 'Aflaai-gids',
+
+  'Scan': 'Deursoek',
+  'Clear': 'Maak Skoon',
+
+  'Sure to clear all avatar images?': 'Is jy seker jy wil alle avatar-afbeeldings skoonmaak?',
+  'Sure to clear all message files?': 'Is jy seker jy wil alle boodskap-lêers skoonmaak? Hierdie aksie kan nie ongedaan gemaak word nie!',
+  'Sure to clear these temporary files?': 'Is jy seker jy wil hierdie tydelike lêers skoonmaak?',
+
+  'CacheFiles::Description': '* Avatar-afbeeldings en boodskap-lêers word op jou toestel gestoor.\n'
+      '* Die boodskap-lêers wat oor die netwerk gestuur word, is versleutel,'
+      ' en kan nie deur tussenliggende knope, soos relaaisentrums, dekripteer word nie.\n'
+      '* Wanneer jy hierdie lêers vanaf plaaslike stoorplek verwyder,'
+      ' mag jy nie in staat wees om hulle te herstel tensy jy die sender vra om hulle weer te stuur nie.\n'
+      '* Let daarop dat ons lêer-relaisbediener slegs die versleutelde weergawes van die boodskap-lêers vir tot 7 dae kan stoor.\n'
+      '* Daarom, hanteer asseblief hierdie data met sorg.',
+
+  'TemporaryFiles::Description': '* Wanneer die app lêers oplaai of aflaai,'
+      ' skep dit tydelike lêers wat gewoonlik outomaties deur die stelsel skoongemaak word as dit nodig is.\n'
+      '* Indien jy wil hê dat hulle onmiddellik verwyder moet word, kan jy ook kies om hulle hier handmatig te verwyder.',
+
+
+  //
   //  Footers
   //
 

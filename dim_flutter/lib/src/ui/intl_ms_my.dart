@@ -267,6 +267,41 @@ final Map<String, String> intlMsMy = {
   'Grant to access microphone': 'Anda perlu memberikan kebenaran untuk mengakses mikrofon.',
 
   //
+  //  Cache Files Management
+  //
+
+  'Storage': 'Simpanan',
+  'Cache Files Management': 'Pengurusan Fail Cache',
+
+  'Total Cached Data': 'Jumlah Data Cache',
+  'Cache Files': 'Fail Cache',
+  'Avatars': 'Avatar',
+  'Message Files': 'Fail Mesej',
+  'Temporary Files': 'Fail Sementara',
+  'Upload Directory': 'Direktori Muat Naik',
+  'Download Directory': 'Direktori Muat Turun',
+
+  'Scan': 'Imbas',
+  'Clear': 'Kosongkan',
+
+  'Sure to clear all avatar images?': 'Adakah anda pasti mahu mengosongkan semua imej avatar?',
+  'Sure to clear all message files?': 'Adakah anda pasti mahu mengosongkan semua fail mesej? Tindakan ini tidak boleh dipulihkan!',
+  'Sure to clear these temporary files?': 'Adakah anda pasti mahu mengosongkan fail sementara ini?',
+
+  'CacheFiles::Description': '* Imej avatar dan fail mesej disimpan di peranti anda.\n'
+      '* Fail mesej yang dihantar melalui rangkaian telah dienkripsi,'
+      ' dan tidak dapat didekripsi oleh nod-nod perantara, seperti stesen penyiaran.\n'
+      '* Setelah anda memadamkan fail-fail ini dari penyimpanan tempatan,'
+      ' anda mungkin tidak dapat mengembalikannya kecuali anda meminta pengirim untuk menghantarnya semula.\n'
+      '* Harap maklum bahawa pelayan hulur fail kami hanya boleh menyimpan versi terenkripsi'
+      ' fail mesej selama maksimum 7 hari.\n'
+      '* Oleh itu, sila berhati-hati dalam mengendalikan data ini.',
+
+  'TemporaryFiles::Description': '* Apabila aplikasi memuat naik atau memuat turun fail,'
+      ' ia mencipta fail sementara yang biasanya secara automatik dibersihkan oleh sistem apabila perlu.\n'
+      '* Sekiranya anda ingin mengeluarkannya dengan segera, anda juga boleh memilih untuk memadamnya secara manual di sini.',
+
+  //
   //  Footers
   //
 

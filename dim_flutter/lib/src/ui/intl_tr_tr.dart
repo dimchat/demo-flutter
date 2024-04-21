@@ -266,6 +266,37 @@ final Map<String, String> intlTrTr = {
   'Grant to access microphone': 'Mikrofon erişimi iznini vermelisiniz.',
 
   //
+  //  Cache Files Management
+  //
+
+  'Storage': 'Depolama',
+  'Cache Files Management': 'Önbellek Dosyaları Yönetimi',
+
+  'Total Cached Data': 'Toplam Önbelleklenmiş Veri',
+  'Cache Files': 'Önbellek Dosyaları',
+  'Avatars': 'Avatarlar',
+  'Message Files': 'Mesaj Dosyaları',
+  'Temporary Files': 'Geçici Dosyalar',
+  'Upload Directory': 'Yükleme Dizini',
+  'Download Directory': 'İndirme Dizini',
+
+  'Scan': 'Tara',
+  'Clear': 'Temizle',
+
+  'Sure to clear all avatar images?': 'Tüm avatar resimlerini silmek istediğinizden emin misiniz?',
+  'Sure to clear all message files?': 'Tüm mesaj dosyalarını silmek istediğinizden emin misiniz? Bu işlem geri alınamaz!',
+  'Sure to clear these temporary files?': 'Bu geçici dosyaları silmek istediğinizden emin misiniz?',
+
+  'CacheFiles::Description': '* Avatar resimleri ve mesaj dosyaları cihazınızda saklanır.\n'
+      '* Ağ üzerinde iletilen mesaj dosyaları şifrelenmiştir ve röle istasyonları gibi ara düğümler tarafından çözülemez.\n'
+      '* Bu dosyaları yerel depolamadan sildikten sonra, göndereni tekrar göndermelerini istemedikçe kurtaramayabilirsiniz.\n'
+      '* Dosya röle sunucumuz, mesaj dosyalarının şifreli sürümlerini en fazla 7 gün boyunca önbelleğe alabilir.\n'
+      '* Bu nedenle, lütfen bu verileri dikkatlice ele alın.',
+
+  'TemporaryFiles::Description': '* Uygulama dosyaları yüklediğinde veya indirdiğinde, genellikle gerekli olduğunda otomatik olarak temizlenen geçici dosyalar oluşturur.\n'
+      '* Bunları hemen kaldırmak isterseniz, bunları buradan manuel olarak da silebilirsiniz.',
+
+  //
   //  Footers
   //
 

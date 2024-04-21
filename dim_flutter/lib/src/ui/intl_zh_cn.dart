@@ -261,6 +261,37 @@ final Map<String, String> intlZhCn = {
   'Grant to access camera': '您需要授权访问摄像头。',
   'Grant to access microphone': '您需要授权访问麦克风。',
 
+  //
+  //  Cache Files Management
+  //
+
+  'Storage': '存储',
+  'Cache Files Management': '缓存文件管理',
+
+  'Total Cached Data': '总缓存数据',
+  'Cache Files': '缓存文件',
+  'Avatars': '头像',
+  'Message Files': '消息文件',
+  'Temporary Files': '临时文件',
+  'Upload Directory': '上传目录',
+  'Download Directory': '下载目录',
+
+  'Scan': '扫描',
+  'Clear': '清除',
+
+  'Sure to clear all avatar images?': '确定要清除所有头像图片吗？',
+  'Sure to clear all message files?': '确定要清除所有消息文件吗？此操作无法恢复！',
+  'Sure to clear these temporary files?': '确定要清除这些临时文件吗？',
+
+  'CacheFiles::Description': '* 头像和消息文件会存储在您的设备上。\n'
+      '* 网络传输的消息文件已加密，中间节点（如中继站）无法解密。\n'
+      '* 一旦您从本地存储中删除这些文件，除非您要求发送者重新发送，否则将无法恢复。\n'
+      '* 请注意，我们的文件中继服务器仅会将消息文件的加密版本缓存最多 7 天。\n'
+      '* 因此，请谨慎处理这些数据。',
+
+  'TemporaryFiles::Description': '* 当应用程序上传或下载文件时，会生成临时文件，'
+      '通常在必要时由系统自动清除。\n'
+      '* 如果您希望立即删除它们，也可以在此手动清除。',
 
   //
   //  Footers

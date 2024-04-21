@@ -265,6 +265,37 @@ final Map<String, String> intlJaJp = {
   'Grant to access microphone': 'マイクへのアクセス権を付与してください。',
 
   //
+  //  Cache Files Management
+  //
+
+  'Storage': 'ストレージ',
+  'Cache Files Management': 'キャッシュファイル管理',
+
+  'Total Cached Data': '総キャッシュデータ',
+  'Cache Files': 'キャッシュファイル',
+  'Avatars': 'アバター',
+  'Message Files': 'メッセージファイル',
+  'Temporary Files': '一時ファイル',
+  'Upload Directory': 'アップロードディレクトリ',
+  'Download Directory': 'ダウンロードディレクトリ',
+
+  'Scan': 'スキャン',
+  'Clear': 'クリア',
+
+  'Sure to clear all avatar images?': 'すべてのアバター画像を消去してもよろしいですか？',
+  'Sure to clear all message files?': 'すべてのメッセージファイルを消去してもよろしいですか？この操作は元に戻せません！',
+  'Sure to clear these temporary files?': 'これらの一時ファイルを消去してもよろしいですか？',
+
+  'CacheFiles::Description': '* アバター画像とメッセージファイルは、デバイスに保存されます。\n'
+      '* ネットワークで送信されたメッセージファイルは、中継局などの中間ノードによって復号化できないように暗号化されています。\n'
+      '* ローカルストレージからこれらのファイルを削除すると、送信者に再送信を依頼しない限り、それらを回復できない場合があります。\n'
+      '* 当社のファイル中継サーバーは、メッセージファイルの暗号化されたバージョンを最大7日間キャッシュできます。\n'
+      '* したがって、このデータを慎重に扱ってください。',
+
+  'TemporaryFiles::Description': '* アプリがファイルのアップロードやダウンロードを行うと、必要に応じて通常は自動的にクリアされる一時ファイルが作成されます。\n'
+      '* それらを即時に削除したい場合は、ここで手動で削除することもできます。',
+
+  //
   //  Footers
   //
 

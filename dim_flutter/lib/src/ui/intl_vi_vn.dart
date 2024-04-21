@@ -267,6 +267,38 @@ final Map<String, String> intlViVN = {
   'Grant to access microphone': 'Bạn nên cấp quyền truy cập vào microphone.',
 
   //
+  //  Cache Files Management
+  //
+
+  'Storage': 'Bộ nhớ',
+  'Cache Files Management': 'Quản lý Tập tin Bộ nhớ Cache',
+
+  'Total Cached Data': 'Tổng Dữ liệu đã Cache',
+  'Cache Files': 'Tập tin Cache',
+  'Avatars': 'Hình đại diện',
+  'Message Files': 'Tập tin Tin nhắn',
+  'Temporary Files': 'Tập tin Tạm thời',
+  'Upload Directory': 'Thư mục Tải lên',
+  'Download Directory': 'Thư mục Tải xuống',
+
+  'Scan': 'Quét',
+  'Clear': 'Xóa',
+
+  'Sure to clear all avatar images?': 'Bạn có chắc muốn xóa tất cả hình đại diện không?',
+  'Sure to clear all message files?': 'Bạn có chắc muốn xóa tất cả tập tin tin nhắn không? Thao tác này không thể hoàn tác!',
+  'Sure to clear these temporary files?': 'Bạn có chắc muốn xóa những tập tin tạm thời này không?',
+
+  'CacheFiles::Description': '* Hình đại diện và tập tin tin nhắn được lưu trữ trên thiết bị của bạn.\n'
+      '* Các tập tin tin nhắn được truyền trên mạng đã được mã hóa, và không thể giải mã bởi các nút trung gian, như trạm trung gian.\n'
+      '* Khi bạn xóa các tập tin này khỏi bộ nhớ cục bộ, bạn có thể không thể khôi phục chúng trừ khi bạn yêu cầu người gửi gửi lại chúng.\n'
+      '* Vui lòng lưu ý rằng máy chủ truyền tệp của chúng tôi chỉ có thể lưu trữ phiên bản được mã hóa của các tập tin tin nhắn trong tối đa 7 ngày.\n'
+      '* Vì vậy, vui lòng xử lý dữ liệu này một cách cẩn thận.',
+
+  'TemporaryFiles::Description': '* Khi ứng dụng tải lên hoặc tải xuống tập tin,'
+      ' nó tạo ra các tập tin tạm thời thường được hệ thống tự động xóa khi cần thiết.\n'
+      '* Nếu bạn muốn xóa chúng ngay lập tức, bạn cũng có thể chọn xóa chúng thủ công ở đây.',
+
+  //
   //  Footers
   //
 

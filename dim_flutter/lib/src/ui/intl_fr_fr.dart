@@ -267,6 +267,40 @@ final Map<String, String> intlFrFr = {
   'Grant to access microphone': 'Vous devez accorder l\'autorisation d\'accéder au microphone.',
 
   //
+  //  Cache Files Management
+  //
+
+  'Storage': 'Stockage',
+  'Cache Files Management': 'Gestion des fichiers en cache',
+
+  'Total Cached Data': 'Données mises en cache totales',
+  'Cache Files': 'Fichiers en cache',
+  'Avatars': 'Avatars',
+  'Message Files': 'Fichiers de messages',
+  'Temporary Files': 'Fichiers temporaires',
+  'Upload Directory': 'Répertoire de téléchargement',
+  'Download Directory': 'Répertoire de téléchargement',
+
+  'Scan': 'Analyser',
+  'Clear': 'Effacer',
+
+  'Sure to clear all avatar images?': 'Êtes-vous sûr de vouloir effacer toutes les images d\'avatar ?',
+  'Sure to clear all message files?': 'Êtes-vous sûr de vouloir effacer tous les fichiers de messages ? Cette opération est irréversible !',
+  'Sure to clear these temporary files?': 'Êtes-vous sûr de vouloir effacer ces fichiers temporaires ?',
+
+  'CacheFiles::Description': '* Les images d\'avatar et les fichiers de messages sont stockés sur votre appareil.\n'
+      '* Les fichiers de messages transmis sur le réseau ont été chiffrés et ne peuvent pas être déchiffrés par des nœuds intermédiaires, tels que les stations relais.\n'
+      '* Une fois que vous supprimez ces fichiers du stockage local,'
+      ' vous ne pourrez peut-être pas les récupérer à moins de demander à l\'expéditeur de vous les renvoyer.\n'
+      '* Veuillez noter que notre serveur relais de fichiers ne peut mettre en cache que les versions chiffrées'
+      ' des fichiers de messages pendant une durée maximale de 7 jours.\n'
+      '* Par conséquent, veuillez manipuler ces données avec précaution.',
+
+  'TemporaryFiles::Description': '* Lorsque l\'application télécharge ou téléverse des fichiers,'
+      ' elle crée des fichiers temporaires qui sont généralement automatiquement effacés par le système en cas de besoin.\n'
+      '* Si vous souhaitez les supprimer immédiatement, vous pouvez également choisir de les supprimer manuellement ici.',
+
+  //
   //  Footers
   //
 

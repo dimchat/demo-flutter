@@ -262,6 +262,40 @@ final Map<String, String> intlDeDe = {
   'Grant to access microphone': 'Sie sollten die Berechtigung zum Zugriff auf das Mikrofon gewähren.',
 
   //
+  //  Cache Files Management
+  //
+
+  'Storage': 'Speicher',
+  'Cache Files Management': 'Dateiverwaltung im Cache',
+
+  'Total Cached Data': 'Gesamte gecachte Daten',
+  'Cache Files': 'Cache-Dateien',
+  'Avatars': 'Avatare',
+  'Message Files': 'Nachrichtendateien',
+  'Temporary Files': 'Temporäre Dateien',
+  'Upload Directory': 'Upload-Verzeichnis',
+  'Download Directory': 'Download-Verzeichnis',
+
+  'Scan': 'Scannen',
+  'Clear': 'Löschen',
+
+  'Sure to clear all avatar images?': 'Sind Sie sicher, dass Sie alle Avatar-Bilder löschen möchten?',
+  'Sure to clear all message files?': 'Sind Sie sicher, dass Sie alle Nachrichtendateien löschen möchten? Dieser Vorgang kann nicht rückgängig gemacht werden!',
+  'Sure to clear these temporary files?': 'Sind Sie sicher, dass Sie diese temporären Dateien löschen möchten?',
+
+  'CacheFiles::Description': '* Avatar-Bilder und Nachrichtendateien werden auf Ihrem Gerät gespeichert.\n'
+      '* Die über das Netzwerk übertragenen Nachrichtendateien wurden verschlüsselt und können nicht von Zwischenknoten wie Relaisstationen entschlüsselt werden.\n'
+      '* Sobald Sie diese Dateien aus dem lokalen Speicher löschen,'
+      ' können Sie sie möglicherweise nicht wiederherstellen, es sei denn, Sie bitten den Absender, sie erneut zu senden.\n'
+      '* Bitte beachten Sie, dass unser Datei-Relais-Server nur die verschlüsselten Versionen'
+      ' der Nachrichtendateien für bis zu 7 Tage zwischenspeichern kann.\n'
+      '* Bitte behandeln Sie diese Daten daher sorgfältig.',
+
+  'TemporaryFiles::Description': '* Wenn die App Dateien hochlädt oder herunterlädt,'
+      ' werden temporäre Dateien erstellt, die in der Regel vom System automatisch gelöscht werden, wenn dies erforderlich ist.\n'
+      '* Wenn Sie sie sofort entfernen möchten, können Sie sie auch hier manuell löschen.',
+
+  //
   //  Footers
   //
 

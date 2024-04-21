@@ -267,6 +267,38 @@ final Map<String, String> intlKoKr = {
   'Grant to access microphone': '마이크에 대한 권한을 부여해야 합니다.',
 
   //
+  //  Cache Files Management
+  //
+
+  'Storage': '저장소',
+  'Cache Files Management': '캐시 파일 관리',
+
+  'Total Cached Data': '총 캐시된 데이터',
+  'Cache Files': '캐시 파일',
+  'Avatars': '아바타',
+  'Message Files': '메시지 파일',
+  'Temporary Files': '임시 파일',
+  'Upload Directory': '업로드 디렉토리',
+  'Download Directory': '다운로드 디렉토리',
+
+  'Scan': '스캔',
+  'Clear': '지우기',
+
+  'Sure to clear all avatar images?': '모든 아바타 이미지를 지우시겠습니까?',
+  'Sure to clear all message files?': '모든 메시지 파일을 지우시겠습니까? 이 작업은 되돌릴 수 없습니다!',
+  'Sure to clear these temporary files?': '이러한 임시 파일을 지우시겠습니까?',
+
+  'CacheFiles::Description': '* 아바타 이미지 및 메시지 파일은 장치에 저장됩니다.\n'
+      '* 네트워크에서 전송된 메시지 파일은 중계 기지국과 같은 중간 노드에서 복호화할 수 없도록 암호화되었습니다.\n'
+      '* 로컬 저장소에서 이 파일을 삭제하면, 송신자에게 재전송을 요청하지 않는 한 복구할 수 없을 수 있습니다.\n'
+      '* 당사의 파일 중계 서버는 메시지 파일의 암호화된 버전을 최대 7일 동안 캐시할 수 있습니다.\n'
+      '* 따라서 이 데이터를 주의 깊게 다루십시오.',
+
+  'TemporaryFiles::Description': '* 앱이 파일을 업로드하거나 다운로드할 때,'
+      ' 시스템이 필요할 때 자동으로 지우는 일반적으로 임시 파일이 생성됩니다.\n'
+      '* 즉시 삭제하고 싶은 경우 여기서 수동으로 삭제할 수도 있습니다.',
+
+  //
   //  Footers
   //
 

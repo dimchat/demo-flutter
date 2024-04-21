@@ -267,6 +267,41 @@ final Map<String, String> intlNlNl = {
   'Grant to access microphone': 'U moet toestemming verlenen om toegang te krijgen tot de microfoon.',
 
   //
+  //  Cache Files Management
+  //
+
+  'Storage': 'Opslag',
+  'Cache Files Management': 'Beheer van Cachebestanden',
+
+  'Total Cached Data': 'Totaal gecachete gegevens',
+  'Cache Files': 'Cachebestanden',
+  'Avatars': 'Avatars',
+  'Message Files': 'Berichtenbestanden',
+  'Temporary Files': 'Tijdelijke bestanden',
+  'Upload Directory': 'Uploadmap',
+  'Download Directory': 'Downloadmap',
+
+  'Scan': 'Scannen',
+  'Clear': 'Wissen',
+
+  'Sure to clear all avatar images?': 'Weet je zeker dat je alle avatarafbeeldingen wilt wissen?',
+  'Sure to clear all message files?': 'Weet je zeker dat je alle berichtenbestanden wilt wissen? Deze actie kan niet ongedaan worden gemaakt!',
+  'Sure to clear these temporary files?': 'Weet je zeker dat je deze tijdelijke bestanden wilt wissen?',
+
+  'CacheFiles::Description': '* Avatarafbeeldingen en berichtenbestanden worden op uw apparaat opgeslagen.\n'
+      '* De berichtenbestanden die via het netwerk zijn verzonden, zijn versleuteld'
+      ' en kunnen niet worden ontsleuteld door tussenliggende knooppunten, zoals relaisstations.\n'
+      '* Als u deze bestanden van de lokale opslag verwijdert,'
+      ' kunt u ze mogelijk niet herstellen, tenzij u de afzender vraagt ze opnieuw te verzenden.\n'
+      '* Houd er rekening mee dat onze bestand-relais-server alleen de versleutelde versies'
+      ' van de berichtenbestanden tot 7 dagen kan cachen.\n'
+      '* Ga daarom zorgvuldig om met deze gegevens.',
+
+  'TemporaryFiles::Description': '* Wanneer de app bestanden uploadt of downloadt,'
+      ' worden er tijdelijke bestanden aangemaakt die doorgaans automatisch worden gewist door het systeem wanneer dat nodig is.\n'
+      '* Als u ze onmiddellijk wilt verwijderen, kunt u er ook voor kiezen om ze hier handmatig te verwijderen.',
+
+  //
   //  Footers
   //
 

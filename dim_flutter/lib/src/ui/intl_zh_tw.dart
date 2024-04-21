@@ -262,6 +262,38 @@ final Map<String, String> intlZhTw = {
   'Grant to access microphone': '你應該授權訪問麥克風的權限。',
 
   //
+  //  Cache Files Management
+  //
+
+  'Storage': '儲存',
+  'Cache Files Management': '快取檔案管理',
+
+  'Total Cached Data': '總快取數據',
+  'Cache Files': '快取檔案',
+  'Avatars': '頭像',
+  'Message Files': '訊息檔案',
+  'Temporary Files': '暫存檔案',
+  'Upload Directory': '上傳目錄',
+  'Download Directory': '下載目錄',
+
+  'Scan': '掃描',
+  'Clear': '清除',
+
+  'Sure to clear all avatar images?': '確定要清除所有頭像圖片嗎？',
+  'Sure to clear all message files?': '確定要清除所有訊息檔案嗎？此操作無法復原！',
+  'Sure to clear these temporary files?': '確定要清除這些暫存檔案嗎？',
+
+  'CacheFiles::Description': '* 頭像圖片和訊息檔案儲存在您的設備上。\n'
+      '* 透過網路傳輸的訊息檔案已加密，中繼節點（如中繼站）無法解密。\n'
+      '* 一旦您從本地儲存中刪除這些檔案，您可能無法恢復它們，除非您要求發送者重新發送。\n'
+      '* 請注意，我們的檔案中繼伺服器僅能在最多7天內快取訊息檔案的加密版本。\n'
+      '* 因此，請小心處理這些資料。',
+
+  'TemporaryFiles::Description': '* 當應用程式上傳或下載檔案時，它會建立暫存檔案，'
+      '通常在必要時會由系統自動清除。\n'
+      '* 如果您希望立即刪除它們，您也可以選擇在此手動刪除。',
+
+  //
   //  Footers
   //
 

@@ -266,6 +266,41 @@ final Map<String, String> intlEnUs = {
   'Grant to access microphone': 'You should grant the permission to access microphone.',
 
   //
+  //  Cache Files Management
+  //
+
+  'Storage': 'Storage',
+  'Cache Files Management': 'Cache Files Management',
+
+  'Total Cached Data': 'Total Cached Data',
+  'Cache Files': 'Cache Files',
+  'Avatars': 'Avatars',
+  'Message Files': 'Message Files',
+  'Temporary Files': 'Temporary Files',
+  'Upload Directory': 'Upload Directory',
+  'Download Directory': 'Download Directory',
+
+  'Scan': 'Scan',
+  'Clear': 'Clear',
+
+  'Sure to clear all avatar images?': 'Are you sure want to clear all avatar images?',
+  'Sure to clear all message files?': 'Are you sure want to clear all message files? This operation cannot be recover!',
+  'Sure to clear these temporary files?': 'Are you sure want to clear these temporary files?',
+
+  'CacheFiles::Description': '* Avatar images and message files are stored on your device.\n'
+      '* The message files transmitted on the network had been encrypted,'
+      ' and could not be decrypted by intermediate nodes, such as relay stations.\n'
+      '* Once you delete these files from local storage,'
+      ' you may not be able to recover them unless you ask the sender to resend them.\n'
+      '* Please note that our file relay server can only cache the encrypted versions'
+      ' of the message files for up to 7 days.\n'
+      '* Therefore, please handle this data with care.',
+
+  'TemporaryFiles::Description': '* When the app uploads or downloads files,'
+      ' it creates temporary files that are typically automatically cleared by the system when necessary.\n'
+      '* Should you wish to remove them immediately, you can also choose to manually delete them here.',
+
+  //
   //  Footers
   //
 

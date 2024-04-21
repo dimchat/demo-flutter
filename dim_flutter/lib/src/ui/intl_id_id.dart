@@ -267,6 +267,41 @@ final Map<String, String> intlIdId = {
   'Grant to access microphone': 'Anda harus memberikan izin untuk mengakses mikrofon.',
 
   //
+  //  Cache Files Management
+  //
+
+  'Storage': 'Penyimpanan',
+  'Cache Files Management': 'Manajemen Berkas Cache',
+
+  'Total Cached Data': 'Total Data yang Dicache',
+  'Cache Files': 'Berkas Cache',
+  'Avatars': 'Avatar',
+  'Message Files': 'Berkas Pesan',
+  'Temporary Files': 'Berkas Sementara',
+  'Upload Directory': 'Direktori Unggah',
+  'Download Directory': 'Direktori Unduh',
+
+  'Scan': 'Pindai',
+  'Clear': 'Bersihkan',
+
+  'Sure to clear all avatar images?': 'Apakah Anda yakin ingin menghapus semua gambar avatar?',
+  'Sure to clear all message files?': 'Apakah Anda yakin ingin menghapus semua berkas pesan? Tindakan ini tidak dapat dikembalikan!',
+  'Sure to clear these temporary files?': 'Apakah Anda yakin ingin menghapus berkas sementara ini?',
+
+  'CacheFiles::Description': '* Gambar avatar dan berkas pesan disimpan di perangkat Anda.\n'
+      '* Berkas pesan yang ditransmisikan melalui jaringan telah dienkripsi,'
+      ' dan tidak dapat didekripsi oleh node-node perantara, seperti stasiun relay.\n'
+      '* Setelah Anda menghapus berkas-berkas ini dari penyimpanan lokal,'
+      ' Anda mungkin tidak dapat memulihkannya kecuali Anda meminta pengirim untuk mengirim ulang.\n'
+      '* Harap diperhatikan bahwa server pengantar berkas kami hanya dapat menyimpan versi terenkripsi'
+      ' dari berkas pesan selama maksimal 7 hari.\n'
+      '* Oleh karena itu, harap perlakukan data ini dengan hati-hati.',
+
+  'TemporaryFiles::Description': '* Ketika aplikasi mengunggah atau mengunduh berkas,'
+      ' itu membuat berkas sementara yang biasanya secara otomatis dihapus oleh sistem saat diperlukan.\n'
+      '* Jika Anda ingin menghapusnya secara langsung, Anda juga dapat memilih untuk menghapusnya secara manual di sini.',
+
+  //
   //  Footers
   //
 

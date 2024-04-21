@@ -268,6 +268,41 @@ final Map<String, String> intlEsEs = {
   'Grant to access microphone': 'Debes otorgar el permiso para acceder al micrófono.',
 
   //
+  //  Cache Files Management
+  //
+
+  'Storage': 'Almacenamiento',
+  'Cache Files Management': 'Gestión de Archivos en Caché',
+
+  'Total Cached Data': 'Datos en Caché Totales',
+  'Cache Files': 'Archivos en Caché',
+  'Avatars': 'Avatares',
+  'Message Files': 'Archivos de Mensajes',
+  'Temporary Files': 'Archivos Temporales',
+  'Upload Directory': 'Directorio de Subida',
+  'Download Directory': 'Directorio de Descarga',
+
+  'Scan': 'Escanear',
+  'Clear': 'Limpiar',
+
+  'Sure to clear all avatar images?': '¿Estás seguro de que deseas borrar todas las imágenes de avatar?',
+  'Sure to clear all message files?': '¿Estás seguro de que deseas borrar todos los archivos de mensajes? ¡Esta operación no se puede deshacer!',
+  'Sure to clear these temporary files?': '¿Estás seguro de que deseas borrar estos archivos temporales?',
+
+  'CacheFiles::Description': '* Las imágenes de avatar y los archivos de mensajes se almacenan en tu dispositivo.\n'
+      '* Los archivos de mensajes transmitidos en la red han sido encriptados'
+      ' y no pueden ser descifrados por nodos intermedios, como estaciones de retransmisión.\n'
+      '* Una vez que eliminas estos archivos del almacenamiento local,'
+      ' es posible que no puedas recuperarlos a menos que pidas al remitente que los reenvíe.\n'
+      '* Ten en cuenta que nuestro servidor de retransmisión de archivos solo puede almacenar en caché las versiones encriptadas'
+      ' de los archivos de mensajes durante un máximo de 7 días.\n'
+      '* Por lo tanto, maneja estos datos con cuidado.',
+
+  'TemporaryFiles::Description': '* Cuando la aplicación sube o descarga archivos,'
+      ' crea archivos temporales que generalmente se eliminan automáticamente por el sistema cuando es necesario.\n'
+      '* Si deseas eliminarlos de inmediato, también puedes optar por eliminarlos manualmente aquí.',
+
+  //
   //  Footers
   //
 

@@ -267,6 +267,37 @@ final Map<String, String> intlPtPt = {
   'Grant to access microphone': 'Deve conceder permissão para aceder ao microfone.',
 
   //
+  //  Cache Files Management
+  //
+
+  'Storage': 'Armazenamento',
+  'Cache Files Management': 'Gerenciamento de Arquivos de Cache',
+
+  'Total Cached Data': 'Total de Dados em Cache',
+  'Cache Files': 'Arquivos de Cache',
+  'Avatars': 'Avatares',
+  'Message Files': 'Arquivos de Mensagem',
+  'Temporary Files': 'Arquivos Temporários',
+  'Upload Directory': 'Diretório de Upload',
+  'Download Directory': 'Diretório de Download',
+
+  'Scan': 'Escanear',
+  'Clear': 'Limpar',
+
+  'Sure to clear all avatar images?': 'Tem certeza de que deseja limpar todas as imagens de avatar?',
+  'Sure to clear all message files?': 'Tem certeza de que deseja limpar todos os arquivos de mensagem? Esta operação não pode ser desfeita!',
+  'Sure to clear these temporary files?': 'Tem certeza de que deseja limpar esses arquivos temporários?',
+
+  'CacheFiles::Description': '* As imagens de avatar e os arquivos de mensagem são armazenados no seu dispositivo.\n'
+      '* Os arquivos de mensagem transmitidos na rede foram criptografados e não podem ser descriptografados por nós intermediários, como estações de retransmissão.\n'
+      '* Uma vez que você exclui esses arquivos do armazenamento local, pode não ser possível recuperá-los, a menos que peça ao remetente para reenviá-los.\n'
+      '* Por favor, note que nosso servidor de retransmissão de arquivos só pode armazenar em cache as versões criptografadas dos arquivos de mensagem por até 7 dias.\n'
+      '* Portanto, por favor, manuseie esses dados com cuidado.',
+
+  'TemporaryFiles::Description': '* Quando o aplicativo faz upload ou download de arquivos, ele cria arquivos temporários que normalmente são automaticamente limpos pelo sistema quando necessário.\n'
+      '* Se você deseja removê-los imediatamente, também pode optar por excluí-los manualmente aqui.',
+
+  //
   //  Footers
   //
 

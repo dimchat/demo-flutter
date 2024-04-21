@@ -104,9 +104,12 @@ class _ImagePreviewState extends State<_ImagePreview> {
   }
 
   @override
-  Widget build(BuildContext context) => Container(
-    color: CupertinoColors.black,
-    child: _gallery(),
+  Widget build(BuildContext context) => GestureDetector(
+    child: Container(
+      color: CupertinoColors.black,
+      child: _gallery(),
+    ),
+    onTap: () => closePage(context),
   );
 
   Widget _gallery() => PhotoViewGallery.builder(
@@ -117,15 +120,11 @@ class _ImagePreviewState extends State<_ImagePreview> {
       return PhotoViewGalleryPageOptions.customChild(
         child: GestureDetector(
           child: view,
-          onTap: () {
-            closePage(context);
-          },
-          onLongPress: () {
-            Alert.actionSheet(context, null, null,
-              Alert.action(AppIcons.saveFileIcon, 'Save to Album'),
-                  () => Gallery.saveImage(context, loader),
-            );
-          },
+          // onTap: () => closePage(context),
+          onLongPress: () => Alert.actionSheet(context, null, null,
+            Alert.action(AppIcons.saveFileIcon, 'Save to Album'),
+                () => Gallery.saveImage(context, loader),
+          ),
         ),
       );
     },

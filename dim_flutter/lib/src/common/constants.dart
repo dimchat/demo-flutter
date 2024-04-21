@@ -56,6 +56,10 @@ abstract class NotificationNames {
   static const String kFileDownloadSuccess = 'FileDownloadSuccess';
   static const String kFileDownloadFailure = 'FileDownloadFailure';
 
+  // Cache File Management
+  static const String kCacheFileFound = 'CacheFileFound';
+  static const String kCacheScanFinished = 'CacheScanFinished';
+
   //
   //  PNF
   //

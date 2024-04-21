@@ -267,6 +267,41 @@ final Map<String, String> intlItIt = {
   'Grant to access microphone': 'Devi concedere il permesso per accedere al microfono.',
 
   //
+  //  Cache Files Management
+  //
+
+  'Storage': 'Archiviazione',
+  'Cache Files Management': 'Gestione dei File nella Cache',
+
+  'Total Cached Data': 'Dati Totali in Cache',
+  'Cache Files': 'File in Cache',
+  'Avatars': 'Avatar',
+  'Message Files': 'File dei Messaggi',
+  'Temporary Files': 'File Temporanei',
+  'Upload Directory': 'Directory di Upload',
+  'Download Directory': 'Directory di Download',
+
+  'Scan': 'Scansionare',
+  'Clear': 'Cancellare',
+
+  'Sure to clear all avatar images?': 'Sei sicuro di voler cancellare tutte le immagini degli avatar?',
+  'Sure to clear all message files?': 'Sei sicuro di voler cancellare tutti i file dei messaggi? Questa operazione non può essere annullata!',
+  'Sure to clear these temporary files?': 'Sei sicuro di voler cancellare questi file temporanei?',
+
+  'CacheFiles::Description': '* Le immagini degli avatar e i file dei messaggi sono memorizzati sul tuo dispositivo.\n'
+      '* I file dei messaggi trasmessi sulla rete sono stati criptati,'
+      ' e non possono essere decifrati da nodi intermedi, come le stazioni di rilancio.\n'
+      '* Una volta che elimini questi file dalla memoria locale,'
+      ' potresti non essere in grado di recuperarli a meno che tu non chieda all\'inviante di rinviarteli.\n'
+      '* Tieni presente che il nostro server di rilancio dei file può memorizzare in cache solo le versioni criptate'
+      ' dei file dei messaggi per un massimo di 7 giorni.\n'
+      '* Pertanto, gestisci questi dati con attenzione.',
+
+  'TemporaryFiles::Description': '* Quando l\'app carica o scarica file,'
+      ' crea file temporanei che di solito vengono eliminati automaticamente dal sistema quando necessario.\n'
+      '* Se desideri rimuoverli immediatamente, puoi anche scegliere di eliminarli manualmente qui.',
+
+  //
   //  Footers
   //
 

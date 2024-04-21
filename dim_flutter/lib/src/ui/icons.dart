@@ -89,6 +89,11 @@ abstract class AppIcons {
   // static const IconData exportAccountIcon = Icons.account_balance_wallet_outlined;
   static const IconData          burnIcon = CupertinoIcons.timer;
 
+  static const IconData       storageIcon = CupertinoIcons.square_stack_3d_up;
+  // static const IconData       storageIcon = Icons.storage;
+  static const IconData         cacheIcon = CupertinoIcons.folder;
+  static const IconData     temporaryIcon = CupertinoIcons.trash;
+
   static const IconData    setNetworkIcon = CupertinoIcons.cloud;
   static const IconData setWhitePaperIcon = CupertinoIcons.doc;
   static const IconData setOpenSourceIcon = Icons.code;

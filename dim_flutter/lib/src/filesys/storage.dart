@@ -43,6 +43,10 @@ class CacheFileManager {
     _init();
   }
 
+  _FileScanner? _db1Scanner;
+  _FileScanner? _db2Scanner;
+  _FileScanner? _db3Scanner;
+
   _FileScanner? _avatarScanner;
   _FileScanner? _cachesScanner;
   _FileScanner? _uploadScanner;
@@ -58,17 +62,34 @@ class CacheFileManager {
     String caches = await local.cachesDirectory;
     String tmp = await local.temporaryDirectory;
     // create scanners & cleaners
+    _db1Scanner = _FileScanner(Paths.append(caches, '.dim'));
+    _db2Scanner = _FileScanner(Paths.append(caches, '.dkd'));
+    _db3Scanner = _FileScanner(Paths.append(caches, '.mkm'));
     _avatarCleaner = _FileCleaner(_avatarScanner = _FileScanner(Paths.append(caches, 'avatar')));
     _cachesCleaner = _FileCleaner(_cachesScanner = _FileScanner(Paths.append(caches, 'files')));
     _uploadCleaner = _FileCleaner(_uploadScanner = _FileScanner(Paths.append(tmp, 'upload')));
     _downloadCleaner = _FileCleaner(_downloadScanner = _FileScanner(Paths.append(tmp, 'download')));
   }
 
-  bool get refreshing => _avatarScanner?._refreshing == true
+  bool get refreshing => _db1Scanner?._refreshing == true
+      || _db2Scanner?._refreshing == true
+      || _db3Scanner?._refreshing == true
+      || _avatarScanner?._refreshing == true
       || _cachesScanner?._refreshing == true
       || _uploadScanner?._refreshing == true
       || _downloadScanner?._refreshing == true;
 
+  String get dbSummary {
+    int count = 0;
+    count += _db1Scanner?._count ?? 0;
+    count += _db2Scanner?._count ?? 0;
+    count += _db3Scanner?._count ?? 0;
+    int size = 0;
+    size += _db1Scanner?._size ?? 0;
+    size += _db2Scanner?._size ?? 0;
+    size += _db3Scanner?._size ?? 0;
+    return _summary(count: count, size: size);
+  }
   String get avatarSummary => _avatarScanner?.summary ?? '';
   String get cacheSummary => _cachesScanner?.summary ?? '';
   String get uploadSummary => _uploadScanner?.summary ?? '';
@@ -76,6 +97,9 @@ class CacheFileManager {
 
   String get summary {
     int size = 0;
+    size += _db1Scanner?._size ?? 0;
+    size += _db2Scanner?._size ?? 0;
+    size += _db3Scanner?._size ?? 0;
     size += _avatarScanner?._size ?? 0;
     size += _cachesScanner?._size ?? 0;
     size += _uploadScanner?._size ?? 0;
@@ -84,6 +108,9 @@ class CacheFileManager {
   }
 
   void scanAll() {
+    _db1Scanner?.scan();
+    _db2Scanner?.scan();
+    _db3Scanner?.scan();
     _avatarScanner?.scan();
     _cachesScanner?.scan();
     _uploadScanner?.scan();
@@ -160,14 +187,7 @@ class _FileScanner with Logging {
 
   bool _refreshing = false;
 
-  String get summary {
-    String text = _readableSize(_size);
-    int count = _count;
-    if (count < 2) {
-      return '$count file, $text';
-    }
-    return '$count files, $text';
-  }
+  String get summary => _summary(count: _count, size: _size);
 
   void scan() async {
     if (_refreshing) {
@@ -217,7 +237,7 @@ class _FileScanner with Logging {
 
   Future<bool> _checkFile(File file) async {
     int length = await file.length();
-    if (length <= 0) {
+    if (length < 0) {
       logError('file error: $file, $length');
       return false;
     }
@@ -233,6 +253,14 @@ class _FileScanner with Logging {
     return true;
   }
 
+}
+
+String _summary({required int count, required int size}) {
+  String text = _readableSize(size);
+  if (count < 2) {
+    return 'Contains $count file, totaling $text';
+  }
+  return 'Contains $count files, totaling $text';
 }
 
 String _readableSize(int size) {

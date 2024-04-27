@@ -5,6 +5,7 @@ import 'package:dim_client/dim_client.dart';
 import 'package:lnc/log.dart';
 import 'package:lnc/notification.dart' as lnc;
 
+import '../client/packer.dart';
 import '../common/dbi/contact.dart';
 import '../common/constants.dart';
 import '../client/shared.dart';
@@ -222,6 +223,11 @@ class ContactInfo extends Conversation {
         Alert.show(ctx, 'Error', 'Failed to add contact'.tr);
       }
     });
+    var packer = shared.messenger?.packer;
+    if (packer is SharedPacker) {
+      logInfo('push visa document to new contact: $contact');
+      packer.pushVisa(contact);
+    }
   }
 
   void delete({required BuildContext context}) {

@@ -43,7 +43,13 @@ class CastScreenDiscoverer with Logging implements ScreenDiscoverer {
   @override
   Future<Iterable<ScreenDevice>> discover() async {
     logInfo('discovering devices ...');
-    var devices = await CastScreen.discoverDevice();
+    List<Device> devices = [];
+    int seconds = 2;
+    while (devices.isEmpty && seconds < 10) {
+      seconds <<= 1;
+      logInfo('discover duration: $seconds seconds');
+      devices = await CastScreen.discoverDevice(timeout: Duration(seconds: seconds));
+    }
     logInfo('discovered devices: $devices');
     return screens(devices);
   }

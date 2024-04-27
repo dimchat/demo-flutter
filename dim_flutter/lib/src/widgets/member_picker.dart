@@ -86,7 +86,8 @@ class _MemberPickerState extends State<MemberPicker> {
         },
       ),
     ),
-    body: SectionListView.builder(
+    body: buildSectionListView(
+      enableScrollbar: true,
       adapter: _adapter,
     ),
   );

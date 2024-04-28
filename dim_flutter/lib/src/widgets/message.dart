@@ -81,7 +81,9 @@ abstract class ContentViewUtils {
   }) {
     String text = DefaultMessageBuilder().getText(content, sender);
     bool mine = sender == currentUser?.identifier;
-    Widget textView = mine
+    var format = content.getString('format', null);
+    bool plain = mine || format != 'markdown';
+    Widget textView = plain
         ? SelectableText(text, style: TextStyle(color: getTextColor(ctx, sender)),)
         : RichTextView(sender: sender, text: text, onWebShare: onWebShare, onVideoShare: onVideoShare,);
     return GestureDetector(
@@ -94,7 +96,7 @@ abstract class ContentViewUtils {
         text: text, sender: sender,
         onWebShare: onWebShare,
         onVideoShare: onVideoShare,
-        previewing: mine,
+        previewing: plain,
       ),
     );
   }

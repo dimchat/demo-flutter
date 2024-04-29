@@ -6,7 +6,7 @@ import 'package:flutter_markdown/flutter_markdown.dart';
 import 'package:syntax_highlight/syntax_highlight.dart';
 import 'package:markdown/markdown.dart' as md;
 
-import 'package:dim_client/dim_common.dart';
+import 'package:dim_client/dim_client.dart';
 import 'package:lnc/log.dart';
 
 import '../client/shared.dart';
@@ -287,8 +287,9 @@ abstract class _MarkdownUtils {
         var pnf = PortableNetworkFile.createFromURL(url,
           PlainKey.getInstance(),
         );
-        pnf['title'] = title;
-        pnf['snapshot'] = _getSnapshot(text);
+        var pair = _parseTitleInfo(title);
+        pnf['title'] = pair.first;
+        pnf['snapshot'] = pair.second;
         VideoPlayerPage.open(context, url, pnf, onShare: onVideoShare);
       } else {
         // open other link
@@ -321,33 +322,22 @@ abstract class _MarkdownUtils {
     return Base64.decode(body);
   }
 
-  static String? _getSnapshot(String text) {
+  /// Get title and cover
+  static Pair<String, String?> _parseTitleInfo(String text) {
     // Snapshot in alt text:
-    //      [http://files.dim.chat/images/snapshot.jpg]
-    //      [video-url=http://files.dim.chat/images/snapshot.jpg]
-    //      [video src="http://files.dim.chat/images/snapshot.jpg"]
-    int pos = text.indexOf('https://');
-    if (pos < 0) {
-      pos = text.indexOf('http://');
-      if (pos < 0) {
-        return null;
-      }
-    }
-    String urlString = pos > 0 ? text.substring(pos) : text;
-    // trim the tail
-    pos = urlString.indexOf('"');
-    if (pos < 0) {
-      pos = urlString.indexOf(' ');
-    }
+    //      [$title; cover=$cover]
+    String title;
+    String? cover;
+    int pos;
+    // get cover
+    pos = text.indexOf('; cover=');
     if (pos > 0) {
-      urlString = urlString.substring(0, pos);
+      cover = text.substring(pos + 8);
+      cover = cover.trim();
+      text = text.substring(0, pos);
     }
-    _MimeType? type = _checkFileType(urlString);
-    if (type == _MimeType.image) {
-      return urlString;
-    }
-    // TODO:
-    return null;
+    title = text.trim();
+    return Pair(title, cover);
   }
 
   //

@@ -96,13 +96,39 @@ class _PortableVideoState extends PortableNetworkState<_PortableVideoView> {
     if (indicator == null) {
       return loader.getImage(widget);
     }
+    String? title = widget.pnf.getString('title', null);
+    String? cover = widget.pnf.getString('snapshot', null);
     return Stack(
       alignment: AlignmentDirectional.center,
       // fit: StackFit.passthrough,
       children: [
         loader.getImage(widget),
+        if (cover == null && title != null)
+          _titleWidget(title),
         indicator,
       ],
+    );
+  }
+
+  Widget _titleWidget(String title) {
+    String name;
+    int pos = title.indexOf('; cover=');
+    if (pos > 0) {
+      title = title.substring(0, pos);
+    }
+    pos = title.indexOf(' - ');
+    if (pos > 0) {
+      name = title.substring(0, pos).trim();
+      title = title.substring(pos + 3).trim();
+    } else {
+      name = title.trim();
+      title = '';
+    }
+    return Text('$name\n\n$title',
+      textAlign: TextAlign.center,
+      style: const TextStyle(
+        fontSize: 12,
+      ),
     );
   }
 

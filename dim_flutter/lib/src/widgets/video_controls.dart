@@ -42,6 +42,47 @@ import 'package:chewie/src/center_play_button.dart';
 
 import 'package:provider/provider.dart';
 
+import 'package:startrek/skywalker.dart';
+
+import '../common/platform.dart';
+
+
+class _PlayerMetronome {
+  factory _PlayerMetronome() => _instance;
+  static final _PlayerMetronome _instance = _PlayerMetronome._internal();
+  _PlayerMetronome._internal() {
+    _metronome = Metronome(Duration.millisecondsPerSecond);
+    /*await */_metronome.start();
+  }
+
+  late final Metronome _metronome;
+
+  void addTicker(Ticker ticker) => _metronome.addTicker(ticker);
+
+  void removeTicker(Ticker ticker) => _metronome.removeTicker(ticker);
+
+  /// playback speed
+  double _speed = 1.0;
+
+  double get playbackSpeed => _speed;
+
+  double changePlaybackSpeed() {
+    if (_speed < 1.0) {
+      _speed = 1.0;
+    } else if (_speed < 1.25) {
+      _speed = 1.25;
+    } else if (_speed < 1.5) {
+      _speed = 1.5;
+    } else if (_speed < 2.0) {
+      _speed = 2.0;
+    } else {
+      _speed = 0.5;
+    }
+    return _speed;
+  }
+
+}
+
 
 class CustomControls extends StatefulWidget {
   const CustomControls({super.key});
@@ -52,7 +93,7 @@ class CustomControls extends StatefulWidget {
 }
 
 class _CustomControlsState extends State<CustomControls>
-    with SingleTickerProviderStateMixin {
+    with SingleTickerProviderStateMixin implements Ticker {
   late PlayerNotifier notifier;
   late VideoPlayerValue _latestValue;
   double? _latestVolume;
@@ -76,9 +117,26 @@ class _CustomControlsState extends State<CustomControls>
   ChewieController get chewieController => _chewieController!;
 
   @override
+  Future<void> tick(DateTime now, int elapsed) async {
+    var metronome = _PlayerMetronome();
+    double playbackSpeed = metronome.playbackSpeed;
+    if (controller.value.isPlaying) {
+      if (controller.value.playbackSpeed != playbackSpeed) {
+        controller.setPlaybackSpeed(playbackSpeed);
+      } else if (DevicePlatform.isAndroid) {
+        // Android is OK
+      } else if (playbackSpeed != 1.0) {
+        // fix for iOS, Windows, ...
+        controller.setPlaybackSpeed(playbackSpeed);
+      }
+    }
+  }
+
+  @override
   void initState() {
     super.initState();
     notifier = Provider.of<PlayerNotifier>(context, listen: false);
+    _PlayerMetronome().addTicker(this);
   }
 
   @override
@@ -137,6 +195,7 @@ class _CustomControlsState extends State<CustomControls>
 
   @override
   void dispose() {
+    _PlayerMetronome().removeTicker(this);
     _dispose();
     super.dispose();
   }
@@ -293,8 +352,12 @@ class _CustomControlsState extends State<CustomControls>
       Color iconColor,
       double barHeight,
       ) {
+    var metronome = _PlayerMetronome();
+    double playbackSpeed = metronome.playbackSpeed;
     return GestureDetector(
-      onTap: () => _changeSpeed(),
+      onTap: () => setState(() {
+        controller.setPlaybackSpeed(metronome.changePlaybackSpeed());
+      }),
       child: Container(
         alignment: Alignment.center,
         height: barHeight,
@@ -303,7 +366,7 @@ class _CustomControlsState extends State<CustomControls>
           left: 6.0,
           right: 8.0,
         ),
-        child: Text('X${controller.value.playbackSpeed}',
+        child: Text('X$playbackSpeed',
           style: TextStyle(
             fontSize: 16,
             color: iconColor,
@@ -312,24 +375,6 @@ class _CustomControlsState extends State<CustomControls>
         ),
       ),
     );
-  }
-
-  void _changeSpeed() {
-    double speed = controller.value.playbackSpeed;
-    if (speed < 1.0) {
-      speed = 1.0;
-    } else if (speed < 1.25) {
-      speed = 1.25;
-    } else if (speed < 1.5) {
-      speed = 1.5;
-    } else if (speed < 2.0) {
-      speed = 2.0;
-    } else {
-      speed = 0.5;
-    }
-    setState(() {
-      controller.setPlaybackSpeed(speed);
-    });
   }
 
   GestureDetector _buildExpandButton() {

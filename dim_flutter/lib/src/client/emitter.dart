@@ -13,7 +13,7 @@ import '../filesys/upload.dart';
 import 'shared.dart';
 
 
-class Emitter implements Observer {
+class Emitter with Logging implements Observer {
   Emitter() {
     var nc = NotificationCenter();
     nc.addObserver(this, NotificationNames.kFileUploadSuccess);
@@ -56,10 +56,10 @@ class Emitter implements Observer {
   Future<void> _onUploadSuccess(String filename, Uri url) async {
     InstantMessage? iMsg = _popTask(filename);
     if (iMsg == null) {
-      Log.error('failed to get task: $filename, url: $url');
+      logError('failed to get task: $filename, url: $url');
       return;
     }
-    Log.info('get task for file: $filename, url: $url');
+    logInfo('get task for file: $filename, url: $url');
     // file data uploaded to FTP server, replace it with download URL
     // and send the content to station
     FileContent content = iMsg.content as FileContent;
@@ -67,7 +67,7 @@ class Emitter implements Observer {
     // content.data = null;
     content.url = url;
     await sendInstantMessage(iMsg, priority: 1).onError((error, stackTrace) {
-      Log.error('failed to send message: $error');
+      logError('failed to send message: $error');
       return null;
     });
   }
@@ -75,10 +75,10 @@ class Emitter implements Observer {
   Future<void> _onUploadFailed(String filename) async {
     InstantMessage? iMsg = _popTask(filename);
     if (iMsg == null) {
-      Log.error('failed to get task: $filename');
+      logError('failed to get task: $filename');
       return;
     }
-    Log.info('get task for file: $filename');
+    logInfo('get task for file: $filename');
     // file data failed to upload, mark it error
     iMsg['error'] = {
       'message': 'failed to upload file',
@@ -87,7 +87,7 @@ class Emitter implements Observer {
   }
 
   Future<ReliableMessage?> sendInstantMessage(InstantMessage iMsg, {int priority = 0}) async {
-    Log.info('send instant message (type=${iMsg.content.type}): ${iMsg.sender} -> ${iMsg.receiver}');
+    logInfo('send instant message (type=${iMsg.content.type}): ${iMsg.sender} -> ${iMsg.receiver}');
     ReliableMessage? rMsg;
     ID receiver = iMsg.receiver;
     if (receiver.isGroup) {
@@ -124,7 +124,7 @@ class Emitter implements Observer {
     // 0. check file content
     Uint8List? data = content.data;
     if (data == null) {
-      Log.warning('already uploaded: ${content.url}');
+      logWarning('already uploaded: ${content.url}');
       return false;
     }
     assert(content.password == null, 'file content error: $content');
@@ -134,7 +134,7 @@ class Emitter implements Observer {
     assert(filename != null, 'content filename should not empty: $content');
     int len = await FileUploader.cacheFileData(data, filename!);
     if (len != data.length) {
-      Log.error('failed to save file data (len=${data.length}): $filename');
+      logError('failed to save file data (len=${data.length}): $filename');
       return false;
     }
     // 2. add upload task with encrypted data
@@ -143,12 +143,12 @@ class Emitter implements Observer {
     FileUploader ftp = FileUploader();
     Uri? url = await ftp.uploadEncryptData(encrypted, filename, sender);
     if (url == null) {
-      Log.error('failed to upload: ${content.filename} -> $filename');
+      logError('failed to upload: ${content.filename} -> $filename');
       // TODO: mark message failed
       return false;
     } else {
       // upload success
-      Log.info('uploaded filename: ${content.filename} -> $filename => $url');
+      logInfo('uploaded filename: ${content.filename} -> $filename => $url');
     }
     // 3. replace file data with URL & decrypt key
     content.url = url;
@@ -164,7 +164,25 @@ class Emitter implements Observer {
   /// @throws IOException on failed to save message
   Future<void> sendText(String text, {required ID receiver}) async {
     TextContent content = TextContent.create(text);
+    // check text format
+    if (_checkMarkdown(text)) {
+      logInfo('send text as markdown: $text => $receiver');
+      content['format'] = 'markdown';
+    } else {
+      logInfo('send text as plain: $text -> $receiver');
+    }
     await sendContent(content, receiver);
+  }
+  bool _checkMarkdown(String text) {
+    int pos = text.indexOf('```');
+    if (pos >= 0) {
+      pos += 3;
+      int next = text.codeUnitAt(pos);
+      if (next != '`'.codeUnitAt(0)) {
+        return text.indexOf('```', pos + 1) > 0;
+      }
+    }
+    return false;
   }
 
   ///  Send image message to receiver
@@ -257,9 +275,9 @@ class Emitter implements Observer {
           assert(false, 'failed to get encrypt key: ''$sender => $receiver, ${iMsg['group']}');
           return Pair(iMsg, null);
         } else if (await uploadFileData(content, password: password, sender: sender)) {
-          Log.info('uploaded file data for sender: $sender, ${content.filename}');
+          logInfo('uploaded file data for sender: $sender, ${content.filename}');
         } else {
-          Log.error('failed to upload file data for sender: $sender, ${content.filename}');
+          logError('failed to upload file data for sender: $sender, ${content.filename}');
           return Pair(iMsg, null);
         }
       }
@@ -267,7 +285,7 @@ class Emitter implements Observer {
     // 3. send
     ReliableMessage? rMsg = await sendInstantMessage(iMsg, priority: priority);
     if (rMsg == null && !iMsg.receiver.isGroup) {
-      Log.warning('not send yet (type=${content.type}): $receiver');
+      logWarning('not send yet (type=${content.type}): $receiver');
     }
     return Pair(iMsg, rMsg);
   }

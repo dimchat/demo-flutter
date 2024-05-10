@@ -205,6 +205,8 @@ class _VideoAppState extends State<VideoPlayerPage> {
       // backgroundColor: Styles.colors.appBardBackgroundColor,
       backgroundColor: widget.bgColor,
       middle: Text(widget.title ?? 'Video Player'.tr,
+        maxLines: 1,
+        overflow: TextOverflow.ellipsis,
         style: TextStyle(
           // color: Styles.colors.primaryTextColor,
           color: widget.color,

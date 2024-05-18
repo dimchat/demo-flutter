@@ -124,6 +124,7 @@ class InstantMessageTable extends DataTableHandler<InstantMessage> implements In
 
   @override
   Future<bool> saveInstantMessage(ID chat, InstantMessage iMsg) async {
+    String cid = chat.toString();
     String sender = iMsg.sender.toString();
     // String receiver = iMsg.receiver.string;
     int? time = iMsg.time?.millisecondsSinceEpoch;
@@ -141,43 +142,58 @@ class InstantMessageTable extends DataTableHandler<InstantMessage> implements In
 
     // check old record
     SQLConditions cond;
-    cond = SQLConditions(left: 'cid', comparison: '=', right: chat.toString());
+    cond = SQLConditions(left: 'sn', comparison: '=', right: content.sn);
+    cond.addCondition(SQLConditions.kAnd, left: 'cid', comparison: '=', right: cid);
     cond.addCondition(SQLConditions.kAnd, left: 'sender', comparison: '=', right: sender);
-    cond.addCondition(SQLConditions.kAnd, left: 'sn', comparison: '=', right: content.sn);
     List<InstantMessage> messages = await select(_table, columns: _selectColumns,
         conditions: cond, limit: 1);
 
-    String act;
-    if (messages.isNotEmpty) {
-      Map<String, dynamic> values = {
-        // 'cid': chat.string,
-        // 'sender': sender,
-        // // 'receiver': receiver,
-        'time': time,
-        'type': iMsg.type,
-        // 'sn': content.sn,
-        'signature': sig,
-        // 'content': JSON.encode(content.dictionary),
-        'msg': msg,
-      };
-      if (await update(_table, values: values, conditions: cond) < 1) {
-        Log.error('failed to update message: $sender -> $chat');
-        return false;
-      }
-      act = 'update';
-    } else {
-      List values = [chat.toString(), sender,/* receiver,*/ time, iMsg.type,
+    if (messages.isEmpty) {
+      // add new message
+      List values = [cid, sender,/* receiver,*/ time, iMsg.type,
         content.sn, sig, /*JSON.encode(content.dictionary),*/ msg];
       if (await insert(_table, columns: _insertColumns, values: values) <= 0) {
         Log.error('failed to save message: $sender -> $chat');
         return false;
       }
-      act = 'add';
+      // post notification
+      var nc = NotificationCenter();
+      nc.postNotification(NotificationNames.kMessageUpdated, this, {
+        'action': 'add',
+        'ID': chat,
+        'msg': iMsg,
+      });
+      return true;
+    }
+
+    // check message time
+    DateTime? oldTime = messages.last.time;
+    DateTime? newTime = iMsg.time;
+    if (oldTime != null && newTime != null && newTime.isBefore(oldTime)) {
+      Log.warning('ignore expired message: $iMsg');
+      return false;
+    }
+
+    // update old message
+    Map<String, dynamic> values = {
+      // 'cid': chat.string,
+      // 'sender': sender,
+      // // 'receiver': receiver,
+      'time': time,
+      'type': iMsg.type,
+      // 'sn': content.sn,
+      'signature': sig,
+      // 'content': JSON.encode(content.dictionary),
+      'msg': msg,
+    };
+    if (await update(_table, values: values, conditions: cond) < 1) {
+      Log.error('failed to update message: $sender -> $chat');
+      return false;
     }
     // post notification
     var nc = NotificationCenter();
     nc.postNotification(NotificationNames.kMessageUpdated, this, {
-      'action': act,
+      'action': 'update',
       'ID': chat,
       'msg': iMsg,
     });

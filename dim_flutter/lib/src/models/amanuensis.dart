@@ -236,6 +236,9 @@ class Amanuensis with Logging {
     } else if (content is Command) {
       logDebug('ignore command');
       increase = 0;
+    } else if (iMsg.getBool('muted', false) == true) {
+      logInfo('muted message');
+      increase = 0;
     } else {
       increase = 1;
     }

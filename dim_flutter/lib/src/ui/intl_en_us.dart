@@ -182,13 +182,17 @@ final Map<String, String> intlEnUs = {
   'Select Participants': 'Select Participants',
   'Select a Chat': 'Select a Chat',
 
-  'Waiting to send': 'Waiting to send',
+  'Recall Message': 'Recall Message',
+  'Sure to recall this message?': 'Are you sure to recall this message?'
+      ' (this action may not necessarily succeed)',
+
+  'Waiting to send': 'Waiting to send (tap to retry)',
+  'No response': 'No response (tap to resend)',
+  'Stranded': 'Stranded (tap to resend)',
   'Encrypted and sent to relay station': 'Encrypted and sent to relay station',
   'Message is rejected': 'Message is rejected',
   'Safely delivered': 'Safely delivered',
   'Safely delivered to @count members': 'Safely delivered to @count member(s)',
-  'No response': 'No response',
-  'Stranded': 'Stranded',
 
   'Draft': 'Draft',
   'Mentioned': 'You were mentioned',

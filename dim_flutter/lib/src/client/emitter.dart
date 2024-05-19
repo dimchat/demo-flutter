@@ -5,6 +5,7 @@ import 'package:lnc/log.dart';
 import 'package:lnc/notification.dart';
 import 'package:pnf/dos.dart';
 import 'package:pnf/pnf.dart' show URLHelper;
+import 'package:stargate/startrek.dart';
 
 import '../common/constants.dart';
 import '../models/amanuensis.dart';
@@ -263,10 +264,14 @@ class Emitter with Logging implements Observer {
       return const Pair(null, null);
     }
     ID sender = user.identifier;
-    // 1. pack instant message
+    //
+    //  1. pack instant message
+    //
     Envelope envelope = Envelope.create(sender: sender, receiver: receiver);
     InstantMessage iMsg = InstantMessage.create(envelope, content);
-    // 2. check file content
+    //
+    //  2. check file content
+    //
     if (content is FileContent) {
       // encrypt & upload file data before send out
       if (content.data != null/* && content.url == null*/) {
@@ -282,9 +287,76 @@ class Emitter with Logging implements Observer {
         }
       }
     }
-    // 3. send
+    //
+    //  3. send
+    //
     ReliableMessage? rMsg = await sendInstantMessage(iMsg, priority: priority);
-    if (rMsg == null && !iMsg.receiver.isGroup) {
+    if (rMsg == null && !receiver.isGroup) {
+      logWarning('not send yet (type=${content.type}): $receiver');
+    }
+    return Pair(iMsg, rMsg);
+  }
+
+  Future<Pair<InstantMessage?, ReliableMessage?>> recallTextMessage(TextContent content, Envelope envelope) async =>
+      await recallMessage(null, content, envelope);
+
+  Future<Pair<InstantMessage?, ReliableMessage?>> recallImageMessage(ImageContent content, Envelope envelope) async =>
+      await recallMessage('_(image recalled)_', content, envelope);
+
+  Future<Pair<InstantMessage?, ReliableMessage?>> recallAudioMessage(AudioContent content, Envelope envelope) async =>
+      await recallMessage('_(voice message recalled)_', content, envelope);
+
+  Future<Pair<InstantMessage?, ReliableMessage?>> recallVideoMessage(VideoContent content, Envelope envelope) async =>
+      await recallMessage('_(video recalled)_', content, envelope);
+
+  Future<Pair<InstantMessage?, ReliableMessage?>> recallMessage(String? text, Content content, Envelope envelope) async {
+    GlobalVariable shared = GlobalVariable();
+    User? user = await shared.facebook.currentUser;
+    if (user == null) {
+      assert(false, 'failed to get current user');
+      return const Pair(null, null);
+    }
+    // check sender
+    ID sender = user.identifier;
+    if (sender != envelope.sender) {
+      assert(false, 'cannot recall this message: ${envelope.sender} -> ${envelope.receiver}, ${content.group}');
+      return const Pair(null, null);
+    }
+    ID receiver = content.group ?? envelope.receiver;
+    return await _recall(text, content, sender: sender, receiver: receiver);
+  }
+
+  Future<Pair<InstantMessage?, ReliableMessage?>> _recall(String? text, Content content, {
+    required ID sender, required ID receiver,
+  }) async {
+    assert(sender != receiver, 'cycled message: $sender, $text, $content');
+    //
+    //  1. build the recall command
+    //
+    Content command = TextContent.create(text ?? '_(message recalled)_');
+    command['format'] = 'markdown';
+    command['action'] = 'recall';
+    command['origin'] = {
+      'type': content.type,
+      'sn': content.sn,
+    };
+    command['time'] = content['time'];
+    command['sn'] = content.sn;
+    if (receiver.isGroup) {
+      command.group = receiver;
+    }
+    //
+    //  2. pack instant message
+    //
+    Envelope envelope = Envelope.create(sender: sender, receiver: receiver);
+    content = Content.parse(command.toMap()) ?? command;
+    InstantMessage iMsg = InstantMessage.create(envelope, content);
+    iMsg['muted'] = true;
+    //
+    //  3. send
+    //
+    ReliableMessage? rMsg = await sendInstantMessage(iMsg, priority: DeparturePriority.kSlower);
+    if (rMsg == null && !receiver.isGroup) {
       logWarning('not send yet (type=${content.type}): $receiver');
     }
     return Pair(iMsg, rMsg);

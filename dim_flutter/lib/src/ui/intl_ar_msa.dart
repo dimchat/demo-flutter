@@ -183,13 +183,17 @@ final Map<String, String> intlAr = {
   'Select Participants': 'تحديد المشاركين',
   'Select a Chat': 'تحديد دردشة',
 
-  'Waiting to send': 'في انتظار الإرسال',
+  'Recall Message': 'استدعاء الرسالة',
+  'Sure to recall this message?': 'هل أنت متأكد من استدعاء هذه الرسالة؟'
+      ' (قد لا ينجح هذا الإجراء بالضرورة)',
+
+  'Waiting to send': 'في انتظار الإرسال (انقر لإعادة المحاولة)',
+  'No response': 'لا يوجد رد (انقر لإعادة الإرسال)',
+  'Stranded': 'معلق (انقر لإعادة الإرسال)',
   'Encrypted and sent to relay station': 'تم تشفيره وإرساله إلى محطة الوسيلة',
   'Message is rejected': 'تم رفض الرسالة',
   'Safely delivered': 'تم التوصيل بأمان',
   'Safely delivered to @count members': 'تم التوصيل بأمان لـ @count عضو',
-  'No response': 'لا توجد استجابة',
-  'Stranded': 'عالق',
 
   'Draft': 'مسودة',
   'Mentioned': 'تمت الإشارة إليك',

@@ -183,13 +183,17 @@ final Map<String, String> intlMsMy = {
   'Select Participants': 'Pilih Peserta',
   'Select a Chat': 'Pilih Sembang',
 
-  'Waiting to send': 'Menunggu untuk dihantar',
+  'Recall Message': 'Ingat Semula Pesanan',
+  'Sure to recall this message?': 'Adakah anda pasti untuk mengingati semula pesanan ini?'
+      ' (tindakan ini mungkin tidak berjaya)',
+
+  'Waiting to send': 'Menunggu untuk menghantar (tekan semula untuk cuba)',
+  'No response': 'Tiada respons (tekan semula untuk hantar semula)',
+  'Stranded': 'Terdampar (tekan semula untuk hantar semula)',
   'Encrypted and sent to relay station': 'Dienkripsi dan dihantar ke stesen ralat',
   'Message is rejected': 'Mesej ditolak',
   'Safely delivered': 'Berjaya dihantar',
   'Safely delivered to @count members': 'Berjaya dihantar kepada @count ahli',
-  'No response': 'Tiada respons',
-  'Stranded': 'Terbiar',
 
   'Draft': 'Draf',
   'Mentioned': 'Anda telah disebutkan',

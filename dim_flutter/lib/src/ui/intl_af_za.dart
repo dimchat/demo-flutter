@@ -183,13 +183,17 @@ final Map<String, String> intlAfZa = {
   'Select Participants': 'Kies Deelnemers',
   'Select a Chat': 'Kies \'n Geselskap',
 
-  'Waiting to send': 'Wag om te stuur',
+  'Recall Message': 'Herroep Boodskap',
+  'Sure to recall this message?': 'Is u seker dat u hierdie boodskap wil herroep?'
+      ' (hierdie aksie kan moontlik nie suksesvol wees nie)',
+
+  'Waiting to send': 'Wag om te stuur (tik om te herprobeer)',
+  'No response': 'Geen reaksie (tik om weer te stuur)',
+  'Stranded': 'Gestrand (tik om weer te stuur)',
   'Encrypted and sent to relay station': 'Versleutel en gestuur na relaaisender',
   'Message is rejected': 'Boodskap word afgekeur',
   'Safely delivered': 'Veilig afgelewer',
   'Safely delivered to @count members': 'Veilig afgelewer aan @count lid/lidmate',
-  'No response': 'Geen reaksie',
-  'Stranded': 'Vasgevang',
 
   'Draft': 'Konsep',
   'Mentioned': 'Jy is genoem',

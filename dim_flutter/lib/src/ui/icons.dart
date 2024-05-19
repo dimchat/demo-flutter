@@ -72,6 +72,7 @@ abstract class AppIcons {
 
   static const IconData  addFriendIcon = CupertinoIcons.person_add;
   static const IconData    sendMsgIcon = CupertinoIcons.chat_bubble;
+  static const IconData     recallIcon = CupertinoIcons.arrow_uturn_down;
   static const IconData      shareIcon = CupertinoIcons.share;
   static const IconData  clearChatIcon = CupertinoIcons.delete;
   static const IconData     deleteIcon = CupertinoIcons.delete;

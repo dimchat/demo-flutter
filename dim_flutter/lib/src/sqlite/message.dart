@@ -202,12 +202,13 @@ class InstantMessageTable extends DataTableHandler<InstantMessage> implements In
 
   @override
   Future<bool> removeInstantMessage(ID chat, InstantMessage iMsg) async {
+    String cid = chat.toString();
     String sender = iMsg.sender.toString();
     Content content = iMsg.content;
     SQLConditions cond;
-    cond = SQLConditions(left: 'cid', comparison: '=', right: chat.toString());
+    cond = SQLConditions(left: 'sn', comparison: '=', right: content.sn);
+    cond.addCondition(SQLConditions.kAnd, left: 'cid', comparison: '=', right: cid);
     cond.addCondition(SQLConditions.kAnd, left: 'sender', comparison: '=', right: sender);
-    cond.addCondition(SQLConditions.kAnd, left: 'sn', comparison: '=', right: content.sn);
     if (await delete(_table, conditions: cond) < 0) {
       Log.error('failed to remove message: $sender -> $chat');
       return false;

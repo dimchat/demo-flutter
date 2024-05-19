@@ -183,13 +183,17 @@ final Map<String, String> intlJaJp = {
   'Select Participants': '参加者を選択',
   'Select a Chat': 'チャットを選択',
 
-  'Waiting to send': '送信待ち',
+  'Recall Message': 'メッセージを撤回',
+  'Sure to recall this message?': '本当にこのメッセージを撤回しますか？'
+      '（この操作は必ず成功するとは限りません）',
+
+  'Waiting to send': '送信中（タップして再試行）',
+  'No response': '応答なし（タップして再送信）',
+  'Stranded': '送信失敗（タップして再送信）',
   'Encrypted and sent to relay station': '暗号化して中継局に送信されました',
   'Message is rejected': 'メッセージが拒否されました',
   'Safely delivered': '安全に配信されました',
   'Safely delivered to @count members': '安全に @count 人のメンバーに配信されました',
-  'No response': '返信なし',
-  'Stranded': '立ち往生',
 
   'Draft': '下書き',
   'Mentioned': 'あなたは言及されました',

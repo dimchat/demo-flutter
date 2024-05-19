@@ -183,13 +183,17 @@ final Map<String, String> intlViVN = {
   'Select Participants': 'Chọn Người tham gia',
   'Select a Chat': 'Chọn Một Cuộc trò chuyện',
 
-  'Waiting to send': 'Đợi để gửi',
+  'Recall Message': 'Gọi Lại Tin Nhắn',
+  'Sure to recall this message?': 'Bạn có chắc chắn muốn gọi lại tin nhắn này không?'
+      ' (hành động này có thể không thành công)',
+
+  'Waiting to send': 'Đang chờ gửi (chạm để thử lại)',
+  'No response': 'Không có phản hồi (chạm để gửi lại)',
+  'Stranded': 'Bị kẹt (chạm để gửi lại)',
   'Encrypted and sent to relay station': 'Đã mã hóa và gửi đến trạm relay',
   'Message is rejected': 'Tin nhắn bị từ chối',
   'Safely delivered': 'Giao hàng an toàn',
   'Safely delivered to @count members': 'Giao hàng an toàn cho @count thành viên',
-  'No response': 'Không có phản hồi',
-  'Stranded': 'Bị kẹt',
 
   'Draft': 'Nháp',
   'Mentioned': 'Bạn đã được đề cập',

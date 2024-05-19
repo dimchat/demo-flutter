@@ -184,13 +184,17 @@ final Map<String, String> intlEsEs = {
   'Select Participants': 'Seleccionar Participantes',
   'Select a Chat': 'Seleccionar un Chat',
 
-  'Waiting to send': 'Esperando para enviar',
+  'Recall Message': 'Recuperar mensaje',
+  'Sure to recall this message?': '¿Seguro que desea recuperar este mensaje?'
+      ' (esta acción puede no tener éxito necesariamente)',
+
+  'Waiting to send': 'En espera para enviar (toque para reintentar)',
+  'No response': 'Sin respuesta (toque para volver a enviar)',
+  'Stranded': 'Varado (toque para volver a enviar)',
   'Encrypted and sent to relay station': 'Encriptado y enviado a la estación de retransmisión',
   'Message is rejected': 'Mensaje rechazado',
   'Safely delivered': 'Entregado con seguridad',
   'Safely delivered to @count members': 'Entregado con seguridad a @count miembro(s)',
-  'No response': 'Sin respuesta',
-  'Stranded': 'Varado',
 
   'Draft': 'Borrador',
   'Mentioned': 'Fuiste mencionado',

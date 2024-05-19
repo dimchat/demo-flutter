@@ -183,13 +183,17 @@ final Map<String, String> intlKoKr = {
   'Select Participants': '참가자 선택',
   'Select a Chat': '채팅 선택',
 
-  'Waiting to send': '전송 대기 중',
+  'Recall Message': '메시지撤回',
+  'Sure to recall this message?': '정말 이 메시지를撤回하시겠습니까?'
+      '（이操作은 반드시 성공하는 것은 아닙니다）',
+
+  'Waiting to send': '전송 대기 중 (다시 시도하려면 탭)',
+  'No response': '응답 없음 (재전송하려면 탭)',
+  'Stranded': '전송 실패 (재전송하려면 탭)',
   'Encrypted and sent to relay station': '암호화되어 릴레이 스테이션으로 전송됨',
   'Message is rejected': '메시지가 거부되었습니다',
   'Safely delivered': '안전하게 전달됨',
   'Safely delivered to @count members': '@count 명에게 안전하게 전달됨',
-  'No response': '응답 없음',
-  'Stranded': '고립됨',
 
   'Draft': '초안',
   'Mentioned': '당신은 언급되었습니다',

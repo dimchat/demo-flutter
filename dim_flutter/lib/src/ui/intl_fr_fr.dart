@@ -183,13 +183,17 @@ final Map<String, String> intlFrFr = {
   'Select Participants': 'Sélectionner des participants',
   'Select a Chat': 'Sélectionner un chat',
 
-  'Waiting to send': 'En attente d\'envoi',
+  'Recall Message': 'Rappel de message',
+  'Sure to recall this message?': 'Êtes-vous sûr de vouloir rappeler ce message ?'
+      ' (cette action peut ne pas réussir)',
+
+  'Waiting to send': 'En attente d\'envoi (appuyez pour réessayer)',
+  'No response': 'Aucune réponse (appuyez pour renvoyer)',
+  'Stranded': 'En rade (appuyez pour renvoyer)',
   'Encrypted and sent to relay station': 'Crypté et envoyé à la station relais',
   'Message is rejected': 'Message rejeté',
   'Safely delivered': 'Livré en toute sécurité',
   'Safely delivered to @count members': 'Livré en toute sécurité à @count membre(s)',
-  'No response': 'Pas de réponse',
-  'Stranded': 'Échoué',
 
   'Draft': 'Brouillon',
   'Mentioned': 'Tu as été mentionné',

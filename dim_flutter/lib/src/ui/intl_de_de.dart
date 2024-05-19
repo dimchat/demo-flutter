@@ -183,13 +183,17 @@ final Map<String, String> intlDeDe = {
   'Select Participants': 'Teilnehmer auswählen',
   'Select a Chat': 'Einen Chat auswählen',
 
-  'Waiting to send': 'Warten auf Senden',
+  'Recall Message': 'Nachricht zurückrufen',
+  'Sure to recall this message?': 'Sind Sie sicher, dass Sie diese Nachricht zurückrufen möchten?'
+      ' (diese Aktion kann möglicherweise nicht erfolgreich sein)',
+
+  'Waiting to send': 'Warte auf Senden (zum Wiederholen tippen)',
+  'No response': 'Keine Antwort (zum erneuten Senden tippen)',
+  'Stranded': 'Gestrandet (zum erneuten Senden tippen)',
   'Encrypted and sent to relay station': 'Verschlüsselt und an Relaisstation gesendet',
   'Message is rejected': 'Nachricht wurde abgelehnt',
   'Safely delivered': 'Sicher zugestellt',
   'Safely delivered to @count members': 'Sicher an @count Mitglieder zugestellt',
-  'No response': 'Keine Antwort',
-  'Stranded': 'Gestrandet',
 
   'Draft': 'Entwurf',
   'Mentioned': 'Du wurdest erwähnt',

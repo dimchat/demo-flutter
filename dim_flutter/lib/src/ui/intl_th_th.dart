@@ -183,13 +183,17 @@ final Map<String, String> intlThTh = {
   'Select Participants': 'เลือกผู้ร่วม',
   'Select a Chat': 'เลือกแชท',
 
-  'Waiting to send': 'กำลังรอการส่ง',
+  'Recall Message': 'เรียกคืนข้อความ',
+  'Sure to recall this message?': 'คุณแน่ใจหรือไม่ว่าจะเรียกคืนข้อความนี้?'
+      ' (การกระทำนี้อาจไม่เป็นไปตามประสงค์ที่ต้องการ)',
+
+  'Waiting to send': 'กำลังรอส่ง (แตะเพื่อลองอีกครั้ง)',
+  'No response': 'ไม่มีการตอบสนอง (แตะเพื่อส่งใหม่)',
+  'Stranded': 'ติดอยู่ (แตะเพื่อส่งใหม่)',
   'Encrypted and sent to relay station': 'เข้ารหัสและส่งไปยังสถานีรีเลย์',
   'Message is rejected': 'ข้อความถูกปฏิเสธ',
   'Safely delivered': 'ส่งสำเร็จ',
   'Safely delivered to @count members': 'ส่งสำเร็จถึงสมาชิก @count คน',
-  'No response': 'ไม่มีการตอบกลับ',
-  'Stranded': 'ติดอยู่',
 
   'Draft': 'ร่าง',
   'Mentioned': 'คุณถูกกล่าวถึง',

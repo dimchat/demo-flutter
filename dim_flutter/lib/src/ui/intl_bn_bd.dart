@@ -183,13 +183,17 @@ final Map<String, String> intlBnBd = {
   'Select Participants': 'অংশগ্রহণকারী নির্বাচন করুন',
   'Select a Chat': 'একটি চ্যাট নির্বাচন করুন',
 
-  'Waiting to send': 'পাঠানোর জন্য অপেক্ষা করছে',
+  'Recall Message': 'মেসেজ পুনর্বরত করা',
+  'Sure to recall this message?': 'আপনি কি নিশ্চিত যে এই বার্তাটি পুনর্বরত করতে চান?'
+      ' (এই কর্ম অবশ্যই সফল হবে না)',
+
+  'Waiting to send': 'প্রেরণের জন্য অপেক্ষমান (পুনরাবর্তনের জন্য ট্যাপ করুন)',
+  'No response': 'কোনও প্রতিক্রিয়া নেই (পুনরাবর্তনের জন্য ট্যাপ করুন)',
+  'Stranded': 'অপসারিত (পুনরাবর্তনের জন্য ট্যাপ করুন)',
   'Encrypted and sent to relay station': 'এনক্রিপ্ট এবং রিলে স্টেশনে প্রেরিত',
   'Message is rejected': 'বার্তা প্রত্যাখ্যান',
   'Safely delivered': 'নিরাপদে পৌঁছেছে',
   'Safely delivered to @count members': 'নিরাপদে @count সদস্যদের কাছে পৌঁছেছে',
-  'No response': 'কোনো প্রতিক্রিয়া নেই',
-  'Stranded': 'অনুদানিত',
 
   'Draft': 'খসড়া',
   'Mentioned': 'তোমার উল্লেখ হয়েছে',

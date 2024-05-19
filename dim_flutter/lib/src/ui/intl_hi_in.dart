@@ -183,13 +183,17 @@ final Map<String, String> intlHiIn = {
   'Select Participants': 'सहभागियों का चयन करें',
   'Select a Chat': 'एक चैट का चयन करें',
 
-  'Waiting to send': 'भेजने की प्रतीक्षा कर रहा है',
+  'Recall Message': 'संदेश वापस बुलाएँ',
+  'Sure to recall this message?': 'क्या आप वास्तव में इस संदेश को वापस बुलाना चाहते हैं?'
+      ' (यह कार्रवाई आवश्यक रूप से सफल नहीं हो सकती है)',
+
+  'Waiting to send': 'भेजने की प्रतीक्षा कर रहा है (पुनः प्रयास करने के लिए टैप करें)',
+  'No response': 'कोई प्रतिक्रिया नहीं है (पुनः भेजने के लिए टैप करें)',
+  'Stranded': 'फँसा हुआ (पुनः भेजने के लिए टैप करें)',
   'Encrypted and sent to relay station': 'एन्क्रिप्ट किया और रिले स्टेशन को भेजा गया',
   'Message is rejected': 'संदेश अस्वीकृत है',
   'Safely delivered': 'सुरक्षित रूप से डिलीवर किया गया',
   'Safely delivered to @count members': 'सुरक्षित रूप से @count सदस्यों को डिलीवर किया गया',
-  'No response': 'कोई प्रतिक्रिया नहीं है',
-  'Stranded': 'अवरुद्ध',
 
   'Draft': 'मसौदा',
   'Mentioned': 'आपका उल्लेख किया गया',

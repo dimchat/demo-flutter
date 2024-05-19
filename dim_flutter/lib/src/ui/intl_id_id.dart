@@ -183,13 +183,17 @@ final Map<String, String> intlIdId = {
   'Select Participants': 'Pilih Peserta',
   'Select a Chat': 'Pilih Obrolan',
 
-  'Waiting to send': 'Menunggu untuk mengirim',
+  'Recall Message': 'Panggilan Ulang Pesan',
+  'Sure to recall this message?': 'Apakah Anda yakin akan memanggil ulang pesan ini?'
+      ' (tindakan ini mungkin tidak selalu berhasil)',
+
+  'Waiting to send': 'Menunggu untuk mengirim (tekan untuk mencoba kembali)',
+  'No response': 'Tidak ada respons (tekan untuk mengirim ulang)',
+  'Stranded': 'Terdampar (tekan untuk mengirim ulang)',
   'Encrypted and sent to relay station': 'Dienkripsi dan dikirim ke stasiun relay',
   'Message is rejected': 'Pesan ditolak',
   'Safely delivered': 'Terkirim dengan aman',
   'Safely delivered to @count members': 'Terkirim dengan aman kepada @count anggota',
-  'No response': 'Tidak ada respons',
-  'Stranded': 'Terdampar',
 
   'Draft': 'Draf',
   'Mentioned': 'Anda disebutkan',

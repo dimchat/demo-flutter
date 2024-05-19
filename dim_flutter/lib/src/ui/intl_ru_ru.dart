@@ -183,13 +183,17 @@ final Map<String, String> intlRuRu = {
   'Select Participants': 'Выберите участников',
   'Select a Chat': 'Выберите чат',
 
-  'Waiting to send': 'Ожидание отправки',
+  'Recall Message': 'Отозвать сообщение',
+  'Sure to recall this message?': 'Вы действительно хотите отозвать это сообщение?'
+      ' (эта операция может не увенчаться успехом)',
+
+  'Waiting to send': 'Ожидание отправки (нажмите, чтобы повторить)',
+  'No response': 'Нет ответа (нажмите, чтобы отправить снова)',
+  'Stranded': 'Застрял (нажмите, чтобы отправить снова)',
   'Encrypted and sent to relay station': 'Зашифровано и отправлено на ретрансляционную станцию',
   'Message is rejected': 'Сообщение отклонено',
   'Safely delivered': 'Безопасно доставлено',
   'Safely delivered to @count members': 'Безопасно доставлено @count участникам',
-  'No response': 'Нет ответа',
-  'Stranded': 'Заблудившийся',
 
   'Draft': 'Черновик',
   'Mentioned': 'Вас упомянули',

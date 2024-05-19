@@ -183,13 +183,17 @@ final Map<String, String> intlItIt = {
   'Select Participants': 'Seleziona Partecipanti',
   'Select a Chat': 'Seleziona una Chat',
 
-  'Waiting to send': 'In attesa di inviare',
+  'Recall Message': 'Richiamo Messaggio',
+  'Sure to recall this message?': 'Sei sicuro di voler richiamare questo messaggio?'
+      ' (questa azione potrebbe non riuscire)',
+
+  'Waiting to send': 'In attesa di invio (tocca per riprovare)',
+  'No response': 'Nessuna risposta (tocca per inviare di nuovo)',
+  'Stranded': 'Bloccato (tocca per inviare di nuovo)',
   'Encrypted and sent to relay station': 'Criptato e inviato alla stazione di rilancio',
   'Message is rejected': 'Messaggio rifiutato',
   'Safely delivered': 'Consegnato in modo sicuro',
   'Safely delivered to @count members': 'Consegnato in modo sicuro a @count membri',
-  'No response': 'Nessuna risposta',
-  'Stranded': 'Bloccato',
 
   'Draft': 'Bozza',
   'Mentioned': 'Sei stato menzionato',

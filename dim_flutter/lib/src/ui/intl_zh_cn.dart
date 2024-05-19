@@ -182,13 +182,17 @@ final Map<String, String> intlZhCn = {
   'Select Participants': '选择与会人员',
   'Select a Chat': '选择一个会话',
 
-  'Waiting to send': '等待发送',
+  'Recall Message': '撤回消息',
+  'Sure to recall this message?': '确定撤回此消息吗？'
+      '（此操作可能不会成功）',
+
+  'Waiting to send': '等待发送（点击重试）',
+  'No response': '无应答（点击重新发送）',
+  'Stranded': '未发送（点击重新发送）',
   'Encrypted and sent to relay station': '已加密并发送到中继站',
   'Message is rejected': '消息被拒收',
   'Safely delivered': '已安全送达',
   'Safely delivered to @count members': '已安全送达 @count 位成员',
-  'No response': '无应答',
-  'Stranded': '未发送',
 
   'Draft': '草稿',
   'Mentioned': '有人@我',

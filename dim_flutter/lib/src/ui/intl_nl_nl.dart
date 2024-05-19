@@ -183,13 +183,17 @@ final Map<String, String> intlNlNl = {
   'Select Participants': 'Selecteer Deelnemers',
   'Select a Chat': 'Selecteer een Chat',
 
-  'Waiting to send': 'Wachten om te verzenden',
+  'Recall Message': 'Bericht intrekken',
+  'Sure to recall this message?': 'Weet u zeker dat u dit bericht wilt intrekken?'
+      ' (deze actie kan mogelijk niet slagen)',
+
+  'Waiting to send': 'Wachten op verzenden (tik om opnieuw te proberen)',
+  'No response': 'Geen reactie (tik om opnieuw te versturen)',
+  'Stranded': 'Vastgelopen (tik om opnieuw te versturen)',
   'Encrypted and sent to relay station': 'Gecodeerd en verzonden naar het relaisstation',
   'Message is rejected': 'Bericht wordt afgewezen',
   'Safely delivered': 'Veilig afgeleverd',
   'Safely delivered to @count members': 'Veilig afgeleverd aan @count lid(den)',
-  'No response': 'Geen reactie',
-  'Stranded': 'Vastgelopen',
 
   'Draft': 'Concept',
   'Mentioned': 'Je werd genoemd',

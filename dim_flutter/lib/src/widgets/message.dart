@@ -101,43 +101,58 @@ abstract class ContentViewUtils {
     );
   }
 
-  static Widget getAudioContentView(BuildContext ctx, AudioContent content, ID sender) =>
-      NetworkAudioFactory().getAudioView(content,
-        color: getTextColor(ctx, sender),
-        backgroundColor: getBackgroundColor(ctx, sender),
-      );
+  static Widget getAudioContentView(BuildContext ctx, AudioContent content, ID sender, {
+    GestureLongPressCallback? onLongPress,
+  }) {
+    Widget view = NetworkAudioFactory().getAudioView(content,
+      color: getTextColor(ctx, sender),
+      backgroundColor: getBackgroundColor(ctx, sender),
+    );
+    if (onLongPress == null) {
+      return view;
+    }
+    return GestureDetector(
+      onLongPress: onLongPress,
+      child: view,
+    );
+  }
 
-  static Widget getVideoContentView(BuildContext ctx, VideoContent content, ID sender,
-      {GestureLongPressCallback? onLongPress, OnVideoShare? onVideoShare}) =>
-      GestureDetector(
-        onLongPress: onLongPress,
-        child: NetworkVideoFactory().getVideoView(content, onVideoShare: onVideoShare),
-      );
+  static Widget getVideoContentView(BuildContext ctx, VideoContent content, ID sender, {
+    GestureLongPressCallback? onLongPress, OnVideoShare? onVideoShare,
+  }) {
+    Widget view = NetworkVideoFactory().getVideoView(content, onVideoShare: onVideoShare);
+    if (onLongPress == null) {
+      return view;
+    }
+    return GestureDetector(
+      onLongPress: onLongPress,
+      child: view,
+    );
+  }
 
-  static Widget getImageContentView(BuildContext ctx,
-      ImageContent content, ID sender, List<InstantMessage> messages,
-      {GestureTapCallback? onTap, GestureLongPressCallback? onLongPress}) =>
-      GestureDetector(
-        onTap: onTap ?? () => previewImageContent(ctx, content, messages),
-        onLongPress: onLongPress,
-        child: NetworkImageFactory().getImageView(PortableNetworkFile.parse(content)!),
-      );
+  static Widget getImageContentView(BuildContext ctx, ImageContent content, ID sender, List<InstantMessage> messages, {
+    GestureTapCallback? onTap, GestureLongPressCallback? onLongPress,
+  }) => GestureDetector(
+    onTap: onTap ?? () => previewImageContent(ctx, content, messages),
+    onLongPress: onLongPress,
+    child: NetworkImageFactory().getImageView(PortableNetworkFile.parse(content)!),
+  );
 
-  static Widget getPageContentView(BuildContext ctx, PageContent content, ID sender,
-      {GestureTapCallback? onTap, GestureLongPressCallback? onLongPress, OnWebShare? onWebShare}) =>
-      PageContentView(content: content,
-        onTap: onTap ?? () => Browser.open(ctx,
-          url: HtmlUri.getUriString(content),
-          onShare: onWebShare,
-        ),
-        onLongPress: onLongPress,
-      );
+  static Widget getPageContentView(BuildContext ctx, PageContent content, ID sender, {
+    GestureTapCallback? onTap, GestureLongPressCallback? onLongPress, OnWebShare? onWebShare,
+  }) => PageContentView(content: content,
+    onTap: onTap ?? () => Browser.open(ctx,
+      url: HtmlUri.getUriString(content),
+      onShare: onWebShare,
+    ),
+    onLongPress: onLongPress,
+  );
 
-  static Widget getNameCardView(BuildContext ctx, NameCard content,
-      {GestureTapCallback? onTap, GestureLongPressCallback? onLongPress}) =>
-      NameCardView(content: content,
-        onTap: onTap,
-        onLongPress: onLongPress,
-      );
+  static Widget getNameCardView(BuildContext ctx, NameCard content, {
+    GestureTapCallback? onTap, GestureLongPressCallback? onLongPress,
+  }) => NameCardView(content: content,
+    onTap: onTap,
+    onLongPress: onLongPress,
+  );
 
 }

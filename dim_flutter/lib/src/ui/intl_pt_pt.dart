@@ -183,13 +183,17 @@ final Map<String, String> intlPtPt = {
   'Select Participants': 'Selecionar Participantes',
   'Select a Chat': 'Selecionar uma Conversa',
 
-  'Waiting to send': 'A aguardar para enviar',
+  'Recall Message': 'Recuperar Mensagem',
+  'Sure to recall this message?': 'Tem certeza de que deseja recuperar esta mensagem?'
+      ' (esta ação pode não ser bem-sucedida)',
+
+  'Waiting to send': 'Aguardando para enviar (toque para tentar novamente)',
+  'No response': 'Sem resposta (toque para reenviar)',
+  'Stranded': 'Encalhado (toque para reenviar)',
   'Encrypted and sent to relay station': 'Encriptado e enviado para a estação de retransmissão',
   'Message is rejected': 'Mensagem foi rejeitada',
   'Safely delivered': 'Entregue com segurança',
   'Safely delivered to @count members': 'Entregue com segurança a @count membro(s)',
-  'No response': 'Sem resposta',
-  'Stranded': 'Encalhado',
 
   'Draft': 'Rasura',
   'Mentioned': 'Você foi mencionado',

@@ -182,13 +182,17 @@ final Map<String, String> intlTrTr = {
   'Select Participants': 'Katılımcıları Seç',
   'Select a Chat': 'Bir Sohbet Seç',
 
-  'Waiting to send': 'Gönderilmeyi bekliyor',
+  'Recall Message': 'Mesajı Geri Çek',
+  'Sure to recall this message?': 'Bu mesajı geri çekmek istediğinizden emin misiniz?'
+      ' (bu eylem mutlaka başarılı olmayabilir)',
+
+  'Waiting to send': 'Gönderilmeyi bekliyor (tekrar denemek için dokunun)',
+  'No response': 'Yanıt Yok (tekrar göndermek için dokunun)',
+  'Stranded': 'Mahsur Kaldı (tekrar göndermek için dokunun)',
   'Encrypted and sent to relay station': 'Şifrelenmiş ve röle istasyonuna gönderilmiş',
   'Message is rejected': 'Mesaj reddedildi',
   'Safely delivered': 'Güvenli bir şekilde teslim edildi',
   'Safely delivered to @count members': '@count üye(ler)e güvenli bir şekilde teslim edildi',
-  'No response': 'Cevap yok',
-  'Stranded': 'Mahsur kalmış',
 
   'Draft': 'Taslak',
   'Mentioned': 'Bahsedildiniz',

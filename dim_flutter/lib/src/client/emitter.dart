@@ -297,19 +297,40 @@ class Emitter with Logging implements Observer {
     return Pair(iMsg, rMsg);
   }
 
+  //
+  //  Recall Messages
+  //
+
+  /// recall text message
   Future<Pair<InstantMessage?, ReliableMessage?>> recallTextMessage(TextContent content, Envelope envelope) async =>
-      await recallMessage(null, content, envelope);
+      await recallMessage(content, envelope, text: '_(message recalled)_');
 
+  /// recall image message
   Future<Pair<InstantMessage?, ReliableMessage?>> recallImageMessage(ImageContent content, Envelope envelope) async =>
-      await recallMessage('_(image recalled)_', content, envelope);
+      await recallFileMessage(content, envelope, text: '_(image recalled)_');
 
+  /// recall audio message
   Future<Pair<InstantMessage?, ReliableMessage?>> recallAudioMessage(AudioContent content, Envelope envelope) async =>
-      await recallMessage('_(voice message recalled)_', content, envelope);
+      await recallFileMessage(content, envelope, text: '_(voice message recalled)_');
 
+  /// recall video message
   Future<Pair<InstantMessage?, ReliableMessage?>> recallVideoMessage(VideoContent content, Envelope envelope) async =>
-      await recallMessage('_(video recalled)_', content, envelope);
+      await recallFileMessage(content, envelope, text: '_(video recalled)_');
 
-  Future<Pair<InstantMessage?, ReliableMessage?>> recallMessage(String? text, Content content, Envelope envelope) async {
+  /// recall file message
+  Future<Pair<InstantMessage?, ReliableMessage?>> recallFileMessage(FileContent content, Envelope envelope, {
+    String? text,
+  }) async => await recallMessage(content, envelope, text: text ?? '_(file recalled)_', origin: {
+    'type': content['type'],
+    'sn': content['sn'],
+    'URL': content['URL'],
+    'filename': content['filename'],
+  });
+
+  /// recall other message
+  Future<Pair<InstantMessage?, ReliableMessage?>> recallMessage(Content content, Envelope envelope, {
+    String? text, Map<String, dynamic>? origin,
+  }) async {
     GlobalVariable shared = GlobalVariable();
     User? user = await shared.facebook.currentUser;
     if (user == null) {
@@ -323,25 +344,28 @@ class Emitter with Logging implements Observer {
       return const Pair(null, null);
     }
     ID receiver = content.group ?? envelope.receiver;
-    return await _recall(text, content, sender: sender, receiver: receiver);
+    return await _recall(content, sender: sender, receiver: receiver,
+      text: text ?? '_(message recalled)_', origin: origin ?? {
+        'type': content['type'],
+        'sn': content['sn'],
+      },
+    );
   }
 
-  Future<Pair<InstantMessage?, ReliableMessage?>> _recall(String? text, Content content, {
+  Future<Pair<InstantMessage?, ReliableMessage?>> _recall(Content content, {
     required ID sender, required ID receiver,
+    required String text, required Map<String, dynamic> origin,
   }) async {
     assert(sender != receiver, 'cycled message: $sender, $text, $content');
     //
     //  1. build the recall command
     //
-    Content command = TextContent.create(text ?? '_(message recalled)_');
+    Content command = TextContent.create(text);
     command['format'] = 'markdown';
     command['action'] = 'recall';
-    command['origin'] = {
-      'type': content.type,
-      'sn': content.sn,
-    };
+    command['origin'] = origin;
     command['time'] = content['time'];
-    command['sn'] = content.sn;
+    command['sn'] = content['sn'];
     if (receiver.isGroup) {
       command.group = receiver;
     }

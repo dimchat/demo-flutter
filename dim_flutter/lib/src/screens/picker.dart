@@ -34,6 +34,7 @@ import 'package:get/get.dart';
 
 import '../ui/nav.dart';
 import '../ui/styles.dart';
+import '../widgets/table.dart';
 
 import 'device.dart';
 
@@ -80,7 +81,8 @@ class _AirPlayState extends State<AirPlayPicker> {
       title: Text('Select TV'.tr),
     ),
     body: Center(
-      child: SingleChildScrollView(
+      child: buildScrollView(
+        enableScrollbar: true,
         child: Column(
           children: _deviceList(context),
         ),

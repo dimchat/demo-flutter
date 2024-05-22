@@ -213,7 +213,8 @@ Future<Widget> previewMembers(List<ID> members) async {
     ));
   }
   return Center(
-    child: SingleChildScrollView(
+    child: buildScrollView(
+      enableScrollbar: true,
       scrollDirection: Axis.horizontal,
       child: Row(
         mainAxisAlignment: MainAxisAlignment.center,

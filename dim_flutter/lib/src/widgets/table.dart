@@ -155,3 +155,24 @@ Widget buildSectionListView({
   );
   return enableScrollbar ? Scrollbar(child: view) : view;
 }
+
+
+Widget buildScrollView({
+  bool enableScrollbar = false,
+  Axis scrollDirection = Axis.vertical,
+  // bool reverse = false,
+  // EdgeInsetsGeometry? padding,
+  // bool? primary,
+  // ScrollPhysics? physics,
+  // ScrollController? controller,
+  required Widget child,
+  // DragStartBehavior dragStartBehavior = DragStartBehavior.start,
+  // Clip clipBehavior = Clip.hardEdge,
+  // String? restorationId,
+  // ScrollViewKeyboardDismissBehavior keyboardDismissBehavior = ScrollViewKeyboardDismissBehavior.manual,
+}) {
+  var view = SingleChildScrollView(
+    child: child,
+  );
+  return enableScrollbar ? Scrollbar(child: view) : view;
+}

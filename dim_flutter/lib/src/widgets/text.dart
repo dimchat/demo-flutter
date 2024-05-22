@@ -20,6 +20,7 @@ import '../ui/styles.dart';
 import 'alert.dart';
 import 'browse_html.dart';
 import 'browser.dart';
+import 'table.dart';
 import 'video_player.dart';
 
 
@@ -96,7 +97,8 @@ class _TextPreviewState extends State<TextPreviewPage> {
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
           Expanded(
-            child: SingleChildScrollView(
+            child: buildScrollView(
+              enableScrollbar: true,
               child: _body(),
             ),
           ),

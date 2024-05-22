@@ -21,6 +21,7 @@ abstract class AppIcons {
   // Tabs
   static const IconData    chatsTabIcon = CupertinoIcons.chat_bubble_2;
   static const IconData contactsTabIcon = CupertinoIcons.group;
+  static const IconData servicesTabIcon = CupertinoIcons.compass;
   static const IconData settingsTabIcon = CupertinoIcons.gear;
 
   // Chat Box
@@ -97,7 +98,8 @@ abstract class AppIcons {
 
   static const IconData    setNetworkIcon = CupertinoIcons.cloud;
   static const IconData setWhitePaperIcon = CupertinoIcons.doc;
-  static const IconData setOpenSourceIcon = Icons.code;
+  // static const IconData setOpenSourceIcon = Icons.code;
+  static const IconData setOpenSourceIcon = CupertinoIcons.chevron_left_slash_chevron_right;
   static const IconData      setTermsIcon = CupertinoIcons.doc_checkmark;
   static const IconData      setAboutIcon = CupertinoIcons.info;
 

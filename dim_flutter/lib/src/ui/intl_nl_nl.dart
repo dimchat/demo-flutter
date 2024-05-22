@@ -306,6 +306,18 @@ final Map<String, String> intlNlNl = {
       '* Als u ze onmiddellijk wilt verwijderen, kunt u er ook voor kiezen om ze hier handmatig te verwijderen.',
 
   //
+  //  Service Bots
+  //
+
+  'Services': 'Diensten',
+  'Service Bots': 'Servicebots',
+
+  'ServiceBotList::Description': '* Hier worden populaire services van derden getoond;\n'
+      '* Iedereen kan dergelijke services ontwikkelen en aanbieden aan het publiek, zolang ze het DIMP-protocol volgen;\n'
+      '* Als u uw eigen servicebot wilt maken, nodigen wij u uit de DIMP-documenten te lezen,'
+      ' voorbeeldprojecten te downloaden van GitHub of rechtstreeks contact op te nemen met "Albert Moky".',
+
+  //
   //  Footers
   //
 

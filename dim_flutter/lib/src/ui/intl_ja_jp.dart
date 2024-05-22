@@ -300,6 +300,18 @@ final Map<String, String> intlJaJp = {
       '* それらを即時に削除したい場合は、ここで手動で削除することもできます。',
 
   //
+  //  Service Bots
+  //
+
+  'Services': 'サービス',
+  'Service Bots': 'サービスボット',
+
+  'ServiceBotList::Description': '* ここでは人気のあるサードパーティのサービスを表示します;\n'
+      '* 誰でも、DIMPプロトコルに従う限り、このようなサービスを開発して一般に提供することができます;\n'
+      '* 独自のサービスボットを作成したい場合は、DIMPドキュメントを読むか、GitHubからサンプルプロジェクトをダウンロードするか、'
+      '"Albert Moky"に直接連絡してください。',
+
+  //
   //  Footers
   //
 

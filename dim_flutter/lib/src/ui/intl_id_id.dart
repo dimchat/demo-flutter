@@ -306,6 +306,18 @@ final Map<String, String> intlIdId = {
       '* Jika Anda ingin menghapusnya secara langsung, Anda juga dapat memilih untuk menghapusnya secara manual di sini.',
 
   //
+  //  Service Bots
+  //
+
+  'Services': 'Layanan',
+  'Service Bots': 'Bot Layanan',
+
+  'ServiceBotList::Description': '* Di sini menampilkan layanan pihak ketiga yang populer;\n'
+      '* Siapa saja dapat mengembangkan dan memberikan layanan tersebut kepada publik selama mereka mengikuti protokol DIMP;\n'
+      '* Jika Anda ingin membuat bot layanan Anda sendiri, kami mengundang Anda untuk membaca dokumen DIMP,'
+      ' mengunduh proyek contoh dari GitHub, atau menghubungi "Albert Moky" secara langsung.',
+
+  //
   //  Footers
   //
 

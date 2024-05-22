@@ -125,6 +125,9 @@ class Config {
     return bots == null ? null : ID.convert(bots);
   }
 
+  /// Service Bots
+  Future<List<dynamic>?> get services async => (await info)?['services'];
+
   Future<ID?> get provider async => ID.parse((await info)?['ID']);
 
   /// Base stations

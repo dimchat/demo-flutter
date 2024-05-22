@@ -301,6 +301,18 @@ final Map<String, String> intlTrTr = {
       '* Bunları hemen kaldırmak isterseniz, bunları buradan manuel olarak da silebilirsiniz.',
 
   //
+  //  Service Bots
+  //
+
+  'Services': 'Hizmetler',
+  'Service Bots': 'Hizmet Botları',
+
+  'ServiceBotList::Description': '* Burada popüler üçüncü taraf hizmetleri gösteriliyor;\n'
+      '* Herhangi bir kişi DIMP protokolünü takip ettiği sürece, böyle hizmetleri geliştirebilir ve halka sunabilir;\n'
+      '* Kendi hizmet botunuzu oluşturmak isterseniz, DIMP belgelerini okumanızı,'
+      ' GitHub üzerinden örnek projeler indirmenizi veya "Albert Moky" ile doğrudan iletişime geçmenizi öneriyoruz.',
+
+  //
   //  Footers
   //
 

@@ -307,6 +307,18 @@ final Map<String, String> intlEsEs = {
       '* Si deseas eliminarlos de inmediato, también puedes optar por eliminarlos manualmente aquí.',
 
   //
+  //  Service Bots
+  //
+
+  'Services': 'Servicios',
+  'Service Bots': 'Bots de servicio',
+
+  'ServiceBotList::Description': '* Aquí mostramos servicios de terceros populares;\n'
+      '* Cualquiera puede desarrollar y ofrecer este tipo de servicios al público siempre y cuando sigan el protocolo DIMP;\n'
+      '* Si desea crear su propio bot de servicio, le invitamos a leer los documentos de DIMP,'
+      ' descargar proyectos de ejemplo de GitHub o ponerse en contacto directo con "Albert Moky".',
+
+  //
   //  Footers
   //
 

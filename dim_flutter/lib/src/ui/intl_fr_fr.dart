@@ -305,6 +305,18 @@ final Map<String, String> intlFrFr = {
       '* Si vous souhaitez les supprimer immédiatement, vous pouvez également choisir de les supprimer manuellement ici.',
 
   //
+  //  Service Bots
+  //
+
+  'Services' : 'Services',
+  'Service Bots' : 'Bots de service',
+
+  'ServiceBotList::Description' : '* Ici, nous présentons des services tiers populaires ;\n'
+      '* N\'importe qui peut développer et proposer de tels services au public tant qu\'ils respectent le protocole DIMP ;\n'
+      '* Si vous souhaitez créer votre propre bot de service, nous vous invitons à lire la documentation DIMP,'
+      ' télécharger des exemples de projets sur GitHub ou contacter directement "Albert Moky".',
+
+  //
   //  Footers
   //
 

@@ -298,6 +298,17 @@ final Map<String, String> intlZhCn = {
       '* 如果您希望立即删除它们，也可以在此手动清除。',
 
   //
+  //  Service Bots
+  //
+
+  'Services': '服务',
+  'Service Bots': '服务机器人',
+
+  'ServiceBotList::Description': '* 这里展示了流行的第三方服务;\n'
+      '* 任何人都可以开发并提供此类服务，只要他们遵循 DIMP 协议;\n'
+      '* 如果您想创建自己的服务机器人，我们邀请您阅读 DIMP 文档，从 GitHub 下载示例项目，或直接与 "Albert Moky" 联系。',
+
+  //
   //  Footers
   //
 

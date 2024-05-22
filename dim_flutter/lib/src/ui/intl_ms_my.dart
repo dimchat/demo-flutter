@@ -306,6 +306,18 @@ final Map<String, String> intlMsMy = {
       '* Sekiranya anda ingin mengeluarkannya dengan segera, anda juga boleh memilih untuk memadamnya secara manual di sini.',
 
   //
+  //  Service Bots
+  //
+
+  'Services': 'Perkhidmatan',
+  'Service Bots': 'Bot Perkhidmatan',
+
+  'ServiceBotList::Description': '* Di sini menunjukkan perkhidmatan pihak ketiga yang popular;\n'
+      '* Sesiapa sahaja boleh mengembangkan dan menyediakan perkhidmatan seperti ini kepada orang ramai selagi mereka mengikuti protokol DIMP;\n'
+      '* Jika anda ingin membuat bot perkhidmatan sendiri, kami menggalakkan anda untuk membaca dokumen DIMP,'
+      ' muat turun projek contoh dari GitHub, atau hubungi "Albert Moky" secara langsung.',
+
+  //
   //  Footers
   //
 

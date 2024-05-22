@@ -298,6 +298,17 @@ final Map<String, String> intlZhTw = {
       '* 如果您希望立即刪除它們，您也可以選擇在此手動刪除。',
 
   //
+  //  Service Bots
+  //
+
+  'Services': '服務',
+  'Service Bots': '服務機器人',
+
+  'ServiceBotList::Description': '* 這裡顯示熱門的第三方服務;\n'
+      '* 任何人都可以開發並提供此類服務，只要遵循 DIMP 協議即可;\n'
+      '* 如果您想建立自己的服務機器人，我們邀請您閱讀 DIMP 文件，從 GitHub 下載範例專案，或直接與 "Albert Moky" 聯絡。',
+
+  //
   //  Footers
   //
 

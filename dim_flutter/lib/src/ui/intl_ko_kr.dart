@@ -303,6 +303,17 @@ final Map<String, String> intlKoKr = {
       '* 즉시 삭제하고 싶은 경우 여기서 수동으로 삭제할 수도 있습니다.',
 
   //
+  //  Service Bots
+  //
+
+  'Services': '서비스',
+  'Service Bots': '서비스 봇',
+
+  'ServiceBotList::Description': '* 여기에는 인기 있는 타사 서비스가 표시됩니다;\n'
+      '* 누구나 DIMP 프로토콜을 준수하는 한 이러한 서비스를 개발하여 대중에게 제공할 수 있습니다;\n'
+      '* 자체 서비스 봇을 만들고 싶다면 DIMP 문서를 읽거나 GitHub에서 예제 프로젝트를 다운로드하거나 "Albert Moky"에게 직접 연락하세요.',
+
+  //
   //  Footers
   //
 

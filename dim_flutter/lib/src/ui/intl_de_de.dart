@@ -300,6 +300,18 @@ final Map<String, String> intlDeDe = {
       '* Wenn Sie sie sofort entfernen möchten, können Sie sie auch hier manuell löschen.',
 
   //
+  //  Service Bots
+  //
+
+  'Services': 'Dienste',
+  'Service Bots': 'Service-Bots',
+
+  'ServiceBotList::Description': '* Hier zeigen wir beliebte Drittanbieter-Dienste;\n'
+      '* Jeder kann solche Dienste für die Öffentlichkeit entwickeln und anbieten, solange sie dem DIMP-Protokoll folgen;\n'
+      '* Wenn Sie Ihren eigenen Service-Bot erstellen möchten, laden wir Sie ein, die DIMP-Dokumente zu lesen,'
+      ' Beispielprojekte von GitHub herunterzuladen oder sich direkt an "Albert Moky" zu wenden.',
+
+  //
   //  Footers
   //
 

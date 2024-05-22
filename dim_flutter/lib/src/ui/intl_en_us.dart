@@ -305,6 +305,18 @@ final Map<String, String> intlEnUs = {
       '* Should you wish to remove them immediately, you can also choose to manually delete them here.',
 
   //
+  //  Service Bots
+  //
+
+  'Services': 'Services',
+  'Service Bots': 'Service Bots',
+
+  'ServiceBotList::Description': '* Here shows popular third-party services;\n'
+      '* Anyone can develop and provide such services to the public as long as they follow the DIMP protocol;\n'
+      '* If you wish to create your own service bot, we invite you to read the DIMP documents,'
+      ' download example projects from GitHub, or get in touch with "Albert Moky" directly.',
+
+  //
   //  Footers
   //
 

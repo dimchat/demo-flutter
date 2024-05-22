@@ -304,6 +304,17 @@ final Map<String, String> intlAfZa = {
       ' skep dit tydelike lêers wat gewoonlik outomaties deur die stelsel skoongemaak word as dit nodig is.\n'
       '* Indien jy wil hê dat hulle onmiddellik verwyder moet word, kan jy ook kies om hulle hier handmatig te verwyder.',
 
+  //
+  //  Service Bots
+  //
+
+  'Services': 'Dienste',
+  'Service Bots': 'Diensbots',
+
+  'ServiceBotList::Description': '* Hier word populêre derdepartydienste gewys;\n'
+      '* Enigiemand kan sulke dienste ontwikkel en aan die publiek verskaf as lank hulle die DIMP-protokol volg;\n'
+      '* As u u eie diensbot wil skep, nodig ons u uit om die DIMP-dokumente te lees,'
+      ' voorbeeldprojekte van GitHub af te laai, of direk met "Albert Moky" kontak te maak.',
 
   //
   //  Footers

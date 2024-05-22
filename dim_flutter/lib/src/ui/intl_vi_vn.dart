@@ -303,6 +303,18 @@ final Map<String, String> intlViVN = {
       '* Nếu bạn muốn xóa chúng ngay lập tức, bạn cũng có thể chọn xóa chúng thủ công ở đây.',
 
   //
+  //  Service Bots
+  //
+
+  'Services': 'Dịch vụ',
+  'Service Bots': 'Bot Dịch vụ',
+
+  'ServiceBotList::Description': '* Ở đây hiển thị các dịch vụ bên thứ ba phổ biến;\n'
+      '* Bất kỳ ai cũng có thể phát triển và cung cấp các dịch vụ này cho công chúng miễn là họ tuân thủ giao thức DIMP;\n'
+      '* Nếu bạn muốn tạo bot dịch vụ riêng của mình, chúng tôi mời bạn đọc tài liệu DIMP,'
+      ' tải xuống các dự án ví dụ từ GitHub hoặc liên hệ trực tiếp với "Albert Moky".',
+
+  //
   //  Footers
   //
 

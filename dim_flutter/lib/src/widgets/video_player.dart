@@ -46,6 +46,7 @@ import '../ui/icons.dart';
 import '../ui/nav.dart';
 import '../ui/styles.dart';
 
+import 'browse_html.dart';
 import 'video_controls.dart';
 
 
@@ -128,6 +129,15 @@ class _VideoHolder {
     // patch for Windows
     DevicePlatform.patchVideoPlayer();
     //
+    //  0. check 'live' in url string
+    //
+    bool isLive = false;
+    String? liveUrl = _cutLiveUrlString(url.toString());
+    if (liveUrl != null) {
+      url = HtmlUri.parseUri(liveUrl) ?? url;
+      isLive = true;
+    }
+    //
     //  1. create video player controller with network URL
     //
     var videoPlayerController = VideoPlayerController.networkUrl(url);
@@ -137,7 +147,9 @@ class _VideoHolder {
     //
     ChewieController chewieController = ChewieController(
       videoPlayerController: videoPlayerController,
-      // autoPlay: true,
+      // autoPlay: isLive,
+      looping: isLive,
+      isLive: isLive,
       showOptions: false,
       allowedScreenSleep: false,
       customControls: const CustomControls(),
@@ -281,15 +293,17 @@ class _VideoAppState extends State<VideoPlayerPage> {
       fontSize: 14,
       decoration: TextDecoration.none,
     );
+    String urlString = widget.url.toString();
+    urlString = _cutLiveUrlString(urlString) ?? urlString;
     if (_error == null) {
       indicator = CupertinoActivityIndicator(color: widget.color,);
       message = Text('Loading "@url" ...'.trParams({
-        'url': widget.url.toString(),
+        'url': urlString,
       }), style: textStyle,);
     } else {
       indicator = const Icon(AppIcons.decryptErrorIcon, color: CupertinoColors.systemRed,);
       message = Text('Failed to load "@url".'.trParams({
-        'url': widget.url.toString(),
+        'url': urlString,
       }), style: textStyle,);
     }
     return Column(
@@ -304,4 +318,18 @@ class _VideoAppState extends State<VideoPlayerPage> {
     );
   }
 
+}
+
+String? _cutLiveUrlString(String urlString) {
+  // check "...#live"
+  if (urlString.endsWith('#live')) {
+    return urlString.substring(0, urlString.length - 5);
+  }
+  // check "...#live/stream.m3u8"
+  int pos = urlString.lastIndexOf('#live/');
+  if (pos > 0) {
+    return urlString.substring(0, pos);
+  }
+  // not a live URL string
+  return null;
 }

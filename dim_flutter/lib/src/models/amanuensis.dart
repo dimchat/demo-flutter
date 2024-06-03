@@ -200,19 +200,23 @@ class Amanuensis with Logging {
   }
 
   Future<void> _updateConversation(ID cid, InstantMessage iMsg) async {
+    final ID sender = iMsg.sender;
     Shield shield = Shield();
-    if (await shield.isBlocked(iMsg.sender, group: iMsg.group)) {
+    if (await shield.isBlocked(sender, group: iMsg.group)) {
       // this message should have been blocked before verifying by messenger
-      logError('contact is blocked: ${iMsg.sender}, group: ${iMsg.group}');
+      logError('contact is blocked: $sender, group: ${iMsg.group}');
       return;
     }
     Content content = iMsg.content;
     DefaultMessageBuilder mb = DefaultMessageBuilder();
-    if (mb.isCommand(content, iMsg.sender)) {
+    if (mb.isCommand(content, sender)) {
       logDebug('ignore command for conversation updating');
       return;
     }
-    String last = mb.getText(content, iMsg.sender);
+    GlobalVariable shared = GlobalVariable();
+    CommonFacebook facebook = shared.facebook;
+    // get last message
+    String last = mb.getText(content, sender);
     if (last.isEmpty) {
       logWarning('content text empty: $content');
       return;
@@ -221,16 +225,19 @@ class Amanuensis with Logging {
       if (last.length > 200) {
         last = '${last.substring(0, 197)}...';
       }
+      // show 'sender' in group chat
+      if (cid.isGroup) {
+        String name = await facebook.getName(sender);
+        last = '$name: $last';
+      }
     }
     DateTime? time = iMsg.time;
     logWarning('update last message: $last for conversation: $cid');
-
-    GlobalVariable shared = GlobalVariable();
-    User? current = await shared.facebook.currentUser;
+    User? current = await facebook.currentUser;
     assert(current != null, 'failed to get current user');
     // increase unread counter
     int increase;
-    if (current?.identifier == iMsg.sender) {
+    if (current?.identifier == sender) {
       logDebug('message from myself');
       increase = 0;
     } else if (content is Command) {
@@ -283,7 +290,7 @@ class Amanuensis with Logging {
       if (oldTime == null || time == null || time.isAfter(oldTime)) {
         // new message
       } else {
-        logWarning('ignore old message: ${iMsg.sender} -> ${iMsg.receiver}'
+        logWarning('ignore old message: $sender -> ${iMsg.receiver}'
             ' (${iMsg['group']}), time: $time');
         return;
       }

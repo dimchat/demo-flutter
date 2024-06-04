@@ -123,25 +123,28 @@ class FileUploader {
     //  2. config for upload API
     //
     Config config = Config();
-    List api = await config.uploadAPI;
-    String url;
+    List apiList = await config.uploadAPI;
+    String url = '';
     String? enigma;
     // TODO: pick up the fastest API for upload
-    var chosen = api.first;
-    if (chosen is Map) {
-      url = chosen['url'];
-      enigma = chosen['enigma'];
-      if (enigma != null) {
-        url = '$url&enigma=$enigma';
+    for (var api in apiList) {
+      if (api is Map) {
+        url = api['url'];
+        enigma = api['enigma'];
+        if (enigma != null) {
+          url = '$url&enigma=$enigma';
+        }
+      } else {
+        assert(api is String, 'API error: $api');
+        url = api;
+        enigma = '';
       }
-    } else {
-      assert(chosen is String, 'API error: $api');
-      url = chosen;
-      enigma = '';
-    }
-    if (url.isEmpty) {
-      assert(false, 'config error: $api');
-      return;
+      if (url.isEmpty) {
+        Log.info('skip this API: $api');
+        continue;
+      }
+      Log.info('got upload API: $api');
+      break;
     }
     Log.warning('set upload API: $url (enigma: $enigma)');
     _api = url;
@@ -207,13 +210,13 @@ class FileUploader {
       return url;
     }
     String? api = _api;
-    if (api == null) {
+    if (api == null || api.isEmpty) {
       assert(false, 'failed to get upload API');
       return null;
     }
     Pair<String, Uint8List>? pair = fetchEnigma(api);
     if (pair == null) {
-      assert(false, 'failed to fetch enigma: $_api');
+      assert(false, 'failed to fetch enigma: $api');
       return null;
     }
     String enigma = pair.first;

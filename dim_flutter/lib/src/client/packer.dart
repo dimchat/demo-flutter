@@ -49,7 +49,7 @@ class SharedPacker extends ClientMessagePacker {
         // push my newest visa to the sender
       } else if (errMsg.contains('receiver error')) {
         // Exception from 'MessagePacker::decryptMessage(sMsg)'
-        logError('decrypt message error: $e, st');
+        logError('decrypt message error: $e, $st');
         // not for you?
         // just ignore it
         return null;

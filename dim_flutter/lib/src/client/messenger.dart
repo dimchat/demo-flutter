@@ -92,7 +92,10 @@ class SharedMessenger extends ClientMessenger {
   Future<void> handshake(String? sessionKey) async {
     if (sessionKey == null || sessionKey.isEmpty) {
       // first handshake, update visa document first
+      logInfo('update visa for first handshake');
       await updateVisa();
+    } else if (sessionKey == session.key) {
+      logWarning('duplicated session key: $sessionKey');
     }
     await super.handshake(sessionKey);
   }

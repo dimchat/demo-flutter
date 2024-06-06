@@ -55,7 +55,7 @@ public enum VersionManager {
     }
 
     // "https://raw.githubusercontent.com/dimchat/demo-flutter/main/sechat/assets/apk-release.json";
-    static final String ENTRANCE = "http://tarsier.dim.chat/apk-release.json";
+    static final String ENTRANCE = "http://tarsier.dim.chat/v1/apk-release.json";
 
     private JSONObject newestInfo = null;
 

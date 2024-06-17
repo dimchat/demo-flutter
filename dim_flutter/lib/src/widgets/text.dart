@@ -183,6 +183,23 @@ class _RichTextState extends State<RichTextView> {
     ),
   );
 
+/// TODO: patch for block colors
+///
+///   file: '/Users/moky/.pub-cache/hosted/pub.flutter-io.cn/flutter_markdown-0.6.22+1/lib/src/style_sheet.dart'
+///   line: 144
+///
+///   old:
+///
+///      blockquoteDecoration: BoxDecoration(
+///        color: Colors.blue.shade100,
+///
+///   new:
+///
+///      blockquoteDecoration: BoxDecoration(
+///        color: theme.brightness == Brightness.dark
+///            ? Colors.grey.shade800
+///            : Colors.blue.shade100,
+
 }
 
 

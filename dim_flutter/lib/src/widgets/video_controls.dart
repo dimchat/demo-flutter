@@ -66,6 +66,8 @@ class _PlayerMetronome {
 
   double get playbackSpeed => _speed;
 
+  void resetPlaybackSpeed() => _speed = 1.0;
+
   double changePlaybackSpeed() {
     if (_speed < 1.0) {
       _speed = 1.0;
@@ -86,6 +88,8 @@ class _PlayerMetronome {
 
 class CustomControls extends StatefulWidget {
   const CustomControls({super.key});
+
+  static void resetPlaybackSpeed() => _PlayerMetronome().resetPlaybackSpeed();
 
   @override
   State<StatefulWidget> createState() => _CustomControlsState();
@@ -293,8 +297,10 @@ class _CustomControlsState extends State<CustomControls>
                     if (chewieController.allowMuting)
                       _buildMuteButton(controller),
                     const Spacer(),
-                    _buildSpeedButton(controller, Colors.white, barHeight),
-                    if (chewieController.allowFullScreen) _buildExpandButton(),
+                    if (!chewieController.isLive)
+                      _buildSpeedButton(controller, Colors.white, barHeight),
+                    if (chewieController.allowFullScreen)
+                      _buildExpandButton(),
                   ],
                 ),
               ),

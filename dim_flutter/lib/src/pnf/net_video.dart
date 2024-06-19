@@ -29,12 +29,15 @@
  * =============================================================================
  */
 import 'package:flutter/cupertino.dart';
-
-import 'package:dim_client/dim_client.dart';
 import 'package:flutter/material.dart';
 
+import 'package:dim_client/dim_client.dart';
+import 'package:lnc/log.dart';
+
 import '../ui/icons.dart';
-import '../widgets/video_player.dart';
+import '../video/player.dart';
+import '../video/playing.dart';
+
 import 'gallery.dart';
 import 'image.dart';
 import 'loader.dart';
@@ -87,7 +90,7 @@ class _PortableVideoView extends PortableNetworkView {
 
 }
 
-class _PortableVideoState extends PortableNetworkState<_PortableVideoView> {
+class _PortableVideoState extends PortableNetworkState<_PortableVideoView> with Logging {
 
   @override
   Widget build(BuildContext context) {
@@ -110,8 +113,9 @@ class _PortableVideoState extends PortableNetworkState<_PortableVideoView> {
     );
   }
 
-  Widget _titleWidget(String title) {
+  Widget _titleWidget(String text) {
     String name;
+    String title = text;
     int pos = title.indexOf('; cover=');
     if (pos > 0) {
       title = title.substring(0, pos);
@@ -124,9 +128,11 @@ class _PortableVideoState extends PortableNetworkState<_PortableVideoView> {
       name = title.trim();
       title = '';
     }
+    logInfo('video title: "$text" => "$name" + "$title"');
     return Text('$name\n\n$title',
       textAlign: TextAlign.center,
       style: const TextStyle(
+        color: CupertinoColors.systemYellow,
         fontSize: 12,
       ),
     );
@@ -170,16 +176,17 @@ class _PortableVideoLoader extends PortableFileLoader {
       return _showError('Download not supported', null, CupertinoColors.systemRed);
     }
     var icon = const Icon(AppIcons.playVideoIcon, color: CupertinoColors.white);
+    var playingItem = MediaItem(pnf.toMap());
     var button = IconButton(
       icon: icon,
-      onPressed: () => VideoPlayerPage.open(ctx, url, pnf, onShare: widget.onVideoShare),
+      onPressed: () => VideoPlayerPage.openVideoPlayer(ctx, playingItem, onShare: widget.onVideoShare),
     );
     return ClipRRect(
       borderRadius: const BorderRadius.all(
         Radius.elliptical(16, 16),
       ),
       child: Container(
-        color: CupertinoColors.secondaryLabel,
+        color: CupertinoColors.tertiaryLabel,
         child: button,
       ),
     );

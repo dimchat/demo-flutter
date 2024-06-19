@@ -75,3 +75,32 @@ class DevicePlatform {
   static bool _videoPlayerPatched = false;
 
 }
+
+/// TODO: patch for block colors in dark theme
+///
+///   file: '/Users/moky/.pub-cache/hosted/pub.flutter-io.cn/flutter_markdown-0.6.22+1/lib/src/style_sheet.dart'
+///   line: 144
+///
+///   old:
+///
+///     class MarkdownStyleSheet {
+///       ...
+///       factory MarkdownStyleSheet.fromTheme(ThemeData theme) {
+///         ...
+///         blockquoteDecoration: BoxDecoration(
+///           color: Colors.blue.shade100,
+///           borderRadius: BorderRadius.circular(2.0),
+///         ),
+///
+///   new:
+///
+///     class MarkdownStyleSheet {
+///       ...
+///       factory MarkdownStyleSheet.fromTheme(ThemeData theme) {
+///         ...
+///         blockquoteDecoration: BoxDecoration(
+///           color: theme.brightness == Brightness.dark
+///               ? Colors.grey.shade800
+///               : Colors.blue.shade100,
+///           borderRadius: BorderRadius.circular(2.0),
+///         ),

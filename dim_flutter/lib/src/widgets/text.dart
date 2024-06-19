@@ -16,12 +16,13 @@ import '../ui/brightness.dart';
 import '../ui/icons.dart';
 import '../ui/nav.dart';
 import '../ui/styles.dart';
+import '../video/player.dart';
+import '../video/playing.dart';
 
 import 'alert.dart';
 import 'browse_html.dart';
 import 'browser.dart';
 import 'table.dart';
-import 'video_player.dart';
 
 
 class TextPreviewPage extends StatefulWidget {
@@ -183,23 +184,6 @@ class _RichTextState extends State<RichTextView> {
     ),
   );
 
-/// TODO: patch for block colors
-///
-///   file: '/Users/moky/.pub-cache/hosted/pub.flutter-io.cn/flutter_markdown-0.6.22+1/lib/src/style_sheet.dart'
-///   line: 144
-///
-///   old:
-///
-///      blockquoteDecoration: BoxDecoration(
-///        color: Colors.blue.shade100,
-///
-///   new:
-///
-///      blockquoteDecoration: BoxDecoration(
-///        color: theme.brightness == Brightness.dark
-///            ? Colors.grey.shade800
-///            : Colors.blue.shade100,
-
 }
 
 
@@ -303,13 +287,10 @@ abstract class _MarkdownUtils {
       } else if (type == _MimeType.video) {
         // show video
         Log.info('play video: "$title" $url, text: "$text"');
-        var pnf = PortableNetworkFile.createFromURL(url,
-          PlainKey.getInstance(),
-        );
         var pair = _parseTitleInfo(title);
-        pnf['title'] = pair.first;
-        pnf['snapshot'] = pair.second;
-        VideoPlayerPage.open(context, url, pnf, onShare: onVideoShare);
+        var playingItem = MediaItem.create(url, title: pair.first);
+        playingItem['snapshot'] = pair.second;
+        VideoPlayerPage.openVideoPlayer(context, playingItem, onShare: onVideoShare);
       } else {
         // open other link
         Browser.open(context, url: url.toString(), onShare: onWebShare,);

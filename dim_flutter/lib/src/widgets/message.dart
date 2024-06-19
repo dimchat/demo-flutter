@@ -11,12 +11,12 @@ import '../pnf/auto_image.dart';
 import '../pnf/net_video.dart';
 import '../pnf/net_voice.dart';
 import '../ui/styles.dart';
+import '../video/playing.dart';
 
 import 'browser.dart';
 import 'browse_html.dart';
 import 'name_card.dart';
 import 'text.dart';
-import 'video_player.dart';
 
 
 abstract class ContentViewUtils {

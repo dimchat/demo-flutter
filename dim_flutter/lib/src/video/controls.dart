@@ -1,6 +1,6 @@
 /* license: https://mit-license.org
  *
- *  PNF : Portable Network File
+ *  DIM-SDK : Decentralized Instant Messaging Software Development Kit
  *
  *                               Written in 2024 by Moky <albert.moky@gmail.com>
  *

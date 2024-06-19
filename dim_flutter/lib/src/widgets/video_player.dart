@@ -45,9 +45,9 @@ import '../screens/picker.dart';
 import '../ui/icons.dart';
 import '../ui/nav.dart';
 import '../ui/styles.dart';
+import '../video/controls.dart';
 
 import 'browse_html.dart';
-import 'video_controls.dart';
 
 
 typedef OnVideoShare = void Function(Uri url, {

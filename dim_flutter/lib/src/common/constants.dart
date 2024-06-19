@@ -77,4 +77,10 @@ abstract class NotificationNames {
   static const String       kPortableNetworkError =
       pnf.NotificationNames.kPortableNetworkError;
 
+  //
+  //  Live Player
+  //
+
+  static const String kVideoPlayerPlay = 'VideoPlayerPlay';
+
 }

@@ -59,9 +59,9 @@ class MediaItem extends Dictionary {
   }
 
   /// update values
-  void refresh(Map<String, dynamic> info) {
+  void refresh(Map info) {
     clear();
-    addAll(info);
+    info.forEach((key, value) => this[key] = value);
   }
 
   //

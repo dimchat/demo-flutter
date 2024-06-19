@@ -43,6 +43,7 @@ abstract class AppIcons {
   // Video
   static const IconData    playVideoIcon = CupertinoIcons.play;
   static const IconData      airPlayIcon = Icons.airplay;
+  static const IconData        livesIcon = Icons.live_tv;
   // Msg Status
   static const IconData   msgDefaultIcon = CupertinoIcons.ellipsis;
   static const IconData   msgWaitingIcon = CupertinoIcons.ellipsis;

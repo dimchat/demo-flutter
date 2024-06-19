@@ -76,9 +76,13 @@ class PlayerController {
   }
 
   Future<void> destroy() async {
+    await closeVideo();
+    SystemChrome.setPreferredOrientations(DeviceOrientation.values);
+  }
+
+  Future<void> closeVideo() async {
     await setVideoPlayerController(null);
     await setChewieController(null);
-    SystemChrome.setPreferredOrientations(DeviceOrientation.values);
   }
 
   /// Start playing URL

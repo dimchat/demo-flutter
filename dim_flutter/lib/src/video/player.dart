@@ -33,7 +33,10 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
 import 'package:lnc/log.dart';
+import 'package:lnc/notification.dart' as lnc;
+import 'package:stargate/startrek.dart' show Runner;
 
+import '../common/constants.dart';
 import '../screens/cast.dart';
 import '../screens/device.dart';
 import '../screens/picker.dart';
@@ -43,13 +46,15 @@ import '../ui/styles.dart';
 
 import 'controller.dart';
 import 'playing.dart';
+import 'tvbox.dart';
 
 
 /// Stateful widget to fetch and then display video content.
 class VideoPlayerPage extends StatefulWidget {
-  const VideoPlayerPage(this.playingItem, {this.onShare, super.key,});
+  const VideoPlayerPage(this.playingItem, this.tvBox, {this.onShare, super.key,});
 
   final MediaItem playingItem;
+  final TVBox? tvBox;
 
   Uri? get url => playingItem.url;
 
@@ -70,7 +75,14 @@ class VideoPlayerPage extends StatefulWidget {
     OnVideoShare? onShare,
   }) => showPage(
     context: context,
-    builder: (context) => VideoPlayerPage(playingItem, onShare: onShare,),
+    builder: (context) => VideoPlayerPage(playingItem, null, onShare: onShare,),
+  );
+
+  static void openLivePlayer(BuildContext context, Uri livesUrl, {
+    OnVideoShare? onShare,
+  }) => showPage(
+    context: context,
+    builder: (context) => VideoPlayerPage(MediaItem(null), TVBox(livesUrl), onShare: onShare,),
   );
 
   @override
@@ -79,17 +91,69 @@ class VideoPlayerPage extends StatefulWidget {
 }
 
 
-class _VideoAppState extends State<VideoPlayerPage> with Logging {
+class _VideoAppState extends State<VideoPlayerPage> with Logging implements lnc.Observer {
+  _VideoAppState() {
+    var nc = lnc.NotificationCenter();
+    nc.addObserver(this, NotificationNames.kVideoPlayerPlay);
+  }
 
   final PlayerController _playerController = PlayerController();
 
   String? _error;
+
+  @override
+  void dispose() {
+    var nc = lnc.NotificationCenter();
+    nc.removeObserver(this, NotificationNames.kVideoPlayerPlay);
+    _playerController.destroy();
+    super.dispose();
+  }
+
+  @override
+  Future<void> onReceiveNotification(lnc.Notification notification) async {
+    String name = notification.name;
+    Map? info = notification.userInfo;
+    if (name == NotificationNames.kVideoPlayerPlay) {
+      Uri? url = info?['url'];
+      String? title = info?['title'];
+      if (url == null || title == null) {
+        assert(false, 'video play info error: $info');
+      } else {
+        await _changeVideo(url, title);
+      }
+    }
+  }
+
+  Future<void> _changeVideo(Uri url, String title) async {
+    await _playerController.closeVideo();
+    _error = null;
+    widget.playingItem.refresh({
+      'url': url.toString(),
+      'URL': url.toString(),
+      'title': title,
+    });
+    widget.tvBox?.hidden = true;
+    if (mounted) {
+      setState(() {});
+    }
+    await Runner.sleep(milliseconds: 128);
+    openVideo(url);
+  }
 
   void openVideo(Uri url) {
     logInfo('[Video Player] remote url: $url');
     _playerController.openVideo(url).then((chewie) {
       // auto start playing
       setState(() {});
+    }).onError((error, stackTrace) {
+      setState(() => _error = '$error');
+    });
+  }
+
+  void loadLives(TVBox tvBox) {
+    tvBox.refresh().then((genres) {
+    // show channels button
+    setState(() {});
     }).onError((error, stackTrace) {
       setState(() => _error = '$error');
     });
@@ -103,15 +167,14 @@ class _VideoAppState extends State<VideoPlayerPage> with Logging {
     if (m3u8 != null) {
       openVideo(m3u8);
     }
+    // preparing tv box
+    var tvBox = widget.tvBox;
+    if (tvBox != null) {
+      loadLives(tvBox);
+    }
     // prepare screen manager
     var man = ScreenManager();
     man.addDiscoverer(CastScreenDiscoverer());
-  }
-
-  @override
-  void dispose() {
-    _playerController.destroy();
-    super.dispose();
   }
 
   @override
@@ -131,25 +194,76 @@ class _VideoAppState extends State<VideoPlayerPage> with Logging {
       ),
       trailing: _trailing(context),
     ),
-    child: Center(
-      child: _playerController.chewie ?? _loading(),
-    ),
+    child: _body(),
   );
+
+  Widget _body() {
+    // build main view
+    Widget? chewie = _playerController.chewie;
+    Widget? main = chewie ?? _loadingVideo() ?? _loadingLives();
+    if (main != null) {
+      main = Center(
+        child: main,
+      );
+    }
+    // build lives view
+    Widget? lives = widget.tvBox?.view;
+    if (lives != null) {
+      lives = Container(
+        alignment: Alignment.topRight,
+        // margin: const EdgeInsets.only(right: 16, bottom: 72),
+        child: lives,
+      );
+    }
+    // combine
+    if (main != null && lives != null) {
+      return Stack(
+        children: [
+          main,
+          lives,
+        ],
+      );
+    }
+    return main ?? lives ?? Container();
+  }
 
   Widget? _trailing(BuildContext context) {
     Widget? castBtn = _castButton(context);
     Widget? shareBtn = _shareButton();
-    if (castBtn == null) {
-      return shareBtn;
-    } else if (shareBtn == null) {
-      return castBtn;
-    }
+    Widget? livesBtn = _livesButton();
     return Row(
       mainAxisSize: MainAxisSize.min,
       children: [
-        castBtn,
-        shareBtn,
+        if (castBtn != null)
+          castBtn,
+        if (shareBtn != null)
+          shareBtn,
+        if (livesBtn != null)
+          livesBtn,
       ],
+    );
+  }
+
+  Widget? _livesButton() {
+    var tvbox = widget.tvBox;
+    if (tvbox == null) {
+      return null;
+    }
+    var channelGroups = tvbox.lives;
+    if (channelGroups == null || channelGroups.isEmpty) {
+      return null;
+    }
+    return IconButton(
+      icon: Icon(
+        AppIcons.livesIcon,
+        size: Styles.navigationBarIconSize,
+        color: widget.color,
+      ),
+      onPressed: () {
+        setState(() {
+          tvbox.hidden = !tvbox.hidden;
+        });
+      },
     );
   }
 
@@ -192,7 +306,7 @@ class _VideoAppState extends State<VideoPlayerPage> with Logging {
     );
   }
 
-  Widget _loading() {
+  Widget? _loadingLives() {
     Widget indicator;
     Widget message;
     TextStyle textStyle = TextStyle(
@@ -200,19 +314,71 @@ class _VideoAppState extends State<VideoPlayerPage> with Logging {
       fontSize: 14,
       decoration: TextDecoration.none,
     );
+    //
+    //  check TV box
+    //
+    var tvBox = widget.tvBox;
+    if (tvBox == null) {
+      logWarning('TV box not found: $tvBox');
+      return null;
+    }
+    var livesUrl = tvBox.livesUrl;
+    String urlString = livesUrl.toString();
+    var channelGroups = tvBox.lives;
+    if (channelGroups == null) {
+      // loading
+      indicator = CupertinoActivityIndicator(color: widget.color,);
+      message = Text('Loading "@url" ...'.trParams({
+        'url': urlString,
+      }), style: textStyle,);
+    } else if (channelGroups.isEmpty) {
+      // error
+      indicator = const Icon(AppIcons.decryptErrorIcon, color: CupertinoColors.systemRed,);
+      message = Text('Failed to load "@url".'.trParams({
+        'url': urlString,
+      }), style: textStyle,);
+    } else {
+      // success
+      return null;
+    }
+    return Column(
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: [
+        indicator,
+        Container(
+          padding: const EdgeInsets.fromLTRB(32, 16, 32, 16),
+          child: message,
+        ),
+      ],
+    );
+  }
+
+  Widget? _loadingVideo() {
+    Widget indicator;
+    Widget message;
+    TextStyle textStyle = TextStyle(
+      color: widget.color,
+      fontSize: 14,
+      decoration: TextDecoration.none,
+    );
+    //
+    //  check playing item
+    //
     var m3u8 = widget.url;
     if (m3u8 == null) {
       logWarning('playing URL not found: ${widget.playingItem}');
-      return Container();
+      return null;
     }
     String urlString = m3u8.toString();
     urlString = PlayerController.cutLiveUrlString(urlString) ?? urlString;
     if (_error == null) {
+      // loading
       indicator = CupertinoActivityIndicator(color: widget.color,);
       message = Text('Loading "@url" ...'.trParams({
         'url': urlString,
       }), style: textStyle,);
     } else {
+      // error
       indicator = const Icon(AppIcons.decryptErrorIcon, color: CupertinoColors.systemRed,);
       message = Text('Failed to load "@url".'.trParams({
         'url': urlString,

@@ -1,6 +1,7 @@
 library dim_flutter;
 
 export 'client/cpu/search.dart';
+export 'client/cpu/text.dart';
 export 'client/cpu/any.dart';
 export 'client/cpu/creator.dart';
 

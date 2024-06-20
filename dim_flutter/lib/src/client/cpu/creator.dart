@@ -2,12 +2,17 @@ import 'package:dim_client/dim_client.dart';
 
 import 'any.dart';
 import 'search.dart';
+import 'text.dart';
 
 class SharedContentProcessorCreator extends ClientContentProcessorCreator {
   SharedContentProcessorCreator(super.facebook, super.messenger);
 
   @override
   ContentProcessor? createContentProcessor(int msgType) {
+    // customizable text
+    if (msgType == ContentType.kText) {
+      return TextContentProcessor(facebook!, messenger!);
+    }
     // default
     if (msgType == 0) {
       return AnyContentProcessor(facebook!, messenger!);

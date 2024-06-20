@@ -214,17 +214,26 @@ class _VideoAppState extends State<VideoPlayerPage> with Logging implements lnc.
         // margin: const EdgeInsets.only(right: 16, bottom: 72),
         child: lives,
       );
-    }
-    // combine
-    if (main != null && lives != null) {
-      return Stack(
-        children: [
-          main,
-          lives,
-        ],
+      lives = AnimatedOpacity(
+        opacity: widget.tvBox?.hidden != false ? 0.0 : 1.0,
+        duration: const Duration(milliseconds: 512),
+        child: lives,
+      );
+      lives = AnimatedSlide(
+        offset: widget.tvBox?.hidden != false ? const Offset(1, 0) : Offset.zero,
+        duration: const Duration(milliseconds: 512),
+        child: lives,
       );
     }
-    return main ?? lives ?? Container();
+    // combine
+    return Stack(
+      children: [
+        if (main != null)
+          main,
+        if (lives != null)
+          lives,
+      ],
+    );
   }
 
   Widget? _trailing(BuildContext context) {
@@ -257,7 +266,7 @@ class _VideoAppState extends State<VideoPlayerPage> with Logging implements lnc.
       icon: Icon(
         AppIcons.livesIcon,
         size: Styles.navigationBarIconSize,
-        color: widget.color,
+        color: tvbox.hidden ? widget.color : Colors.blue,
       ),
       onPressed: () {
         setState(() {
@@ -293,6 +302,15 @@ class _VideoAppState extends State<VideoPlayerPage> with Logging implements lnc.
   Widget? _shareButton() {
     OnVideoShare? onShare = widget.onShare;
     if (onShare == null) {
+      return null;
+    }
+    var chewie = _playerController.chewieController;
+    if (chewie == null) {
+      return null;
+    }
+    var m3u8 = widget.url;
+    if (m3u8 == null) {
+      logError('playing URL not exists: ${widget.playingItem}');
       return null;
     }
     return IconButton(

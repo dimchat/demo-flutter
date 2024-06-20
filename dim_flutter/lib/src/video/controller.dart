@@ -103,7 +103,6 @@ class PlayerController {
     //  1. create video player controller with network URL
     //
     var videoPlayerController = VideoPlayerController.networkUrl(url);
-    await setVideoPlayerController(videoPlayerController);
     //
     //  2. create chewie controller
     //
@@ -118,12 +117,14 @@ class PlayerController {
       // fullScreenByDefault: true,
       deviceOrientationsAfterFullScreen: _deviceOrientations(),
     );
-    await setChewieController(chewieController);
     //
     //  3. load & play
     //
     await videoPlayerController.initialize();
     await chewieController.play();
+    // OK
+    await setVideoPlayerController(videoPlayerController);
+    await setChewieController(chewieController);
     return chewieController;
   }
 

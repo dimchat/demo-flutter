@@ -34,24 +34,42 @@ import 'package:flutter/material.dart';
 
 import 'package:dim_client/dim_common.dart';
 import 'package:lnc/log.dart';
-import 'package:lnc/notification.dart' as lnc;
 import 'package:pnf/http.dart';
 import 'package:tvbox/lives.dart';
 
-import '../common/constants.dart';
-import '../widgets/table.dart';
+import 'lives.dart';
 
 
 class ChannelSource {
-  ChannelSource(this.name, this.url);
+  ChannelSource(this.name, this.url, this.sourceIndex);
+
   final String name;
   final Uri url;
+  final int sourceIndex;
+
+  @override
+  bool operator ==(Object other) {
+    if (other is ChannelSource) {
+      if (identical(this, other)) {
+        // same object
+        return true;
+      }
+      return url == other.url;
+    }
+    return false;
+  }
+
+  @override
+  int get hashCode => url.hashCode;
+
 }
 
 class ChannelGroup {
   ChannelGroup(this.title, this.sources);
+
   final String title;
   final List<ChannelSource> sources;
+
 }
 
 
@@ -60,21 +78,13 @@ class TVBox with Logging {
 
   final Uri livesUrl;
 
+  ChannelSource? playingItem;
+
   List<ChannelGroup>? lives;
 
   bool hidden = false;
-  Widget? _view;
 
-  Widget? get view {
-    if (hidden) {
-      return null;
-    }
-    Widget? v = _view;
-    if (v == null) {
-      _view = v = _livesView(lives);
-    }
-    return v;
-  }
+  Widget? get view => LiveChannelListPage(this);
 
   Future<List<ChannelGroup>> refresh() async {
     var helper = _LiveHelper();
@@ -83,7 +93,6 @@ class TVBox with Logging {
     //
     var old = lives ?? [];
     lives = null;
-    _view = null;
     //
     //  1. get from lives URL
     //
@@ -115,11 +124,7 @@ class TVBox with Logging {
           } else {
             index += 1;
           }
-          if (index > 1) {
-            sources.add(ChannelSource('$name ($index)', m3u8));
-          } else {
-            sources.add(ChannelSource(name, m3u8));
-          }
+          sources.add(ChannelSource(name, m3u8, index));
         }
       }
       sections.add(ChannelGroup(grp.title, sources));
@@ -173,88 +178,4 @@ class _LiveHelper with Logging {
     return text;
   }
 
-}
-
-Widget? _livesView(List<ChannelGroup>? groups) {
-  if (groups == null) {
-    return null;
-  }
-  var secs = const TextStyle(
-    color: Colors.yellow,
-    fontSize: 24,
-    decoration: TextDecoration.none,
-  );
-  var opts = const TextStyle(
-    color: Colors.white,
-    fontSize: 16,
-    decoration: TextDecoration.none,
-  );
-
-  List<Widget> children = [];
-  for (var grp in groups) {
-    children.add(Text(grp.title, style: secs,));
-    var sources = grp.sources;
-    for (var src in sources) {
-      children.add(_livesButton(src, style: opts));
-    }
-  }
-  Widget view = Column(
-    crossAxisAlignment: CrossAxisAlignment.start,
-    children: children,
-  );
-  view = Container(
-    padding: const EdgeInsets.fromLTRB(16, 8, 16, 8),
-    child: view,
-  );
-  view = buildScrollView(
-    child: view,
-  );
-  view = Container(
-    color: Colors.grey.withAlpha(0x77),
-    child: view,
-  );
-  return view;
-}
-
-Widget _livesButton(ChannelSource src, {required TextStyle style,}) {
-  Uri url = _getLiveUrl(src);
-  String title = _getLiveTitle(src);
-  Widget view = Text(src.name, style: style,);
-  return TextButton(
-    onPressed: () => _postPlay(url, title),
-    child: view,
-  );
-}
-
-void _postPlay(Uri url, String title) {
-  var nc = lnc.NotificationCenter();
-  nc.postNotification(NotificationNames.kVideoPlayerPlay, null, {
-    'url': url,
-    'title': title,
-  });
-}
-
-Uri _getLiveUrl(ChannelSource src) {
-  Uri url = src.url;
-  String urlString = url.toString();
-  if (urlString.endsWith(r'#live') || urlString.contains(r'#live/')) {
-    return url;
-  } else if (urlString.contains(r'm3u8')) {
-    urlString += '#live/stream.m3u8';
-  } else {
-    urlString += '#live';
-  }
-  try {
-    return Uri.parse(urlString);
-  } catch (e) {
-    return url;
-  }
-}
-
-String _getLiveTitle(ChannelSource src) {
-  String name = src.name;
-  if (name.toUpperCase().endsWith(' - LIVE')) {
-    return name;
-  }
-  return '$name - LIVE';
 }

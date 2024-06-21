@@ -190,6 +190,7 @@ class _RichTextState extends State<RichTextView> {
 enum _MimeType {
   image,
   video,
+  lives,  // 'lives.txt'
   other,
 }
 final List<String> _imageTypes = [
@@ -224,7 +225,18 @@ _MimeType? _checkFileType(String urlString) {
   return null;
 }
 Future<_MimeType> _checkUrlType(Uri url) async {
-  _MimeType? type = _checkFileType(url.path);
+  _MimeType? type;
+  // check for live stream
+  if (url.hasFragment) {
+    String text = url.toString();
+    if (text.endsWith(r'#lives.txt')) {
+      type = _MimeType.lives;
+    // } else if (text.endsWith(r'#live') || text.contains(r'#live/')) {
+    //   // video
+    }
+  }
+  // check file type
+  type ??= _checkFileType(url.path);
   if (type == null && (url.hasQuery || url.hasFragment)) {
     type ??= _checkFileType(url.toString());
   }
@@ -291,7 +303,11 @@ abstract class _MarkdownUtils {
         var playingItem = MediaItem.create(url, title: pair.first);
         playingItem['snapshot'] = pair.second;
         VideoPlayerPage.openVideoPlayer(context, playingItem, onShare: onVideoShare);
+      } else if (type == _MimeType.lives) {
+        Log.info('open video player for live streams: "$title" $url, text: "$text"');
+        VideoPlayerPage.openLivePlayer(context, url, onShare: onVideoShare);
       } else {
+        Log.info('open link with type: $type, "$title" $url, text: "$text"');
         // open other link
         Browser.open(context, url: url.toString(), onShare: onWebShare,);
       }

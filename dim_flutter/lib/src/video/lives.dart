@@ -29,69 +29,43 @@
  * =============================================================================
  */
 import 'package:flutter/material.dart';
+import 'package:flutter_section_list/flutter_section_list.dart';
 
 import 'package:lnc/notification.dart' as lnc;
 
 import '../common/constants.dart';
+import '../ui/styles.dart';
 import '../widgets/table.dart';
 
 import 'tvbox.dart';
 
 
-///
-/// Text Styles
-///
-const TextStyle channelGroupStyle = TextStyle(
-  color: Colors.yellow,
-  fontSize: 24,
-  decoration: TextDecoration.none,
-);
-const TextStyle channelSourceStyle = TextStyle(
-  color: Colors.white,
-  fontSize: 16,
-  decoration: TextDecoration.none,
-);
-const TextStyle playingSourceStyle = TextStyle(
-  color: Colors.blue,
-  fontSize: 16,
-  decoration: TextDecoration.none,
-);
-
-
-class LiveChannelListPage extends StatelessWidget {
+class LiveChannelListPage extends StatefulWidget {
   const LiveChannelListPage(this.tvBox, {super.key});
 
   final TVBox tvBox;
 
   @override
+  State<LiveChannelListPage> createState() => _LiveChannelListState();
+}
+
+class _LiveChannelListState extends State<LiveChannelListPage> {
+  _LiveChannelListState() {
+    _adapter = _LiveChannelAdapter(this);
+  }
+
+  late final _LiveChannelAdapter _adapter;
+
+  TVBox get tvBox => widget.tvBox;
+
+  @override
   Widget build(BuildContext context) {
-    List<ChannelGroup>? groups = tvBox.lives;
-    if (groups == null || groups.isEmpty) {
-      // empty
-      return Container();
-    }
-    List<Widget> children = [];
-    for (var grp in groups) {
-      // channel group
-      children.add(Text(grp.title, style: channelGroupStyle,));
-      var sources = grp.sources;
-      for (var src in sources) {
-        // channel source
-        children.add(_LiveChannelButton(src, tvBox));
-      }
-    }
-    Widget view = Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: children,
+    Widget view = buildSectionListView(
+      enableScrollbar: true,
+      adapter: _adapter,
     );
     view = Container(
-      padding: const EdgeInsets.fromLTRB(16, 8, 16, 8),
-      child: view,
-    );
-    view = buildScrollView(
-      child: view,
-    );
-    view = Container(
+      width: 220,
       color: Colors.black.withAlpha(0x77),
       child: view,
     );
@@ -100,68 +74,89 @@ class LiveChannelListPage extends StatelessWidget {
 
 }
 
-class _LiveChannelButton extends StatefulWidget {
-  const _LiveChannelButton(this.source, this.tvBox);
 
-  final ChannelSource source;
-  final TVBox tvBox;
+//
+//  Section Adapter
+//
 
-  @override
-  State<StatefulWidget> createState() => _LiveChannelState();
+class _LiveChannelAdapter with SectionAdapterMixin {
+  _LiveChannelAdapter(this.state);
 
-}
-
-class _LiveChannelState extends State<_LiveChannelButton> implements lnc.Observer {
-  _LiveChannelState() {
-    var nc = lnc.NotificationCenter();
-    nc.addObserver(this, NotificationNames.kVideoPlayerPlay);
-  }
+  final _LiveChannelListState state;
 
   @override
-  void dispose() {
-    var nc = lnc.NotificationCenter();
-    nc.removeObserver(this, NotificationNames.kVideoPlayerPlay);
-    super.dispose();
-  }
+  bool shouldExistSectionHeader(int section) => true;
 
   @override
-  Future<void> onReceiveNotification(lnc.Notification notification) async {
-    String name = notification.name;
-    if (name == NotificationNames.kConversationUpdated) {
-      if (mounted) {
-        setState(() {});
-      }
-    }
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    var src = widget.source;
-    var tvBox = widget.tvBox;
-    Uri url = _getLiveUrl(src);
-    String title = _getLiveTitle(src);
-    String name = src.name;
-    int index = src.sourceIndex;
-    if (index > 1) {
-      name += ' ($index)';
-    }
-    bool isPlaying = src == tvBox.playingItem;
-    Widget view = Text(name, style: isPlaying ? playingSourceStyle : channelSourceStyle,);
-    return TextButton(
-      onPressed: isPlaying ? null : () {
-        var nc = lnc.NotificationCenter();
-        nc.postNotification(NotificationNames.kVideoPlayerPlay, null, {
-          'url': url,
-          'title': title,
-        });
-        tvBox.playingItem = src;
-      },
+  Widget getSectionHeader(BuildContext context, int section) {
+    var group = getGroup(section);
+    Widget view = Text(group.title,
+      style: Styles.liveGroupStyle,
+      softWrap: false,
+      overflow: TextOverflow.fade,
+      maxLines: 1,
+    );
+    return Center(
       child: view,
     );
   }
 
+  @override
+  int numberOfSections() => getGroupCount();
+
+  @override
+  int numberOfItems(int section) => getSourceCount(section);
+
+  @override
+  Widget getItem(BuildContext context, IndexPath indexPath) {
+    ChannelSource src = getSource(indexPath.section, indexPath.item);
+    Widget view = _getChannelButton(src, state.tvBox);
+    view = Container(
+      alignment: Alignment.centerLeft,
+      child: view,
+    );
+    return view;
+  }
+
+  //
+  //  Data Source
+  //
+  List<ChannelGroup> get groups => state.widget.tvBox.lives ?? [];
+  int getGroupCount() => groups.length;
+  ChannelGroup getGroup(int sec) => groups[sec];
+  int getSourceCount(int sec) => groups[sec].sources.length;
+  ChannelSource getSource(int sec, int idx) => groups[sec].sources[idx];
+
 }
 
+Widget _getChannelButton(ChannelSource src, TVBox tvBox) {
+  Uri url = _getLiveUrl(src);
+  String title = _getLiveTitle(src);
+  String name = src.name;
+  int index = src.sourceIndex;
+  if (index > 1) {
+    name += ' ($index)';
+  }
+  bool isPlaying = src == tvBox.playingItem;
+  Widget view = Text(name,
+    style: isPlaying ? Styles.livePlayingStyle : Styles.liveChannelStyle,
+    softWrap: false,
+    overflow: TextOverflow.fade,
+    maxLines: 1,
+  );
+  view = TextButton(
+    onPressed: isPlaying ? null : () {
+      var nc = lnc.NotificationCenter();
+      nc.postNotification(NotificationNames.kVideoPlayerPlay, null, {
+        'url': url,
+        'title': title,
+      });
+      tvBox.playingItem = src;
+    },
+    child: view,
+  );
+  return view;
+}
 
 Uri _getLiveUrl(ChannelSource src) {
   Uri url = src.url;

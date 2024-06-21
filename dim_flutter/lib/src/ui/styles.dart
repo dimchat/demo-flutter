@@ -1,4 +1,3 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
 import 'colors.dart';
@@ -131,5 +130,26 @@ abstract class Styles {
   static const EdgeInsets pageMessagePadding = EdgeInsets.fromLTRB(12, 8, 8, 8);
 
   static const EdgeInsets commandPadding = EdgeInsets.fromLTRB(8, 4, 8, 4);
+
+  //
+  //  Live Stream
+  //
+  static const TextStyle liveGroupStyle = TextStyle(
+    color: Colors.yellow,
+    fontSize: 24,
+    decoration: TextDecoration.none,
+  );
+
+  static const TextStyle liveChannelStyle = TextStyle(
+    color: Colors.white,
+    fontSize: 16,
+    decoration: TextDecoration.none,
+  );
+
+  static const TextStyle livePlayingStyle = TextStyle(
+    color: Colors.blue,
+    fontSize: 16,
+    decoration: TextDecoration.none,
+  );
 
 }

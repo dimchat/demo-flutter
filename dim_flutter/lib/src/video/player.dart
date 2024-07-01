@@ -34,6 +34,7 @@ import 'package:get/get.dart';
 
 import 'package:lnc/log.dart';
 import 'package:lnc/notification.dart' as lnc;
+import 'package:pnf/dos.dart';
 import 'package:stargate/startrek.dart' show Runner;
 
 import '../common/constants.dart';
@@ -82,7 +83,10 @@ class VideoPlayerPage extends StatefulWidget {
     OnVideoShare? onShare,
   }) => showPage(
     context: context,
-    builder: (context) => VideoPlayerPage(MediaItem(null), TVBox(livesUrl), onShare: onShare,),
+    builder: (context) => VideoPlayerPage(MediaItem(null),
+      TVBox(livesUrl, {'url': livesUrl.toString()},),
+      onShare: onShare,
+    ),
   );
 
   @override
@@ -126,11 +130,13 @@ class _VideoAppState extends State<VideoPlayerPage> with Logging implements lnc.
 
   Future<void> _changeVideo(Uri url, String title) async {
     await _playerController.closeVideo();
+    var filename = Paths.filename(url.path);
     _error = null;
     widget.playingItem.refresh({
       'url': url.toString(),
       'URL': url.toString(),
       'title': title,
+      'filename': filename,
     });
     widget.tvBox?.hidden = true;
     if (mounted) {

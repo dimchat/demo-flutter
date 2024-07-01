@@ -23,11 +23,13 @@ abstract class Styles {
   static TextStyle get sectionHeaderTextStyle => TextStyle(
     fontSize: 12,
     color: colors.sectionHeaderTextColor,
+    decoration: TextDecoration.none,
   );
 
   static TextStyle get sectionFooterTextStyle => TextStyle(
     fontSize: 12,
     color: colors.sectionHeaderTextColor,
+    decoration: TextDecoration.none,
   );
 
   static TextStyle get sectionItemTitleTextStyle => TextStyle(

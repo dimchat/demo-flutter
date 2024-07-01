@@ -208,6 +208,10 @@ class Amanuensis with Logging {
       return;
     }
     Content content = iMsg.content;
+    if (content.getBool('hidden', false) == true) {
+      logDebug('ignore hidden message: $sender -> $cid: $content');
+      return;
+    }
     DefaultMessageBuilder mb = DefaultMessageBuilder();
     if (mb.isCommand(content, sender)) {
       logDebug('ignore command for conversation updating');
@@ -215,6 +219,8 @@ class Amanuensis with Logging {
     }
     GlobalVariable shared = GlobalVariable();
     CommonFacebook facebook = shared.facebook;
+    User? current = await facebook.currentUser;
+    assert(current != null, 'failed to get current user');
     // get last message
     String last = mb.getText(content, sender);
     if (last.isEmpty) {
@@ -226,15 +232,13 @@ class Amanuensis with Logging {
         last = '${last.substring(0, 197)}...';
       }
       // show 'sender' in group chat
-      if (cid.isGroup) {
+      if (cid.isGroup && sender != current?.identifier) {
         String name = await facebook.getName(sender);
         last = '$name: $last';
       }
     }
     DateTime? time = iMsg.time;
     logWarning('update last message: $last for conversation: $cid');
-    User? current = await facebook.currentUser;
-    assert(current != null, 'failed to get current user');
     // increase unread counter
     int increase;
     if (current?.identifier == sender) {

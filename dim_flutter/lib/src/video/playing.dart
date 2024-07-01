@@ -29,6 +29,7 @@
  * =============================================================================
  */
 import 'package:dim_client/dim_common.dart';
+import 'package:pnf/dos.dart';
 import 'package:tvbox/lives.dart';
 
 
@@ -76,7 +77,7 @@ class MediaItem extends Dictionary {
     'URL': m3u8.toString(),
     'url': m3u8.toString(),
     'title': title,
-    'filename': filename,
+    'filename': filename ?? Paths.filename(m3u8.path),
     'cover': cover?.toString(),
     'snapshot': cover?.toString(),
   });

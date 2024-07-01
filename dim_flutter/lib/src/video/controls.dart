@@ -263,7 +263,8 @@ class _CustomControlsState extends State<CustomControls>
   AnimatedOpacity _buildBottomBar(
       BuildContext context,
       ) {
-    final iconColor = Theme.of(context).textTheme.labelLarge!.color;
+    // final iconColor = Theme.of(context).textTheme.labelLarge!.color;
+    var iconColor = Colors.white;
 
     return AnimatedOpacity(
       opacity: notifier.hideStuff ? 0.0 : 1.0,
@@ -286,21 +287,21 @@ class _CustomControlsState extends State<CustomControls>
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: <Widget>[
                     if (chewieController.isLive)
-                      const Expanded(child: Text('LIVE',
+                      Expanded(child: Text('LIVE',
                         style: TextStyle(
-                          // color: iconColor,
+                          color: iconColor,
                           decoration: TextDecoration.none,
                         ),
                       ))
                     else
                       _buildPosition(iconColor),
                     if (chewieController.allowMuting)
-                      _buildMuteButton(controller),
+                      _buildMuteButton(controller, iconColor),
                     const Spacer(),
                     if (!chewieController.isLive)
-                      _buildSpeedButton(controller, Colors.white, barHeight),
+                      _buildSpeedButton(controller, iconColor, barHeight),
                     if (chewieController.allowFullScreen)
-                      _buildExpandButton(),
+                      _buildExpandButton(iconColor),
                   ],
                 ),
               ),
@@ -327,6 +328,7 @@ class _CustomControlsState extends State<CustomControls>
 
   GestureDetector _buildMuteButton(
       VideoPlayerController controller,
+      Color? iconColor,
       ) {
     return GestureDetector(
       onTap: () {
@@ -350,7 +352,7 @@ class _CustomControlsState extends State<CustomControls>
             ),
             child: Icon(
               _latestValue.volume > 0 ? Icons.volume_up : Icons.volume_off,
-              color: Colors.white,
+              color: iconColor,
             ),
           ),
         ),
@@ -360,7 +362,7 @@ class _CustomControlsState extends State<CustomControls>
 
   GestureDetector _buildSpeedButton(
       VideoPlayerController controller,
-      Color iconColor,
+      Color? iconColor,
       double barHeight,
       ) {
     var metronome = _PlayerMetronome();
@@ -388,7 +390,7 @@ class _CustomControlsState extends State<CustomControls>
     );
   }
 
-  GestureDetector _buildExpandButton() {
+  GestureDetector _buildExpandButton(Color? iconColor) {
     return GestureDetector(
       onTap: _onExpandCollapse,
       child: AnimatedOpacity(
@@ -406,7 +408,7 @@ class _CustomControlsState extends State<CustomControls>
               chewieController.isFullScreen
                   ? Icons.fullscreen_exit
                   : Icons.fullscreen,
-              color: Colors.white,
+              color: iconColor,
             ),
           ),
         ),
@@ -459,14 +461,14 @@ class _CustomControlsState extends State<CustomControls>
             text: '/ ${formatDuration(duration)}',
             style: TextStyle(
               fontSize: 14.0,
-              color: Colors.white.withOpacity(.75),
+              color: iconColor?.withOpacity(.75),
               fontWeight: FontWeight.normal,
             ),
           )
         ],
-        style: const TextStyle(
+        style: TextStyle(
           fontSize: 14.0,
-          color: Colors.white,
+          color: iconColor,
           fontWeight: FontWeight.bold,
         ),
       ),

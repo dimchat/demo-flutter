@@ -3,6 +3,7 @@ import 'dart:typed_data';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_markdown/flutter_markdown.dart';
+import 'package:pnf/dos.dart';
 import 'package:syntax_highlight/syntax_highlight.dart';
 import 'package:markdown/markdown.dart' as md;
 
@@ -299,8 +300,9 @@ abstract class _MarkdownUtils {
       } else if (type == _MimeType.video) {
         // show video
         Log.info('play video: "$title" $url, text: "$text"');
+        var filename = Paths.filename(url.path);
         var pair = _parseTitleInfo(title);
-        var playingItem = MediaItem.create(url, title: pair.first);
+        var playingItem = MediaItem.create(url, title: pair.first, filename: filename);
         playingItem['snapshot'] = pair.second;
         VideoPlayerPage.openVideoPlayer(context, playingItem, onShare: onVideoShare);
       } else if (type == _MimeType.lives) {

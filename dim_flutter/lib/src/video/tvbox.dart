@@ -73,8 +73,8 @@ class ChannelGroup {
 }
 
 
-class TVBox with Logging {
-  TVBox(this.livesUrl);
+class TVBox extends Dictionary with Logging {
+  TVBox(this.livesUrl, super.dict);
 
   final Uri livesUrl;
 

@@ -41,11 +41,17 @@ import 'lives.dart';
 
 
 class ChannelSource {
-  ChannelSource(this.name, this.url, this.sourceIndex);
+  ChannelSource({
+    required this.name,
+    required this.url,
+    required this.label,
+    required this.index,
+  });
 
-  final String name;
-  final Uri url;
-  final int sourceIndex;
+  final String name;    // channel name
+  final Uri url;        // stream URL
+  final String? label;  // stream label
+  final int index;      // stream index
 
   @override
   bool operator ==(Object other) {
@@ -113,7 +119,6 @@ class TVBox extends Dictionary with Logging {
       List<ChannelSource> sources = [];
       var channels = grp.channels;
       for (var item in channels) {
-        var name = item.name;
         var streams = item.streams;
         int index = 0;
         for (var src in streams) {
@@ -124,7 +129,12 @@ class TVBox extends Dictionary with Logging {
           } else {
             index += 1;
           }
-          sources.add(ChannelSource(name, m3u8, index));
+          sources.add(ChannelSource(
+            name: item.name,
+            url: m3u8,
+            label: src.label,
+            index: index,
+          ));
         }
       }
       sections.add(ChannelGroup(grp.title, sources));

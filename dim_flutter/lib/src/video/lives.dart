@@ -65,7 +65,7 @@ class _LiveChannelListState extends State<LiveChannelListPage> {
       adapter: _adapter,
     );
     view = Container(
-      width: 220,
+      width: 256,
       color: Colors.black.withAlpha(0x77),
       child: view,
     );
@@ -133,8 +133,11 @@ Widget _getChannelButton(ChannelSource src, TVBox tvBox) {
   Uri url = _getLiveUrl(src);
   String title = _getLiveTitle(src);
   String name = src.name;
-  int index = src.sourceIndex;
-  if (index > 1) {
+  String? label = src.label;
+  int index = src.index;
+  if (label != null && label.isNotEmpty) {
+    name += ' - $label';
+  } else if (index > 1) {
     name += ' ($index)';
   }
   bool isPlaying = src == tvBox.playingItem;

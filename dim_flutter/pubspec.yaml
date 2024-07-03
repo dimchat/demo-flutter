@@ -74,7 +74,7 @@ dependencies:
   dim_client: 0.5.1
 
   pnf: 0.1.3
-  tvbox: 0.1.0
+  tvbox: 0.1.1
 
 dev_dependencies:
   flutter_test:

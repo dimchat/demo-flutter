@@ -35,6 +35,7 @@ import 'package:dim_client/dim_client.dart';
 import 'package:lnc/log.dart';
 
 import '../../common/platform.dart';
+import '../../filesys/local.dart';
 
 
 ///
@@ -59,18 +60,7 @@ class DatabaseConnector {
 
   DBConnection? _connection;
 
-  Future<String?> get path async {
-    String? dir = directory;
-    if (dir == null) {
-      DevicePlatform.patchSQLite();
-      dir = await getDatabasesPath();
-      Log.debug('internal database: $name in $dir');
-      return Paths.append(dir, name);
-    } else if (DevicePlatform.isWeb) {
-      return dir;
-    }
-    throw Exception('external database: $name in $dir');
-  }
+  Future<String?> get path async => await DBPath.getDatabasePath(this);
 
   Future<Database> _open(String path) async =>
       await openDatabase(path, version: version,
@@ -120,44 +110,58 @@ class DatabaseConnector {
 
   static void addColumn(Database db, String table,
       {required String name, required String type}) {
-    String sql = SQLBuilder2.buildAddColumn(table, name: name, type: type);
+    String sql = SQLBuilder.buildAddColumn(table, name: name, type: type);
     DBLogger.output('alterTable: $sql');
     db.execute(sql);
   }
 
 }
 
-class SQLBuilder2 {
-  SQLBuilder2(String command) : _sb = StringBuffer(command);
 
-  final StringBuffer _sb;
+abstract class DBPath {
 
-  static const String alter = "ALTER";
-
-  @override
-  String toString() => _sb.toString();
-
-  void _append(String sub) {
-    _sb.write(sub);
-  }
-
-  ///
-  ///  ALTER TABLE table ADD COLUMN IF NOT EXISTS name type;
-  ///
-  static String buildAddColumn(String table,
-      {required String name, required String type}) {
-    SQLBuilder2 builder = SQLBuilder2(alter);
-    builder._append(' TABLE ');
-    builder._append(table);
-    // builder._append(' ADD COLUMN IF NOT EXISTS ');
-    builder._append(' ADD COLUMN ');
-    builder._append(name);
-    builder._append(' ');
-    builder._append(type);
-    return builder.toString();
+  /// Android:
+  ///       '/data/user/0/chat.dim.tarsier/databases/*.db'
+  ///       '/sdcard/Android/data/chat.dim.tarsier/files/.dkd/msg.db'
+  /// iOS:
+  ///       '/var/mobile/Containers/Data/Application/{XXX}/Documents/*.db'
+  ///       '/var/mobile/Containers/Data/Application/{XXX}/Library/Caches/.dkd/msg.db'
+  /// Windows:
+  ///       'C:\Users\moky\AppData\Roaming\chat.dim.tarsier\databases\*.db'
+  ///       'C:\Users\moky\AppData\Roaming\chat.dim.tarsier\databases\.dkd\msg.db'
+  static Future<String?> getDatabasePath(DatabaseConnector connector) async {
+    String name = connector.name;
+    String? sub = connector.directory;
+    String root = await LocalStorage().cachesDirectory;
+    // check platform
+    if (DevicePlatform.isMobile) {
+      // iOS or Android
+      if (sub == null) {
+        DevicePlatform.patchSQLite();
+        String root = await getDatabasesPath();
+        Log.info('internal database: $name in $root');
+        return Paths.append(root, name);
+      }
+      root = Paths.append(root, sub);
+      Log.info('external database: $name in $root');
+    } else {
+      // Windows, Linux, Web, ...
+      root = Paths.append(root, 'databases');
+      if (sub != null) {
+        root = Paths.append(root, sub);
+      }
+      Log.info('common database: $name in $root');
+    }
+    // make sure parent directory exists
+    if (await Paths.mkdirs(root)) {} else {
+      Log.error('failed to create directory: $root');
+      return null;
+    }
+    return Paths.append(root, name);
   }
 
 }
+
 
 abstract class DBLogger {
 

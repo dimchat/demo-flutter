@@ -1,10 +1,7 @@
 import 'package:lnc/log.dart';
 import 'package:lnc/notification.dart';
-import 'package:pnf/dos.dart';
 
 import '../common/constants.dart';
-import '../common/platform.dart';
-import '../filesys/local.dart';
 import 'helper/sqlite.dart';
 
 
@@ -35,25 +32,6 @@ class LoginDatabase extends DatabaseConnector {
   static const int dbVersion = 1;
 
   static const String tLogin         = 't_login';
-
-  /// returns: '{caches}/.dim/login.db'
-  @override
-  Future<String?> get path async {
-    if (DevicePlatform.isWeb) {
-      return await super.path;
-    }
-    String root = await LocalStorage().cachesDirectory;
-    String dir = Paths.append(root, directory);
-    if (await Paths.mkdirs(dir)) {
-      // make sure parent directory exists
-      Log.debug('created: $dir');
-    } else {
-      Log.error('failed to create directory: $dir');
-      return null;
-    }
-    Log.debug('external database: $name in $dir');
-    return Paths.append(dir, name);
-  }
 
 }
 

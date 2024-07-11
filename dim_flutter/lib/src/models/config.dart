@@ -116,13 +116,43 @@ class Config {
   /// Default contacts
   Future<List<ID>> get contacts async {
     List? array = (await info)?['contacts'];
-    return array == null ? [] : ID.convert(array);
+    if (array == null || array.isEmpty) {
+      return [];
+    }
+    List<ID> users = [];
+    ID? uid;
+    for (var item in array) {
+      if (item is Map) {
+        uid = ID.parse(item['ID']);
+      } else {
+        uid = ID.parse(item);
+      }
+      if (uid != null) {
+        users.add(uid);
+      }
+    }
+    return users;
   }
 
   /// Common assistants for group
   Future<List<ID>?> get assistants async {
-    var bots = (await info)?['assistants'];
-    return bots == null ? null : ID.convert(bots);
+    List? array = (await info)?['assistants'];
+    if (array == null || array.isEmpty) {
+      return [];
+    }
+    List<ID> bots = [];
+    ID? uid;
+    for (var item in array) {
+      if (item is Map) {
+        uid = ID.parse(item['ID']);
+      } else {
+        uid = ID.parse(item);
+      }
+      if (uid != null) {
+        bots.add(uid);
+      }
+    }
+    return bots;
   }
 
   /// Service Bots

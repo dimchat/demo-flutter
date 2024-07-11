@@ -175,6 +175,17 @@ class Emitter with Logging implements Observer {
     await sendContent(content, receiver);
   }
   bool _checkMarkdown(String text) {
+    if (text.contains('://')) {
+      return true;
+    } else if (text.contains('\n> ')) {
+      return true;
+    } else if (text.contains('\n# ')) {
+      return true;
+    } else if (text.contains('\n## ')) {
+      return true;
+    } else if (text.contains('\n### ')) {
+      return true;
+    }
     int pos = text.indexOf('```');
     if (pos >= 0) {
       pos += 3;

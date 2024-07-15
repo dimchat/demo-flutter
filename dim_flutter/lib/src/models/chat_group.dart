@@ -13,6 +13,7 @@ import '../common/constants.dart';
 import '../network/group_image.dart';
 import '../ui/nav.dart';
 import '../widgets/alert.dart';
+import '../widgets/title.dart';
 
 import 'amanuensis.dart';
 import 'chat.dart';
@@ -130,8 +131,11 @@ class GroupInfo extends Conversation with Logging {
     String alias = cr.alias;
     if (alias.isEmpty) {
       return text.isEmpty ? Anonymous.getName(identifier) : text;
-    } else if (text.length > 15) {
-      text = '${text.substring(0, 12)}...';
+    }
+    // trim title
+    if (VisualTextUtils.getTextWidth(text) > 25) {
+      text = VisualTextUtils.getSubText(text, 22);
+      text = '$text...';
     }
     return '$text ($alias)';
   }

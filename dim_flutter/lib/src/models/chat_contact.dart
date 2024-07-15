@@ -12,6 +12,7 @@ import '../client/shared.dart';
 import '../pnf/auto_avatar.dart';
 import '../ui/language.dart';
 import '../widgets/alert.dart';
+import '../widgets/title.dart';
 
 import 'amanuensis.dart';
 import 'chat.dart';
@@ -86,8 +87,10 @@ class ContactInfo extends Conversation {
         return nickname.isEmpty ? Anonymous.getName(identifier) : nickname;
       }
     }
-    if (nickname.length > 15) {
-      nickname = '${nickname.substring(0, 12)}...';
+    // trim nickname
+    if (VisualTextUtils.getTextWidth(nickname) > 25) {
+      nickname = VisualTextUtils.getSubText(nickname, 22);
+      nickname = '$nickname...';
     }
     return '$nickname ($desc)';
   }

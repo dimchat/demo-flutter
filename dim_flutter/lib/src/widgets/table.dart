@@ -31,6 +31,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_section_list/flutter_section_list.dart';
 
+import '../common/platform.dart';
 import '../ui/styles.dart';
 
 
@@ -153,6 +154,11 @@ Widget buildSectionListView({
     reverse: reverse,
     adapter: adapter,
   );
+  if (DevicePlatform.isMobile) {
+    // needs to enable scroll bar
+  } else {
+    enableScrollbar = false;
+  }
   return enableScrollbar ? Scrollbar(child: view) : view;
 }
 
@@ -174,5 +180,10 @@ Widget buildScrollView({
   var view = SingleChildScrollView(
     child: child,
   );
+  if (DevicePlatform.isMobile) {
+    // needs to enable scroll bar
+  } else {
+    enableScrollbar = false;
+  }
   return enableScrollbar ? Scrollbar(child: view) : view;
 }

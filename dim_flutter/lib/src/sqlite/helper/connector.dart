@@ -145,7 +145,7 @@ abstract class DBPath {
       root = Paths.append(root, sub);
       Log.info('external database: $name in $root');
     } else {
-      // Windows, Linux, Web, ...
+      // MacOS, Windows, Linux, Web, ...
       root = Paths.append(root, 'databases');
       if (sub != null) {
         root = Paths.append(root, sub);
@@ -158,6 +158,26 @@ abstract class DBPath {
       return null;
     }
     return Paths.append(root, name);
+  }
+
+  static Future<String> getDatabaseDirectory(String? sub) async {
+    String root = await LocalStorage().cachesDirectory;
+    // check platform
+    if (DevicePlatform.isMobile) {
+      // iOS or Android
+      if (sub == null) {
+        DevicePlatform.patchSQLite();
+        return await getDatabasesPath();
+      }
+      root = Paths.append(root, sub);
+    } else {
+      // MacOS, Windows, Linux, Web, ...
+      root = Paths.append(root, 'databases');
+      if (sub != null) {
+        root = Paths.append(root, sub);
+      }
+    }
+    return root;
   }
 
 }

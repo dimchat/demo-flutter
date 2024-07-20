@@ -33,6 +33,7 @@ import 'package:lnc/notification.dart';
 import 'package:pnf/dos.dart';
 
 import '../common/constants.dart';
+import '../sqlite/helper/connector.dart';
 import 'local.dart';
 
 
@@ -61,10 +62,13 @@ class CacheFileManager {
     LocalStorage local = LocalStorage();
     String caches = await local.cachesDirectory;
     String tmp = await local.temporaryDirectory;
+    String dbDir1 = await DBPath.getDatabaseDirectory(null);
+    String dbDir2 = await DBPath.getDatabaseDirectory('.dkd');
+    String dbDir3 = await DBPath.getDatabaseDirectory('.dim');
     // create scanners & cleaners
-    _db1Scanner = _FileScanner(Paths.append(caches, '.dim'));
-    _db2Scanner = _FileScanner(Paths.append(caches, '.dkd'));
-    _db3Scanner = _FileScanner(Paths.append(caches, '.mkm'));
+    _db1Scanner = _FileScanner(dbDir1);
+    _db2Scanner = _FileScanner(dbDir2);
+    _db3Scanner = _FileScanner(dbDir3);
     _avatarCleaner = _FileCleaner(_avatarScanner = _FileScanner(Paths.append(caches, 'avatar')));
     _cachesCleaner = _FileCleaner(_cachesScanner = _FileScanner(Paths.append(caches, 'files')));
     _uploadCleaner = _FileCleaner(_uploadScanner = _FileScanner(Paths.append(tmp, 'upload')));

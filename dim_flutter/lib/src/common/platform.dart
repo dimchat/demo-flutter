@@ -1,8 +1,8 @@
 import 'dart:io' show Platform;
 
 import 'package:flutter/foundation.dart';
-// import 'package:sqflite_common_ffi/sqflite_ffi.dart';
-// import 'package:sqflite_common_ffi_web/sqflite_ffi_web.dart';
+import 'package:sqflite_common_ffi/sqflite_ffi.dart';
+import 'package:sqflite_common_ffi_web/sqflite_ffi_web.dart';
 // import 'package:fvp/fvp.dart';
 
 import 'package:lnc/log.dart';
@@ -37,15 +37,13 @@ class DevicePlatform {
       return;
     }
     if (isWeb) {
-      // TODO: open for Web
-      // // Change default factory on the web
-      // databaseFactory = databaseFactoryFfiWeb;
+      // Change default factory on the web
+      databaseFactory = databaseFactoryFfiWeb;
     } else if (isWindows || isLinux) {
-      // TODO: open for Windows & Linux
-      // // Initialize FFI
-      // sqfliteFfiInit();
-      // // Change the default factory
-      // databaseFactory = databaseFactoryFfi;
+      // Initialize FFI
+      sqfliteFfiInit();
+      // Change the default factory
+      databaseFactory = databaseFactoryFfi;
     }
     _sqlitePatched = true;
   }

@@ -63,7 +63,7 @@ class _PrivateKeyTable extends DataTableHandler<PrivateKey> implements PrivateKe
 
   @override
   Future<List<DecryptKey>> getPrivateKeysForDecryption(ID user) async {
-    if (DevicePlatform.isIOS || DevicePlatform.isMacOS) {
+    if (DevicePlatform.isIOS/* || DevicePlatform.isMacOS*/) {
       ChannelManager man = ChannelManager();
       return await man.dbChannel.getPrivateKeysForDecryption(user);
     }
@@ -78,7 +78,7 @@ class _PrivateKeyTable extends DataTableHandler<PrivateKey> implements PrivateKe
 
   @override
   Future<PrivateKey?> getPrivateKeyForSignature(ID user) async {
-    if (DevicePlatform.isIOS || DevicePlatform.isMacOS) {
+    if (DevicePlatform.isIOS/* || DevicePlatform.isMacOS*/) {
       ChannelManager man = ChannelManager();
       return await man.dbChannel.getPrivateKeyForSignature(user);
     }
@@ -88,7 +88,7 @@ class _PrivateKeyTable extends DataTableHandler<PrivateKey> implements PrivateKe
 
   @override
   Future<PrivateKey?> getPrivateKeyForVisaSignature(ID user) async {
-    if (DevicePlatform.isIOS || DevicePlatform.isMacOS) {
+    if (DevicePlatform.isIOS/* || DevicePlatform.isMacOS*/) {
       ChannelManager man = ChannelManager();
       return await man.dbChannel.getPrivateKeyForVisaSignature(user);
     }
@@ -106,7 +106,7 @@ class _PrivateKeyTable extends DataTableHandler<PrivateKey> implements PrivateKe
   @override
   Future<bool> savePrivateKey(PrivateKey key, String type, ID user,
       {int sign = 1, required int decrypt}) async {
-    if (DevicePlatform.isIOS || DevicePlatform.isMacOS) {
+    if (DevicePlatform.isIOS/* || DevicePlatform.isMacOS*/) {
       ChannelManager man = ChannelManager();
       return await man.dbChannel.savePrivateKey(key, type, user,
           sign: sign, decrypt: decrypt);

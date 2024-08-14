@@ -54,9 +54,9 @@ Future<bool> _updateStations(SessionDBI database) async {
   // 1. get stations from config
   Config config = Config();
   ID? pid = await config.provider;
-  List? stations = await config.stations;
-  if (pid == null || stations == null || stations.isEmpty) {
-    assert(false, 'config error: ${await config.info}');
+  List stations = await config.stations;
+  if (pid == null || stations.isEmpty) {
+    assert(false, 'config error: $config');
     return false;
   }
 
@@ -91,12 +91,17 @@ Future<bool> _updateStations(SessionDBI database) async {
 
   // 3. check neighbor stations
   List<StationInfo> currentStations = await database.allStations(provider: pid);
-  String host;
-  int port;
+  String? host;
+  int? port;
   for (Map item in stations) {
     host = item['host'];
     port = item['port'];
-    if (_contains(host, port, currentStations)) {
+    if (host == null) {
+      continue;
+    } else {
+      port ??= 9394;
+    }
+    if (_stationExists(host, port, currentStations)) {
       Log.debug('station exists: $item');
     } else if (await database.addStation(null, host: host, port: port, provider: pid)) {
       Log.warning('station added: $item, $pid');
@@ -110,7 +115,7 @@ Future<bool> _updateStations(SessionDBI database) async {
   return true;
 }
 
-bool _contains(String host, int port, List<StationInfo> stations) {
+bool _stationExists(String host, int port, List<StationInfo> stations) {
   for (var item in stations) {
     if (item.host == host && item.port == port) {
       return true;

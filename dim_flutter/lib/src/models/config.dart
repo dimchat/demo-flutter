@@ -1,4 +1,6 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/services.dart';
+import 'package:get/get.dart';
 
 import 'package:dim_client/dim_client.dart';
 import 'package:lnc/log.dart';
@@ -6,11 +8,16 @@ import 'package:lnc/notification.dart' as lnc;
 import 'package:pnf/dos.dart';
 import 'package:pnf/pnf.dart' show PortableNetworkLoader;
 
+import '../client/client.dart';
+import '../client/shared.dart';
 import '../common/constants.dart';
+import '../common/platform.dart';
 import '../filesys/local.dart';
 import '../pnf/loader.dart';
 import '../pnf/net_base.dart';
+import '../widgets/alert.dart';
 import '../widgets/browse_html.dart';
+import '../widgets/browser.dart';
 
 
 class _ConfigLoader implements lnc.Observer {
@@ -76,6 +83,10 @@ class _ConfigLoader implements lnc.Observer {
     }
     info = JSON.decode(text);
     Log.info('new config: $text');
+    var nc = lnc.NotificationCenter();
+    nc.postNotification(NotificationNames.kConfigUpdated, this, {
+      'config': text,
+    });
     return true;
   }
 
@@ -92,7 +103,7 @@ class Config {
 
   final _cfgLoader = _ConfigLoader();
 
-  Future<Map?> get info async {
+  Future<Map> get _info async {
     Map? conf = _cfgLoader.info;
     if (conf == null) {
       String path = await _path();
@@ -110,12 +121,18 @@ class Config {
         /*await */_cfgLoader.download(url);
       }
     }
-    return conf;
+    return conf ?? {};
+  }
+
+  @override
+  String toString() {
+    Type clazz = runtimeType;
+    return '<$clazz url="$entrance">\n${_cfgLoader.info}\n</$clazz>';
   }
 
   /// Default contacts
   Future<List<ID>> get contacts async {
-    List? array = (await info)?['contacts'];
+    List? array = (await _info)['contacts'];
     if (array == null || array.isEmpty) {
       return [];
     }
@@ -135,8 +152,8 @@ class Config {
   }
 
   /// Common assistants for group
-  Future<List<ID>?> get assistants async {
-    List? array = (await info)?['assistants'];
+  Future<List<ID>> get assistants async {
+    List? array = (await _info)['assistants'];
     if (array == null || array.isEmpty) {
       return [];
     }
@@ -156,24 +173,117 @@ class Config {
   }
 
   /// Service Bots
-  Future<List<dynamic>?> get services async => (await info)?['services'];
+  Future<List> get services async => (await _info)['services'] ?? [];
 
-  Future<ID?> get provider async => ID.parse((await info)?['ID']);
+  Future<ID?> get provider async => ID.parse((await _info)['ID']);
 
   /// Base stations
-  Future<List?> get stations async => (await info)?['stations'];
+  Future<List> get stations async => (await _info)['stations'] ?? [];
 
   // 'http://106.52.25.169:8081/{ID}/upload?md5={MD5}&salt={SALT}'
-  Future<List> get uploadAPI async => (await info)?['uploads'];
+  Future<List> get uploadAPI async => (await _info)['uploads'] ?? [];
   // Future<String> get uploadKey async => '12345678';
 
   /// Home Page
-  Future<String> get aboutURL async => (await info)?['about']
+  Future<String> get aboutURL async => (await _info)['about']
       ?? 'https://dim.chat/';
 
   /// Terms Web Page
-  Future<String> get termsURL async => (await info)?['terms']
+  Future<String> get termsURL async => (await _info)['terms']
       ?? 'https://wallet.dim.chat/dimchat/sechat/privacy.html';
+
+  Newest? get newest => NewestManager().parse(_cfgLoader.info);
+
+}
+
+
+class NewestManager {
+  factory NewestManager() => _instance;
+  static final NewestManager _instance = NewestManager._internal();
+  NewestManager._internal();
+
+  Newest? _latest;
+
+  bool _remind = false;
+
+  Newest? parse(Map? info) {
+    Newest? newest = _latest;
+    if (newest != null) {
+      return newest;
+    } else if (info == null) {
+      return null;
+    }
+    // get newest info
+    var child = info['newest'];
+    if (child is Map) {
+      info = child;
+    } else {
+      // check for URL?
+      return null;
+    }
+    // check OS
+    var os = DevicePlatform.operatingSystem;
+    info = info[os.toLowerCase()] ?? info[os] ?? info;
+    if (info is Map) {
+      _latest = newest = Newest.from(info);
+    }
+    if (newest != null) {
+      GlobalVariable shared = GlobalVariable();
+      Client client = shared.terminal;
+      _remind = newest.mustUpgrade(client);
+    }
+    return newest;
+  }
+
+  bool checkUpdate(BuildContext context) {
+    Newest? newest = _latest;
+    if (newest == null) {
+      return false;
+    } else if (_remind) {
+      _remind = false;
+    } else {
+      return false;
+    }
+    Alert.confirm(context, 'Upgrade',
+      'Please update the client to the latest version (@version, build: @build).'.trParams({
+        'version': newest.version,
+        'build': newest.build.toString(),
+      }),
+      okAction: () => Browser.launch(context, url: newest.url),
+    );
+    return true;
+  }
+
+}
+
+
+/// Newest client info
+class Newest {
+  Newest({required this.version, required this.build, required this.url});
+
+  final String version;
+  final int build;
+  final String url;
+
+  bool mustUpgrade(Client client) =>
+      int.parse(client.buildNumber) < build && client.versionName != version;
+
+  bool canUpgrade(Client client) =>
+      int.parse(client.buildNumber) < build;
+
+  static Newest? from(Map info) {
+    String? version = info['version'];
+    int? build = info['build'];
+    String? url = info['url'] ?? info['URL'];
+    if (version == null || build == null || url == null) {
+      return null;
+    } else if (!url.contains('://')) {
+      assert(false, 'client download URL error: $info');
+      return null;
+    }
+    return Newest(version: version, build: build, url: url);
+  }
+
 }
 
 

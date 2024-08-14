@@ -31,6 +31,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_inappwebview/flutter_inappwebview.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 import 'package:dim_client/dim_client.dart';
 import 'package:lnc/log.dart';
@@ -65,6 +66,31 @@ class Browser extends StatefulWidget {
         builder: (context) => Browser(uri: uri, onShare: onShare,),
       );
     }
+  }
+
+  static void launch(BuildContext context, {
+    required String url,
+    LaunchMode mode = LaunchMode.externalApplication,
+  }) {
+    Uri? uri = HtmlUri.parseUri(url);
+    Log.info('URL length: ${url.length}: $uri');
+    if (uri == null) {
+      Alert.show(context, 'Error', 'Failed to launch URL: $url');
+      return;
+    }
+    canLaunchUrl(uri).then((can) {
+      if (can) {
+        launchUrl(uri, mode: mode).then((ok) {
+          if (ok) {
+            Log.info('launch URL: $url');
+          } else {
+            Alert.show(context, 'Error', 'Failed to launch URL: $url');
+          }
+        });
+      } else {
+        Alert.show(context, 'Error', 'Cannot launch URL: $url');
+      }
+    });
   }
 
   @override

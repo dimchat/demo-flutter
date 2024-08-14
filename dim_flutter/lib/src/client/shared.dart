@@ -22,7 +22,7 @@ class GlobalVariable {
     // get common assistants
     Config config = Config();
     config.assistants.then((bots) {
-      if (bots != null && bots.isNotEmpty) {
+      if (bots.isNotEmpty) {
         SharedGroupManager man = SharedGroupManager();
         man.delegate.setCommonAssistants(bots);
       }

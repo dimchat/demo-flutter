@@ -1,9 +1,11 @@
 import 'package:get/get.dart';
 
 import 'package:lnc/log.dart';
+import 'package:lnc/notification.dart' as lnc;
 
 import '../client/shared.dart';
 
+import '../common/constants.dart';
 import '../filesys/local.dart';
 import 'settings.dart';
 
@@ -45,6 +47,15 @@ class BurnAfterReadingDataSource {
   Future<bool> setBurnAfterReading(int duration) async {
     bool ok = await _settings!.setValue('burn_after_reading', duration);
     assert(ok, 'failed to set burnAfterReading: $duration');
+    // refresh page
+    var nc = lnc.NotificationCenter();
+    nc.postNotification(NotificationNames.kBurnTimeUpdated, this, {
+      'duration': duration,
+    });
+    nc.postNotification(NotificationNames.kSettingUpdated, this, {
+      "category": 'BurnAfterReading',
+      'duration': duration,
+    });
     return ok;
   }
 

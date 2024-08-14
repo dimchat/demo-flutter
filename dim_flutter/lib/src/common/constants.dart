@@ -48,7 +48,9 @@ abstract class NotificationNames {
   static const String kRecordFinished = 'RecordFinished';
   static const String kPlayFinished = 'PlayFinished';
 
+  static const String kBurnTimeUpdated = 'BurnAfterReadingUpdated';
   static const String kSettingUpdated = 'SettingUpdated';
+  static const String kConfigUpdated = 'ConfigUpdated';
 
   static const String kFileUploadSuccess = 'FileUploadSuccess';
   static const String kFileUploadFailure = 'FileUploadFailure';

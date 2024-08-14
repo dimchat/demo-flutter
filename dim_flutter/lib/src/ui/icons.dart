@@ -116,7 +116,8 @@ abstract class AppIcons {
   static const IconData   chosenStationIcon = CupertinoIcons.cloud_fill;
 
   // Register
-  static const IconData agreeIcon = CupertinoIcons.check_mark;
+  static const IconData    agreeIcon = CupertinoIcons.check_mark;
+  static const IconData disagreeIcon = CupertinoIcons.clear;
 
   static const IconData updateDocIcon = CupertinoIcons.cloud_upload;
 

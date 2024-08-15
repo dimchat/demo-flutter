@@ -3,13 +3,19 @@ import 'dart:ui';
 import 'package:flutter/cupertino.dart';
 
 class GaussianPage extends StatelessWidget {
-  const GaussianPage({super.key, required this.child});
+  const GaussianPage({super.key, required this.child, this.locked = false});
 
   final Widget child;
+  final bool locked;
 
   static void show(BuildContext context, Widget child) => showCupertinoDialog(
     context: context,
     builder: (context) => GaussianPage(child: child),
+  );
+
+  static void lock(BuildContext context, Widget child) => showCupertinoDialog(
+    context: context,
+    builder: (context) => GaussianPage(locked: true, child: child,),
   );
 
   @override
@@ -17,7 +23,8 @@ class GaussianPage extends StatelessWidget {
     filter: ImageFilter.blur(sigmaY: 8.0, sigmaX: 8.0),
     child: Stack(
       children: [
-        GestureDetector(onTap: () => Navigator.pop(context)),
+        if (!locked)
+          GestureDetector(onTap: () => Navigator.pop(context)),
         Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
@@ -47,35 +54,50 @@ class GaussianPage extends StatelessWidget {
 }
 
 class FrostedGlassPage extends StatelessWidget {
-  const FrostedGlassPage({super.key, this.head, this.body, this.width});
+  const FrostedGlassPage({super.key, this.head, this.body, this.tail, this.width});
 
   final Widget? head;
   final Widget? body;
+  final Widget? tail;
   final double? width;
 
   static void show(BuildContext context,
-      {String? title, String? message, Widget? head, Widget? body, double? width}) {
+      {String? title, String? message, Widget? head, Widget? body, Widget? tail, double? width}) {
     if (head == null && title != null) {
-      head = Text(title,
-        style: const TextStyle(
-          fontSize: 18,
-          color: CupertinoColors.systemBlue,
-          decoration: TextDecoration.none,
-        ),
-      );
+      head = buildHead(title);
     }
     if (body == null && message != null) {
-      body = Text(message,
-        style: const TextStyle(
-          fontSize: 12,
-          fontWeight: FontWeight.normal,
-          color: CupertinoColors.systemGrey,
-          decoration: TextDecoration.none,
-        ),
-      );
+      body = buildBody(message);
     }
-    return GaussianPage.show(context, FrostedGlassPage(head: head, body: body, width: width,));
+    return GaussianPage.show(context, FrostedGlassPage(head: head, body: body, tail: tail, width: width,));
   }
+
+  static void lock(BuildContext context,
+      {String? title, String? message, Widget? head, Widget? body, Widget? tail, double? width}) {
+    if (head == null && title != null) {
+      head = buildHead(title);
+    }
+    if (body == null && message != null) {
+      body = buildBody(message);
+    }
+    return GaussianPage.lock(context, FrostedGlassPage(head: head, body: body, tail: tail, width: width,));
+  }
+
+  static Widget buildHead(String title) => Text(title,
+    style: const TextStyle(
+      fontSize: 18,
+      color: CupertinoColors.systemBlue,
+      decoration: TextDecoration.none,
+    ),
+  );
+  static Widget buildBody(String message) => Text(message,
+    style: const TextStyle(
+      fontSize: 12,
+      fontWeight: FontWeight.normal,
+      color: CupertinoColors.systemGrey,
+      decoration: TextDecoration.none,
+    ),
+  );
 
   @override
   Widget build(BuildContext context) => Column(
@@ -93,6 +115,13 @@ class FrostedGlassPage extends StatelessWidget {
         padding: const EdgeInsets.all(8),
         alignment: Alignment.topLeft,
         child: body,
+      ),
+      if (tail != null)
+      Container(
+        width: width ?? 256,
+        // padding: const EdgeInsets.all(2),
+        alignment: Alignment.center,
+        child: tail,
       ),
     ],
   );

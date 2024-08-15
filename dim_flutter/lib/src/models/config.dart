@@ -1,4 +1,4 @@
-import 'package:flutter/cupertino.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 
@@ -15,9 +15,11 @@ import '../common/platform.dart';
 import '../filesys/local.dart';
 import '../pnf/loader.dart';
 import '../pnf/net_base.dart';
+import '../ui/styles.dart';
 import '../widgets/alert.dart';
 import '../widgets/browse_html.dart';
 import '../widgets/browser.dart';
+import '../widgets/gaussian.dart';
 
 
 class _ConfigLoader implements lnc.Observer {
@@ -204,7 +206,11 @@ class NewestManager {
 
   Newest? _latest;
 
-  bool _remind = false;
+  int _remind = 0;
+  // remind level
+  static const int kCanUpgrade = 1;
+  static const int kShouldUpgrade = 2;
+  static const int kMustUpgrade = 3;
 
   Newest? parse(Map? info) {
     Newest? newest = _latest;
@@ -230,27 +236,55 @@ class NewestManager {
     if (newest != null) {
       GlobalVariable shared = GlobalVariable();
       Client client = shared.terminal;
-      _remind = newest.mustUpgrade(client);
+      if (newest.mustUpgrade(client)) {
+        _remind = kMustUpgrade;
+      } else if (newest.shouldUpgrade(client)) {
+        _remind = kShouldUpgrade;
+      } else if (newest.canUpgrade(client)) {
+        _remind = kCanUpgrade;
+      } else {
+        _remind = 0;
+      }
     }
     return newest;
   }
 
   bool checkUpdate(BuildContext context) {
     Newest? newest = _latest;
+    int level = _remind;
     if (newest == null) {
       return false;
-    } else if (_remind) {
-      _remind = false;
+    } else if (level > 0) {
+      _remind = 0;
     } else {
       return false;
     }
-    Alert.confirm(context, 'Upgrade',
-      'Please update the client to the latest version (@version, build: @build).'.trParams({
-        'version': newest.version,
-        'build': newest.build.toString(),
-      }),
-      okAction: () => Browser.launch(context, url: newest.url),
-    );
+    String notice = 'Please update this app to the latest version (@version, build @build).'.trParams({
+      'version': newest.version,
+      'build': newest.build.toString(),
+    });
+    if (level == kShouldUpgrade) {
+      Alert.confirm(context, 'Upgrade', notice,
+        okAction: () => Browser.launch(context, url: newest.url),
+      );
+    } else if (level == kMustUpgrade) {
+      FrostedGlassPage.lock(context, title: 'Upgrade'.tr, body: RichText(
+        text: TextSpan(
+          text: notice,
+          style: TextStyle(
+            fontSize: 12,
+            fontWeight: FontWeight.normal,
+            color: Styles.colors.secondaryTextColor,
+            decoration: TextDecoration.none,
+          ),
+        ),
+      ), tail: TextButton(
+        onPressed: () => Browser.launch(context, url: newest.url),
+        child: Text('Download'.tr, style: TextStyle(
+          color: Styles.colors.criticalButtonColor,
+        ),),
+      ));
+    }
     return true;
   }
 
@@ -265,8 +299,40 @@ class Newest {
   final int build;
   final String url;
 
-  bool mustUpgrade(Client client) =>
-      int.parse(client.buildNumber) < build && client.versionName != version;
+  bool mustUpgrade(Client client) {
+    if (int.parse(client.buildNumber) >= build) {
+      // it is the latest build
+      return false;
+    }
+    String clientVersion = client.versionName;
+    int pos = clientVersion.indexOf(r'.');
+    if (pos <= 0) {
+      // version error
+      return false;
+    }
+    // if the client has a different major version number,
+    // it must be upgraded now.
+    clientVersion = clientVersion.substring(0, pos);
+    return !version.startsWith(clientVersion);
+  }
+
+  bool shouldUpgrade(Client client) {
+    if (int.parse(client.buildNumber) >= build) {
+      // it is the latest build
+      return false;
+    }
+    String clientVersion = client.versionName;
+    int pos = clientVersion.lastIndexOf(r'.');
+    if (pos <= 0) {
+      // version error
+      return false;
+    }
+    // if the client has a same major version number,
+    // but a different minor version number,
+    // it should be upgraded now.
+    clientVersion = clientVersion.substring(0, pos);
+    return !version.startsWith(clientVersion);
+  }
 
   bool canUpgrade(Client client) =>
       int.parse(client.buildNumber) < build;

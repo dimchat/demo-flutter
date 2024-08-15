@@ -133,11 +133,11 @@ abstract class DBPath {
     String name = connector.name;
     String? sub = connector.directory;
     String root = await LocalStorage().cachesDirectory;
+    DevicePlatform.patchSQLite();
     // check platform
     if (DevicePlatform.isMobile) {
       // iOS or Android
       if (sub == null) {
-        DevicePlatform.patchSQLite();
         String root = await getDatabasesPath();
         Log.info('internal database: $name in $root');
         return Paths.append(root, name);
@@ -162,11 +162,11 @@ abstract class DBPath {
 
   static Future<String> getDatabaseDirectory(String? sub) async {
     String root = await LocalStorage().cachesDirectory;
+    DevicePlatform.patchSQLite();
     // check platform
     if (DevicePlatform.isMobile) {
       // iOS or Android
       if (sub == null) {
-        DevicePlatform.patchSQLite();
         return await getDatabasesPath();
       }
       root = Paths.append(root, sub);

@@ -40,9 +40,9 @@ import '../pnf/image.dart';
 import '../ui/icons.dart';
 import '../ui/nav.dart';
 import '../ui/styles.dart';
+import '../utils/html.dart';
 
 import 'alert.dart';
-import 'browse_html.dart';
 
 
 typedef OnWebShare = void Function(Uri url, {

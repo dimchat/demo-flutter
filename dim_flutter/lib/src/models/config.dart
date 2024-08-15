@@ -16,8 +16,8 @@ import '../filesys/local.dart';
 import '../pnf/loader.dart';
 import '../pnf/net_base.dart';
 import '../ui/styles.dart';
+import '../utils/html.dart';
 import '../widgets/alert.dart';
-import '../widgets/browse_html.dart';
 import '../widgets/browser.dart';
 import '../widgets/gaussian.dart';
 
@@ -282,6 +282,9 @@ class NewestManager {
         onPressed: () => Browser.launch(context, url: newest.url),
         child: Text('Download'.tr, style: TextStyle(
           color: Styles.colors.criticalButtonColor,
+          decoration: TextDecoration.underline,
+          // decorationStyle: TextDecorationStyle.double,
+          decorationColor: Styles.colors.criticalButtonColor,
         ),),
       ));
     }

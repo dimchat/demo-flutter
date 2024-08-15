@@ -18,7 +18,7 @@ class NameLabel extends StatefulWidget {
     this.locale,
     this.softWrap,
     this.overflow,
-    this.textScaleFactor,
+    this.textScaler,
     this.maxLines,
     this.semanticsLabel,
     this.textWidthBasis,
@@ -35,7 +35,7 @@ class NameLabel extends StatefulWidget {
   final Locale? locale;
   final bool? softWrap;
   final TextOverflow? overflow;
-  final double? textScaleFactor;
+  final TextScaler? textScaler;
   final int? maxLines;
   final String? semanticsLabel;
   final TextWidthBasis? textWidthBasis;
@@ -103,7 +103,7 @@ class _NameState extends State<NameLabel> implements lnc.Observer {
     locale:             widget.locale,
     softWrap:           widget.softWrap,
     overflow:           widget.overflow,
-    textScaleFactor:    widget.textScaleFactor,
+    textScaler:         widget.textScaler,
     maxLines:           widget.maxLines,
     semanticsLabel:     widget.semanticsLabel,
     textWidthBasis:     widget.textWidthBasis,

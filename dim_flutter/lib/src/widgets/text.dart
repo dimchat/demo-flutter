@@ -4,7 +4,6 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_markdown/flutter_markdown.dart';
 import 'package:pnf/dos.dart';
-import 'package:syntax_highlight/syntax_highlight.dart';
 import 'package:markdown/markdown.dart' as md;
 
 import 'package:dim_client/dim_client.dart';
@@ -13,15 +12,15 @@ import 'package:lnc/log.dart';
 import '../client/shared.dart';
 import '../pnf/auto_image.dart';
 import '../pnf/image.dart';
-import '../ui/brightness.dart';
 import '../ui/icons.dart';
 import '../ui/nav.dart';
 import '../ui/styles.dart';
+import '../utils/html.dart';
+import '../utils/syntax.dart';
 import '../video/player.dart';
 import '../video/playing.dart';
 
 import 'alert.dart';
-import 'browse_html.dart';
 import 'browser.dart';
 import 'table.dart';
 
@@ -173,7 +172,7 @@ class _RichTextState extends State<RichTextView> {
     data: widget.text,
     selectable: true,
     extensionSet: md.ExtensionSet.gitHubWeb,
-    syntaxHighlighter: _SyntaxManager().getHighlighter(),
+    syntaxHighlighter: SyntaxManager().getHighlighter(),
     onTapLink: (text, href, title) => _MarkdownUtils.openLink(context,
       sender: widget.sender,
       text: text, href: href, title: title,
@@ -433,71 +432,6 @@ abstract class _MarkdownUtils {
     var head = Envelope.create(sender: ID.kAnyone, receiver: ID.kAnyone);
     var msg = InstantMessage.create(head, imageContent);
     previewImageContent(ctx, imageContent, [msg]);
-  }
-
-}
-
-
-class _SyntaxManager {
-  factory _SyntaxManager() => _instance;
-  static final _SyntaxManager _instance = _SyntaxManager._internal();
-  _SyntaxManager._internal();
-
-  bool _loaded = false;
-  _DefaultSyntaxHighlighter? _dark;
-  _DefaultSyntaxHighlighter? _light;
-
-  Future<HighlighterTheme> getTheme(Brightness brightness) async {
-    // 1. load grammars
-    if (!_loaded) {
-      _loaded = true;
-      await Highlighter.initialize([
-        'dart',
-        // 'json',
-        // 'sql',
-        // 'yaml',
-      ]);
-    }
-    // 2. load theme with brightness
-    return await HighlighterTheme.loadForBrightness(brightness);
-  }
-
-  SyntaxHighlighter getHighlighter() {
-    Brightness brightness = BrightnessDataSource().current;
-    var pipe = brightness == Brightness.dark ? _dark : _light;
-    if (pipe != null) {
-      return pipe;
-    } else if (brightness == Brightness.dark) {
-      return _dark = _DefaultSyntaxHighlighter(brightness);
-    } else {
-      return _light = _DefaultSyntaxHighlighter(brightness);
-    }
-  }
-
-}
-
-class _DefaultSyntaxHighlighter with Logging implements SyntaxHighlighter {
-  _DefaultSyntaxHighlighter(Brightness brightness) {
-    _initialize(brightness);
-  }
-
-  Highlighter? _inner;
-
-  void _initialize(Brightness brightness) async {
-    HighlighterTheme theme = await _SyntaxManager().getTheme(brightness);
-    _inner = Highlighter(language: 'dart', theme: theme);
-  }
-
-  @override
-  TextSpan format(String source) {
-    TextSpan? res;
-    try {
-      res = _inner?.highlight(source);
-      logInfo('syntax highlighter: $_inner');
-    } catch (e, st) {
-      logError('syntax error: $source\n error: $e, $st');
-    }
-    return res ?? TextSpan(text: source);
   }
 
 }

@@ -11,8 +11,8 @@ import '../common/constants.dart';
 import '../client/shared.dart';
 import '../pnf/auto_avatar.dart';
 import '../ui/language.dart';
+import '../utils/syntax.dart';
 import '../widgets/alert.dart';
-import '../widgets/title.dart';
 
 import 'amanuensis.dart';
 import 'chat.dart';

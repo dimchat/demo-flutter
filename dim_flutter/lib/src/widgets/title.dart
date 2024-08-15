@@ -8,6 +8,7 @@ import '../common/constants.dart';
 import '../client/shared.dart';
 import '../network/station_speed.dart';
 import '../ui/styles.dart';
+import '../utils/syntax.dart';
 
 
 class StatedTitleView extends StatefulWidget {
@@ -106,58 +107,3 @@ void _testSpeed() async {
   await speeder.reload();
   await speeder.testAll();
 }
-
-
-abstract class VisualTextUtils {
-
-  /// Calculate visual width
-  static int getTextWidth(String text) {
-    int width = 0;
-    int index;
-    int code;
-    for (index = 0; index < text.length; ++index) {
-      code = text.codeUnitAt(index);
-      if (0x0000 <= code && code <= 0x007F) {
-        // Basic Latin (ASCII)
-        width += 1;
-      } else if (0x0080 <= code && code <= 0x07FF) {
-        // Latin-1 Supplement to CJK Unified Ideographs
-        // ASCII or Latin-1 Supplement (includes most Western European languages)
-        width += 1;
-      } else {
-        // Assume other characters are wide (e.g., CJK characters)
-        width += 2;
-      }
-    }
-    return width;
-  }
-
-  static String getSubText(String text, int maxWidth) {
-    int width = 0;
-    int index;
-    int code;
-    for (index = 0; index < text.length; ++index) {
-      code = text.codeUnitAt(index);
-      if (0x0000 <= code && code <= 0x007F) {
-        // Basic Latin (ASCII)
-        width += 1;
-      } else if (0x0080 <= code && code <= 0x07FF) {
-        // Latin-1 Supplement to CJK Unified Ideographs
-        // ASCII or Latin-1 Supplement (includes most Western European languages)
-        width += 1;
-      } else {
-        // Assume other characters are wide (e.g., CJK characters)
-        width += 2;
-      }
-      if (width > maxWidth) {
-        break;
-      }
-    }
-    if (index == 0) {
-      return '';
-    }
-    return text.substring(0, index);
-  }
-
-}
-

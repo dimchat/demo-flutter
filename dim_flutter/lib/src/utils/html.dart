@@ -34,7 +34,8 @@ import 'package:flutter_inappwebview/flutter_inappwebview.dart';
 import 'package:dim_client/dim_client.dart';
 import 'package:lnc/log.dart';
 
-import 'browser.dart';
+import '../widgets/browser.dart';
+
 
 abstract class HtmlUri {
 

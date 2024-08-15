@@ -13,6 +13,7 @@ export 'src/dim_pnf.dart' hide NotificationNames;
 export 'src/dim_screens.dart';
 export 'src/dim_sqlite.dart';
 export 'src/dim_ui.dart';
+export 'src/dim_utils.dart';
 export 'src/dim_video.dart';
 export 'src/dim_web3.dart';
 export 'src/dim_widgets.dart';

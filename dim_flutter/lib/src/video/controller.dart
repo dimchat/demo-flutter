@@ -35,7 +35,8 @@ import 'package:lnc/log.dart';
 import 'package:video_player/video_player.dart';
 
 import '../common/platform.dart';
-import '../widgets/browse_html.dart';
+import '../utils/html.dart';
+
 import 'controls.dart';
 
 

@@ -12,8 +12,8 @@ import '../common/dbi/contact.dart';
 import '../common/constants.dart';
 import '../network/group_image.dart';
 import '../ui/nav.dart';
+import '../utils/syntax.dart';
 import '../widgets/alert.dart';
-import '../widgets/title.dart';
 
 import 'amanuensis.dart';
 import 'chat.dart';

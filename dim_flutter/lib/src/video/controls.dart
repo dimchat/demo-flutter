@@ -129,8 +129,10 @@ class _CustomControlsState extends State<CustomControls>
         controller.setPlaybackSpeed(playbackSpeed);
       } else if (DevicePlatform.isAndroid) {
         // Android is OK
+      } else if (DevicePlatform.isWindows) {
+        // Windows is OK
       } else if (playbackSpeed != 1.0) {
-        // fix for iOS, Windows, ...
+        // fix for iOS, ...
         controller.setPlaybackSpeed(playbackSpeed);
       }
     }

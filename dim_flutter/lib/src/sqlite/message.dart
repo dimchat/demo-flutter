@@ -89,12 +89,13 @@ class InstantMessageTable extends DataTableHandler<InstantMessage> implements In
   @override
   Future<Pair<List<InstantMessage>, int>> getInstantMessages(ID chat,
       {int start = 0, int? limit}) async {
+    limit ??= 1024;
     SQLConditions cond;
     cond = SQLConditions(left: 'cid', comparison: '=', right: chat.toString());
     List<InstantMessage> messages = await select(_table, columns: _selectColumns,
-        conditions: cond, orderBy: 'time DESC');
+        conditions: cond, orderBy: 'time DESC', offset: start, limit: limit);
     int remaining = 0;
-    if (limit != null && limit == messages.length) {
+    if (limit > 0 && limit == messages.length) {
       // TODO: get number of remaining messages
     }
     return Pair(messages, remaining);

@@ -186,13 +186,17 @@ class Config {
   Future<List> get uploadAPI async => (await _info)['uploads'] ?? [];
   // Future<String> get uploadKey async => '12345678';
 
-  /// Home Page
-  Future<String> get aboutURL async => (await _info)['about']
-      ?? 'https://dim.chat/';
+  /// Open Source
+  Future<String> get sourceURL async => (await _info)['sources']
+      ?? 'https://github.com/dimpart/tarsier';
 
   /// Terms Web Page
   Future<String> get termsURL async => (await _info)['terms']
       ?? 'https://wallet.dim.chat/dimchat/sechat/privacy.html';
+
+  /// Home Page
+  Future<String> get aboutURL async => (await _info)['about']
+      ?? 'https://dim.chat/';
 
   Newest? get newest => NewestManager().parse(_cfgLoader.info);
 
@@ -265,7 +269,7 @@ class NewestManager {
     });
     if (level == kShouldUpgrade) {
       Alert.confirm(context, 'Upgrade', notice,
-        okAction: () => Browser.launch(context, url: newest.url),
+        okAction: () => Browser.launch(context, newest.url),
       );
     } else if (level == kMustUpgrade) {
       FrostedGlassPage.lock(context, title: 'Upgrade'.tr, body: RichText(
@@ -279,7 +283,7 @@ class NewestManager {
           ),
         ),
       ), tail: TextButton(
-        onPressed: () => Browser.launch(context, url: newest.url),
+        onPressed: () => Browser.launch(context, newest.url),
         child: Text('Download'.tr, style: TextStyle(
           color: Styles.colors.criticalButtonColor,
           decoration: TextDecoration.underline,

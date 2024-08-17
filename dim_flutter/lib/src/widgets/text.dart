@@ -284,7 +284,7 @@ abstract class _MarkdownUtils {
         }
       } else {
         assert(path.startsWith('text/html;'), 'data url error: $href');
-        Browser.open(context, url: href, onShare: onWebShare,);
+        Browser.openURL(context, url, onWebShare: onWebShare,);
       }
       return;
     }
@@ -310,7 +310,7 @@ abstract class _MarkdownUtils {
       } else {
         Log.info('open link with type: $type, "$title" $url, text: "$text"');
         // open other link
-        Browser.open(context, url: url.toString(), onShare: onWebShare,);
+        Browser.openURL(context, url, onWebShare: onWebShare,);
       }
     });
   }

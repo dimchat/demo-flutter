@@ -39,6 +39,8 @@ import '../widgets/browser.dart';
 
 abstract class HtmlUri {
 
+  static final Uri blank = parseUri('about:blank')!;
+
   static Uri? parseUri(String? urlString) {
     if (urlString == null) {
       return null;
@@ -47,6 +49,8 @@ abstract class HtmlUri {
       // - https://
     } else if (urlString.startsWith('data:')) {
       // - data:text/html;charset=UTF-8;base64,
+    } else if (urlString.startsWith('about:')) {
+      // - about:blank
     } else {
       Log.error('URL error: $urlString');
       return null;
@@ -101,9 +105,9 @@ abstract class HtmlUri {
   }
 
   static void showWebPage(BuildContext context,
-      {required PageContent content, OnWebShare? onShare}) {
+      {required PageContent content, OnWebShare? onWebShare}) {
     String url = getUriString(content);
-    Browser.open(context, url: url, onShare: onShare);
+    Browser.open(context, url, onWebShare: onWebShare);
   }
 
   //
@@ -124,8 +128,8 @@ abstract class HtmlUri {
     }
   }
 
-  static InAppWebViewInitialData? getWebViewData(Uri url) {
-    String? html = getHtmlString(url);
+  static InAppWebViewInitialData? getWebViewData(Uri url, String? html) {
+    html ??= getHtmlString(url);
     if (html == null) {
       // http:
       // https:

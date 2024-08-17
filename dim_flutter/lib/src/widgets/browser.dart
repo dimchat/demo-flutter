@@ -51,47 +51,60 @@ typedef OnWebShare = void Function(Uri url, {
 
 
 class Browser extends StatefulWidget {
-  const Browser({super.key, required this.uri, this.onShare});
+  const Browser({super.key, required this.url, this.html, this.onWebShare});
 
-  final Uri uri;
-  final OnWebShare? onShare;
+  final Uri url;
+  final String? html;
+  final OnWebShare? onWebShare;
 
-  static void open(BuildContext context, {required String url, OnWebShare? onShare}) {
-    Uri? uri = HtmlUri.parseUri(url);
-    Log.info('URL length: ${url.length}: $uri');
-    if (uri == null) {
-      Alert.show(context, 'Error', 'Failed to open URL: $url');
+  static void open(BuildContext context, String? urlString, {
+    OnWebShare? onWebShare,
+  }) {
+    Uri? url = HtmlUri.parseUri(urlString);
+    Log.info('URL length: ${urlString?.length}: $url');
+    if (url == null) {
+      Alert.show(context, 'Error', 'Failed to open URL: $urlString');
     } else {
-      showPage(context: context,
-        builder: (context) => Browser(uri: uri, onShare: onShare,),
-      );
+      openURL(context, url, onWebShare: onWebShare);
     }
   }
+  static void openURL(BuildContext context, Uri url, {
+    OnWebShare? onWebShare,
+  }) => showPage(context: context,
+    builder: (context) => Browser(url: url, onWebShare: onWebShare,),
+  );
 
-  static void launch(BuildContext context, {
-    required String url,
+  static void launch(BuildContext context, String? urlString, {
     LaunchMode mode = LaunchMode.externalApplication,
   }) {
-    Uri? uri = HtmlUri.parseUri(url);
-    Log.info('URL length: ${url.length}: $uri');
-    if (uri == null) {
-      Alert.show(context, 'Error', 'Failed to launch URL: $url');
-      return;
+    Uri? url = HtmlUri.parseUri(urlString);
+    Log.info('URL length: ${urlString?.length}: $url');
+    if (url == null) {
+      Alert.show(context, 'Error', 'Failed to launch URL: $urlString');
+    } else {
+      launchURL(context, url, mode: mode);
     }
-    canLaunchUrl(uri).then((can) {
-      if (can) {
-        launchUrl(uri, mode: mode).then((ok) {
-          if (ok) {
-            Log.info('launch URL: $url');
-          } else {
-            Alert.show(context, 'Error', 'Failed to launch URL: $url');
-          }
-        });
-      } else {
-        Alert.show(context, 'Error', 'Cannot launch URL: $url');
-      }
-    });
   }
+  static void launchURL(BuildContext context, Uri url, {
+    LaunchMode mode = LaunchMode.externalApplication,
+  }) => canLaunchUrl(url).then((can) {
+    if (can) {
+      launchUrl(url, mode: mode).then((ok) {
+        if (ok) {
+          Log.info('launch URL: $url');
+        } else {
+          Alert.show(context, 'Error', 'Failed to launch URL: $url');
+        }
+      });
+    } else {
+      Alert.show(context, 'Error', 'Cannot launch URL: $url');
+    }
+  });
+
+  // create web view
+  static Widget view(BuildContext context, Uri url, {
+    String? html,
+  }) => Browser(url: url, html: html,);
 
   @override
   State<Browser> createState() => _BrowserState();
@@ -105,8 +118,10 @@ class _BrowserState extends State<Browser> {
   Uri? _url;
   String? _title;
 
-  Uri get url => _url ?? widget.uri;
+  Uri get url => _url ?? widget.url;
   String get title => _title ?? '';
+
+  String? get html => _url == null ? widget.html : null;
 
   @override
   Widget build(BuildContext context) => Scaffold(
@@ -136,13 +151,13 @@ class _BrowserState extends State<Browser> {
     child: CircularProgressIndicator(strokeWidth: 2.0),
   );
   Widget? _shareButton() {
-    OnWebShare? onShare = widget.onShare;
+    OnWebShare? onShare = widget.onWebShare;
     if (onShare == null) {
       return null;
     }
     Uri target = url;
     if (target.toString() == 'about:blank') {
-      target = widget.uri;
+      target = widget.url;
     }
     // TODO: get page desc & icon
     return IconButton(
@@ -156,8 +171,8 @@ class _BrowserState extends State<Browser> {
   }
 
   Widget _webView() => InAppWebView(
-    initialUrlRequest: HtmlUri.getURLRequest(widget.uri),
-    initialData: HtmlUri.getWebViewData(widget.uri),
+    initialUrlRequest: HtmlUri.getURLRequest(url),
+    initialData: HtmlUri.getWebViewData(url, html),
     initialOptions: HtmlUri.getWebViewOptions(),
     onProgressChanged: (controller, progress) => setState(() {
       _progress = progress;

@@ -18,12 +18,23 @@ class TextContentProcessor extends BaseContentProcessor {
     String? act = content['act'];
     if (app == 'chat.dim.tvbox') {
       Log.info('got customized text content: $content');
-      if (mod == 'lives' && act == 'respond') {
+      if (mod == 'lives') {
+        // got live streams
+        assert(act == 'respond', 'customized text content error: $content');
         var lives = content['lives'];
         Log.info('got ${lives?.length} lives');
         nc.postNotification(NotificationNames.kLiveSourceUpdated, this, {
           'cmd': content,
           'lives': lives,
+        });
+      }
+    } else if (app == 'chat.dim.sites') {
+      Log.info('got customized text content: $content');
+      if (mod == 'homepage') {
+        // got home page
+        assert(act == 'respond', 'customized text content error: $content');
+        nc.postNotification(NotificationNames.kWebSitesUpdated, this, {
+          'cmd': content,
         });
       }
     }

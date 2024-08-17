@@ -86,4 +86,9 @@ abstract class NotificationNames {
   static const String kLiveSourceUpdated = 'LiveSourceUpdated';
   static const String kVideoPlayerPlay = 'VideoPlayerPlay';
 
+  //
+  //  Web Browser
+  //
+  static const String kWebSitesUpdated = 'WebSitesUpdated';
+
 }

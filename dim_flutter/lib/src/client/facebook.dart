@@ -77,9 +77,9 @@ class SharedArchivist extends ClientArchivist {
 
   @override
   Future<bool> queryMeta(ID identifier) async {
-    Session? session = messenger?.session;
-    if (session?.identifier == null) {
-      logWarning('querying meta cancel, waiting to connect: $identifier');
+    var session = messenger?.session;
+    if (session is ClientSession && session.isReady) {} else {
+      logWarning('querying meta cancel, waiting to connect: $identifier -> $session');
       return false;
     }
     return await super.queryMeta(identifier);
@@ -87,9 +87,9 @@ class SharedArchivist extends ClientArchivist {
 
   @override
   Future<bool> queryDocuments(ID identifier, List<Document> documents) async {
-    Session? session = messenger?.session;
-    if (session?.identifier == null) {
-      logWarning('querying documents cancel, waiting to connect: $identifier');
+    var session = messenger?.session;
+    if (session is ClientSession && session.isReady) {} else {
+      logWarning('querying documents cancel, waiting to connect: $identifier -> $session');
       return false;
     }
     return await super.queryDocuments(identifier, documents);

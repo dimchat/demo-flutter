@@ -67,14 +67,14 @@ dependencies:
 # startrek: 0.5.0
   stargate: 0.5.0
 
-# mkm: 0.3.2
-# dkd: 0.3.2
-# dimp: 0.3.3
-# dimsdk: 0.3.3
-# dim_plugins: 0.3.3
-  dim_client: 0.5.3
+# mkm: 1.0.0
+# dkd: 1.0.0
+# dimp: 1.0.0
+# dimsdk: 1.0.0
+# dim_plugins: 1.0.0
+  dim_client: 0.6.0
 
-  pnf: 0.2.0
+  pnf: 0.2.1
   tvbox: 0.1.1
 
 dev_dependencies:

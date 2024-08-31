@@ -11,7 +11,6 @@ import '../pnf/auto_image.dart';
 import '../pnf/net_video.dart';
 import '../pnf/net_voice.dart';
 import '../ui/styles.dart';
-import '../utils/html.dart';
 import '../video/playing.dart';
 
 import 'browser.dart';
@@ -23,12 +22,12 @@ abstract class ContentViewUtils {
 
   static User? currentUser;
 
-  static Color getBackgroundColor(BuildContext context, ID sender) =>
+  static Color getBackgroundColor(ID sender) =>
       sender == currentUser?.identifier
           ? Styles.colors.messageIsMineBackgroundColor
           : Styles.colors.textMessageBackgroundColor;
 
-  static Color getTextColor(BuildContext context, ID sender) =>
+  static Color getTextColor(ID sender) =>
       sender == currentUser?.identifier
           ? CupertinoColors.black
           : Styles.colors.textMessageColor;
@@ -75,38 +74,36 @@ abstract class ContentViewUtils {
     ),
   );
 
-  static Widget getTextContentView(BuildContext ctx, Content content, ID sender, {
+  static Widget getTextContentView(Content content, ID sender, {
+    required GestureTapCallback? onDoubleTap,
+    required GestureLongPressCallback? onLongPress,
     required OnWebShare? onWebShare,
     required OnVideoShare? onVideoShare,
   }) {
-    String text = DefaultMessageBuilder().getText(content, sender);
     bool mine = sender == currentUser?.identifier;
     var format = content.getString('format', null);
     bool plain = mine || format != 'markdown';
+    String text = DefaultMessageBuilder().getText(content, sender);
     Widget textView = plain
-        ? SelectableText(text, style: TextStyle(color: getTextColor(ctx, sender)),)
+        ? SelectableText(text, style: TextStyle(color: getTextColor(sender)),)
         : RichTextView(sender: sender, text: text, onWebShare: onWebShare, onVideoShare: onVideoShare,);
     return GestureDetector(
+      onDoubleTap: onDoubleTap,
+      onLongPress: onLongPress,
       child: Container(
-        color: getBackgroundColor(ctx, sender),
+        color: getBackgroundColor(sender),
         padding: Styles.textMessagePadding,
         child: textView,
-      ),
-      onDoubleTap: () => TextPreviewPage.open(ctx,
-        text: text, sender: sender,
-        onWebShare: onWebShare,
-        onVideoShare: onVideoShare,
-        previewing: plain,
       ),
     );
   }
 
-  static Widget getAudioContentView(BuildContext ctx, AudioContent content, ID sender, {
-    GestureLongPressCallback? onLongPress,
+  static Widget getAudioContentView(AudioContent content, ID sender, {
+    required GestureLongPressCallback? onLongPress,
   }) {
     Widget view = NetworkAudioFactory().getAudioView(content,
-      color: getTextColor(ctx, sender),
-      backgroundColor: getBackgroundColor(ctx, sender),
+      color: getTextColor(sender),
+      backgroundColor: getBackgroundColor(sender),
     );
     if (onLongPress == null) {
       return view;
@@ -117,8 +114,9 @@ abstract class ContentViewUtils {
     );
   }
 
-  static Widget getVideoContentView(BuildContext ctx, VideoContent content, ID sender, {
-    GestureLongPressCallback? onLongPress, OnVideoShare? onVideoShare,
+  static Widget getVideoContentView(VideoContent content, ID sender, {
+    required GestureLongPressCallback? onLongPress,
+    required OnVideoShare? onVideoShare,
   }) {
     Widget view = NetworkVideoFactory().getVideoView(content, onVideoShare: onVideoShare);
     if (onLongPress == null) {
@@ -130,25 +128,26 @@ abstract class ContentViewUtils {
     );
   }
 
-  static Widget getImageContentView(BuildContext ctx, ImageContent content, ID sender, List<InstantMessage> messages, {
-    GestureTapCallback? onTap, GestureLongPressCallback? onLongPress,
+  static Widget getImageContentView(ImageContent content, ID sender, {
+    required GestureTapCallback? onTap,
+    required GestureLongPressCallback? onLongPress,
   }) => GestureDetector(
-    onTap: onTap ?? () => previewImageContent(ctx, content, messages),
+    onTap: onTap,
     onLongPress: onLongPress,
     child: NetworkImageFactory().getImageView(PortableNetworkFile.parse(content)!),
   );
 
-  static Widget getPageContentView(BuildContext ctx, PageContent content, ID sender, {
-    GestureTapCallback? onTap, GestureLongPressCallback? onLongPress, OnWebShare? onWebShare,
+  static Widget getPageContentView(PageContent content, ID sender, {
+    required GestureTapCallback? onTap,
+    required GestureLongPressCallback? onLongPress,
   }) => PageContentView(content: content,
-    onTap: onTap ?? () => Browser.open(ctx, HtmlUri.getUriString(content),
-      onWebShare: onWebShare,
-    ),
+    onTap: onTap,
     onLongPress: onLongPress,
   );
 
-  static Widget getNameCardView(BuildContext ctx, NameCard content, {
-    GestureTapCallback? onTap, GestureLongPressCallback? onLongPress,
+  static Widget getNameCardView(NameCard content, {
+    required GestureTapCallback? onTap,
+    required GestureLongPressCallback? onLongPress,
   }) => NameCardView(content: content,
     onTap: onTap,
     onLongPress: onLongPress,

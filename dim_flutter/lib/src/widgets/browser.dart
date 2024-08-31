@@ -88,17 +88,18 @@ class Browser extends StatefulWidget {
   static void launchURL(BuildContext context, Uri url, {
     LaunchMode mode = LaunchMode.externalApplication,
   }) => canLaunchUrl(url).then((can) {
-    if (can) {
-      launchUrl(url, mode: mode).then((ok) {
-        if (ok) {
-          Log.info('launch URL: $url');
-        } else {
-          Alert.show(context, 'Error', 'Failed to launch URL: $url');
-        }
-      });
-    } else {
+    if (!can) {
       Alert.show(context, 'Error', 'Cannot launch URL: $url');
+      // return;
+      Log.warning('cannot launch URL: $url');
     }
+    launchUrl(url, mode: mode).then((ok) {
+      if (ok) {
+        Log.info('launch URL: $url');
+      } else {
+        Alert.show(context, 'Error', 'Failed to launch URL: $url');
+      }
+    });
   });
 
   // create web view
@@ -112,6 +113,8 @@ class Browser extends StatefulWidget {
 }
 
 class _BrowserState extends State<Browser> {
+
+  InAppWebViewController? _controller;
 
   int _progress = 0;
 
@@ -133,19 +136,49 @@ class _BrowserState extends State<Browser> {
         overflow: TextOverflow.ellipsis,
         style: Styles.titleTextStyle,
       ),
-      trailing: _naviItem(),
+      trailing: _naviItems(context),
     ),
     body: Stack(
       alignment: AlignmentDirectional.bottomStart,
       children: [
-        _webView(),
-        if (_progress <= 99)
+        // FIXME: Use PopScope instead.
+        WillPopScope(
+          onWillPop: () async {
+            var controller = _controller;
+            if (controller != null && await controller.canGoBack()) {
+              await controller.goBack();
+              return false;
+            }
+            return true;
+          },
+          child: _webView(),
+        ),
+        // _webView(),
+        if (_progress < 100)
           _statusBar(),
       ],
     ),
   );
 
-  Widget? _naviItem() => _progress <= 99 ? _indicator() : _shareButton();
+  Widget? _naviItems(BuildContext context) {
+    Widget? one = _progress <= 99 ? _indicator() : _shareButton();
+    Widget? two = _controller == null ? null : IconButton(
+      onPressed: () => closePage(context),
+      icon: const Icon(
+        AppIcons.closeIcon,
+        size: Styles.navigationBarIconSize,
+        // color: Styles.avatarColor,
+      ),
+    );
+    return one == null ? two : two == null ? one : Row(
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        one,
+        two,
+      ],
+    );
+  }
+  // => _progress <= 99 ? _indicator() : _shareButton();
   Widget _indicator() => const SizedBox(
     width: Styles.navigationBarIconSize, height: Styles.navigationBarIconSize,
     child: CircularProgressIndicator(strokeWidth: 2.0),
@@ -178,12 +211,38 @@ class _BrowserState extends State<Browser> {
       _progress = progress;
     }),
     onLoadStart: (controller, url) => setState(() {
+      _controller = controller;
       _url = url;
     }),
     onTitleChanged: (controller, title) => setState(() {
       _title = title;
     }),
+    shouldOverrideUrlLoading: (controller, action) async {
+      var url = action.request.url;
+      if (url == null || systemSchemes.contains(url.scheme)) {
+        Log.info('loading URL: $url');
+        return NavigationActionPolicy.ALLOW;
+      } else if (await canLaunchUrl(url)) {
+        Log.info('launch other app with URL: $url');
+      } else {
+        // FIXME: adding 'queries' in AndroidManifest.xml
+        Log.warning('failed to check URL: $url');
+        // return NavigationActionPolicy.ALLOW;
+      }
+      // Launch the App
+      await launchUrl(url);
+      // and cancel the request
+      return NavigationActionPolicy.CANCEL;
+    },
   );
+  static final List<String> systemSchemes = [
+    "http", "https",
+    "file",
+    "chrome",
+    "data",
+    "javascript",
+    "about",
+  ];
 
   Widget _statusBar() => Container(
     color: Colors.black54,

@@ -80,6 +80,8 @@ abstract class AppIcons {
   static const IconData     deleteIcon = CupertinoIcons.delete;
   static const IconData     removeIcon = Icons.remove_circle_outline;
 
+  static const IconData      closeIcon = CupertinoIcons.clear_thick;
+
   static const IconData       quitIcon = CupertinoIcons.escape;
   static const IconData  groupChatIcon = CupertinoIcons.group;
   static const IconData       plusIcon = CupertinoIcons.add;

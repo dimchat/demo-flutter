@@ -32,6 +32,7 @@ import 'dart:typed_data';
 
 import 'package:dim_client/dim_client.dart';
 
+import '../client/cpu/handshake.dart';
 import '../client/facebook.dart';
 import '../client/messenger.dart';
 import '../client/shared.dart';
@@ -144,7 +145,7 @@ class StationSpeeder {
     }
     // create message envelope and handshake command
     Envelope env = Envelope.create(sender: uid, receiver: sid);
-    Content content = HandshakeCommand.start();
+    Content content = ClientHandshakeProcessor.createTestSpeedCommand();
     content.group = Station.kEvery;
     // create instant message with meta & visa
     InstantMessage iMsg = InstantMessage.create(env, content);

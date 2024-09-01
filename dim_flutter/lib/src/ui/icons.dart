@@ -22,7 +22,8 @@ abstract class AppIcons {
   static const IconData    chatsTabIcon = CupertinoIcons.chat_bubble_2;
   static const IconData contactsTabIcon = CupertinoIcons.group;
   static const IconData servicesTabIcon = CupertinoIcons.compass;
-  static const IconData settingsTabIcon = CupertinoIcons.gear;
+  // static const IconData settingsTabIcon = CupertinoIcons.gear;
+  static const IconData       meTabIcon = CupertinoIcons.person;
 
   // Chat Box
   static const IconData   chatDetailIcon = Icons.more_horiz;

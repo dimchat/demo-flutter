@@ -31,6 +31,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_inappwebview/flutter_inappwebview.dart';
+import 'package:get/get.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 import 'package:dim_client/dim_client.dart';
@@ -80,7 +81,9 @@ class Browser extends StatefulWidget {
     Uri? url = HtmlUri.parseUri(urlString);
     Log.info('URL length: ${urlString?.length}: $url');
     if (url == null) {
-      Alert.show(context, 'Error', 'Failed to launch URL: $urlString');
+      Alert.show(context, 'Error', 'Failed to launch "@url".'.trParams({
+        'url': _shortUrlString(urlString),
+      }));
     } else {
       launchURL(context, url, mode: mode);
     }
@@ -89,7 +92,10 @@ class Browser extends StatefulWidget {
     LaunchMode mode = LaunchMode.externalApplication,
   }) => canLaunchUrl(url).then((can) {
     if (!can) {
-      Alert.show(context, 'Error', 'Cannot launch URL: $url');
+      // FIXME: adding 'queries' in AndroidManifest.xml
+      Alert.show(context, 'Error', 'Cannot launch "@url".'.trParams({
+        'url': _shortUrlString(url.toString()),
+      }));
       // return;
       Log.warning('cannot launch URL: $url');
     }
@@ -97,10 +103,22 @@ class Browser extends StatefulWidget {
       if (ok) {
         Log.info('launch URL: $url');
       } else {
-        Alert.show(context, 'Error', 'Failed to launch URL: $url');
+        Alert.show(context, 'Error', 'Failed to launch "@url".'.trParams({
+          'url': _shortUrlString(url.toString()),
+        }));
       }
     });
   });
+  static String _shortUrlString(String? urlString) {
+    if (urlString == null) {
+      return '';
+    } else if (urlString.length <= 64) {
+      return urlString;
+    }
+    var head = urlString.substring(0, 50);
+    var tail = urlString.substring(urlString.length-12);
+    return '$head...$tail';
+  }
 
   // create web view
   static Widget view(BuildContext context, Uri url, {
@@ -151,9 +169,8 @@ class _BrowserState extends State<Browser> {
             }
             return true;
           },
-          child: _webView(),
+          child: _webView(context),
         ),
-        // _webView(),
         if (_progress < 100)
           _statusBar(),
       ],
@@ -203,7 +220,7 @@ class _BrowserState extends State<Browser> {
     );
   }
 
-  Widget _webView() => InAppWebView(
+  Widget _webView(BuildContext ctx) => InAppWebView(
     initialUrlRequest: HtmlUri.getURLRequest(url),
     initialData: HtmlUri.getWebViewData(url, html),
     initialOptions: HtmlUri.getWebViewOptions(),
@@ -217,22 +234,17 @@ class _BrowserState extends State<Browser> {
     onTitleChanged: (controller, title) => setState(() {
       _title = title;
     }),
-    shouldOverrideUrlLoading: (controller, action) async {
+    shouldOverrideUrlLoading: (controller, action) {
       var url = action.request.url;
       if (url == null || systemSchemes.contains(url.scheme)) {
         Log.info('loading URL: $url');
-        return NavigationActionPolicy.ALLOW;
-      } else if (await canLaunchUrl(url)) {
-        Log.info('launch other app with URL: $url');
-      } else {
-        // FIXME: adding 'queries' in AndroidManifest.xml
-        Log.warning('failed to check URL: $url');
-        // return NavigationActionPolicy.ALLOW;
+        // allow the request
+        return Future.value(NavigationActionPolicy.ALLOW);
       }
       // Launch the App
-      await launchUrl(url);
+      Browser.launchURL(ctx, url);
       // and cancel the request
-      return NavigationActionPolicy.CANCEL;
+      return Future.value(NavigationActionPolicy.CANCEL);
     },
   );
   static final List<String> systemSchemes = [
@@ -256,6 +268,7 @@ class _BrowserState extends State<Browser> {
       ),
     ),
   );
+
 }
 
 

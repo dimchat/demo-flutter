@@ -13,6 +13,9 @@ abstract class ThemeColors {
   Color get avatarColor => tarsierLogoBackgroundColor;
   Color get avatarDefaultColor => CupertinoColors.inactiveGray;
 
+  // Color get tabColor => CupertinoColors.black;
+  Color get activeTabColor => CupertinoColors.systemBlue;
+
   Color get scaffoldBackgroundColor;
   Color get appBardBackgroundColor;
 

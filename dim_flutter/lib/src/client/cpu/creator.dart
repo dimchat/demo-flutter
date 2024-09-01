@@ -1,6 +1,7 @@
 import 'package:dim_client/dim_client.dart';
 
 import 'any.dart';
+import 'handshake.dart';
 import 'search.dart';
 import 'text.dart';
 
@@ -27,6 +28,10 @@ class SharedContentProcessorCreator extends ClientContentProcessorCreator {
     if (cmd == SearchCommand.kOnlineUsers ||
         cmd == SearchCommand.kSearch) {
       return SearchCommandProcessor(facebook!, messenger!);
+    }
+    // handshake
+    if (cmd == HandshakeCommand.kHandshake) {
+      return ClientHandshakeProcessor(facebook!, messenger!);
     }
     // others
     return super.createCommandProcessor(msgType, cmd);

@@ -113,7 +113,9 @@ final Map<String, String> intlThTh = {
   // Tabs
   'Chats': 'แชท',
   'Contacts': 'ติดต่อ',
-  'Settings': 'ตั้งค่า',
+  'Me': 'ฉัน',
+  'Services': 'บริการ',
+  'Service Bots': 'บอทบริการ',
 
   // Contacts
   'New Friends': 'เพื่อนใหม่',
@@ -124,6 +126,7 @@ final Map<String, String> intlThTh = {
   'Search User': 'ค้นหาผู้ใช้',
 
   // Settings
+  'Settings': 'ตั้งค่า',
   'Export': 'ส่งออกบัญชี',
   'Mnemonic': 'วลีช่วยในการจำ',
   'Language': 'ภาษา',
@@ -203,13 +206,26 @@ final Map<String, String> intlThTh = {
   //
   'Video Player': 'เครื่องเล่นวิดีโอ',
 
-  'Loading "@url" ...': 'กำลังโหลด "@url" ...',
+  'Loading "@url"': 'กำลังโหลด "@url" ...',
   'Failed to load "@url".': 'โหลด "@url" ล้มเหลว',
 
   'Select TV': 'เลือกทีวี',
   'TV not found': 'ไม่พบทีวี',
   'Search again': 'ค้นหาอีกครั้ง',
   'Refresh': 'รีเฟรช',
+
+  //
+  //  Web Browser
+  //
+  'Cannot launch "@url".': 'ไม่สามารถเปิด "@url" ได้',
+  'Failed to launch "@url".': 'เปิด "@url" ไม่สำเร็จ',
+
+  //
+  //  Check Update
+  //
+  'Please update app (@version, build @build).': 'กรุณาอัปเดตแอปเป็นเวอร์ชันล่าสุด (@version, บิลด์ @build)',
+  'Upgrade': 'อัปเกรด',
+  'Download': 'ดาวน์โหลด',
 
   //
   //  Profile
@@ -257,6 +273,9 @@ final Map<String, String> intlThTh = {
       ' การกระทำนี้ไม่สามารถกู้คืนได้',
   'Failed to clear chat history': 'ไม่สามารถล้างประวัติแชทได้',
 
+  'Sure to remove this conversation?': 'แน่ใจหรือไม่ว่าต้องการลบบทสนทนานี้? การกระทำนี้ไม่สามารถกู้คืนได้',
+  'Failed to remove conversation': 'ไม่สามารถลบบทสนทนาได้',
+
   'Failed to set remark': 'ไม่สามารถตั้งค่าหมายเหตุได้',
 
   'Never receive message from this contact': 'คุณจะไม่ได้รับข้อความจากที่ติดต่อนี้อีก',
@@ -302,20 +321,13 @@ final Map<String, String> intlThTh = {
       '* หากคุณต้องการลบแฟ้มเหล่านี้ทันที คุณยังสามารถเลือกลบด้วยตนเองได้ที่นี่',
 
   //
-  //  Service Bots
+  //  Footers
   //
-
-  'Services': 'บริการ',
-  'Service Bots': 'บอทบริการ',
 
   'ServiceBotList::Description': '* ที่นี่แสดงบริการบุคคลที่สามที่ได้รับความนิยม;\n'
       '* ใครก็ตามสามารถพัฒนาและให้บริการเช่นนี้แก่ประชาชนเพียงเขาปฏิบัติตามโปรโตคอล DIMP;\n'
       '* หากคุณต้องการสร้างบอทบริการของคุณเอง เราเชิญชวนให้อ่านเอกสาร DIMP,'
       ' ดาวน์โหลดโครงการตัวอย่างจาก GitHub หรือติดต่อ "Albert Moky" โดยตรง',
-
-  //
-  //  Footers
-  //
 
   'ChatBox::Description': 'แอปนี้ถูกขับเคลื่อนด้วย DIM, ซึ่งเป็นเทคโนโลยี E2EE (End-to-End Encrypted)'
       ' ข้อความของคุณจะถูกเข้ารหัสก่อนที่จะส่งออก ไม่มีใครสามารถถอดรหัสเนื้อหาได้นอกจากผู้รับ',

@@ -113,7 +113,9 @@ final Map<String, String> intlBnBd = {
   // Tabs
   'Chats': 'চ্যাটস',
   'Contacts': 'যোগাযোগ',
-  'Settings': 'সেটিংস',
+  'Me': 'আমি',
+  'Services': 'সেবা',
+  'Service Bots': 'সেবা বট',
 
   // Contacts
   'New Friends': 'নতুন বন্ধু',
@@ -124,6 +126,7 @@ final Map<String, String> intlBnBd = {
   'Search User': 'ব্যবহারকারী অনুসন্ধান করুন',
 
   // Settings
+  'Settings': 'সেটিংস',
   'Export': 'অ্যাকাউন্ট রফতানি',
   'Mnemonic': 'মনেমনিক',
   'Language': 'ভাষা',
@@ -203,13 +206,26 @@ final Map<String, String> intlBnBd = {
   //
   'Video Player': 'ভিডিও প্লেয়ার',
 
-  'Loading "@url" ...': '"@url" লোড হচ্ছে ...',
+  'Loading "@url"': '"@url" লোড হচ্ছে ...',
   'Failed to load "@url".': '"@url" লোড করা ব্যর্থ হয়েছে।',
 
   'Select TV': 'টিভি নির্বাচন করুন',
   'TV not found': 'টিভি পাওয়া যায়নি',
   'Search again': 'আবার অনুসন্ধান করুন',
   'Refresh': 'রিফ্রেশ করুন',
+
+  //
+  //  Web Browser
+  //
+  'Cannot launch "@url".': '"@url" চালু করতে পারছি না।',
+  'Failed to launch "@url".': '"@url" চালু করতে ব্যর্থ হয়েছে।',
+
+  //
+  //  Check Update
+  //
+  'Please update app (@version, build @build).': 'অনুগ্রহ করে অ্যাপটি সর্বশেষ সংস্করণে আপডেট করুন (@version, build @build)।',
+  'Upgrade': 'আপগ্রেড',
+  'Download': 'ডাউনলোড করুন',
 
   //
   //  Profile
@@ -256,6 +272,9 @@ final Map<String, String> intlBnBd = {
   'Sure to clear chat history of this group?': 'আপনি কি নিশ্চিত যে এই গোষ্ঠীর চ্যাট ইতিহাস পরিষ্কার করতে চান?'
       ' এই ক্রিয়াটি পূর্বাভাস করা যাবে না।',
   'Failed to clear chat history': 'চ্যাট ইতিহাস পরিষ্কার করতে ব্যর্থ হয়েছে।',
+
+  'Sure to remove this conversation?': 'আপনি কি নিশ্চিত যে আপনি এই কথোপকথনটি মুছে ফেলতে চান? এই ক্রিয়াটি পুনরুদ্ধারযোগ্য নয়।',
+  'Failed to remove conversation': 'কথোপকথন মুছে ফেলতে ব্যর্থ হয়েছে।',
 
   'Failed to set remark': 'মন্তব্য সেট করতে ব্যর্থ হয়েছে।',
 
@@ -306,20 +325,13 @@ final Map<String, String> intlBnBd = {
       '* আপনি যদি চান তাদের অবিলম্বে সরানো, তবে আপনি এখানে ম্যানুয়ালি তাদের মুছে ফেলতে পারেন।',
 
   //
-  //  Service Bots
+  //  Footers
   //
-
-  'Services': 'সেবা',
-  'Service Bots': 'সেবা বট',
 
   'ServiceBotList::Description': '* এখানে জনপ্রিয় থার্ড পার্টি সেবা দেখানো হয়;\n'
       '* ডিএমপি প্রোটোকল অনুসরণ করে কেউ যে কোনও সেবা উন্নয়ন করতে এবং প্রকাশ করতে পারেন;\n'
       '* আপনি আপনার নিজের সেবা বট তৈরি করতে চাইলে, আমরা আপনাকে DIMP ডকুমেন্টগুলি পড়তে আমন্ত্রণ জানাচ্ছি,'
       ' এক্সাম্পল প্রকল্পগুলি গিটহাব থেকে ডাউনলোড করতে বা "Albert Moky" সরাসরি যোগাযোগ করতে।',
-
-  //
-  //  Footers
-  //
 
   'ChatBox::Description': 'এই অ্যাপটি DIM দ্বারা চালিত, এটি একটি E2EE (End-to-End Encrypted) প্রযুক্তি।'
       ' আপনার বার্তা প্রেরণের আগে এটি এনক্রিপ্ট হবে, প্রাপক ছাড়া কেউ কন্টেন্ট ডিক্রিপ্ট করতে পারবেনা।',

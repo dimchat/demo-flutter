@@ -113,7 +113,9 @@ final Map<String, String> intlViVN = {
   // Tabs
   'Chats': 'Trò chuyện',
   'Contacts': 'Danh bạ',
-  'Settings': 'Cài đặt',
+  'Me': 'Tôi',
+  'Services': 'Dịch vụ',
+  'Service Bots': 'Bot Dịch vụ',
 
   // Contacts
   'New Friends': 'Bạn mới',
@@ -124,6 +126,7 @@ final Map<String, String> intlViVN = {
   'Search User': 'Tìm người dùng',
 
   // Settings
+  'Settings': 'Cài đặt',
   'Export': 'Xuất tài khoản',
   'Mnemonic': 'Mnemonic',
   'Language': 'Ngôn ngữ',
@@ -203,13 +206,26 @@ final Map<String, String> intlViVN = {
   //
   'Video Player': 'Trình phát video',
 
-  'Loading "@url" ...': 'Đang tải "@url" ...',
+  'Loading "@url"': 'Đang tải "@url" ...',
   'Failed to load "@url".': 'Không thể tải "@url" lên.',
 
   'Select TV': 'Chọn TV',
   'TV not found': 'Không tìm thấy TV',
   'Search again': 'Tìm kiếm lại',
   'Refresh': 'Làm mới',
+
+  //
+  //  Web Browser
+  //
+  'Cannot launch "@url".': 'Không thể mở "@url".',
+  'Failed to launch "@url".': 'Không thể mở "@url".',
+
+  //
+  //  Check Update
+  //
+  'Please update app (@version, build @build).': 'Vui lòng cập nhật ứng dụng lên phiên bản mới nhất (@version, bản dựng @build).',
+  'Upgrade': 'Nâng cấp',
+  'Download': 'Tải xuống',
 
   //
   //  Profile
@@ -257,6 +273,9 @@ final Map<String, String> intlViVN = {
       ' Hành động này không thể khôi phục.',
   'Failed to clear chat history': 'Không thể xóa lịch sử trò chuyện.',
 
+  'Sure to remove this conversation?': 'Bạn có chắc chắn muốn xóa cuộc trò chuyện này không? Hành động này không thể khôi phục lại.',
+  'Failed to remove conversation': 'Không thể xóa cuộc trò chuyện.',
+
   'Failed to set remark': 'Không thể đặt ghi chú.',
 
   'Never receive message from this contact': 'Bạn sẽ không bao giờ nhận được tin nhắn từ liên lạc này nữa.',
@@ -303,20 +322,13 @@ final Map<String, String> intlViVN = {
       '* Nếu bạn muốn xóa chúng ngay lập tức, bạn cũng có thể chọn xóa chúng thủ công ở đây.',
 
   //
-  //  Service Bots
+  //  Footers
   //
-
-  'Services': 'Dịch vụ',
-  'Service Bots': 'Bot Dịch vụ',
 
   'ServiceBotList::Description': '* Ở đây hiển thị các dịch vụ bên thứ ba phổ biến;\n'
       '* Bất kỳ ai cũng có thể phát triển và cung cấp các dịch vụ này cho công chúng miễn là họ tuân thủ giao thức DIMP;\n'
       '* Nếu bạn muốn tạo bot dịch vụ riêng của mình, chúng tôi mời bạn đọc tài liệu DIMP,'
       ' tải xuống các dự án ví dụ từ GitHub hoặc liên hệ trực tiếp với "Albert Moky".',
-
-  //
-  //  Footers
-  //
 
   'ChatBox::Description': 'Ứng dụng này được cung cấp bởi DIM, một công nghệ E2EE (End-to-End Encrypted).'
       ' Tin nhắn của bạn sẽ được mã hóa trước khi gửi đi, không ai có thể giải mã nội dung ngoại trừ người nhận.',

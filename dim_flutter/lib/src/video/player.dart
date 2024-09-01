@@ -352,7 +352,7 @@ class _VideoAppState extends State<VideoPlayerPage> with Logging implements lnc.
     if (channelGroups == null) {
       // loading
       indicator = CupertinoActivityIndicator(color: widget.color,);
-      message = Text('Loading "@url" ...'.trParams({
+      message = Text('Loading "@url"'.trParams({
         'url': urlString,
       }), style: textStyle,);
     } else if (channelGroups.isEmpty) {
@@ -398,7 +398,7 @@ class _VideoAppState extends State<VideoPlayerPage> with Logging implements lnc.
     if (_error == null) {
       // loading
       indicator = CupertinoActivityIndicator(color: widget.color,);
-      message = Text('Loading "@url" ...'.trParams({
+      message = Text('Loading "@url"'.trParams({
         'url': urlString,
       }), style: textStyle,);
     } else {

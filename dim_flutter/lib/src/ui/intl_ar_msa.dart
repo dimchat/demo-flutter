@@ -113,7 +113,9 @@ final Map<String, String> intlAr = {
   // Tabs
   'Chats': 'المحادثات',
   'Contacts': 'جهات الاتصال',
-  'Settings': 'الإعدادات',
+  'Me': 'أنا',
+  'Services': 'الخدمات',
+  'Service Bots': 'بوتات الخدمة',
 
   // Contacts
   'New Friends': 'أصدقاء جدد',
@@ -124,6 +126,7 @@ final Map<String, String> intlAr = {
   'Search User': 'البحث عن مستخدم',
 
   // Settings
+  'Settings': 'الإعدادات',
   'Export': 'تصدير الحساب',
   'Mnemonic': 'الرمز الذاكري',
   'Language': 'اللغة',
@@ -203,13 +206,26 @@ final Map<String, String> intlAr = {
   //
   'Video Player': 'مشغل الفيديو',
 
-  'Loading "@url" ...': 'جاري تحميل "@url" ...',
+  'Loading "@url"': 'جاري تحميل "@url" ...',
   'Failed to load "@url".': 'فشل في تحميل "@url".',
 
   'Select TV': 'اختر التلفزيون',
   'TV not found': 'التلفزيون غير موجود',
   'Search again': 'ابحث مرة أخرى',
   'Refresh': 'تحديث',
+
+  //
+  //  Web Browser
+  //
+  'Cannot launch "@url".': 'لا يمكن تشغيل "@url".',
+  'Failed to launch "@url".': 'فشل في تشغيل "@url".',
+
+  //
+  //  Check Update
+  //
+  'Please update app (@version, build @build).': 'يرجى تحديث هذا التطبيق إلى الإصدار الأحدث (@version, البنية @build).',
+  'Upgrade': 'ترقية',
+  'Download': 'تنزيل',
 
   //
   //  Profile
@@ -257,6 +273,9 @@ final Map<String, String> intlAr = {
   'Sure to clear chat history of this group?': 'هل أنت متأكد من مسح تاريخ الدردشة لهذه المجموعة؟'
       ' لا يمكن استعادة هذا الإجراء.',
   'Failed to clear chat history': 'فشل في مسح تاريخ الدردشة.',
+
+  'Sure to remove this conversation?': 'هل أنت متأكد من إزالة هذه المحادثة؟ هذا الإجراء غير قابل للاسترجاع.',
+  'Failed to remove conversation': 'فشل في إزالة المحادثة.',
 
   'Failed to set remark': 'فشل في تعيين الملاحظة.',
 
@@ -307,20 +326,13 @@ final Map<String, String> intlAr = {
       '* إذا كنت ترغب في إزالتها على الفور، يمكنك أيضًا اختيار حذفها يدوياً هنا.',
 
   //
-  //  Service Bots
+  //  Footers
   //
-
-  'Services': 'الخدمات',
-  'Service Bots': 'بوتات الخدمة',
 
   'ServiceBotList::Description': '* هنا تظهر الخدمات التي تقدمها جهات خارجية شائعة؛\n'
       '* يمكن لأي شخص تطوير وتوفير مثل هذه الخدمات للجمهور طالما يتبعون بروتوكول DIMP. \n'
       '* إذا كنت ترغب في إنشاء بوت الخدمة الخاص بك ، فنحن ندعوك لقراءة وثائق DIMP ،'
       ' تنزيل مشاريع المثال من GitHub ، أو التواصل مع "Albert Moky" مباشرة.',
-
-  //
-  //  Footers
-  //
 
   'ChatBox::Description': 'تعتمد هذا التطبيق على تقنية DIM، وهي تقنية تشفير من جهة إلى جهة (End-to-End Encrypted).'
       ' ستتم تشفير رسائلك قبل إرسالها، ولا يمكن لأي شخص فك تشفير المحتويات سوى المستلم.',

@@ -113,7 +113,9 @@ final Map<String, String> intlJaJp = {
   // Tabs
   'Chats': 'チャット',
   'Contacts': '連絡先',
-  'Settings': '設定',
+  'Me': '私',
+  'Services': 'サービス',
+  'Service Bots': 'サービスボット',
 
   // Contacts
   'New Friends': '新しい友達',
@@ -124,6 +126,7 @@ final Map<String, String> intlJaJp = {
   'Search User': 'ユーザーを検索',
 
   // Settings
+  'Settings': '設定',
   'Export': 'アカウントをエクスポート',
   'Mnemonic': '助記語',
   'Language': '言語',
@@ -203,13 +206,26 @@ final Map<String, String> intlJaJp = {
   //
   'Video Player': 'ビデオプレーヤー',
 
-  'Loading "@url" ...': '"@url" を読み込んでいます...',
+  'Loading "@url"': '"@url" を読み込んでいます...',
   'Failed to load "@url".': '"@url" の読み込みに失敗しました。',
 
   'Select TV': 'テレビを選択',
   'TV not found': 'テレビが見つかりません',
   'Search again': '再検索',
   'Refresh': '更新',
+
+  //
+  //  Web Browser
+  //
+  'Cannot launch "@url".': '"@url" を起動できません。',
+  'Failed to launch "@url".': '"@url" の起動に失敗しました。',
+
+  //
+  //  Check Update
+  //
+  'Please update app (@version, build @build).': 'アプリを最新バージョン (@version, ビルド @build) にアップデートしてください。',
+  'Upgrade': 'アップグレード',
+  'Download': 'ダウンロード',
 
   //
   //  Profile
@@ -254,6 +270,9 @@ final Map<String, String> intlJaJp = {
   'Sure to clear chat history of this group?': 'このグループのチャット履歴を消去しますか？'
       ' この操作は元に戻せません。',
   'Failed to clear chat history': 'チャット履歴の消去に失敗しました。',
+
+  'Sure to remove this conversation?': 'この会話を削除してもよろしいですか？この操作は元に戻せません。',
+  'Failed to remove conversation': '会話の削除に失敗しました。',
 
   'Failed to set remark': '備考の設定に失敗しました。',
 
@@ -300,20 +319,13 @@ final Map<String, String> intlJaJp = {
       '* それらを即時に削除したい場合は、ここで手動で削除することもできます。',
 
   //
-  //  Service Bots
+  //  Footers
   //
-
-  'Services': 'サービス',
-  'Service Bots': 'サービスボット',
 
   'ServiceBotList::Description': '* ここでは人気のあるサードパーティのサービスを表示します;\n'
       '* 誰でも、DIMPプロトコルに従う限り、このようなサービスを開発して一般に提供することができます;\n'
       '* 独自のサービスボットを作成したい場合は、DIMPドキュメントを読むか、GitHubからサンプルプロジェクトをダウンロードするか、'
       '"Albert Moky"に直接連絡してください。',
-
-  //
-  //  Footers
-  //
 
   'ChatBox::Description': 'このアプリはDIMによって提供される、E2EE（End-to-End Encrypted）技術を使用しています。'
       'あなたのメッセージは送信前に暗号化され、受信者以外は内容を解読できません。',

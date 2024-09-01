@@ -112,7 +112,9 @@ final Map<String, String> intlZhTw = {
   // Tabs
   'Chats': '聊天',
   'Contacts': '聯絡人',
-  'Settings': '設定',
+  'Me': '我',
+  'Services': '服務',
+  'Service Bots': '服務機器人',
 
   // Contacts
   'New Friends': '新的朋友',
@@ -123,6 +125,7 @@ final Map<String, String> intlZhTw = {
   'Search User': '搜尋使用者',
 
   // Settings
+  'Settings': '設定',
   'Export': '導出帳戶',
   'Mnemonic': '助憶詞',
   'Language': '語言',
@@ -202,13 +205,26 @@ final Map<String, String> intlZhTw = {
   //
   'Video Player': '影片播放器',
 
-  'Loading "@url" ...': '正在載入 "@url" ...',
+  'Loading "@url"': '正在載入 "@url" ...',
   'Failed to load "@url".': '無法載入 "@url"。',
 
   'Select TV': '選擇電視',
   'TV not found': '未找到電視',
   'Search again': '重新搜尋',
   'Refresh': '重新整理',
+
+  //
+  //  Web Browser
+  //
+  'Cannot launch "@url".': '無法開啟 "@url"。',
+  'Failed to launch "@url".': '開啟 "@url" 失敗。',
+
+  //
+  //  Check Update
+  //
+  'Please update app (@version, build @build).': '請更新應用程式至最新版本 (@version，版本號 @build)。',
+  'Upgrade': '升級',
+  'Download': '下載',
 
   //
   //  Profile
@@ -251,6 +267,9 @@ final Map<String, String> intlZhTw = {
   'Sure to clear chat history of this friend?': '確定要清除此朋友的聊天歷史嗎？此操作無法還原。',
   'Sure to clear chat history of this group?': '確定要清除此群組的聊天歷史嗎？此操作無法還原。',
   'Failed to clear chat history': '無法清除聊天歷史。',
+
+  'Sure to remove this conversation?': '確定要刪除此對話嗎？此操作無法恢復。',
+  'Failed to remove conversation': '刪除對話失敗。',
 
   'Failed to set remark': '無法設定備註。',
 
@@ -298,19 +317,12 @@ final Map<String, String> intlZhTw = {
       '* 如果您希望立即刪除它們，您也可以選擇在此手動刪除。',
 
   //
-  //  Service Bots
+  //  Footers
   //
-
-  'Services': '服務',
-  'Service Bots': '服務機器人',
 
   'ServiceBotList::Description': '* 這裡顯示熱門的第三方服務;\n'
       '* 任何人都可以開發並提供此類服務，只要遵循 DIMP 協議即可;\n'
       '* 如果您想建立自己的服務機器人，我們邀請您閱讀 DIMP 文件，從 GitHub 下載範例專案，或直接與 "Albert Moky" 聯絡。',
-
-  //
-  //  Footers
-  //
 
   'ChatBox::Description': '此應用由 DIM 驅動，採用端對端加密技術（E2EE）。'
       '在發送前，你的訊息將被加密，除了接收者，沒有人能解密其內容。',

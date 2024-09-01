@@ -113,7 +113,9 @@ final Map<String, String> intlRuRu = {
   // Tabs
   'Chats': 'Чаты',
   'Contacts': 'Контакты',
-  'Settings': 'Настройки',
+  'Me': 'Я',
+  'Services': 'Услуги',
+  'Service Bots': 'Сервисные боты',
 
   // Contacts
   'New Friends': 'Новые друзья',
@@ -124,6 +126,7 @@ final Map<String, String> intlRuRu = {
   'Search User': 'Поиск пользователя',
 
   // Settings
+  'Settings': 'Настройки',
   'Export': 'Экспорт аккаунта',
   'Mnemonic': 'Мнемокод',
   'Language': 'Язык',
@@ -203,13 +206,26 @@ final Map<String, String> intlRuRu = {
   //
   'Video Player': 'Видео плеер',
 
-  'Loading "@url" ...': 'Загрузка "@url" ...',
+  'Loading "@url"': 'Загрузка "@url" ...',
   'Failed to load "@url".': 'Не удалось загрузить "@url".',
 
   'Select TV': 'Выбрать ТВ',
   'TV not found': 'ТВ не найден',
   'Search again': 'Искать снова',
   'Refresh': 'Обновить',
+
+  //
+  //  Web Browser
+  //
+  'Cannot launch "@url".': 'Не удается запустить "@url".',
+  'Failed to launch "@url".': 'Не удалось запустить "@url".',
+
+  //
+  //  Check Update
+  //
+  'Please update app (@version, build @build).': 'Пожалуйста, обновите приложение до последней версии (@version, сборка @build).',
+  'Upgrade': 'Обновить',
+  'Download': 'Скачать',
 
   //
   //  Profile
@@ -256,6 +272,9 @@ final Map<String, String> intlRuRu = {
   'Sure to clear chat history of this group?': 'Вы уверены, что хотите очистить историю чата этой группы?'
       ' Это действие не может быть отменено.',
   'Failed to clear chat history': 'Не удалось очистить историю чата.',
+
+  'Sure to remove this conversation?': 'Вы уверены, что хотите удалить этот разговор? Это действие не может быть отменено.',
+  'Failed to remove conversation': 'Не удалось удалить разговор.',
 
   'Failed to set remark': 'Не удалось установить заметку.',
 
@@ -306,20 +325,14 @@ final Map<String, String> intlRuRu = {
       '* Если вы хотите удалить их немедленно, вы также можете выбрать вручную удалить их здесь.',
 
   //
-  //  Service Bots
+  //  Footers
   //
-
-  'Services': 'Услуги',
-  'Service Bots': 'Сервисные боты',
 
   'ServiceBotList::Description': '* Здесь показаны популярные сторонние сервисы;\n'
       '* Любой может разработать и предоставлять такие сервисы общественности, при условии соблюдения протокола DIMP;\n'
       '* Если вы хотите создать своего собственного сервисного бота, мы приглашаем вас ознакомиться с документами DIMP,'
       ' загрузить примеры проектов с GitHub или связаться непосредственно с "Albert Moky".',
 
-  //
-  //  Footers
-  //
   'ChatBox::Description': 'Это приложение работает на технологии DIM, обеспечивающей конечное шифрование (End-to-End Encrypted).'
       ' Ваши сообщения будут зашифрованы перед отправкой и смогут быть расшифрованы только получателем.',
 

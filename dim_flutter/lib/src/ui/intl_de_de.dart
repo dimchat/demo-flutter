@@ -113,7 +113,9 @@ final Map<String, String> intlDeDe = {
   // Tabs
   'Chats': 'Chats',
   'Contacts': 'Kontakte',
-  'Settings': 'Einstellungen',
+  'Me': 'Ich',
+  'Services': 'Dienste',
+  'Service Bots': 'Service-Bots',
 
   // Contacts
   'New Friends': 'Neue Freunde',
@@ -124,6 +126,7 @@ final Map<String, String> intlDeDe = {
   'Search User': 'Benutzer suchen',
 
   // Settings
+  'Settings': 'Einstellungen',
   'Export': 'Konto exportieren',
   'Mnemonic': 'Mnemonic',
   'Language': 'Sprache',
@@ -203,13 +206,26 @@ final Map<String, String> intlDeDe = {
   //
   'Video Player': 'Videoplayer',
 
-  'Loading "@url" ...': 'Laden von "@url" ...',
+  'Loading "@url"': 'Laden von "@url" ...',
   'Failed to load "@url".': 'Fehler beim Laden von "@url".',
 
   'Select TV': 'TV auswählen',
   'TV not found': 'TV nicht gefunden',
   'Search again': 'Erneut suchen',
   'Refresh': 'Aktualisieren',
+
+  //
+  //  Web Browser
+  //
+  'Cannot launch "@url".': '"@url" kann nicht gestartet werden.',
+  'Failed to launch "@url".': 'Fehler beim Starten von "@url".',
+
+  //
+  //  Check Update
+  //
+  'Please update app (@version, build @build).': 'Bitte aktualisieren Sie die App auf die neueste Version (@version, Build @build).',
+  'Upgrade': 'Upgrade',
+  'Download': 'Herunterladen',
 
   //
   //  Profile
@@ -251,6 +267,9 @@ final Map<String, String> intlDeDe = {
   'Sure to clear chat history of this friend?': 'Sind Sie sicher, den Chat-Verlauf dieses Freundes zu löschen? Diese Aktion kann nicht rückgängig gemacht werden.',
   'Sure to clear chat history of this group?': 'Sind Sie sicher, den Chat-Verlauf dieser Gruppe zu löschen? Diese Aktion kann nicht rückgängig gemacht werden.',
   'Failed to clear chat history': 'Fehler beim Löschen des Chat-Verlaufs.',
+
+  'Sure to remove this conversation?': 'Möchten Sie dieses Gespräch wirklich löschen? Diese Aktion kann nicht rückgängig gemacht werden.',
+  'Failed to remove conversation': 'Gespräch konnte nicht gelöscht werden.',
 
   'Failed to set remark': 'Fehler beim Festlegen der Bemerkung.',
 
@@ -300,20 +319,13 @@ final Map<String, String> intlDeDe = {
       '* Wenn Sie sie sofort entfernen möchten, können Sie sie auch hier manuell löschen.',
 
   //
-  //  Service Bots
+  //  Footers
   //
-
-  'Services': 'Dienste',
-  'Service Bots': 'Service-Bots',
 
   'ServiceBotList::Description': '* Hier zeigen wir beliebte Drittanbieter-Dienste;\n'
       '* Jeder kann solche Dienste für die Öffentlichkeit entwickeln und anbieten, solange sie dem DIMP-Protokoll folgen;\n'
       '* Wenn Sie Ihren eigenen Service-Bot erstellen möchten, laden wir Sie ein, die DIMP-Dokumente zu lesen,'
       ' Beispielprojekte von GitHub herunterzuladen oder sich direkt an "Albert Moky" zu wenden.',
-
-  //
-  //  Footers
-  //
 
   'ChatBox::Description': 'Diese App wird von DIM betrieben, einer E2EE (End-to-End-verschlüsselten) Technologie.'
       ' Ihre Nachrichten werden vor dem Senden verschlüsselt, niemand kann den Inhalt außer dem Empfänger entschlüsseln.',

@@ -113,7 +113,9 @@ final Map<String, String> intlAfZa = {
   // Tabs
   'Chats': 'Geselskap',
   'Contacts': 'Kontakte',
-  'Settings': 'Instellings',
+  'Me': 'Ek',
+  'Services': 'Dienste',
+  'Service Bots': 'Diensbots',
 
   // Contacts
   'New Friends': 'Nuwe Vriende',
@@ -124,6 +126,7 @@ final Map<String, String> intlAfZa = {
   'Search User': 'Soek Gebruiker',
 
   // Settings
+  'Settings': 'Instellings',
   'Export': 'Voer Rekening Uit',
   'Mnemonic': 'Mnemoniese',
   'Language': 'Taal',
@@ -203,13 +206,26 @@ final Map<String, String> intlAfZa = {
   //
   'Video Player': 'Video Speler',
 
-  'Loading "@url" ...': 'Laai "@url" ...',
+  'Loading "@url"': 'Laai "@url" ...',
   'Failed to load "@url".': 'Kon nie "@url" laai nie.',
 
   'Select TV': 'Kies TV',
   'TV not found': 'TV nie gevind nie',
   'Search again': 'Soek weer',
   'Refresh': 'Herlaai',
+
+  //
+  //  Web Browser
+  //
+  'Cannot launch "@url".': 'Kan nie "@url" oopmaak nie.',
+  'Failed to launch "@url".': 'Kon nie "@url" oopmaak nie.',
+
+  //
+  //  Check Update
+  //
+  'Please update app (@version, build @build).': 'Dateer asseblief die toepassing op na die nuutste weergawe (@version, bou @build).',
+  'Upgrade': 'Opgradering',
+  'Download': 'Aflaai',
 
   //
   //  Profile
@@ -256,6 +272,9 @@ final Map<String, String> intlAfZa = {
   'Sure to clear chat history of this group?': 'Is jy seker jy wil die geskiedenis van hierdie groep skoonmaak?'
       ' Hierdie aksie kan nie ongedaan gemaak word nie.',
   'Failed to clear chat history': 'Kon nie geskiedenis skoonmaak nie.',
+
+  'Sure to remove this conversation?': 'Is jy seker jy wil hierdie gesprek verwyder? Hierdie aksie kan nie omgekeer word nie.',
+  'Failed to remove conversation': 'Kon nie die gesprek verwyder nie.',
 
   'Failed to set remark': 'Kon nie opmerking stel nie.',
 
@@ -305,20 +324,13 @@ final Map<String, String> intlAfZa = {
       '* Indien jy wil hê dat hulle onmiddellik verwyder moet word, kan jy ook kies om hulle hier handmatig te verwyder.',
 
   //
-  //  Service Bots
+  //  Footers
   //
-
-  'Services': 'Dienste',
-  'Service Bots': 'Diensbots',
 
   'ServiceBotList::Description': '* Hier word populêre derdepartydienste gewys;\n'
       '* Enigiemand kan sulke dienste ontwikkel en aan die publiek verskaf as lank hulle die DIMP-protokol volg;\n'
       '* As u u eie diensbot wil skep, nodig ons u uit om die DIMP-dokumente te lees,'
       ' voorbeeldprojekte van GitHub af te laai, of direk met "Albert Moky" kontak te maak.',
-
-  //
-  //  Footers
-  //
 
   'ChatBox::Description': 'Hierdie app word aangedryf deur DIM, \'n E2EE (End-to-End Versleutelde) tegnologie.'
       ' Jou boodskappe sal versleutel word voordat dit uitgestuur word, niemand kan die inhoud ontsluit nie, behalwe die ontvanger.',

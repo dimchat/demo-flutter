@@ -112,7 +112,9 @@ final Map<String, String> intlTrTr = {
   // Tabs
   'Chats': 'Sohbetler',
   'Contacts': 'Kişiler',
-  'Settings': 'Ayarlar',
+  'Me': 'Ben',
+  'Services': 'Hizmetler',
+  'Service Bots': 'Hizmet Botları',
 
   // Contacts
   'New Friends': 'Yeni Arkadaşlar',
@@ -123,6 +125,7 @@ final Map<String, String> intlTrTr = {
   'Search User': 'Kullanıcı Ara',
 
   // Settings
+  'Settings': 'Ayarlar',
   'Export': 'Hesabı Dışa Aktar',
   'Mnemonic': 'Mnemonic',
   'Language': 'Dil',
@@ -202,13 +205,26 @@ final Map<String, String> intlTrTr = {
   //
   'Video Player': 'Video Oynatıcı',
 
-  'Loading "@url" ...': '"@url" yükleniyor...',
+  'Loading "@url"': '"@url" yükleniyor...',
   'Failed to load "@url".': '"@url" yüklenemedi.',
 
   'Select TV': 'TV Seç',
   'TV not found': 'TV bulunamadı',
   'Search again': 'Tekrar ara',
   'Refresh': 'Yenile',
+
+  //
+  //  Web Browser
+  //
+  'Cannot launch "@url".': '"@url" başlatılamıyor.',
+  'Failed to launch "@url".': '"@url" başlatılamadı.',
+
+  //
+  //  Check Update
+  //
+  'Please update app (@version, build @build).': 'Lütfen uygulamayı en son sürüme güncelleyin (@version, yapı @build).',
+  'Upgrade': 'Yükselt',
+  'Download': 'İndir',
 
   //
   //  Profile
@@ -256,6 +272,9 @@ final Map<String, String> intlTrTr = {
       ' Bu işlem geri alınamaz.',
   'Failed to clear chat history': 'Sohbet geçmişi temizleme başarısız oldu.',
 
+  'Sure to remove this conversation?': 'Bu sohbeti silmek istediğinizden emin misiniz? Bu işlem geri alınamaz.',
+  'Failed to remove conversation': 'Sohbet silinemedi.',
+
   'Failed to set remark': 'Not ayarlama başarısız oldu.',
 
   'Never receive message from this contact': 'Bu kişiden artık mesaj almayacaksınız.',
@@ -301,20 +320,13 @@ final Map<String, String> intlTrTr = {
       '* Bunları hemen kaldırmak isterseniz, bunları buradan manuel olarak da silebilirsiniz.',
 
   //
-  //  Service Bots
+  //  Footers
   //
-
-  'Services': 'Hizmetler',
-  'Service Bots': 'Hizmet Botları',
 
   'ServiceBotList::Description': '* Burada popüler üçüncü taraf hizmetleri gösteriliyor;\n'
       '* Herhangi bir kişi DIMP protokolünü takip ettiği sürece, böyle hizmetleri geliştirebilir ve halka sunabilir;\n'
       '* Kendi hizmet botunuzu oluşturmak isterseniz, DIMP belgelerini okumanızı,'
       ' GitHub üzerinden örnek projeler indirmenizi veya "Albert Moky" ile doğrudan iletişime geçmenizi öneriyoruz.',
-
-  //
-  //  Footers
-  //
 
   'ChatBox::Description': 'Bu uygulama, DIM tarafından desteklenen, E2EE (Uçtan Uca Şifreli) teknolojisi ile çalışır.'
       ' Mesajlarınız gönderilmeden önce şifrelenir, içeriği sadece alıcı hariç kimse çözemeyebilir.',

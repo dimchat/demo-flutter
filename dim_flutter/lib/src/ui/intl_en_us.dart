@@ -112,7 +112,9 @@ final Map<String, String> intlEnUs = {
   // Tabs
   'Chats': 'Chats',
   'Contacts': 'Contacts',
-  'Settings': 'Settings',
+  'Me': 'Me',
+  'Services': 'Services',
+  'Service Bots': 'Service Bots',
 
   // Contacts
   'New Friends': 'New Friends',
@@ -123,6 +125,7 @@ final Map<String, String> intlEnUs = {
   'Search User': 'Search User',
 
   // Settings
+  'Settings': 'Settings',
   'Export': 'Export Account',
   'Mnemonic': 'Mnemonic',
   'Language': 'Language',
@@ -202,13 +205,26 @@ final Map<String, String> intlEnUs = {
   //
   'Video Player': 'Video Player',
 
-  'Loading "@url" ...': 'Loading "@url" ...',
+  'Loading "@url"': 'Loading "@url" ...',
   'Failed to load "@url".': 'Failed to load "@url".',
 
   'Select TV': 'Select TV',
   'TV not found': 'TV not found',
   'Search again': 'Search again',
   'Refresh': 'Refresh',
+
+  //
+  //  Web Browser
+  //
+  'Cannot launch "@url".': 'Cannot launch "@url".',
+  'Failed to launch "@url".': 'Failed to launch "@url".',
+
+  //
+  //  Check Update
+  //
+  'Please update app (@version, build @build).': 'Please update this app to the latest version (@version, build @build).',
+  'Upgrade': 'Upgrade',
+  'Download': 'Download',
 
   //
   //  Profile
@@ -255,6 +271,9 @@ final Map<String, String> intlEnUs = {
   'Sure to clear chat history of this group?': 'Are you sure to clear chat history of this group?'
       ' This action cannot be restored.',
   'Failed to clear chat history': 'Failed to clear chat history.',
+
+  'Sure to remove this conversation?': 'Sure to remove this conversation? This action is not recoverable.',
+  'Failed to remove conversation': 'Failed to remove conversation.',
 
   'Failed to set remark': 'Failed to set remark.',
 
@@ -305,20 +324,13 @@ final Map<String, String> intlEnUs = {
       '* Should you wish to remove them immediately, you can also choose to manually delete them here.',
 
   //
-  //  Service Bots
+  //  Footers
   //
-
-  'Services': 'Services',
-  'Service Bots': 'Service Bots',
 
   'ServiceBotList::Description': '* Here shows popular third-party services;\n'
       '* Anyone can develop and provide such services to the public as long as they follow the DIMP protocol;\n'
       '* If you wish to create your own service bot, we invite you to read the DIMP documents,'
       ' download example projects from GitHub, or get in touch with "Albert Moky" directly.',
-
-  //
-  //  Footers
-  //
 
   'ChatBox::Description': 'This app is powered by DIM, an E2EE (End-to-End Encrypted) technology.'
       ' Your messages will be encrypted before sending out, no one can decrypt the contents except the receiver.',

@@ -112,7 +112,9 @@ final Map<String, String> intlZhCn = {
   // Tabs
   'Chats': '聊天',
   'Contacts': '联系人',
-  'Settings': '设置',
+  'Me': '我',
+  'Services': '服务',
+  'Service Bots': '服务机器人',
 
   // Contacts
   'New Friends': '新的朋友',
@@ -123,6 +125,7 @@ final Map<String, String> intlZhCn = {
   'Search User': '搜索用户',
 
   // Settings
+  'Settings': '设置',
   'Export': '导出账号',
   'Mnemonic': '助记词',
   'Language': '语言',
@@ -202,13 +205,26 @@ final Map<String, String> intlZhCn = {
   //
   'Video Player': '视频播放器',
 
-  'Loading "@url" ...': '正在加载 "@url" ...',
+  'Loading "@url"': '正在加载 "@url" ...',
   'Failed to load "@url".': '无法加载 "@url"。',
 
   'Select TV': '选择电视',
   'TV not found': '未找到电视',
   'Search again': '重新搜索',
   'Refresh': '刷新',
+
+  //
+  //  Web Browser
+  //
+  'Cannot launch "@url".': '无法启动 "@url"。',
+  'Failed to launch "@url".': '启动 "@url" 失败。',
+
+  //
+  //  Check Update
+  //
+  'Please update app (@version, build @build).': '请更新应用到最新版本 (@version, 构建号 @build)。',
+  'Upgrade': '升级',
+  'Download': '下载',
 
   //
   //  Profile
@@ -251,6 +267,9 @@ final Map<String, String> intlZhCn = {
   'Sure to clear chat history of this friend?': '确定要清除该朋友的聊天记录吗？该操作无法撤销。',
   'Sure to clear chat history of this group?': '确定要清除该群组的聊天记录吗？该操作无法撤销。',
   'Failed to clear chat history': '无法清除聊天记录。',
+
+  'Sure to remove this conversation?': '确定要删除此对话吗？此操作不可恢复。',
+  'Failed to remove conversation': '删除对话失败。',
 
   'Failed to set remark': '设置备注失败。',
 
@@ -298,19 +317,12 @@ final Map<String, String> intlZhCn = {
       '* 如果您希望立即删除它们，也可以在此手动清除。',
 
   //
-  //  Service Bots
+  //  Footers
   //
-
-  'Services': '服务',
-  'Service Bots': '服务机器人',
 
   'ServiceBotList::Description': '* 这里展示了流行的第三方服务;\n'
       '* 任何人都可以开发并提供此类服务，只要他们遵循 DIMP 协议;\n'
       '* 如果您想创建自己的服务机器人，我们邀请您阅读 DIMP 文档，从 GitHub 下载示例项目，或直接与 "Albert Moky" 联系。',
-
-  //
-  //  Footers
-  //
 
   'ChatBox::Description': '该应用程序由DIM（去中心化端到端加密）技术提供支持。'
       '您的消息将在发送前进行加密，除了接收者，没有人能解密内容。',

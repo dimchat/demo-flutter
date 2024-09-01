@@ -263,7 +263,7 @@ class NewestManager {
     } else {
       return false;
     }
-    String notice = 'Please update this app to the latest version (@version, build @build).'.trParams({
+    String notice = 'Please update app (@version, build @build).'.trParams({
       'version': newest.version,
       'build': newest.build.toString(),
     });

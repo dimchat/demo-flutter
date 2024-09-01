@@ -113,7 +113,9 @@ final Map<String, String> intlItIt = {
   // Tabs
   'Chats': 'Chat',
   'Contacts': 'Contatti',
-  'Settings': 'Impostazioni',
+  'Me': 'Io',
+  'Services': 'Servizi',
+  'Service Bots': 'Bot di servizio',
 
   // Contacts
   'New Friends': 'Nuovi Amici',
@@ -124,6 +126,7 @@ final Map<String, String> intlItIt = {
   'Search User': 'Cerca Utente',
 
   // Settings
+  'Settings': 'Impostazioni',
   'Export': 'Esportare Account',
   'Mnemonic': 'Mnemonico',
   'Language': 'Lingua',
@@ -203,13 +206,26 @@ final Map<String, String> intlItIt = {
   //
   'Video Player': 'Lettore video',
 
-  'Loading "@url" ...': 'Caricamento di "@url" ...',
+  'Loading "@url"': 'Caricamento di "@url" ...',
   'Failed to load "@url".': 'Caricamento di "@url" non riuscito.',
 
   'Select TV': 'Seleziona TV',
   'TV not found': 'TV non trovata',
   'Search again': 'Cerca di nuovo',
   'Refresh': 'Aggiorna',
+
+  //
+  //  Web Browser
+  //
+  'Cannot launch "@url".': 'Impossibile aprire "@url".',
+  'Failed to launch "@url".': 'Apertura di "@url" non riuscita.',
+
+  //
+  //  Check Update
+  //
+  'Please update app (@version, build @build).': 'Aggiorna l\'app all\'ultima versione (@version, build @build).',
+  'Upgrade': 'Aggiorna',
+  'Download': 'Scarica',
 
   //
   //  Profile
@@ -256,6 +272,9 @@ final Map<String, String> intlItIt = {
   'Sure to clear chat history of this group?': 'Sei sicuro di voler cancellare la cronologia della chat di questo gruppo?'
       ' Questa azione non può essere ripristinata.',
   'Failed to clear chat history': 'Impossibile cancellare la cronologia della chat.',
+
+  'Sure to remove this conversation?': 'Sei sicuro di voler eliminare questa conversazione? Questa azione non è recuperabile.',
+  'Failed to remove conversation': 'Impossibile eliminare la conversazione.',
 
   'Failed to set remark': 'Impossibile impostare la nota.',
 
@@ -306,20 +325,13 @@ final Map<String, String> intlItIt = {
       '* Se desideri rimuoverli immediatamente, puoi anche scegliere di eliminarli manualmente qui.',
 
   //
-  //  Service Bots
+  //  Footers
   //
-
-  'Services': 'Servizi',
-  'Service Bots': 'Bot di servizio',
 
   'ServiceBotList::Description': '* Qui vengono mostrati servizi di terze parti popolari;\n'
       '* Chiunque può sviluppare e fornire tali servizi al pubblico, a condizione che seguano il protocollo DIMP;\n'
       '* Se desideri creare il tuo bot di servizio, ti invitiamo a leggere i documenti DIMP,'
       ' scaricare progetti di esempio da GitHub o contattare direttamente "Albert Moky".',
-
-  //
-  //  Footers
-  //
 
   'ChatBox::Description': 'Questa app è alimentata da DIM, una tecnologia E2EE (End-to-End Encrypted).'
       ' I tuoi messaggi saranno criptati prima dell\'invio, nessuno può decifrare i contenuti tranne il destinatario.',

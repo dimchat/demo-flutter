@@ -113,7 +113,9 @@ final Map<String, String> intlFrFr = {
   // Tabs
   'Chats': 'Chats',
   'Contacts': 'Contacts',
-  'Settings': 'Paramètres',
+  'Me': 'Moi',
+  'Services' : 'Services',
+  'Service Bots' : 'Bots de service',
 
   // Contacts
   'New Friends': 'Nouveaux amis',
@@ -124,6 +126,7 @@ final Map<String, String> intlFrFr = {
   'Search User': 'Rechercher un utilisateur',
 
   // Settings
+  'Settings': 'Paramètres',
   'Export': 'Exporter un compte',
   'Mnemonic': 'Mnémonique',
   'Language': 'Langue',
@@ -203,13 +206,26 @@ final Map<String, String> intlFrFr = {
   //
   'Video Player': 'Lecteur vidéo',
 
-  'Loading "@url" ...': 'Chargement de "@url" ...',
+  'Loading "@url"': 'Chargement de "@url" ...',
   'Failed to load "@url".': 'Échec du chargement de "@url".',
 
   'Select TV': 'Sélectionner la TV',
   'TV not found': 'TV non trouvée',
   'Search again': 'Rechercher à nouveau',
   'Refresh': 'Actualiser',
+
+  //
+  //  Web Browser
+  //
+  'Cannot launch "@url".': 'Impossible de lancer "@url".',
+  'Failed to launch "@url".': 'Échec du lancement de "@url".',
+
+  //
+  //  Check Update
+  //
+  'Please update app (@version, build @build).': 'Veuillez mettre à jour l\'application vers la dernière version (@version, build @build).',
+  'Upgrade': 'Mise à niveau',
+  'Download': 'Télécharger',
 
   //
   //  Profile
@@ -256,6 +272,9 @@ final Map<String, String> intlFrFr = {
   'Sure to clear chat history of this group?': 'Êtes-vous sûr de vouloir effacer l\'historique du chat de ce groupe ?'
       ' Cette action ne peut être annulée.',
   'Failed to clear chat history': 'Échec de l\'effacement de l\'historique du chat.',
+
+  'Sure to remove this conversation?': 'Êtes-vous sûr de vouloir supprimer cette conversation ? Cette action est irréversible.',
+  'Failed to remove conversation': 'Échec de la suppression de la conversation.',
 
   'Failed to set remark': 'Échec de la définition de la remarque.',
 
@@ -305,20 +324,13 @@ final Map<String, String> intlFrFr = {
       '* Si vous souhaitez les supprimer immédiatement, vous pouvez également choisir de les supprimer manuellement ici.',
 
   //
-  //  Service Bots
+  //  Footers
   //
-
-  'Services' : 'Services',
-  'Service Bots' : 'Bots de service',
 
   'ServiceBotList::Description' : '* Ici, nous présentons des services tiers populaires ;\n'
       '* N\'importe qui peut développer et proposer de tels services au public tant qu\'ils respectent le protocole DIMP ;\n'
       '* Si vous souhaitez créer votre propre bot de service, nous vous invitons à lire la documentation DIMP,'
       ' télécharger des exemples de projets sur GitHub ou contacter directement "Albert Moky".',
-
-  //
-  //  Footers
-  //
 
   'ChatBox::Description': 'Cette application est alimentée par DIM, une technologie E2EE (chiffrement de bout en bout).'
       ' Vos messages seront chiffrés avant d\'être envoyés, personne ne peut déchiffrer le contenu sauf le destinataire.',

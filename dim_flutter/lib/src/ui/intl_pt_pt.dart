@@ -113,7 +113,9 @@ final Map<String, String> intlPtPt = {
   // Tabs
   'Chats': 'Conversas',
   'Contacts': 'Contactos',
-  'Settings': 'Definições',
+  'Me': 'Eu',
+  'Services': 'Serviços',
+  'Service Bots': 'Bots de serviço',
 
   // Contacts
   'New Friends': 'Novos Amigos',
@@ -124,6 +126,7 @@ final Map<String, String> intlPtPt = {
   'Search User': 'Pesquisar Utilizador',
 
   // Settings
+  'Settings': 'Definições',
   'Export': 'Exportar Conta',
   'Mnemonic': 'Mnemónico',
   'Language': 'Idioma',
@@ -203,13 +206,26 @@ final Map<String, String> intlPtPt = {
   //
   'Video Player': 'Reprodutor de Vídeo',
 
-  'Loading "@url" ...': 'A carregar "@url" ...',
+  'Loading "@url"': 'A carregar "@url" ...',
   'Failed to load "@url".': 'Falha ao carregar "@url".',
 
   'Select TV': 'Selecionar TV',
   'TV not found': 'TV não encontrado',
   'Search again': 'Pesquisar novamente',
   'Refresh': 'Atualizar',
+
+  //
+  //  Web Browser
+  //
+  'Cannot launch "@url".': 'Não é possível abrir "@url".',
+  'Failed to launch "@url".': 'Falha ao abrir "@url".',
+
+  //
+  //  Check Update
+  //
+  'Please update app (@version, build @build).': 'Por favor, atualize o aplicativo para a versão mais recente (@version, build @build).',
+  'Upgrade': 'Atualizar',
+  'Download': 'Baixar',
 
   //
   //  Profile
@@ -257,6 +273,9 @@ final Map<String, String> intlPtPt = {
       ' Esta ação não pode ser revertida.',
   'Failed to clear chat history': 'Falha ao limpar o histórico de conversa.',
 
+  'Sure to remove this conversation?': 'Tem certeza de que deseja remover esta conversa? Esta ação não pode ser desfeita.',
+  'Failed to remove conversation': 'Falha ao remover a conversa.',
+
   'Failed to set remark': 'Falha ao definir a observação.',
 
   'Never receive message from this contact': 'Nunca mais receberá mensagens deste contato.',
@@ -302,20 +321,13 @@ final Map<String, String> intlPtPt = {
       '* Se você deseja removê-los imediatamente, também pode optar por excluí-los manualmente aqui.',
 
   //
-  //  Service Bots
+  //  Footers
   //
-
-  'Services': 'Serviços',
-  'Service Bots': 'Bots de serviço',
 
   'ServiceBotList::Description': '* Aqui mostramos serviços populares de terceiros;\n'
       '* Qualquer pessoa pode desenvolver e fornecer esses serviços ao público, desde que sigam o protocolo DIMP;\n'
       '* Se você deseja criar seu próprio bot de serviço, convidamos você a ler os documentos do DIMP,'
       ' baixar projetos de exemplo do GitHub ou entrar em contato diretamente com "Albert Moky".',
-
-  //
-  //  Footers
-  //
 
   'ChatBox::Description': 'Esta aplicação é alimentada por DIM, uma tecnologia E2EE (End-to-End Encrypted).'
       ' As suas mensagens serão encriptadas antes de serem enviadas, ninguém pode decifrar o conteúdo exceto o destinatário.',

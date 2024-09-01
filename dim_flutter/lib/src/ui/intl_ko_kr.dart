@@ -113,7 +113,9 @@ final Map<String, String> intlKoKr = {
   // Tabs
   'Chats': '채팅',
   'Contacts': '연락처',
-  'Settings': '설정',
+  'Me': '나',
+  'Services': '서비스',
+  'Service Bots': '서비스 봇',
 
   // Contacts
   'New Friends': '새로운 친구',
@@ -124,6 +126,7 @@ final Map<String, String> intlKoKr = {
   'Search User': '사용자 검색',
 
   // Settings
+  'Settings': '설정',
   'Export': '계정 내보내기',
   'Mnemonic': 'Mnemonic',
   'Language': '언어',
@@ -203,13 +206,26 @@ final Map<String, String> intlKoKr = {
   //
   'Video Player': '비디오 플레이어',
 
-  'Loading "@url" ...': '"@url" 로딩 중...',
+  'Loading "@url"': '"@url" 로딩 중...',
   'Failed to load "@url".': '"@url" 로드 실패.',
 
   'Select TV': 'TV 선택',
   'TV not found': 'TV를 찾을 수 없음',
   'Search again': '다시 검색',
   'Refresh': '새로 고침',
+
+  //
+  //  Web Browser
+  //
+  'Cannot launch "@url".': '"@url" 을(를) 실행할 수 없습니다.',
+  'Failed to launch "@url".': '"@url" 을(를) 실행하지 못했습니다.',
+
+  //
+  //  Check Update
+  //
+  'Please update app (@version, build @build).': '앱을 최신 버전(@version, 빌드 @build)으로 업데이트해 주세요.',
+  'Upgrade': '업그레이드',
+  'Download': '다운로드',
 
   //
   //  Profile
@@ -257,6 +273,9 @@ final Map<String, String> intlKoKr = {
       '이 작업은 복구할 수 없습니다.',
   'Failed to clear chat history': '채팅 기록 지우기 실패',
 
+  'Sure to remove this conversation?': '이 대화를 삭제하시겠습니까? 이 작업은 되돌릴 수 없습니다.',
+  'Failed to remove conversation': '대화 삭제에 실패했습니다.',
+
   'Failed to set remark': '비고 설정 실패',
 
   'Never receive message from this contact': '이 연락처로부터 메시지를 다시 받지 않습니다.',
@@ -303,19 +322,12 @@ final Map<String, String> intlKoKr = {
       '* 즉시 삭제하고 싶은 경우 여기서 수동으로 삭제할 수도 있습니다.',
 
   //
-  //  Service Bots
+  //  Footers
   //
-
-  'Services': '서비스',
-  'Service Bots': '서비스 봇',
 
   'ServiceBotList::Description': '* 여기에는 인기 있는 타사 서비스가 표시됩니다;\n'
       '* 누구나 DIMP 프로토콜을 준수하는 한 이러한 서비스를 개발하여 대중에게 제공할 수 있습니다;\n'
       '* 자체 서비스 봇을 만들고 싶다면 DIMP 문서를 읽거나 GitHub에서 예제 프로젝트를 다운로드하거나 "Albert Moky"에게 직접 연락하세요.',
-
-  //
-  //  Footers
-  //
 
   'ChatBox::Description': '이 앱은 DIM(End-to-End Encrypted) 기술을 사용하여 작동합니다.'
       '메시지는 전송 전에 암호화되어 수신자만이 내용을 해독할 수 있습니다.',

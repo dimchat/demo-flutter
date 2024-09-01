@@ -113,7 +113,9 @@ final Map<String, String> intlMsMy = {
   // Tabs
   'Chats': 'Bualan',
   'Contacts': 'Kenalan',
-  'Settings': 'Tetapan',
+  'Me': 'Saya',
+  'Services': 'Perkhidmatan',
+  'Service Bots': 'Bot Perkhidmatan',
 
   // Contacts
   'New Friends': 'Kenalan Baru',
@@ -124,6 +126,7 @@ final Map<String, String> intlMsMy = {
   'Search User': 'Cari Pengguna',
 
   // Settings
+  'Settings': 'Tetapan',
   'Export': 'Eksport Akaun',
   'Mnemonic': 'Mnemonik',
   'Language': 'Bahasa',
@@ -203,13 +206,26 @@ final Map<String, String> intlMsMy = {
   //
   'Video Player': 'Pemain Video',
 
-  'Loading "@url" ...': 'Memuatkan "@url" ...',
+  'Loading "@url"': 'Memuatkan "@url" ...',
   'Failed to load "@url".': 'Gagal memuatkan "@url".',
 
   'Select TV': 'Pilih TV',
   'TV not found': 'TV tidak dijumpai',
   'Search again': 'Cari lagi',
   'Refresh': 'Segar semula',
+
+  //
+  //  Web Browser
+  //
+  'Cannot launch "@url".': 'Tidak dapat melancarkan "@url".',
+  'Failed to launch "@url".': 'Gagal melancarkan "@url".',
+
+  //
+  //  Check Update
+  //
+  'Please update app (@version, build @build).': 'Sila kemas kini aplikasi kepada versi terkini (@version, binaan @build).',
+  'Upgrade': 'Kemas kini',
+  'Download': 'Muat turun',
 
   //
   //  Profile
@@ -256,6 +272,9 @@ final Map<String, String> intlMsMy = {
   'Sure to clear chat history of this group?': 'Adakah anda pasti mahu memadam sejarah perbualan kumpulan ini?'
       ' Tindakan ini tidak dapat dipulihkan.',
   'Failed to clear chat history': 'Gagal memadam sejarah perbualan.',
+
+  'Sure to remove this conversation?': 'Anda pasti mahu menghapuskan perbualan ini? Tindakan ini tidak boleh dipulihkan.',
+  'Failed to remove conversation': 'Gagal menghapuskan perbualan.',
 
   'Failed to set remark': 'Gagal menetapkan ulasan.',
 
@@ -306,20 +325,13 @@ final Map<String, String> intlMsMy = {
       '* Sekiranya anda ingin mengeluarkannya dengan segera, anda juga boleh memilih untuk memadamnya secara manual di sini.',
 
   //
-  //  Service Bots
+  //  Footers
   //
-
-  'Services': 'Perkhidmatan',
-  'Service Bots': 'Bot Perkhidmatan',
 
   'ServiceBotList::Description': '* Di sini menunjukkan perkhidmatan pihak ketiga yang popular;\n'
       '* Sesiapa sahaja boleh mengembangkan dan menyediakan perkhidmatan seperti ini kepada orang ramai selagi mereka mengikuti protokol DIMP;\n'
       '* Jika anda ingin membuat bot perkhidmatan sendiri, kami menggalakkan anda untuk membaca dokumen DIMP,'
       ' muat turun projek contoh dari GitHub, atau hubungi "Albert Moky" secara langsung.',
-
-  //
-  //  Footers
-  //
 
   'ChatBox::Description': 'Aplikasi ini dikuasakan oleh DIM, teknologi E2EE (End-to-End Encrypted).'
       ' Mesej anda akan dienkripsi sebelum dihantar, tiada sesiapa boleh mendekripsi kandungannya kecuali penerima.',

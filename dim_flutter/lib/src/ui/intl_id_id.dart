@@ -113,7 +113,9 @@ final Map<String, String> intlIdId = {
   // Tabs
   'Chats': 'Obrolan',
   'Contacts': 'Kontak',
-  'Settings': 'Pengaturan',
+  'Me': 'Saya',
+  'Services': 'Layanan',
+  'Service Bots': 'Bot Layanan',
 
   // Contacts
   'New Friends': 'Teman Baru',
@@ -124,6 +126,7 @@ final Map<String, String> intlIdId = {
   'Search User': 'Cari Pengguna',
 
   // Settings
+  'Settings': 'Pengaturan',
   'Export': 'Ekspor Akun',
   'Mnemonic': 'Mnemonic',
   'Language': 'Bahasa',
@@ -203,13 +206,26 @@ final Map<String, String> intlIdId = {
   //
   'Video Player': 'Pemutar Video',
 
-  'Loading "@url" ...': 'Memuat "@url" ...',
+  'Loading "@url"': 'Memuat "@url" ...',
   'Failed to load "@url".': 'Gagal memuat "@url".',
 
   'Select TV': 'Pilih TV',
   'TV not found': 'TV tidak ditemukan',
   'Search again': 'Cari lagi',
   'Refresh': 'Segarkan',
+
+  //
+  //  Web Browser
+  //
+  'Cannot launch "@url".': 'Tidak dapat membuka "@url".',
+  'Failed to launch "@url".': 'Gagal membuka "@url".',
+
+  //
+  //  Check Update
+  //
+  'Please update app (@version, build @build).': 'Harap perbarui aplikasi ke versi terbaru (@version, build @build).',
+  'Upgrade': 'Tingkatkan',
+  'Download': 'Unduh',
 
   //
   //  Profile
@@ -256,6 +272,9 @@ final Map<String, String> intlIdId = {
   'Sure to clear chat history of this group?': 'Apakah Anda yakin ingin menghapus riwayat obrolan grup ini?'
       ' Tindakan ini tidak dapat dipulihkan.',
   'Failed to clear chat history': 'Gagal menghapus riwayat obrolan.',
+
+  'Sure to remove this conversation?': 'Yakin ingin menghapus percakapan ini? Tindakan ini tidak dapat dipulihkan.',
+  'Failed to remove conversation': 'Gagal menghapus percakapan.',
 
   'Failed to set remark': 'Gagal menetapkan catatan.',
 
@@ -306,20 +325,13 @@ final Map<String, String> intlIdId = {
       '* Jika Anda ingin menghapusnya secara langsung, Anda juga dapat memilih untuk menghapusnya secara manual di sini.',
 
   //
-  //  Service Bots
+  //  Footers
   //
-
-  'Services': 'Layanan',
-  'Service Bots': 'Bot Layanan',
 
   'ServiceBotList::Description': '* Di sini menampilkan layanan pihak ketiga yang populer;\n'
       '* Siapa saja dapat mengembangkan dan memberikan layanan tersebut kepada publik selama mereka mengikuti protokol DIMP;\n'
       '* Jika Anda ingin membuat bot layanan Anda sendiri, kami mengundang Anda untuk membaca dokumen DIMP,'
       ' mengunduh proyek contoh dari GitHub, atau menghubungi "Albert Moky" secara langsung.',
-
-  //
-  //  Footers
-  //
 
   'ChatBox::Description': 'Aplikasi ini didukung oleh DIM, sebuah teknologi E2EE (End-to-End Encrypted).'
       ' Pesan Anda akan dienkripsi sebelum dikirimkan, tidak ada yang dapat mendekripsi kontennya kecuali penerima.',

@@ -113,7 +113,9 @@ final Map<String, String> intlHiIn = {
   // Tabs
   'Chats': 'चैट्स',
   'Contacts': 'संपर्क',
-  'Settings': 'सेटिंग्स',
+  'Me': 'मैं',
+  'Services': 'सेवाएं',
+  'Service Bots': 'सेवा बॉट',
 
   // Contacts
   'New Friends': 'नए दोस्त',
@@ -124,6 +126,7 @@ final Map<String, String> intlHiIn = {
   'Search User': 'उपयोगकर्ता खोजें',
 
   // Settings
+  'Settings': 'सेटिंग्स',
   'Export': 'खाता निर्यात करें',
   'Mnemonic': 'म्नेमोनिक',
   'Language': 'भाषा',
@@ -203,13 +206,26 @@ final Map<String, String> intlHiIn = {
   //
   'Video Player': 'वीडियो प्लेयर',
 
-  'Loading "@url" ...': '"@url" लोड हो रहा है ...',
+  'Loading "@url"': '"@url" लोड हो रहा है ...',
   'Failed to load "@url".': '"@url" लोड करने में विफल रहा।',
 
   'Select TV': 'टीवी चुनें',
   'TV not found': 'टीवी नहीं मिला',
   'Search again': 'फिर से खोजें',
   'Refresh': 'ताज़ा करें',
+
+  //
+  //  Web Browser
+  //
+  'Cannot launch "@url".': '"@url" लॉन्च नहीं कर सकता।',
+  'Failed to launch "@url".': '"@url" लॉन्च करने में विफल।',
+
+  //
+  //  Check Update
+  //
+  'Please update app (@version, build @build).': 'कृपया इस ऐप को नवीनतम संस्करण (@version, build @build) में अपडेट करें।',
+  'Upgrade': 'अपग्रेड करें',
+  'Download': 'डाउनलोड करें',
 
   //
   //  Profile
@@ -252,6 +268,9 @@ final Map<String, String> intlHiIn = {
   'Sure to clear chat history of this friend?': 'क्या आप इस दोस्त के चैट इतिहास को साफ करना चाहते हैं? यह क्रिया पुनः स्थापित नहीं की जा सकती है।',
   'Sure to clear chat history of this group?': 'क्या आप इस समूह के चैट इतिहास को साफ करना चाहते हैं? यह क्रिया पुनः स्थापित नहीं की जा सकती है।',
   'Failed to clear chat history': 'चैट इतिहास को साफ करने में विफल हुआ।',
+
+  'Sure to remove this conversation?': 'क्या आप वाकई इस वार्तालाप को हटाना चाहते हैं? यह क्रिया अपरिवर्तनीय है।',
+  'Failed to remove conversation': 'वार्तालाप हटाने में विफल।',
 
   'Failed to set remark': 'टिप्पणी सेट करने में विफल हुआ।',
 
@@ -302,20 +321,13 @@ final Map<String, String> intlHiIn = {
       '* यदि आप इन्हें तुरंत हटाना चाहते हैं, तो आप यहाँ मैन्युअल रूप से उन्हें हटाने का चयन कर सकते हैं।',
 
   //
-  //  Service Bots
+  //  Footers
   //
-
-  'Services': 'सेवाएं',
-  'Service Bots': 'सेवा बॉट',
 
   'ServiceBotList::Description': '* यहाँ लोकप्रिय तृतीय-पक्ष सेवाएं दिखाई देती हैं;\n'
       '* कोई भी व्यक्ति DIMP प्रोटोकॉल का पालन करते हुए ऐसी सेवाएं विकसित और सार्वजनिक के लिए प्रदान कर सकता है;\n'
       '* यदि आप अपना खुद का सेवा बॉट बनाना चाहते हैं, तो हम आपको DIMP दस्तावेज़ पढ़ने के लिए आमंत्रित करते हैं,'
       ' GitHub से उदाहरण परियोजनाएं डाउनलोड करने के लिए या "Albert Moky" के साथ सीधे संपर्क में रहने के लिए।',
-
-  //
-  //  Footers
-  //
 
   'ChatBox::Description': 'यह ऐप DIM द्वारा संचालित है, एक E2EE (End-to-End Encrypted) प्रौद्योगिकी से।'
       ' आपके संदेश भेजने से पहले इन्हें एन्क्रिप्ट किया जाएगा, सिर्फ प्राप्तकर्ता ही सामग्री को डिक्रिप्ट कर सकता है।',

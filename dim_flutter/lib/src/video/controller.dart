@@ -98,7 +98,6 @@ class PlayerController {
     if (liveUrl != null) {
       url = HtmlUri.parseUri(liveUrl) ?? url;
       isLive = true;
-      CustomControls.resetPlaybackSpeed();
     }
     //
     //  1. create video player controller with network URL

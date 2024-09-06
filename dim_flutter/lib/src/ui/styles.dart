@@ -27,8 +27,8 @@ abstract class Styles {
   );
 
   static TextStyle get sectionFooterTextStyle => TextStyle(
-    fontSize: 12,
-    color: colors.sectionHeaderTextColor,
+    fontSize: 10,
+    color: colors.sectionFooterTextColor,
     decoration: TextDecoration.none,
   );
 

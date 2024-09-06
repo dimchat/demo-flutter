@@ -64,11 +64,19 @@ class _PlayerMetronome {
   /// playback speed
   double _speed = 1.0;
 
-  double get playbackSpeed => _speed;
+  bool speedUp = false;
 
-  void resetPlaybackSpeed() => _speed = 1.0;
+  double getPlaybackSpeed(bool isLive) {
+    if (isLive) {
+      return 1.0;
+    } else if (speedUp) {
+      return _speed * 2.0;
+    } else {
+      return _speed;
+    }
+  }
 
-  double changePlaybackSpeed() {
+  void changePlaybackSpeed() {
     if (_speed < 1.0) {
       _speed = 1.0;
     } else if (_speed < 1.25) {
@@ -80,7 +88,28 @@ class _PlayerMetronome {
     } else {
       _speed = 0.5;
     }
-    return _speed;
+  }
+
+  void setPlaybackSpeed(VideoPlayerController controller, bool isLive) {
+    double playbackSpeed = getPlaybackSpeed(isLive);
+    controller.setPlaybackSpeed(playbackSpeed);
+  }
+
+  void keepPlaybackSpeed(VideoPlayerController controller, bool isLive) {
+    if (isLive || !controller.value.isPlaying) {
+      return;
+    }
+    double playbackSpeed = getPlaybackSpeed(isLive);
+    if (controller.value.playbackSpeed != playbackSpeed) {
+      controller.setPlaybackSpeed(playbackSpeed);
+    } else if (DevicePlatform.isAndroid) {
+      // Android is OK
+    } else if (DevicePlatform.isWindows) {
+      // Windows is OK
+    } else if (playbackSpeed != 1.0) {
+      // fix for iOS, ...
+      controller.setPlaybackSpeed(playbackSpeed);
+    }
   }
 
 }
@@ -88,8 +117,6 @@ class _PlayerMetronome {
 
 class CustomControls extends StatefulWidget {
   const CustomControls({super.key});
-
-  static void resetPlaybackSpeed() => _PlayerMetronome().resetPlaybackSpeed();
 
   @override
   State<StatefulWidget> createState() => _CustomControlsState();
@@ -123,26 +150,16 @@ class _CustomControlsState extends State<CustomControls>
   @override
   Future<void> tick(DateTime now, int elapsed) async {
     var metronome = _PlayerMetronome();
-    double playbackSpeed = metronome.playbackSpeed;
-    if (controller.value.isPlaying) {
-      if (controller.value.playbackSpeed != playbackSpeed) {
-        controller.setPlaybackSpeed(playbackSpeed);
-      } else if (DevicePlatform.isAndroid) {
-        // Android is OK
-      } else if (DevicePlatform.isWindows) {
-        // Windows is OK
-      } else if (playbackSpeed != 1.0) {
-        // fix for iOS, ...
-        controller.setPlaybackSpeed(playbackSpeed);
-      }
-    }
+    metronome.keepPlaybackSpeed(controller, chewieController.isLive);
   }
 
   @override
   void initState() {
     super.initState();
     notifier = Provider.of<PlayerNotifier>(context, listen: false);
-    _PlayerMetronome().addTicker(this);
+    var metronome = _PlayerMetronome();
+    metronome.speedUp = false;
+    metronome.addTicker(this);
   }
 
   @override
@@ -160,13 +177,31 @@ class _CustomControlsState extends State<CustomControls>
             ),
           );
     }
-
+    var metronome = _PlayerMetronome();
     return MouseRegion(
       onHover: (_) {
         _cancelAndRestartTimer();
       },
       child: GestureDetector(
-        onTap: () => _cancelAndRestartTimer(),
+        onTapDown: (details) {
+          metronome.speedUp = true;
+          _hideTimer?.cancel();
+        },
+        onTapUp: (details) {
+          metronome.speedUp = false;
+          _cancelAndRestartTimer();
+        },
+        onTapCancel: () {
+          metronome.speedUp = false;
+          _cancelAndRestartTimer();
+        },
+        onTap: () {
+          metronome.speedUp = false;
+          _cancelAndRestartTimer();
+        },
+        onDoubleTap: () {
+          _playPause();
+        },
         child: AbsorbPointer(
           absorbing: notifier.hideStuff,
           child: Stack(
@@ -368,10 +403,14 @@ class _CustomControlsState extends State<CustomControls>
       double barHeight,
       ) {
     var metronome = _PlayerMetronome();
-    double playbackSpeed = metronome.playbackSpeed;
+    double playbackSpeed = metronome.getPlaybackSpeed(chewieController.isLive);
+    bool speedUp = metronome.speedUp;
+    String text = speedUp ? '>> X$playbackSpeed' : 'X$playbackSpeed';
+    Color? color = speedUp ? Colors.red : iconColor;
     return GestureDetector(
       onTap: () => setState(() {
-        controller.setPlaybackSpeed(metronome.changePlaybackSpeed());
+        metronome.changePlaybackSpeed();
+        metronome.setPlaybackSpeed(controller, chewieController.isLive);
       }),
       child: Container(
         alignment: Alignment.center,
@@ -381,10 +420,10 @@ class _CustomControlsState extends State<CustomControls>
           left: 6.0,
           right: 8.0,
         ),
-        child: Text('X$playbackSpeed',
+        child: Text(text,
           style: TextStyle(
             fontSize: 16,
-            color: iconColor,
+            color: color,
             decoration: TextDecoration.none,
           ),
         ),

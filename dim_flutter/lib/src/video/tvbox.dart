@@ -40,41 +40,27 @@ import 'package:tvbox/lives.dart';
 import 'lives.dart';
 
 
-class ChannelSource {
-  ChannelSource({
-    required this.name,
-    required this.url,
-    required this.label,
-    required this.index,
-  });
+class ChannelStream {
+  ChannelStream(this.channel, this.stream);
 
-  final String name;    // channel name
-  final Uri url;        // stream URL
-  final String? label;  // stream label
-  final int index;      // stream index
+  final LiveChannel channel;
+  final LiveStream? stream;
 
   @override
   bool operator ==(Object other) {
-    if (other is ChannelSource) {
-      if (identical(this, other)) {
-        // same object
-        return true;
+    if (other is ChannelStream) {
+      var src = stream;
+      if (src == null) {
+        return other.channel == channel;
+      } else {
+        return other.stream == src;
       }
-      return url == other.url;
     }
     return false;
   }
 
   @override
-  int get hashCode => url.hashCode;
-
-}
-
-class ChannelGroup {
-  ChannelGroup(this.title, this.sources);
-
-  final String title;
-  final List<ChannelSource> sources;
+  int get hashCode => stream?.hashCode ?? channel.hashCode;
 
 }
 
@@ -84,15 +70,15 @@ class TVBox extends Dictionary with Logging {
 
   final Uri livesUrl;
 
-  ChannelSource? playingItem;
+  ChannelStream? playingItem;
 
-  List<ChannelGroup>? lives;
+  List<LiveGenre>? lives;
 
   bool hidden = false;
 
   Widget? get view => LiveChannelListPage(this);
 
-  Future<List<ChannelGroup>> refresh() async {
+  Future<List<LiveGenre>> refresh() async {
     var helper = _LiveHelper();
     //
     //  0. keep old records
@@ -114,30 +100,38 @@ class TVBox extends Dictionary with Logging {
     //
     List<LiveGenre> genres = helper.parseLives(text);
     logInfo('got ${genres.length} genres from URL: $livesUrl');
-    List<ChannelGroup> sections = [];
+    List<LiveGenre> sections = [];
     for (var grp in genres) {
-      List<ChannelSource> sources = [];
+      List<LiveChannel> items = [];
       var channels = grp.channels;
-      for (var item in channels) {
-        var streams = item.streams;
+      for (var mem in channels) {
+        List<LiveStream> sources = [];
+        var streams = mem.streams;
         int index = 0;
         for (var src in streams) {
           var m3u8 = src.url;
           if (m3u8 == null) {
-            logWarning('channel stream error: "${item.name}" -> $src');
+            logWarning('channel stream error: "${mem.name}" -> $src');
             continue;
           } else {
             index += 1;
           }
-          sources.add(ChannelSource(
-            name: item.name,
-            url: m3u8,
-            label: src.label,
-            index: index,
-          ));
+          src.setValue('index', index);
+          sources.add(src);
+        }
+        if (sources.isNotEmpty) {
+          items.add(LiveChannel({
+            'name': mem.name,
+            'streams': sources,
+          }));
         }
       }
-      sections.add(ChannelGroup(grp.title, sources));
+      if (items.isNotEmpty) {
+        sections.add(LiveGenre({
+          'title': grp.title,
+          'channels': items,
+        }));
+      }
     }
     // OK
     lives = sections;

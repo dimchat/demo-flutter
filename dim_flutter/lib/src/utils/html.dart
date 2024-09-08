@@ -29,7 +29,6 @@
  * =============================================================================
  */
 import 'package:flutter/cupertino.dart';
-import 'package:flutter_inappwebview/flutter_inappwebview.dart';
 
 import 'package:dim_client/dim_client.dart';
 import 'package:lnc/log.dart';
@@ -109,52 +108,5 @@ abstract class HtmlUri {
     String url = getUriString(content);
     Browser.open(context, url, onWebShare: onWebShare);
   }
-
-  //
-  //  InAppWebView
-  //
-
-  static URLRequest? getURLRequest(Uri url) {
-    String? html = getHtmlString(url);
-    if (html == null) {
-      // http:
-      // https:
-      return URLRequest(
-        url: url,
-      );
-    } else {
-      // data:text/html
-      return null;
-    }
-  }
-
-  static InAppWebViewInitialData? getWebViewData(Uri url, String? html) {
-    html ??= getHtmlString(url);
-    if (html == null) {
-      // http:
-      // https:
-      return null;
-    } else {
-      // data:text/html
-      return InAppWebViewInitialData(
-        data: html,
-        // TODO: baseUrl
-      );
-    }
-  }
-
-  static InAppWebViewGroupOptions getWebViewOptions() => InAppWebViewGroupOptions(
-      crossPlatform: InAppWebViewOptions(
-        useShouldOverrideUrlLoading: true,
-        mediaPlaybackRequiresUserGesture: false,
-      ),
-      android: AndroidInAppWebViewOptions(
-        useHybridComposition: true,
-        forceDark: AndroidForceDark.FORCE_DARK_AUTO,
-      ),
-      ios: IOSInAppWebViewOptions(
-        allowsInlineMediaPlayback: true,
-      )
-  );
 
 }

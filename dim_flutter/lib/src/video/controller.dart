@@ -109,6 +109,7 @@ class PlayerController {
     ChewieController chewieController = ChewieController(
       videoPlayerController: videoPlayerController,
       // autoPlay: isLive,
+      // zoomAndPan: true,
       looping: isLive,
       isLive: isLive,
       showOptions: false,

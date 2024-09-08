@@ -212,7 +212,7 @@ Widget _getChannelButton(ChannelStream src, TVBox tvBox) {
     var count = channel.count;
     var unfold = channel.getValue('unfold', null);
     if (unfold != true) {
-      name += '  ($count SRCS)';
+      name += '  ($count srcs)';
     }
     return TextButton(
       onPressed: () {
@@ -234,11 +234,10 @@ Widget _getChannelButton(ChannelStream src, TVBox tvBox) {
   if (count > 1) {
     String? label = stream.label;
     int index = stream.getValue('index', 0);
-    if (label == null || label.isEmpty) {
-      name = '    #$index  Live Source';
-    } else {
-      name = '    #$index  $label';
+    if (label == null || label.trim().isEmpty) {
+      label = name;
     }
+    name = '    #$index  $label';
   }
   Widget view = Text(name,
     style: isPlaying ? Styles.livePlayingStyle : Styles.liveChannelStyle,

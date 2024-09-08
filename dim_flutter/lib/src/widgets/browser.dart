@@ -28,13 +28,11 @@
  * SOFTWARE.
  * =============================================================================
  */
-import 'package:flutter/cupertino.dart';
-import 'package:flutter/material.dart';
-import 'package:flutter_inappwebview/flutter_inappwebview.dart';
+import 'package:flutter/widgets.dart';
 import 'package:get/get.dart';
 import 'package:url_launcher/url_launcher.dart';
 
-import 'package:dim_client/dim_client.dart';
+import 'package:dim_client/dim_common.dart';
 import 'package:lnc/log.dart';
 
 import '../pnf/image.dart';
@@ -44,6 +42,9 @@ import '../ui/styles.dart';
 import '../utils/html.dart';
 
 import 'alert.dart';
+
+import 'browser_aim.dart';  // Android, iOS, macOS
+// import 'browser_win.dart';  // Windows
 
 
 typedef OnWebShare = void Function(Uri url, {
@@ -126,148 +127,7 @@ class Browser extends StatefulWidget {
   }) => Browser(url: url, html: html,);
 
   @override
-  State<Browser> createState() => _BrowserState();
-
-}
-
-class _BrowserState extends State<Browser> {
-
-  InAppWebViewController? _controller;
-
-  int _progress = 0;
-
-  Uri? _url;
-  String? _title;
-
-  Uri get url => _url ?? widget.url;
-  String get title => _title ?? '';
-
-  String? get html => _url == null ? widget.html : null;
-
-  @override
-  Widget build(BuildContext context) => Scaffold(
-    backgroundColor: Styles.colors.scaffoldBackgroundColor,
-    appBar: CupertinoNavigationBar(
-      backgroundColor: Styles.colors.appBardBackgroundColor,
-      middle: Text(title,
-        maxLines: 1,
-        overflow: TextOverflow.ellipsis,
-        style: Styles.titleTextStyle,
-      ),
-      trailing: _naviItems(context),
-    ),
-    body: Stack(
-      alignment: AlignmentDirectional.bottomStart,
-      children: [
-        // FIXME: Use PopScope instead.
-        WillPopScope(
-          onWillPop: () async {
-            var controller = _controller;
-            if (controller != null && await controller.canGoBack()) {
-              await controller.goBack();
-              return false;
-            }
-            return true;
-          },
-          child: _webView(context),
-        ),
-        if (_progress < 100)
-          _statusBar(),
-      ],
-    ),
-  );
-
-  Widget? _naviItems(BuildContext context) {
-    Widget? one = _progress <= 99 ? _indicator() : _shareButton();
-    Widget? two = _controller == null ? null : IconButton(
-      onPressed: () => closePage(context),
-      icon: const Icon(
-        AppIcons.closeIcon,
-        size: Styles.navigationBarIconSize,
-        // color: Styles.avatarColor,
-      ),
-    );
-    return one == null ? two : two == null ? one : Row(
-      mainAxisSize: MainAxisSize.min,
-      children: [
-        one,
-        two,
-      ],
-    );
-  }
-  // => _progress <= 99 ? _indicator() : _shareButton();
-  Widget _indicator() => const SizedBox(
-    width: Styles.navigationBarIconSize, height: Styles.navigationBarIconSize,
-    child: CircularProgressIndicator(strokeWidth: 2.0),
-  );
-  Widget? _shareButton() {
-    OnWebShare? onShare = widget.onWebShare;
-    if (onShare == null) {
-      return null;
-    }
-    Uri target = url;
-    if (target.toString() == 'about:blank') {
-      target = widget.url;
-    }
-    // TODO: get page desc & icon
-    return IconButton(
-      icon: const Icon(
-        AppIcons.shareIcon,
-        size: Styles.navigationBarIconSize,
-        // color: Styles.avatarColor,
-      ),
-      onPressed: () => onShare(target, title: title, desc: null, icon: null),
-    );
-  }
-
-  Widget _webView(BuildContext ctx) => InAppWebView(
-    initialUrlRequest: HtmlUri.getURLRequest(url),
-    initialData: HtmlUri.getWebViewData(url, html),
-    initialOptions: HtmlUri.getWebViewOptions(),
-    onProgressChanged: (controller, progress) => setState(() {
-      _progress = progress;
-    }),
-    onLoadStart: (controller, url) => setState(() {
-      _controller = controller;
-      _url = url;
-    }),
-    onTitleChanged: (controller, title) => setState(() {
-      _title = title;
-    }),
-    shouldOverrideUrlLoading: (controller, action) {
-      var url = action.request.url;
-      if (url == null || systemSchemes.contains(url.scheme)) {
-        Log.info('loading URL: $url');
-        // allow the request
-        return Future.value(NavigationActionPolicy.ALLOW);
-      }
-      // Launch the App
-      Browser.launchURL(ctx, url);
-      // and cancel the request
-      return Future.value(NavigationActionPolicy.CANCEL);
-    },
-  );
-  static final List<String> systemSchemes = [
-    "http", "https",
-    "file",
-    "chrome",
-    "data",
-    "javascript",
-    "about",
-  ];
-
-  Widget _statusBar() => Container(
-    color: Colors.black54,
-    padding: const EdgeInsets.fromLTRB(20, 4, 8, 16),
-    child: Text('$_progress% | $url ...',
-      style: const TextStyle(
-        fontSize: 10,
-        color: Colors.white,
-        overflow: TextOverflow.ellipsis,
-        decoration: TextDecoration.none,
-      ),
-    ),
-  );
+  State<Browser> createState() => BrowserState();
 
 }
 

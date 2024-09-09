@@ -43,6 +43,8 @@ import 'controls.dart';
 // protected
 class PlayerController {
 
+  bool _destroyed = false;
+
   /// Video Player Controller
   VideoPlayerController? _videoPlayerController;
   VideoPlayerController? get videoPlayerController => _videoPlayerController;
@@ -77,6 +79,7 @@ class PlayerController {
   }
 
   Future<void> destroy() async {
+    _destroyed = true;
     await closeVideo();
     SystemChrome.setPreferredOrientations(DeviceOrientation.values);
   }
@@ -87,7 +90,7 @@ class PlayerController {
   }
 
   /// Start playing URL
-  Future<ChewieController> openVideo(Uri url) async {
+  Future<ChewieController?> openVideo(Uri url) async {
     // patch for Windows
     DevicePlatform.patchVideoPlayer();
     //
@@ -126,6 +129,14 @@ class PlayerController {
     // OK
     await setVideoPlayerController(videoPlayerController);
     await setChewieController(chewieController);
+    // check destroyed
+    if (_destroyed) {
+      // if video player controller was destroyed before loading finished,
+      // close it
+      Log.warning('video controller destroyed.');
+      await closeVideo();
+      return null;
+    }
     return chewieController;
   }
 

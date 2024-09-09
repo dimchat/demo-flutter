@@ -22,7 +22,7 @@ import '../widgets/browser.dart';
 import '../widgets/gaussian.dart';
 
 
-class _ConfigLoader implements lnc.Observer {
+class _ConfigLoader with Logging implements lnc.Observer {
   _ConfigLoader() {
     var nc = lnc.NotificationCenter();
     nc.addObserver(this, NotificationNames.kPortableNetworkStatusChanged);
@@ -43,12 +43,12 @@ class _ConfigLoader implements lnc.Observer {
     PortableNetworkLoader loader = PortableFileLoader(pnf);
     String? path = await loader.cacheFilePath;
     if (path != null) {
-      Log.info('remove cached config file: $path');
+      logInfo('remove cached config file: $path');
       await Paths.delete(path);
     }
     path = await loader.downloadFilePath;
     if (path != null) {
-      Log.info('remove cached config file: $path');
+      logInfo('remove cached config file: $path');
       await Paths.delete(path);
     }
     // 2. download again
@@ -65,7 +65,7 @@ class _ConfigLoader implements lnc.Observer {
       Uri? url = userInfo?['URL'];
       Uint8List? data = userInfo?['data'];
       String? path = await _pnfLoader?.cacheFilePath;
-      Log.info('[PNF] onSuccess: ${data?.length} bytes, $url');
+      logInfo('[PNF] onSuccess: ${data?.length} bytes, $url');
       await _refresh(data, path);
     }
   }
@@ -84,7 +84,7 @@ class _ConfigLoader implements lnc.Observer {
       return false;
     }
     info = JSON.decode(text);
-    Log.info('new config: $text');
+    logInfo('new config: $text');
     var nc = lnc.NotificationCenter();
     nc.postNotification(NotificationNames.kConfigUpdated, this, {
       'config': text,
@@ -94,7 +94,7 @@ class _ConfigLoader implements lnc.Observer {
 
 }
 
-class Config {
+class Config with Logging {
   factory Config() => _instance;
   static final Config _instance = Config._internal();
   Config._internal();
@@ -114,11 +114,11 @@ class Config {
       // update for next reading
       Uri? url = entrance.isEmpty ? null : HtmlUri.parseUri(entrance);
       if (entrance.isEmpty) {
-        Log.debug('config.json already downloaded');
+        logDebug('config.json already downloaded');
       } else if (url == null) {
-        Log.error('entrance url error: $entrance');
+        logError('entrance url error: $entrance');
       } else {
-        Log.info('try to refresh config: $url -> $path');
+        logInfo('try to refresh config: $url -> $path');
         entrance = '';
         /*await */_cfgLoader.download(url);
       }
@@ -203,7 +203,7 @@ class Config {
 }
 
 
-class NewestManager {
+class NewestManager with Logging {
   factory NewestManager() => _instance;
   static final NewestManager _instance = NewestManager._internal();
   NewestManager._internal();
@@ -215,6 +215,8 @@ class NewestManager {
   static const int kCanUpgrade = 1;
   static const int kShouldUpgrade = 2;
   static const int kMustUpgrade = 3;
+
+  static const String kStore = 'AppStore';
 
   Newest? parse(Map? info) {
     Newest? newest = _latest;
@@ -233,7 +235,11 @@ class NewestManager {
     }
     // check OS
     var os = DevicePlatform.operatingSystem;
-    info = info[os.toLowerCase()] ?? info[os] ?? info;
+    var ver = os.toLowerCase();
+    var store = kStore.toLowerCase();
+    /// 'android-amazon' > 'android' -> 'Android'
+    info = info['$ver-$store'] ?? info[ver] ?? info[os] ?? info;
+    logInfo('got newest for channel "$os-$kStore": $info');
     if (info is Map) {
       _latest = newest = Newest.from(info);
     }

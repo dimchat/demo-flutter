@@ -216,7 +216,8 @@ class NewestManager with Logging {
   static const int kShouldUpgrade = 2;
   static const int kMustUpgrade = 3;
 
-  static const String kStore = 'AppStore';
+  // App Distribution Channel
+  String store = 'AppStore';  // AppStore, GooglePlay, ...
 
   Newest? parse(Map? info) {
     Newest? newest = _latest;
@@ -236,10 +237,10 @@ class NewestManager with Logging {
     // check OS
     var os = DevicePlatform.operatingSystem;
     var ver = os.toLowerCase();
-    var store = kStore.toLowerCase();
-    /// 'android-amazon' > 'android' -> 'Android'
-    info = info['$ver-$store'] ?? info[ver] ?? info[os] ?? info;
-    logInfo('got newest for channel "$os-$kStore": $info');
+    var cid = store.toLowerCase();
+    /// 'android-amazon' > 'android'
+    info = info['$ver-$cid'] ?? info[ver] ?? info;
+    logInfo('got newest for channel "$os-$store": $info');
     if (info is Map) {
       _latest = newest = Newest.from(info);
     }

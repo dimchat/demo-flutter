@@ -3,6 +3,7 @@ import 'dart:typed_data';
 import 'package:dim_client/dim_client.dart';
 
 import '../common/platform.dart';
+import '../models/config.dart';
 import '../models/shield.dart';
 import '../network/velocity.dart';
 import '../ui/language.dart';
@@ -153,13 +154,16 @@ class SharedMessenger extends ClientMessenger {
         'app': info,
       };
     }
-    GlobalVariable shared = GlobalVariable();
-    LanguageDataSource lds = LanguageDataSource();
-    info['id'] = shared.terminal.packageName;
-    info['name'] = shared.terminal.displayName;
-    info['version'] = shared.terminal.versionName;
-    info['build'] = shared.terminal.buildNumber;
-    info['language'] = lds.getCurrentLanguageCode();
+    var lang = LanguageDataSource();
+    var newest = NewestManager();
+    var shared = GlobalVariable();
+    var client = shared.terminal;
+    info['id'] = client.packageName;
+    info['name'] = client.displayName;
+    info['version'] = client.versionName;
+    info['build'] = client.buildNumber;
+    info['store'] = newest.store;
+    info['language'] = lang.getCurrentLanguageCode();
     return info;
   }
   Map _getDeviceInfo(Visa visa) {

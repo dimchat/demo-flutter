@@ -170,22 +170,23 @@ class ContactInfo extends Conversation {
     String? name;
     String? version;
     String? os;
+    String? store;
     // check 'app.id'
     // check 'app.name'
     // check 'app.version'
+    // check 'app.store'
     var app = visa?.getProperty('app');
     if (app is Map) {
       name = app['name'];
       name ??= app['id'];
       version = app['version'];
+      store = app['store'];
     }
     // check 'sys.os'
     var sys = visa?.getProperty('sys');
     if (sys is Map) {
       os = sys['os'];
-      if (os == null) {
-        os = 'Unknown';
-      } else if (os == 'ios') {
+      if (os == 'ios') {
         os = 'iOS';
       } else if (os == 'android') {
         os = 'Android';
@@ -198,7 +199,15 @@ class ContactInfo extends Conversation {
       }
     }
     if (name != null) {
-      _clientInfo = '$name ($os) $version';
+      String? ver;
+      if (os == null) {
+        ver = store ?? 'Unknown';
+      } else if (store == null) {
+        ver = os;
+      } else {
+        ver = '$os; $store';
+      }
+      _clientInfo = '$name ($ver) $version';
     }
   }
 

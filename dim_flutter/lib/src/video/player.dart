@@ -325,8 +325,7 @@ class _VideoAppState extends State<VideoPlayerPage> with Logging implements lnc.
         size: Styles.navigationBarIconSize,
         color: widget.color,
       ),
-      onPressed: () => onShare(widget.playingItem,
-      ),
+      onPressed: () => onShare(widget.playingItem),
     );
   }
 

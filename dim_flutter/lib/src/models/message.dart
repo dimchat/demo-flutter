@@ -1,3 +1,5 @@
+import 'package:get/get.dart';
+
 import 'package:dim_client/dim_client.dart';
 import 'package:lnc/log.dart';
 
@@ -8,6 +10,31 @@ abstract class MessageBuilder with Logging {
   // protected
   String getName(ID identifier);
 
+  // protected
+  String getNames(Iterable<ID> members) {
+    List<String> names = [];
+    for (var item in members) {
+      names.add(getName(item));
+    }
+    return names.join(', ');
+  }
+
+  /// Check whether this message content should be ignored
+  bool isHiddenContent(Content content, ID sender) {
+    if (content is ResetCommand) {
+      return false;
+    } else if (content is InviteCommand) {
+      return false;
+    } else if (content is ExpelCommand) {
+      return false;
+    } else if (content is JoinCommand) {
+      return false;
+    } else if (content is QuitCommand) {
+      return false;
+    } else {
+      return isCommand(content, sender);
+    }
+  }
   /// Check whether this message content should be a command
   bool isCommand(Content content, ID sender) {
     if (content.containsKey('command')) {
@@ -27,6 +54,7 @@ abstract class MessageBuilder with Logging {
     // TODO: other situations?
     return content is Command;
   }
+
   bool _checkText(String text, List<String> array) {
     for (String prefix in array) {
       if (text.startsWith(prefix)) {
@@ -131,8 +159,102 @@ abstract class MessageBuilder with Logging {
   //-------- Group Commands
 
   String _getGroupCommandText(GroupCommand content, ID sender) {
+    if (content is ResetCommand) {
+      return _getResetCommandText(content, sender);
+    } else if (content is InviteCommand) {
+      return _getInviteCommandText(content, sender);
+    } else if (content is ExpelCommand) {
+      return _getExpelCommandText(content, sender);
+    } else if (content is JoinCommand) {
+      return _getJoinCommandText(content, sender);
+    } else if (content is QuitCommand) {
+      return _getQuitCommandText(content, sender);
+    }
     // ...
-    return 'unsupported group command: ${content.cmd}';
+    return 'unsupported group command: @cmd'.trParams({
+      'cmd': content.cmd,
+    });
+  }
+
+  String _getResetCommandText(ResetCommand content, ID sender) {
+    String commander = getName(sender);
+    return '"@commander" has updated the group members.'.trParams({
+      'commander': commander,
+    });
+  }
+
+  String _getJoinCommandText(JoinCommand content, ID sender) {
+    String commander = getName(sender);
+    return '"@commander" wants to join this group.'.trParams({
+      'commander': commander,
+    });
+  }
+
+  String _getQuitCommandText(QuitCommand content, ID sender) {
+    String commander = getName(sender);
+    return '"@commander" left the group.'.trParams({
+      'commander': commander,
+    });
+  }
+
+  String _getInviteCommandText(InviteCommand content, ID sender) {
+    String commander = getName(sender);
+    var someone = content.member;
+    var members = content.members;
+    if (members == null || members.isEmpty) {
+      assert(someone != null, 'failed to get group member: $content');
+      members = null;
+    } else if (members.length == 1) {
+      someone = members[0];
+      members = null;
+    } else {
+      assert(someone == null, 'group member error: $content');
+      someone = null;
+    }
+    if (members != null) {
+      return '"@commander" is inviting "@members" into this group.'.trParams({
+      'commander': commander,
+      'members': getNames(members),
+      });
+    } else if (someone != null) {
+      return '"@commander" is inviting "@member" into this group.'.trParams({
+      'commander': commander,
+      'member': getName(someone),
+      });
+    } else {
+      assert(false, 'should not happen: $content');
+      return 'Invite command error.'.tr;
+    }
+  }
+
+  String _getExpelCommandText(ExpelCommand content, ID sender) {
+    String commander = getName(sender);
+    var someone = content.member;
+    var members = content.members;
+    if (members == null || members.isEmpty) {
+      assert(someone != null, 'failed to get group member: $content');
+      members = null;
+    } else if (members.length == 1) {
+      someone = members[0];
+      members = null;
+    } else {
+      assert(someone == null, 'group member error: $content');
+      someone = null;
+    }
+    if (members != null) {
+      return '"@commander" is expelling members "@members" from this group.'.trParams({
+        'commander': commander,
+        'members': getNames(members),
+      });
+    } else if (someone != null) {
+      return '"@commander" is expelling member "@member" from this group.'.trParams({
+        'commander': commander,
+        'member': getName(someone),
+      });
+    } else {
+      assert(false, 'should not happen: $content');
+      return 'Expel command error.'.tr;
+    }
   }
 
 }
@@ -150,7 +272,7 @@ class DefaultMessageBuilder extends MessageBuilder {
       logWarning('failed to get conversation: $identifier');
       return Anonymous.getName(identifier);
     }
-    return chat.title;
+    return chat.name;
   }
 
 }

@@ -44,7 +44,9 @@ abstract class ContentViewUtils {
         // maybe it's sent by myself, or a member in group chat,
         // just ignore it to reduce noises.
         Log.warning('hide command from: $sender, $text');
-        return '';
+        if (mb.isHiddenContent(content, sender)) {
+          return '';
+        }
       }
       // check text
       text = mb.getText(content, sender);
@@ -55,8 +57,9 @@ abstract class ContentViewUtils {
 
   static Widget getCommandLabel(BuildContext context, String text) => Column(
     children: [
+      const SizedBox(height: 4,),
       ClipRRect(
-        borderRadius: const BorderRadius.all(Radius.circular(4)),
+        borderRadius: const BorderRadius.all(Radius.circular(8)),
         child: Container(
           padding: Styles.commandPadding,
           color: Styles.colors.commandBackgroundColor,

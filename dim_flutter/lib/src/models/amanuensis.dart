@@ -213,8 +213,8 @@ class Amanuensis with Logging {
       return;
     }
     DefaultMessageBuilder mb = DefaultMessageBuilder();
-    if (mb.isCommand(content, sender)) {
-      logDebug('ignore command for conversation updating');
+    if (mb.isHiddenContent(content, sender)) {
+      logInfo('ignore command for conversation updating');
       return;
     }
     GlobalVariable shared = GlobalVariable();
@@ -259,8 +259,12 @@ class Amanuensis with Logging {
       Visa? visa = await current?.visa;
       String? nickname = visa?.name;
       assert(nickname != null, 'failed to get my nickname');
-      // TODO: check '@All', '@all'
-      if (content.text.contains('@$nickname')) {
+      var text = content.text;
+      if (text.endsWith('@$nickname') || text.contains('@$nickname ')) {
+        mentioned = content.sn;
+      } else if (text.endsWith('@all') || text.contains('@all ')) {
+        mentioned = content.sn;
+      } else if (text.endsWith('@All') || text.contains('@All ')) {
         mentioned = content.sn;
       }
     }
@@ -381,8 +385,7 @@ class Amanuensis with Logging {
         //key.put("reused", null);
         key.remove("reused");
       }
-    }
-    if (content is QueryCommand) {
+    } else if (content is QueryCommand) {
       // FIXME: same query command sent to different members?
       return true;
     }

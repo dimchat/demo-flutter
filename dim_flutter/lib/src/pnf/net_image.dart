@@ -44,10 +44,11 @@ import 'net_base.dart';
 
 /// View for show Image Content
 class PortableImageView extends PortableNetworkView {
-  const PortableImageView(super.loader, {this.width, this.height, super.key});
+  const PortableImageView(super.loader, {this.width, this.height, this.fit, super.key});
 
   final double? width;
   final double? height;
+  final BoxFit? fit;
 
   @override
   State<StatefulWidget> createState() => _PortableImageState();
@@ -61,13 +62,13 @@ class _PortableImageState extends PortableNetworkState<PortableImageView> implem
     var loader = widget.loader as PortableImageLoader;
     Widget? indicator = loader.getProgress(widget);
     if (indicator == null) {
-      return loader.getImage(widget);
+      return loader.getImage(widget, fit: widget.fit);
     }
     return Stack(
       alignment: AlignmentDirectional.center,
       // fit: StackFit.passthrough,
       children: [
-        loader.getImage(widget),
+        loader.getImage(widget, fit: widget.fit),
         indicator,
       ],
     );
@@ -95,7 +96,7 @@ abstract class PortableImageLoader extends PortableFileLoader {
     return image;
   }
 
-  Widget getImage(PortableImageView widget);
+  Widget getImage(PortableImageView widget, {BoxFit? fit});
 
   Widget? getProgress(PortableImageView widget) {
     PortableNetworkStatus pns = status;

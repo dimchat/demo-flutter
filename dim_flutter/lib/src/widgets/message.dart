@@ -57,7 +57,7 @@ abstract class ContentViewUtils {
 
   static Widget getCommandLabel(BuildContext context, String text) => Column(
     children: [
-      const SizedBox(height: 4,),
+      // const SizedBox(height: 4,),
       ClipRRect(
         borderRadius: const BorderRadius.all(Radius.circular(8)),
         child: Container(
@@ -65,7 +65,7 @@ abstract class ContentViewUtils {
           color: Styles.colors.commandBackgroundColor,
           child: Text(text, style: Styles.commandTextStyle),
         ),
-      )
+      ),
     ],
   );
 

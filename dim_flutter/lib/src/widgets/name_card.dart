@@ -52,16 +52,16 @@ class NameCardView extends StatelessWidget {
     child: _widget(context),
   );
 
-  static Widget avatarImage(NameCard content, {double? width, double? height}) {
+  static Widget avatarImage(NameCard content, {double? width, double? height, BoxFit? fit}) {
     width ??= 48;
     height ??= 48;
     var factory = AvatarFactory();
     ID identifier = content.identifier;
     var avatar = content.avatar;
     if (avatar == null) {
-      return factory.getAvatarView(identifier, width: width, height: height);
+      return factory.getAvatarView(identifier, width: width, height: height, fit: fit);
     }
-    var view = factory.getImageView(identifier, avatar, width: width, height: height);
+    var view = factory.getImageView(identifier, avatar, width: width, height: height, fit: fit);
     return ClipRRect(
       borderRadius: BorderRadius.all(
         Radius.elliptical(width / 8, height / 8),

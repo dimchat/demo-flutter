@@ -42,7 +42,9 @@ import 'net_image.dart';
 
 
 /// preview image(s) from conversation
-void previewImageContent(BuildContext context, ImageContent image, List<InstantMessage> messages) {
+void previewImageContent(BuildContext context, ImageContent image, List<InstantMessage> messages, {
+  BoxFit? fit,
+}) {
   int pos = messages.length;
   Content item;
   PortableNetworkFile? pnf;
@@ -63,7 +65,7 @@ void previewImageContent(BuildContext context, ImageContent image, List<InstantM
       assert(false, '[PNF] image content error: $item');
       continue;
     }
-    images.add(factory.getImageView(pnf));
+    images.add(factory.getImageView(pnf, fit: fit));
   }
   assert(images.length > index && index >= 0, 'index error: $index, ${images.length}');
   Gallery(images, index).show(context);
@@ -107,11 +109,13 @@ class NetworkImageFactory {
     return runner;
   }
 
-  PortableImageView getImageView(PortableNetworkFile pnf, {double? width, double? height}) {
+  PortableImageView getImageView(PortableNetworkFile pnf, {
+    double? width, double? height, BoxFit? fit,
+  }) {
     Uri? url = pnf.url;
     var loader = getImageLoader(pnf);
     if (url == null) {
-      return _AutoImageView(loader, width: width, height: height,);
+      return _AutoImageView(loader, width: width, height: height, fit: fit,);
     }
     _AutoImageView? img;
     Set<_AutoImageView>? table = _views[url];
@@ -130,7 +134,7 @@ class NetworkImageFactory {
       }
     }
     if (img == null) {
-      img = _AutoImageView(loader, width: width, height: height,);
+      img = _AutoImageView(loader, width: width, height: height, fit: fit,);
       table.add(img);
     }
     return img;
@@ -140,7 +144,7 @@ class NetworkImageFactory {
 
 /// Auto refresh image view
 class _AutoImageView extends PortableImageView {
-  const _AutoImageView(super.loader, {super.width, super.height});
+  const _AutoImageView(super.loader, {super.width, super.height, super.fit});
 
   static Widget getNoImage({double? width, double? height}) {
     double? size = width ?? height;
@@ -169,16 +173,16 @@ class _ImageLoader extends PortableImageLoader {
   }
 
   @override
-  Widget getImage(PortableImageView widget) {
+  Widget getImage(PortableImageView widget, {BoxFit? fit}) {
     double? width = widget.width;
     double? height = widget.height;
     var image = imageProvider;
     if (image == null) {
       return _AutoImageView.getNoImage(width: width, height: height);
     } else if (width == null && height == null) {
-      return ImageUtils.image(image,);
+      return ImageUtils.image(image, fit: fit,);
     } else {
-      return ImageUtils.image(image, width: width, height: height, fit: BoxFit.cover,);
+      return ImageUtils.image(image, width: width, height: height, fit: fit ?? BoxFit.cover,);
     }
   }
 

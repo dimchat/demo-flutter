@@ -107,7 +107,7 @@ abstract class Conversation with Logging implements lnc.Observer {
   bool get isNotMuted => _muted == false;
 
   /// icon
-  Widget getImage({double? width, double? height});
+  Widget getImage({double? width, double? height, BoxFit? fit});
 
   NameLabel getNameLabel({
     TextStyle? style,

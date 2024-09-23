@@ -4,6 +4,7 @@ import 'package:dim_client/dim_client.dart';
 import 'package:lnc/log.dart';
 
 import 'chat.dart';
+import 'chat_group.dart';
 
 abstract class MessageBuilder with Logging {
 
@@ -21,19 +22,25 @@ abstract class MessageBuilder with Logging {
 
   /// Check whether this message content should be ignored
   bool isHiddenContent(Content content, ID sender) {
-    if (content is ResetCommand) {
-      return false;
-    } else if (content is InviteCommand) {
-      return false;
-    } else if (content is ExpelCommand) {
-      return false;
-    } else if (content is JoinCommand) {
-      return false;
-    } else if (content is QuitCommand) {
-      return false;
-    } else {
-      return isCommand(content, sender);
+    if (//content is ResetCommand ||
+        content is InviteCommand ||
+        content is ExpelCommand ||
+        content is JoinCommand ||
+        content is QuitCommand) {
+      // check membership
+      ID? group = content.group;
+      if (group == null) {
+        assert(false, 'group command error: $content');
+        return false;
+      }
+      var chat = GroupInfo.fromID(group);
+      if (chat == null) {
+        assert(false, 'group not found: $group');
+        return false;
+      }
+      return !chat.isMember;
     }
+    return isCommand(content, sender);
   }
   /// Check whether this message content should be a command
   bool isCommand(Content content, ID sender) {
@@ -47,6 +54,7 @@ abstract class MessageBuilder with Logging {
         'Document not accept',
         'Document not change',
         'Document receive',
+        'Failed to decrypt message',
       ])) {
         return true;
       }

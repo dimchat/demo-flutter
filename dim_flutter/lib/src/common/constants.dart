@@ -80,6 +80,12 @@ abstract class NotificationNames {
       pnf.NotificationNames.kPortableNetworkError;
 
   //
+  //  Active Users
+  //
+
+  static const String kActiveUsersUpdated = 'ActiveUsersUpdated';
+
+  //
   //  Live Player
   //
 

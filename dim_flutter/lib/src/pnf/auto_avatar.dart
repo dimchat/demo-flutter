@@ -47,8 +47,10 @@ import 'net_image.dart';
 
 
 /// preview avatar image
-void previewAvatar(BuildContext context, ID identifier, PortableNetworkFile avatar) {
-  var image = AvatarFactory().getImageView(identifier, avatar);
+void previewAvatar(BuildContext context, ID identifier, PortableNetworkFile avatar, {
+  BoxFit? fit,
+}) {
+  var image = AvatarFactory().getImageView(identifier, avatar, fit: fit);
   Gallery([image], 0).show(context);
 }
 
@@ -78,12 +80,13 @@ class AvatarFactory {
     return runner;
   }
 
-  PortableImageView getImageView(ID user, PortableNetworkFile pnf,
-      {double? width, double? height}) {
+  PortableImageView getImageView(ID user, PortableNetworkFile pnf, {
+    double? width, double? height, BoxFit? fit,
+  }) {
     var loader = getImageLoader(pnf);
     Uri? url = pnf.url;
     if (url == null) {
-      return _AvatarImageView(user, loader, width: width, height: height,);
+      return _AvatarImageView(user, loader, width: width, height: height, fit: fit,);
     }
     _AvatarImageView? img;
     Set<_AvatarImageView>? table = _views[url];
@@ -104,13 +107,15 @@ class AvatarFactory {
       }
     }
     if (img == null) {
-      img = _AvatarImageView(user, loader, width: width, height: height,);
+      img = _AvatarImageView(user, loader, width: width, height: height, fit: fit,);
       table.add(img);
     }
     return img;
   }
 
-  Widget getAvatarView(ID user, {double? width, double? height}) {
+  Widget getAvatarView(ID user, {
+    double? width, double? height, BoxFit? fit,
+  }) {
     width ??= 32;
     height ??= 32;
     _AutoAvatarView? avt;
@@ -131,7 +136,7 @@ class AvatarFactory {
       }
     }
     if (avt == null) {
-      avt = _AutoAvatarView(user, width: width, height: height,);
+      avt = _AutoAvatarView(user, width: width, height: height, fit: fit,);
       table.add(avt);
     }
     return avt;
@@ -140,17 +145,20 @@ class AvatarFactory {
 }
 
 class _Info {
-  _Info(this.identifier, {required this.width, required this.height});
+  _Info(this.identifier, {required this.width, required this.height, required this.fit});
 
   final ID identifier;
   final double width;
   final double height;
+  final BoxFit? fit;
 
   PortableNetworkFile? avatar;
   PortableImageView? avatarView;
 
-  static from(ID identifier, {required double width, required double height}) {
-    var info = _Info(identifier, width: width, height: height);
+  static from(ID identifier, {
+    required double width, required double height, required BoxFit? fit,
+  }) {
+    var info = _Info(identifier, width: width, height: height, fit: fit);
     GlobalVariable shared = GlobalVariable();
     shared.facebook.getVisa(identifier).then((visa) {
       var avatar = visa?.avatar;
@@ -158,7 +166,7 @@ class _Info {
         info.avatar = avatar;
         var factory = AvatarFactory();
         info.avatarView = factory.getImageView(identifier, avatar,
-          width: width, height: height,);
+          width: width, height: height, fit: fit);
         var nc = lnc.NotificationCenter();
         nc.postNotification(_kAutoAvatarUpdate, info, {
           'ID': identifier,
@@ -174,14 +182,16 @@ const String _kAutoAvatarUpdate = '_AutoAvatarUpdate';
 
 /// Auto refresh avatar view
 class _AutoAvatarView extends StatefulWidget {
-  _AutoAvatarView(ID identifier, {required double width, required double height})
-      : info = _Info.from(identifier, width: width, height: height);
+  _AutoAvatarView(ID identifier, {
+    required double width, required double height, required BoxFit? fit,
+  }) : info = _Info.from(identifier, width: width, height: height, fit: fit);
 
   final _Info info;
 
   ID get identifier => info.identifier;
   double get width => info.width;
   double get height => info.height;
+  BoxFit? get fit => info.fit;
 
   @override
   State<StatefulWidget> createState() => _AutoAvatarState();
@@ -252,7 +262,7 @@ class _AutoAvatarState extends State<_AutoAvatarView> implements lnc.Observer {
     }
     var factory = AvatarFactory();
     widget.info.avatarView = factory.getImageView(identifier, avatar,
-        width: widget.width, height: widget.height);
+        width: widget.width, height: widget.height, fit: widget.fit);
     if (mounted) {
       setState(() {
       });
@@ -278,7 +288,7 @@ class _AutoAvatarState extends State<_AutoAvatarView> implements lnc.Observer {
 
 /// Auto refresh image view
 class _AvatarImageView extends PortableImageView {
-  const _AvatarImageView(this.identifier, super.loader, {super.width, super.height});
+  const _AvatarImageView(this.identifier, super.loader, {super.width, super.height, super.fit});
 
   final ID identifier;
 
@@ -306,7 +316,7 @@ class _AvatarImageLoader extends PortableImageLoader {
   _AvatarImageLoader(super.pnf);
 
   @override
-  Widget getImage(PortableImageView widget) {
+  Widget getImage(PortableImageView widget, {BoxFit? fit}) {
     _AvatarImageView aiv = widget as _AvatarImageView;
     ID identifier = aiv.identifier;
     double? width = widget.width;
@@ -315,9 +325,9 @@ class _AvatarImageLoader extends PortableImageLoader {
     if (image == null) {
       return _AvatarImageView.getNoImage(identifier, width: width, height: height);
     } else if (width == null && height == null) {
-      return ImageUtils.image(image,);
+      return ImageUtils.image(image, fit: fit);
     } else {
-      return ImageUtils.image(image, width: width, height: height, fit: BoxFit.cover,);
+      return ImageUtils.image(image, width: width, height: height, fit: fit ?? BoxFit.cover,);
     }
   }
 

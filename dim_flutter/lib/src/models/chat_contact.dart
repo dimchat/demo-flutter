@@ -96,8 +96,8 @@ class ContactInfo extends Conversation {
   }
 
   @override
-  Widget getImage({double? width, double? height}) =>
-      AvatarFactory().getAvatarView(identifier, width: width, height: height);
+  Widget getImage({double? width, double? height, BoxFit? fit}) =>
+      AvatarFactory().getAvatarView(identifier, width: width, height: height, fit: fit);
 
   @override
   Future<void> loadData() async {
@@ -199,15 +199,19 @@ class ContactInfo extends Conversation {
       }
     }
     if (name != null) {
-      String? ver;
-      if (os == null) {
-        ver = store ?? 'Unknown';
-      } else if (store == null) {
-        ver = os;
+      String? platform;
+      if (os == null || os.isEmpty) {
+        platform = store;
+      } else if (store == null || store.isEmpty) {
+        platform = os;
       } else {
-        ver = '$os; $store';
+        platform = '$os; $store';
       }
-      _clientInfo = '$name ($ver) $version';
+      if (platform == null || platform.isEmpty) {
+        _clientInfo = '$name $version';
+      } else {
+        _clientInfo = '$name ($platform) $version';
+      }
     }
   }
 

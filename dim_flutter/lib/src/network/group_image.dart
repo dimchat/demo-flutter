@@ -10,12 +10,13 @@ import '../models/chat_group.dart';
 
 /// Group Icon
 class GroupImage extends StatefulWidget {
-  const GroupImage(this.info, {super.key, this.width, this.height});
+  const GroupImage(this.info, {super.key, this.width, this.height, this.fit});
 
   final GroupInfo info;
 
   final double? width;
   final double? height;
+  final BoxFit? fit;
 
   @override
   State<StatefulWidget> createState() => _GroupImageState();
@@ -94,7 +95,7 @@ class _GroupImageState extends State<GroupImage> implements lnc.Observer {
     for (int i = 0; i < count; ++i) {
       info = members[i];
       info.reloadData();
-      img = info.getImage(width: width, height: height);
+      img = info.getImage(width: width, height: height, fit: widget.fit);
       images.add(img);
     }
     double boxWidth = widget.width ?? 48;

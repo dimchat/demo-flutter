@@ -178,6 +178,7 @@ Widget buildScrollView({
   // ScrollViewKeyboardDismissBehavior keyboardDismissBehavior = ScrollViewKeyboardDismissBehavior.manual,
 }) {
   var view = SingleChildScrollView(
+    scrollDirection: scrollDirection,
     child: child,
   );
   if (DevicePlatform.isMobile) {

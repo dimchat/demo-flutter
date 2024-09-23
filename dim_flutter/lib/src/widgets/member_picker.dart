@@ -224,9 +224,9 @@ Future<Widget> previewMembers(List<ID> members) async {
   );
 }
 
-Widget previewEntity(Conversation info, {double width = 48, double height = 48, TextStyle? textStyle}) => Column(
+Widget previewEntity(Conversation info, {double width = 48, double height = 48, BoxFit? fit, TextStyle? textStyle}) => Column(
   children: [
-    info.getImage(width: width, height: height,),
+    info.getImage(width: width, height: height, fit: fit),
     SizedBox(
       width: width,
       child: info.getNameLabel(

@@ -148,8 +148,8 @@ class GroupInfo extends Conversation with Logging {
   Pair<ResetCommand?, ReliableMessage?> get reset => _reset ?? const Pair(null, null);
 
   @override
-  Widget getImage({double? width, double? height}) =>
-      GroupImage(this, width: width, height: height);
+  Widget getImage({double? width, double? height, BoxFit? fit}) =>
+      GroupImage(this, width: width, height: height, fit: fit);
 
   @override
   Future<void> loadData() async {

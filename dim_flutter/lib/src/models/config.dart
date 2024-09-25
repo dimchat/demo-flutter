@@ -132,6 +132,11 @@ class Config with Logging {
     return '<$clazz url="$entrance">\n${_cfgLoader.info}\n</$clazz>';
   }
 
+  Future<ID?> get webmaster async {
+    var admin = (await _info)['webmaster'];
+    return ID.parse(admin);
+  }
+
   /// Default contacts
   Future<List<ID>> get contacts async {
     List? array = (await _info)['contacts'];
@@ -192,7 +197,9 @@ class Config with Logging {
 
   /// Terms Web Page
   Future<String> get termsURL async => (await _info)['terms']
-      ?? 'https://wallet.dim.chat/dimchat/sechat/privacy.html';
+      ?? 'http://tarsier.dim.chat/v1/docs/terms.html';
+  Future<String> get privacyURL async => (await _info)['privacy']
+      ?? 'http://tarsier.dim.chat/v1/docs/privacy.html';
 
   /// Home Page
   Future<String> get aboutURL async => (await _info)['about']

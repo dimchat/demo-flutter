@@ -148,6 +148,17 @@ abstract class Conversation with Logging implements lnc.Observer {
   DateTime? get time => lastMessageTime;
 
   @override
+  bool operator ==(Object other) {
+    if (other is Conversation) {
+      return identifier == other.identifier;
+    }
+    return false;
+  }
+
+  @override
+  int get hashCode => identifier.hashCode;
+
+  @override
   String toString() {
     Type clazz = runtimeType;
     return '<$clazz id="$identifier" type=$type name="$name" muted=$isMuted>\n'

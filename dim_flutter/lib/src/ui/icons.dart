@@ -73,6 +73,7 @@ abstract class AppIcons {
   static const IconData      adminIcon = Icons.admin_panel_settings_outlined;
   static const IconData invitationIcon = Icons.contact_mail_outlined;
 
+  static const IconData     reportIcon = CupertinoIcons.bell;
   static const IconData  addFriendIcon = CupertinoIcons.person_add;
   static const IconData    sendMsgIcon = CupertinoIcons.chat_bubble;
   static const IconData     recallIcon = CupertinoIcons.arrow_uturn_down;

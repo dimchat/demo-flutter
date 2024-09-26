@@ -240,6 +240,7 @@ final Map<String, String> intlFrFr = {
   'Share Contact': 'Partager le contact',
   'Delete Contact': 'Supprimer le contact',
   'Quit Group': 'Quitter le groupe',
+  'Report': 'Signaler',
 
   'Contact @name shared to @chat': 'Le contact "@name" a été partagé avec "@chat".',
   'Failed to share contact @name with @chat': 'Échec du partage du contact "@name" avec "@chat".',
@@ -327,13 +328,18 @@ final Map<String, String> intlFrFr = {
   //  Footers
   //
 
-  'ServiceBotList::Description' : '* Ici, nous présentons des services tiers populaires ;\n'
-      '* N\'importe qui peut développer et proposer de tels services au public tant qu\'ils respectent le protocole DIMP ;\n'
-      '* Si vous souhaitez créer votre propre bot de service, nous vous invitons à lire la documentation DIMP,'
-      ' télécharger des exemples de projets sur GitHub ou contacter directement "Albert Moky".',
+  'ServiceBotList::Description': '* Des bots de service vérifiés sont affichés ici, certains provenant de fournisseurs tiers ;\n'
+      '* Si vous trouvez un comportement illégal, veuillez cliquer sur le bouton "Signaler" dans le coin supérieur droit pour obtenir des preuves et signaler ;\n'
+      '* N\'importe qui peut développer et fournir de tels services au public tant qu\'il respecte le protocole DIMP ;\n'
+      '* Si vous souhaitez créer votre propre bot de service, nous vous invitons à lire les documents DIMP,'
+      ' à télécharger des projets d\'exemple depuis GitHub, ou à contacter directement "Albert Moky".',
 
   'ChatBox::Description': 'Cette application est alimentée par DIM, une technologie E2EE (chiffrement de bout en bout).'
       ' Vos messages seront chiffrés avant d\'être envoyés, personne ne peut déchiffrer le contenu sauf le destinataire.',
+
+  'ChatBox::Remind': 'Veuillez ne pas envoyer d’informations illégales dans cette application de chat, y compris mais sans s’y limiter, des contenus obscènes, frauduleux ou menaçants.'
+      ' Si vous trouvez des informations illégales, veuillez cliquer sur le bouton dans le coin supérieur droit pour les signaler.'
+      ' Maintenez un bon environnement de communication et respectez ensemble les lois et réglementations. Merci !',
 
   'ChatList::Description': '* Ici, seuls les historiques des chats de vos amis sont affichés ;\n'
       '* Les inconnus seront placés dans "Contacts -> Nouveaux Amis".',

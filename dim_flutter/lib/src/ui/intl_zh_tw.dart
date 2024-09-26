@@ -239,6 +239,7 @@ final Map<String, String> intlZhTw = {
   'Share Contact': '分享聯絡人',
   'Delete Contact': '刪除聯絡人',
   'Quit Group': '退出群組',
+  'Report': '舉報',
 
   'Contact @name shared to @chat': '聯絡人 "@name" 已分享至 "@chat"。',
   'Failed to share contact @name with @chat': '無法與 "@chat" 分享聯絡人 "@name"。',
@@ -320,12 +321,17 @@ final Map<String, String> intlZhTw = {
   //  Footers
   //
 
-  'ServiceBotList::Description': '* 這裡顯示熱門的第三方服務;\n'
-      '* 任何人都可以開發並提供此類服務，只要遵循 DIMP 協議即可;\n'
-      '* 如果您想建立自己的服務機器人，我們邀請您閱讀 DIMP 文件，從 GitHub 下載範例專案，或直接與 "Albert Moky" 聯絡。',
+  'ServiceBotList::Description': '* 這裡展示了已經過審核的服務機器人，其中一些來自第三方提供商；\n'
+      '* 如果你發現其中存在不法行為，請點擊右上角的「舉報」按鈕取證舉報；\n'
+      '* 任何人都可以開發並提供此類服務，只要他們遵循 DIMP 協議；\n'
+      '* 如果您想創建自己的服務機器人，我們邀請您閱讀 DIMP 文檔，從 GitHub 下載範例專案，或直接與「Albert Moky」聯繫。',
 
   'ChatBox::Description': '此應用由 DIM 驅動，採用端對端加密技術（E2EE）。'
       '在發送前，你的訊息將被加密，除了接收者，沒有人能解密其內容。',
+
+  'ChatBox::Remind': '請勿在此聊天應用中發送任何違法資訊，包括但不限於淫穢、詐騙或威脅內容。'
+      '如果發現違法資訊，請點擊右上角按鈕舉報。'
+      '維護良好交流環境，共同遵守法律法規，謝謝！',
 
   'ChatList::Description': '* 這裡僅顯示你朋友的聊天歷史；\n'
       '* 陌生人將被放置在「聯絡人 -> 新朋友」中。',

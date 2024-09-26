@@ -240,6 +240,7 @@ final Map<String, String> intlKoKr = {
   'Share Contact': '연락처 공유',
   'Delete Contact': '연락처 삭제',
   'Quit Group': '그룹 나가기',
+  'Report': '신고',
 
   'Contact @name shared to @chat': '연락처 "@name" 이(가) "@chat" 과(와) 공유되었습니다.',
   'Failed to share contact @name with @chat': '연락처 "@name" 을(를) "@chat" 과(와) 공유하지 못했습니다.',
@@ -325,12 +326,17 @@ final Map<String, String> intlKoKr = {
   //  Footers
   //
 
-  'ServiceBotList::Description': '* 여기에는 인기 있는 타사 서비스가 표시됩니다;\n'
-      '* 누구나 DIMP 프로토콜을 준수하는 한 이러한 서비스를 개발하여 대중에게 제공할 수 있습니다;\n'
-      '* 자체 서비스 봇을 만들고 싶다면 DIMP 문서를 읽거나 GitHub에서 예제 프로젝트를 다운로드하거나 "Albert Moky"에게 직접 연락하세요.',
+  'ServiceBotList::Description': '* 여기에는 검토된 서비스 봇이 표시되며, 일부는 제3자 제공업체의 것입니다;\n'
+      '* 불법 행위를 발견하신 경우, 오른쪽 상단의 "신고" 버튼을 클릭하여 증거를 확보하고 신고해 주세요;\n'
+      '* 누구나 DIMP 프로토콜을 따르는 한 이러한 서비스를 대중에게 개발하고 제공할 수 있습니다;\n'
+      '* 자신만의 서비스 봇을 만들고 싶으시다면 DIMP 문서를 읽고, GitHub에서 샘플 프로젝트를 다운로드하거나 "Albert Moky"에게 직접 연락해 주세요.',
 
   'ChatBox::Description': '이 앱은 DIM(End-to-End Encrypted) 기술을 사용하여 작동합니다.'
       '메시지는 전송 전에 암호화되어 수신자만이 내용을 해독할 수 있습니다.',
+
+  'ChatBox::Remind': '이 채팅 애플리케이션에서 불법 정보를 보내지 마세요. 여기에는 음란, 사기 또는 위협적인 내용이 포함됩니다. '
+      '불법 정보를 발견하셨다면 오른쪽 상단 버튼을 클릭하여 신고해 주세요.'
+      ' 좋은 커뮤니케이션 환경을 유지하고 함께 법률 및 규정을 준수합시다. 감사합니다!',
 
   'ChatList::Description': '* 여기에는 친구들의 채팅 기록만 표시됩니다;\n'
       '* 낯선 사람들은 "연락처 -> 새 친구"에 위치합니다.',

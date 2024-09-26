@@ -239,6 +239,7 @@ final Map<String, String> intlZhCn = {
   'Share Contact': '分享联系人',
   'Delete Contact': '删除联系人',
   'Quit Group': '退出群组',
+  'Report': '举报',
 
   'Contact @name shared to @chat': '联系人 "@name" 已分享给 "@chat"。',
   'Failed to share contact @name with @chat': '无法分享联系人 "@name" 给 "@chat"。',
@@ -320,12 +321,17 @@ final Map<String, String> intlZhCn = {
   //  Footers
   //
 
-  'ServiceBotList::Description': '* 这里展示了流行的第三方服务;\n'
+  'ServiceBotList::Description': '* 这里展示了已经过审核的服务机器人，其中一些来自第三方提供商;\n'
+      '* 如果你发现其中存在不法行为，请点击右上角的“举报”按钮取证举报;\n'
       '* 任何人都可以开发并提供此类服务，只要他们遵循 DIMP 协议;\n'
       '* 如果您想创建自己的服务机器人，我们邀请您阅读 DIMP 文档，从 GitHub 下载示例项目，或直接与 "Albert Moky" 联系。',
 
   'ChatBox::Description': '该应用程序由DIM（去中心化端到端加密）技术提供支持。'
       '您的消息将在发送前进行加密，除了接收者，没有人能解密内容。',
+
+  'ChatBox::Remind': '请勿在此聊天应用中发送任何违法信息，包括但不限于淫秽、诈骗或威胁内容。'
+      '如果发现违法信息，请点击右上角按钮举报。'
+      '维护良好交流环境，共同遵守法律法规，谢谢！',
 
   'ChatList::Description': '* 这里只显示你朋友的聊天记录；\n'
       '* 陌生人将被放置在 "联系人 -> 新的朋友" 中。',

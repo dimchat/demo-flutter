@@ -239,6 +239,7 @@ final Map<String, String> intlEnUs = {
   'Share Contact': 'Share Contact',
   'Delete Contact': 'Delete Contact',
   'Quit Group': 'Quit Group',
+  'Report': 'Report',
 
   'Contact @name shared to @chat': 'Contact "@name" shared to "@chat".',
   'Failed to share contact @name with @chat': 'Failed to share contact "@name" with "@chat".',
@@ -327,13 +328,18 @@ final Map<String, String> intlEnUs = {
   //  Footers
   //
 
-  'ServiceBotList::Description': '* Here shows popular third-party services;\n'
+  'ServiceBotList::Description': '* Reviewed service bots are shown here, some from third-party providers;\n'
+      '* If you find any illegal behavior, please click the "Report" button in the upper right corner to obtain evidence and report;\n'
       '* Anyone can develop and provide such services to the public as long as they follow the DIMP protocol;\n'
       '* If you wish to create your own service bot, we invite you to read the DIMP documents,'
       ' download example projects from GitHub, or get in touch with "Albert Moky" directly.',
 
   'ChatBox::Description': 'This app is powered by DIM, an E2EE (End-to-End Encrypted) technology.'
       ' Your messages will be encrypted before sending out, no one can decrypt the contents except the receiver.',
+
+  'ChatBox::Remind': 'Please do not send any illegal information in this chat application, including but not limited to obscene, fraudulent or threatening content.'
+      ' If you find illegal information, please click the button in the upper right corner to report it.'
+      ' Maintain a good communication environment and abide by laws and regulations together. Thank you!',
 
   'ChatList::Description': '* Here shows chat histories of your friends only;\n'
       '* Strangers will be placed in "Contacts -> New Friends".',

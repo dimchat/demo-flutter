@@ -240,6 +240,7 @@ final Map<String, String> intlIdId = {
   'Share Contact': 'Bagikan Kontak',
   'Delete Contact': 'Hapus Kontak',
   'Quit Group': 'Keluar dari Grup',
+  'Report': 'Laporkan',
 
   'Contact @name shared to @chat': 'Kontak "@name" dibagikan ke "@chat".',
   'Failed to share contact @name with @chat': 'Gagal membagikan kontak "@name" ke "@chat".',
@@ -328,13 +329,18 @@ final Map<String, String> intlIdId = {
   //  Footers
   //
 
-  'ServiceBotList::Description': '* Di sini menampilkan layanan pihak ketiga yang populer;\n'
-      '* Siapa saja dapat mengembangkan dan memberikan layanan tersebut kepada publik selama mereka mengikuti protokol DIMP;\n'
+  'ServiceBotList::Description': '* Bot layanan yang telah ditinjau ditampilkan di sini, beberapa dari penyedia pihak ketiga;\n'
+      '* Jika Anda menemukan perilaku ilegal, silakan klik tombol "Laporkan" di sudut kanan atas untuk mendapatkan bukti dan melaporkan;\n'
+      '* Siapa pun dapat mengembangkan dan menyediakan layanan tersebut kepada publik selama mereka mengikuti protokol DIMP;\n'
       '* Jika Anda ingin membuat bot layanan Anda sendiri, kami mengundang Anda untuk membaca dokumen DIMP,'
       ' mengunduh proyek contoh dari GitHub, atau menghubungi "Albert Moky" secara langsung.',
 
   'ChatBox::Description': 'Aplikasi ini didukung oleh DIM, sebuah teknologi E2EE (End-to-End Encrypted).'
       ' Pesan Anda akan dienkripsi sebelum dikirimkan, tidak ada yang dapat mendekripsi kontennya kecuali penerima.',
+
+  'ChatBox::Remind': 'Harap jangan mengirimkan informasi ilegal dalam aplikasi obrolan ini, termasuk namun tidak terbatas pada konten cabul, penipuan, atau ancaman.'
+      ' Jika Anda menemukan informasi ilegal, silakan klik tombol di sudut kanan atas untuk melaporkannya.'
+      ' Pertahankan lingkungan komunikasi yang baik dan bersama-sama patuhi hukum dan peraturan. Terima kasih!',
 
   'ChatList::Description': '* Di sini menampilkan riwayat obrolan hanya dari teman-teman Anda;\n'
       '* Orang asing akan ditempatkan di "Kontak -> Teman Baru".',

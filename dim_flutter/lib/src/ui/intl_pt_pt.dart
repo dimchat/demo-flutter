@@ -240,6 +240,7 @@ final Map<String, String> intlPtPt = {
   'Share Contact': 'Partilhar Contato',
   'Delete Contact': 'Eliminar Contato',
   'Quit Group': 'Sair do Grupo',
+  'Report': 'Reportar',
 
   'Contact @name shared to @chat': 'Contato "@name" partilhado com "@chat".',
   'Failed to share contact @name with @chat': 'Falha ao partilhar o contato "@name" com "@chat".',
@@ -324,13 +325,18 @@ final Map<String, String> intlPtPt = {
   //  Footers
   //
 
-  'ServiceBotList::Description': '* Aqui mostramos serviços populares de terceiros;\n'
-      '* Qualquer pessoa pode desenvolver e fornecer esses serviços ao público, desde que sigam o protocolo DIMP;\n'
-      '* Se você deseja criar seu próprio bot de serviço, convidamos você a ler os documentos do DIMP,'
+  'ServiceBotList::Description': '* Aqui são exibidos bots de serviço revisados, alguns de fornecedores terceiros;\n'
+      '* Se você encontrar algum comportamento ilegal, clique no botão "Reportar" no canto superior direito para obter evidências e relatar;\n'
+      '* Qualquer pessoa pode desenvolver e fornecer esses serviços ao público, desde que siga o protocolo DIMP;\n'
+      '* Se você deseja criar seu próprio bot de serviço, convidamos você a ler os documentos DIMP,'
       ' baixar projetos de exemplo do GitHub ou entrar em contato diretamente com "Albert Moky".',
 
   'ChatBox::Description': 'Esta aplicação é alimentada por DIM, uma tecnologia E2EE (End-to-End Encrypted).'
       ' As suas mensagens serão encriptadas antes de serem enviadas, ninguém pode decifrar o conteúdo exceto o destinatário.',
+
+  'ChatBox::Remind': 'Por favor, não envie informações ilegais neste aplicativo de chat, incluindo, mas não se limitando a conteúdo obsceno, fraudulento ou ameaçador.'
+      ' Se você encontrar informações ilegais, clique no botão no canto superior direito para relatar.'
+      ' Mantenha um bom ambiente de comunicação e respeite juntos as leis e regulamentos. Obrigado!',
 
   'ChatList::Description': '* Aqui são mostrados históricos de conversas apenas dos seus amigos;\n'
       '* Estranhos serão colocados em "Contactos -> Novos Amigos".',

@@ -240,6 +240,7 @@ final Map<String, String> intlNlNl = {
   'Share Contact': 'Contact Delen',
   'Delete Contact': 'Contact Verwijderen',
   'Quit Group': 'Groep Verlaten',
+  'Report': 'Rapporteren',
 
   'Contact @name shared to @chat': 'Contact "@name" gedeeld naar "@chat".',
   'Failed to share contact @name with @chat': 'Mislukt om contact "@name" te delen met "@chat".',
@@ -328,13 +329,18 @@ final Map<String, String> intlNlNl = {
   //  Footers
   //
 
-  'ServiceBotList::Description': '* Hier worden populaire services van derden getoond;\n'
-      '* Iedereen kan dergelijke services ontwikkelen en aanbieden aan het publiek, zolang ze het DIMP-protocol volgen;\n'
-      '* Als u uw eigen servicebot wilt maken, nodigen wij u uit de DIMP-documenten te lezen,'
-      ' voorbeeldprojecten te downloaden van GitHub of rechtstreeks contact op te nemen met "Albert Moky".',
+  'ServiceBotList::Description': '* Hier worden de goedgekeurde servicebots weergegeven, sommige van derde aanbieders;\n'
+      '* Als je illegaal gedrag tegenkomt, klik dan op de knop "Rapporteren" in de rechterbovenhoek om bewijs te verzamelen en te rapporteren;\n'
+      '* Iedereen kan dergelijke diensten ontwikkelen en aan het publiek aanbieden zolang ze het DIMP-protocol volgen;\n'
+      '* Als je je eigen servicebot wilt maken, nodigen we je uit om de DIMP-documenten te lezen,'
+      ' voorbeeldprojecten van GitHub te downloaden of direct contact op te nemen met "Albert Moky".',
 
   'ChatBox::Description': 'Deze app wordt aangedreven door DIM, een E2EE (End-to-End Versleutelde) technologie.'
       ' Uw berichten worden versleuteld voordat ze worden verzonden, niemand kan de inhoud ontcijferen behalve de ontvanger.',
+
+  'ChatBox::Remind': 'Gelieve geen illegale informatie in deze chatapplicatie te verzenden, inclusief maar niet beperkt tot obsceen, frauduleus of bedreigend materiaal.'
+      ' Als je illegale informatie vindt, klik dan op de knop in de rechterbovenhoek om het te rapporteren.'
+      ' Houd een goede communicatieomgeving in stand en houd samen de wetten en regels na. Dank je!',
 
   'ChatList::Description': '* Hier worden alleen chatgeschiedenissen van uw vrienden weergegeven;\n'
       '* Vreemden worden geplaatst in "Contacten -> Nieuwe Vrienden".',

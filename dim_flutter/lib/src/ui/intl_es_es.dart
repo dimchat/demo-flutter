@@ -241,6 +241,7 @@ final Map<String, String> intlEsEs = {
   'Share Contact': 'Compartir contacto',
   'Delete Contact': 'Eliminar contacto',
   'Quit Group': 'Salir del grupo',
+  'Report': 'Reportar',
 
   'Contact @name shared to @chat': 'Contacto "@name" compartido en "@chat".',
   'Failed to share contact @name with @chat': 'Error al compartir contacto "@name" con "@chat".',
@@ -329,14 +330,19 @@ final Map<String, String> intlEsEs = {
   //  Footers
   //
 
-  'ServiceBotList::Description': '* Aquí mostramos servicios de terceros populares;\n'
-      '* Cualquiera puede desarrollar y ofrecer este tipo de servicios al público siempre y cuando sigan el protocolo DIMP;\n'
-      '* Si desea crear su propio bot de servicio, le invitamos a leer los documentos de DIMP,'
-      ' descargar proyectos de ejemplo de GitHub o ponerse en contacto directo con "Albert Moky".',
+  'ServiceBotList::Description': '* Aquí se muestran bots de servicio revisados, algunos de proveedores externos;\n'
+      '* Si encuentra algún comportamiento ilegal, haga clic en el botón "Reportar" en la esquina superior derecha para obtener pruebas y reportar;\n'
+      '* Cualquiera puede desarrollar y ofrecer estos servicios al público siempre que siga el protocolo DIMP;\n'
+      '* Si desea crear su propio bot de servicio, le invitamos a leer los documentos DIMP,'
+      ' descargar proyectos de ejemplo desde GitHub o ponerse en contacto directamente con "Albert Moky".',
 
   'ChatBox::Description': 'Esta aplicación está impulsada por DIM, una tecnología E2EE (cifrado de extremo a extremo).'
       ' Tus mensajes serán cifrados antes de ser enviados,'
       ' nadie puede descifrar el contenido excepto el destinatario.',
+
+  'ChatBox::Remind': 'Por favor, no envíe información ilegal en esta aplicación de chat, incluyendo, pero no limitado a, contenido obsceno, fraudulento o amenazante.'
+      ' Si encuentra información ilegal, haga clic en el botón en la esquina superior derecha para reportarlo.'
+      ' Mantenga un buen ambiente de comunicación y respete juntos las leyes y regulaciones. ¡Gracias!',
 
   'ChatList::Description': '* Aquí se muestran los historiales de chat solo de tus amigos;\n'
       '* Los desconocidos se colocarán en "Contactos -> Nuevos amigos".',

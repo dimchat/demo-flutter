@@ -240,6 +240,7 @@ final Map<String, String> intlViVN = {
   'Share Contact': 'Chia sẻ Liên lạc',
   'Delete Contact': 'Xóa Liên lạc',
   'Quit Group': 'Rời Nhóm',
+  'Report': 'Báo cáo',
 
   'Contact @name shared to @chat': 'Liên lạc "@name" đã được chia sẻ đến "@chat".',
   'Failed to share contact @name with @chat': 'Không thể chia sẻ liên lạc "@name" với "@chat".',
@@ -325,13 +326,18 @@ final Map<String, String> intlViVN = {
   //  Footers
   //
 
-  'ServiceBotList::Description': '* Ở đây hiển thị các dịch vụ bên thứ ba phổ biến;\n'
-      '* Bất kỳ ai cũng có thể phát triển và cung cấp các dịch vụ này cho công chúng miễn là họ tuân thủ giao thức DIMP;\n'
-      '* Nếu bạn muốn tạo bot dịch vụ riêng của mình, chúng tôi mời bạn đọc tài liệu DIMP,'
-      ' tải xuống các dự án ví dụ từ GitHub hoặc liên hệ trực tiếp với "Albert Moky".',
+  'ServiceBotList::Description': '* Các bot dịch vụ đã được xem xét sẽ được hiển thị ở đây, một số đến từ nhà cung cấp bên thứ ba;\n'
+      '* Nếu bạn phát hiện bất kỳ hành vi trái pháp luật nào, vui lòng nhấp vào nút "Báo cáo" ở góc trên bên phải để thu thập bằng chứng và báo cáo;\n'
+      '* Bất kỳ ai cũng có thể phát triển và cung cấp dịch vụ như vậy cho công chúng miễn là họ tuân theo giao thức DIMP;\n'
+      '* Nếu bạn muốn tạo bot dịch vụ của riêng mình, chúng tôi mời bạn đọc tài liệu DIMP,'
+      ' tải xuống các dự án mẫu từ GitHub hoặc liên hệ trực tiếp với "Albert Moky".',
 
   'ChatBox::Description': 'Ứng dụng này được cung cấp bởi DIM, một công nghệ E2EE (End-to-End Encrypted).'
       ' Tin nhắn của bạn sẽ được mã hóa trước khi gửi đi, không ai có thể giải mã nội dung ngoại trừ người nhận.',
+
+  'ChatBox::Remind': 'Vui lòng không gửi bất kỳ thông tin trái pháp luật nào trong ứng dụng trò chuyện này, bao gồm nhưng không giới hạn ở nội dung khiêu dâm, gian lận hoặc đe dọa.'
+      ' Nếu bạn phát hiện thông tin trái pháp luật, vui lòng nhấp vào nút ở góc trên bên phải để báo cáo.'
+      ' Giữ gìn môi trường giao tiếp tốt và cùng nhau tuân thủ các luật lệ và quy định. Cảm ơn bạn!',
 
   'ChatList::Description': '* Ở đây hiển thị lịch sử trò chuyện chỉ của bạn bè;\n'
       '* Người lạ sẽ được đặt trong "Liên lạc -> Bạn bè mới".',

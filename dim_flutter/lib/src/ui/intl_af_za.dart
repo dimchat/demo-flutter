@@ -240,6 +240,7 @@ final Map<String, String> intlAfZa = {
   'Share Contact': 'Deel Kontak',
   'Delete Contact': 'Verwyder Kontak',
   'Quit Group': 'Verlaat Groep',
+  'Report': 'Verslag',
 
   'Contact @name shared to @chat': 'Kontak "@name" gedeel na "@chat".',
   'Failed to share contact @name with @chat': 'Kon nie kontak "@name" deel met "@chat" nie.',
@@ -327,13 +328,18 @@ final Map<String, String> intlAfZa = {
   //  Footers
   //
 
-  'ServiceBotList::Description': '* Hier word populêre derdepartydienste gewys;\n'
-      '* Enigiemand kan sulke dienste ontwikkel en aan die publiek verskaf as lank hulle die DIMP-protokol volg;\n'
-      '* As u u eie diensbot wil skep, nodig ons u uit om die DIMP-dokumente te lees,'
-      ' voorbeeldprojekte van GitHub af te laai, of direk met "Albert Moky" kontak te maak.',
+  'ServiceBotList::Description': '* Gekeurde diensbots word hier getoon, sommige van derdeparty verskaffers;\n'
+      '* As jy enige onwettige gedrag ontdek, klik asseblief op die "Verslag" knoppie in die regter boonste hoek om bewyse te verkry en te rapporteer;\n'
+      '* Enige iemand kan sulke dienste ontwikkel en aan die publiek bied solank hulle die DIMP-protokol volg;\n'
+      '* As jy jou eie diensbot wil skep, nooi ons jou uit om die DIMP-dokumente te lees,'
+      ' voorbeeldprojekte van GitHub af te laai, of direk met "Albert Moky" in verbinding te tree.',
 
   'ChatBox::Description': 'Hierdie app word aangedryf deur DIM, \'n E2EE (End-to-End Versleutelde) tegnologie.'
       ' Jou boodskappe sal versleutel word voordat dit uitgestuur word, niemand kan die inhoud ontsluit nie, behalwe die ontvanger.',
+
+  'ChatBox::Remind': 'Moet asseblief nie enige onwettige inligting in hierdie kletstoepassing stuur nie, insluitend maar nie beperk tot obseen, bedrog of dreigende inhoud.'
+      ' As jy onwettige inligting vind, klik asseblief op die knoppie in die regter boonste hoek om dit te rapporteer.'
+      ' Handhaaf \'n goeie kommunikasieomgewing en volg saam die wette en regulasies. Dankie!',
 
   'ChatList::Description': '* Hier toon geskiedenis van geselskappe met jou vriende alleenlik;\n'
       '* Vreemdelinge sal in "Kontakte -> Nuwe Vriende" geplaas word.',

@@ -239,6 +239,7 @@ final Map<String, String> intlTrTr = {
   'Share Contact': 'Kişiyi Paylaş',
   'Delete Contact': 'Kişiyi Sil',
   'Quit Group': 'Grubu Terk Et',
+  'Report': 'Raporla',
 
   'Contact @name shared to @chat': 'Kişi "@name" "@chat" kişisiyle paylaşıldı.',
   'Failed to share contact @name with @chat': '@chat kişisiyle kişi "@name" paylaşma başarısız oldu.',
@@ -323,13 +324,18 @@ final Map<String, String> intlTrTr = {
   //  Footers
   //
 
-  'ServiceBotList::Description': '* Burada popüler üçüncü taraf hizmetleri gösteriliyor;\n'
-      '* Herhangi bir kişi DIMP protokolünü takip ettiği sürece, böyle hizmetleri geliştirebilir ve halka sunabilir;\n'
-      '* Kendi hizmet botunuzu oluşturmak isterseniz, DIMP belgelerini okumanızı,'
-      ' GitHub üzerinden örnek projeler indirmenizi veya "Albert Moky" ile doğrudan iletişime geçmenizi öneriyoruz.',
+  'ServiceBotList::Description': '* İncelenen hizmet botları burada gösterilmektedir, bazıları üçüncü taraf sağlayıcılardan;\n'
+      '* Herhangi bir yasa dışı davranış bulursanız, lütfen kanıt almak ve rapor etmek için sağ üst köşedeki "Raporla" butonuna tıklayın;\n'
+      '* DIMP protokolüne uymaları koşuluyla, herkes bu tür hizmetleri geliştirip halka sunabilir;\n'
+      '* Kendi hizmet botunuzu oluşturmak istiyorsanız, DIMP belgelerini okumaya,'
+      ' GitHub\'dan örnek projeleri indirmeye veya doğrudan "Albert Moky" ile iletişime geçmeye davet ediyoruz.',
 
   'ChatBox::Description': 'Bu uygulama, DIM tarafından desteklenen, E2EE (Uçtan Uca Şifreli) teknolojisi ile çalışır.'
       ' Mesajlarınız gönderilmeden önce şifrelenir, içeriği sadece alıcı hariç kimse çözemeyebilir.',
+
+  'ChatBox::Remind': 'Lütfen bu sohbet uygulamasında herhangi bir yasa dışı bilgi göndermeyin, bunun içinde ama bununla sınırlı olmamak üzere müstehcen, dolandırıcı veya tehdit edici içerikler de bulunmaktadır.'
+      ' Yasa dışı bilgi bulursanız, lütfen rapor etmek için sağ üst köşedeki butona tıklayın.'
+      ' İyi bir iletişim ortamı sağlayın ve birlikte yasalara ve düzenlemelere uyun. Teşekkür ederiz!',
 
   'ChatList::Description': '* Burada sadece arkadaşlarınızın sohbet geçmişleri gösterilir;\n'
       '* Yabancılar "Kişiler -> Yeni Arkadaşlar" bölümüne yerleştirilir.',

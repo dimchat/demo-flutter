@@ -240,6 +240,7 @@ final Map<String, String> intlDeDe = {
   'Share Contact': 'Kontakt teilen',
   'Delete Contact': 'Kontakt löschen',
   'Quit Group': 'Gruppe verlassen',
+  'Report': 'Melden',
 
   'Contact @name shared to @chat': 'Kontakt "@name" wurde an "@chat" geteilt.',
   'Failed to share contact @name with @chat': 'Fehler beim Teilen des Kontakts "@name" mit "@chat".',
@@ -322,13 +323,18 @@ final Map<String, String> intlDeDe = {
   //  Footers
   //
 
-  'ServiceBotList::Description': '* Hier zeigen wir beliebte Drittanbieter-Dienste;\n'
-      '* Jeder kann solche Dienste für die Öffentlichkeit entwickeln und anbieten, solange sie dem DIMP-Protokoll folgen;\n'
-      '* Wenn Sie Ihren eigenen Service-Bot erstellen möchten, laden wir Sie ein, die DIMP-Dokumente zu lesen,'
-      ' Beispielprojekte von GitHub herunterzuladen oder sich direkt an "Albert Moky" zu wenden.',
+  'ServiceBotList::Description': '* Hier werden geprüfte Dienst-Bots angezeigt, einige von Drittanbietern;\n'
+      '* Wenn Sie illegales Verhalten feststellen, klicken Sie bitte auf die Schaltfläche "Melden" in der oberen rechten Ecke, um Beweise zu sammeln und zu melden;\n'
+      '* Jeder kann solche Dienste für die Öffentlichkeit entwickeln und bereitstellen, solange er das DIMP-Protokoll einhält;\n'
+      '* Wenn Sie Ihren eigenen Dienst-Bot erstellen möchten, laden wir Sie ein, die DIMP-Dokumente zu lesen,'
+      ' Beispielprojekte von GitHub herunterzuladen oder sich direkt mit "Albert Moky" in Verbindung zu setzen.',
 
   'ChatBox::Description': 'Diese App wird von DIM betrieben, einer E2EE (End-to-End-verschlüsselten) Technologie.'
       ' Ihre Nachrichten werden vor dem Senden verschlüsselt, niemand kann den Inhalt außer dem Empfänger entschlüsseln.',
+
+  'ChatBox::Remind': 'Bitte senden Sie keine illegalen Informationen in dieser Chat-Anwendung, einschließlich, aber nicht beschränkt auf obszöne, betrügerische oder bedrohliche Inhalte.'
+      ' Wenn Sie illegale Informationen finden, klicken Sie bitte auf die Schaltfläche in der oberen rechten Ecke, um dies zu melden.'
+      ' Pflegen Sie ein gutes Kommunikationsumfeld und halten Sie gemeinsam die Gesetze und Vorschriften ein. Vielen Dank!',
 
   'ChatList::Description': '* Hier werden nur Chatverläufe Ihrer Freunde angezeigt;\n'
       '* Unbekannte werden unter "Kontakte -> Neue Freunde" platziert.',

@@ -240,6 +240,7 @@ final Map<String, String> intlMsMy = {
   'Share Contact': 'Kongsi Kenalan',
   'Delete Contact': 'Padam Kenalan',
   'Quit Group': 'Keluar Kumpulan',
+  'Report': 'Laporkan',
 
   'Contact @name shared to @chat': 'Kenalan "@name" dikongsi ke "@chat".',
   'Failed to share contact @name with @chat': 'Gagal berkongsi kenalan "@name" dengan "@chat".',
@@ -328,13 +329,18 @@ final Map<String, String> intlMsMy = {
   //  Footers
   //
 
-  'ServiceBotList::Description': '* Di sini menunjukkan perkhidmatan pihak ketiga yang popular;\n'
-      '* Sesiapa sahaja boleh mengembangkan dan menyediakan perkhidmatan seperti ini kepada orang ramai selagi mereka mengikuti protokol DIMP;\n'
-      '* Jika anda ingin membuat bot perkhidmatan sendiri, kami menggalakkan anda untuk membaca dokumen DIMP,'
-      ' muat turun projek contoh dari GitHub, atau hubungi "Albert Moky" secara langsung.',
+  'ServiceBotList::Description': '* Bot perkhidmatan yang telah disemak ditunjukkan di sini, beberapa dari penyedia pihak ketiga;\n'
+      '* Jika anda menemui sebarang tingkah laku haram, sila klik butang "Laporkan" di sudut kanan atas untuk mendapatkan bukti dan melaporkan;\n'
+      '* Sesiapa sahaja boleh membangunkan dan menyediakan perkhidmatan tersebut kepada orang ramai selagi mereka mengikuti protokol DIMP;\n'
+      '* Jika anda ingin mencipta bot perkhidmatan anda sendiri, kami mengundang anda untuk membaca dokumen DIMP,'
+      ' memuat turun projek contoh dari GitHub, atau menghubungi "Albert Moky" secara langsung.',
 
   'ChatBox::Description': 'Aplikasi ini dikuasakan oleh DIM, teknologi E2EE (End-to-End Encrypted).'
       ' Mesej anda akan dienkripsi sebelum dihantar, tiada sesiapa boleh mendekripsi kandungannya kecuali penerima.',
+
+  'ChatBox::Remind': 'Sila jangan hantar sebarang maklumat haram dalam aplikasi sembang ini, termasuk tetapi tidak terhad kepada kandungan lucah, penipuan atau ancaman.'
+      ' Jika anda menemui maklumat haram, sila klik butang di sudut kanan atas untuk melaporkannya.'
+      ' Kekalkan persekitaran komunikasi yang baik dan patuhi undang-undang serta peraturan bersama. Terima kasih!',
 
   'ChatList::Description': '* Di sini menunjukkan sejarah perbualan hanya dengan rakan-rakan anda;\n'
       '* Orang asing akan ditempatkan dalam "Kenalan -> Rakan Baru".',

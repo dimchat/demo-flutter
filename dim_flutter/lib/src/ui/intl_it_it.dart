@@ -240,6 +240,7 @@ final Map<String, String> intlItIt = {
   'Share Contact': 'Condividi Contatto',
   'Delete Contact': 'Elimina Contatto',
   'Quit Group': 'Abbandona Gruppo',
+  'Report': 'Segnala',
 
   'Contact @name shared to @chat': 'Contatto "@name" condiviso con "@chat".',
   'Failed to share contact @name with @chat': 'Impossibile condividere il contatto "@name" con "@chat".',
@@ -328,13 +329,18 @@ final Map<String, String> intlItIt = {
   //  Footers
   //
 
-  'ServiceBotList::Description': '* Qui vengono mostrati servizi di terze parti popolari;\n'
-      '* Chiunque può sviluppare e fornire tali servizi al pubblico, a condizione che seguano il protocollo DIMP;\n'
+  'ServiceBotList::Description': '* Qui vengono mostrati i bot di servizio revisionati, alcuni da fornitori terzi;\n'
+      '* Se trovi comportamenti illegali, fai clic sul pulsante "Segnala" nell\'angolo in alto a destra per ottenere prove e segnalare;\n'
+      '* Chiunque può sviluppare e fornire tali servizi al pubblico purché segua il protocollo DIMP;\n'
       '* Se desideri creare il tuo bot di servizio, ti invitiamo a leggere i documenti DIMP,'
       ' scaricare progetti di esempio da GitHub o contattare direttamente "Albert Moky".',
 
   'ChatBox::Description': 'Questa app è alimentata da DIM, una tecnologia E2EE (End-to-End Encrypted).'
       ' I tuoi messaggi saranno criptati prima dell\'invio, nessuno può decifrare i contenuti tranne il destinatario.',
+
+  'ChatBox::Remind': 'Ti preghiamo di non inviare informazioni illegali in questa applicazione di chat, inclusi, ma non limitati a contenuti osceni, fraudolenti o minacciosi.'
+      ' Se trovi informazioni illegali, fai clic sul pulsante nell\'angolo in alto a destra per segnalarlo.'
+      ' Mantieni un buon ambiente di comunicazione e rispettiamo insieme leggi e regolamenti. Grazie!',
 
   'ChatList::Description': '* Qui vengono mostrate solo le cronologie delle chat dei tuoi amici;\n'
       '* Gli sconosciuti verranno inseriti in "Contatti -> Nuovi Amici".',

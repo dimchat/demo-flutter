@@ -8,8 +8,8 @@ import 'language.dart';
 import 'settings.dart';
 
 
-void launchApp(Widget home) => runApp(GetMaterialApp(
-  // debugShowCheckedModeBanner: false,
+void launchApp(Widget home, {bool debug = true}) => runApp(GetMaterialApp(
+  debugShowCheckedModeBanner: debug,
   theme: _light(),
   darkTheme: _dark(),
   themeMode: BrightnessDataSource().themeMode,

@@ -214,58 +214,34 @@ class _Connection implements DBConnection {
 }
 
 class _Statement implements Statement {
-  _Statement(this.database) : _sql = null, _resultSet = null;
+  _Statement(this.database);
 
   final Database database;
 
-  String? _sql;
-  ResultSet? _resultSet;
-
   @override
   void close() {
-    ResultSet? set = _resultSet;
-    if (set != null) {
-      _resultSet = null;
-      set.close();
-    }
   }
 
   @override
   Future<ResultSet> executeQuery(String sql) async {
-    if (_sql != null) {
-      throw Exception('Redundant execution: $sql');
-    }
-    _sql = sql;
     DBLogger.output('executeQuery: $sql');
     return _ResultSet(await database.rawQuery(sql));
   }
 
   @override
   Future<int> executeInsert(String sql) async {
-    if (_sql != null) {
-      throw Exception('Redundant execution: $sql');
-    }
-    _sql = sql;
     DBLogger.output('executeInsert: $sql');
     return await database.rawInsert(sql);
   }
 
   @override
   Future<int> executeUpdate(String sql) async {
-    if (_sql != null) {
-      throw Exception('Redundant execution: $sql');
-    }
-    _sql = sql;
     DBLogger.output('executeUpdate: $sql');
     return await database.rawUpdate(sql);
   }
 
   @override
   Future<int> executeDelete(String sql) async {
-    if (_sql != null) {
-      throw Exception('Redundant execution: $sql');
-    }
-    _sql = sql;
     DBLogger.output('executeDelete: $sql');
     return await database.rawDelete(sql);
   }
@@ -275,7 +251,7 @@ class _Statement implements Statement {
 class _ResultSet implements ResultSet {
   _ResultSet(this._results) : _cursor = 0;
 
-  final List<Map<String,dynamic>> _results;
+  List<Map> _results;
   int _cursor;
 
   @override
@@ -292,8 +268,8 @@ class _ResultSet implements ResultSet {
   bool next() {
     if (_cursor < 0) {
       throw Exception('ResultSet closed');
-    // } else if (_cursor > _results.length) {
-    //   throw Exception('Out of range: $_cursor, length= ${_results.length}');
+    } else if (_cursor > _results.length) {
+      throw Exception('Out of range: $_cursor, length: ${_results.length}');
     } else if (_cursor == _results.length) {
       return false;
     }
@@ -322,7 +298,8 @@ class _ResultSet implements ResultSet {
   @override
   void close() {
     _cursor = -1;
-    _results.clear();
+    // _results.clear();
+    _results = [];
   }
 
 }

@@ -31,6 +31,7 @@
 import 'package:mutex/mutex.dart';
 
 import 'package:dim_client/dim_client.dart';
+import 'package:lnc/log.dart';
 
 import 'connector.dart';
 
@@ -39,40 +40,37 @@ import 'connector.dart';
 ///
 
 
-class DatabaseHandler<T> {
-  DatabaseHandler(this.connector) : _statement = null, _resultSet = null;
+class DatabaseHandler<T> with Logging {
+  DatabaseHandler(this.connector) : _statement = null;
 
   final DatabaseConnector connector;
 
   Statement? _statement;
-  ResultSet? _resultSet;
 
-  void destroy() {
-    Statement? st = _statement;
-    if (st != null) {
-      _statement = null;
-      st.close();
-    }
-    ResultSet? res = _resultSet;
-    if (res != null) {
-      _resultSet = null;
-      res.close();
+  void _setStatement(Statement? newSta) {
+    var oldSta = _statement;
+    if (oldSta == null) {
+      _statement = newSta;
+    } else if (identical(oldSta, newSta)) {
+      // nothing changed
+    } else {
+      oldSta.close();
+      _statement = newSta;
     }
   }
 
-  Future<DBConnection?> get connection async => connector.connection;
+  // void destroy() {
+  //   _setStatement(null);
+  // }
 
-  Future<Statement?> get statement async {
-    Statement? st = _statement;
-    if (st != null) {
-      // close old statement
-      st.close();
-      _statement = null;
+  Future<Statement?> _connect() async {
+    var conn = await connector.connection;
+    if (conn == null) {
+      return null;
     }
-    // create new statement
-    st = (await connection)?.createStatement();
-    _statement = st;
-    return st;
+    var sta = conn.createStatement();
+    _setStatement(sta);
+    return sta;
   }
 
   ///  Query (SELECT)
@@ -82,15 +80,17 @@ class DatabaseHandler<T> {
   /// @return rows
   /// @throws SQLException on DB error
   Future<List<T>> executeQuery(String sql, OnDataRowExtractFn<T> extractRow) async {
-    List<T> rows = [];
-    Statement? st = await statement;
-    if (st != null) {
-      ResultSet res = await st.executeQuery(sql);
-      _resultSet = res;
-      while (res.next()) {
-        rows.add(extractRow(res, res.row - 1));
-      }
+    Statement? sta = await _connect();
+    if (sta == null) {
+      logError('failed to get statement for "$sql"');
+      return [];
     }
+    List<T> rows = [];
+    ResultSet res = await sta.executeQuery(sql);
+    while (res.next()) {
+      rows.add(extractRow(res, res.row - 1));
+    }
+    res.close();
     return rows;
   }
 
@@ -100,11 +100,12 @@ class DatabaseHandler<T> {
   /// @return result
   /// @throws SQLException on DB error
   Future<int> executeInsert(String sql) async {
-    Statement? st = await statement;
-    if (st != null) {
-      return await st.executeInsert(sql);
+    Statement? sta = await _connect();
+    if (sta == null) {
+      logError('failed to get statement for "$sql"');
+      return -1;
     }
-    return -1;
+    return await sta.executeInsert(sql);
   }
 
   ///  Update (UPDATE)
@@ -113,11 +114,12 @@ class DatabaseHandler<T> {
   /// @return result
   /// @throws SQLException on DB error
   Future<int> executeUpdate(String sql) async {
-    Statement? st = await statement;
-    if (st != null) {
-      return await st.executeUpdate(sql);
+    Statement? sta = await _connect();
+    if (sta == null) {
+      logError('failed to get statement for "$sql"');
+      return -1;
     }
-    return -1;
+    return await sta.executeUpdate(sql);
   }
 
   ///  Update (DELETE)
@@ -126,11 +128,12 @@ class DatabaseHandler<T> {
   /// @return result
   /// @throws SQLException on DB error
   Future<int> executeDelete(String sql) async {
-    Statement? st = await statement;
-    if (st != null) {
-      return await st.executeDelete(sql);
+    Statement? sta = await _connect();
+    if (sta == null) {
+      logError('failed to get statement for "$sql"');
+      return -1;
     }
-    return -1;
+    return await sta.executeDelete(sql);
   }
 
 }

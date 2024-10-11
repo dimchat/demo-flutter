@@ -20,7 +20,7 @@
 <!--    <uses-permission android:name="android.permission.CAPTURE_AUDIO_OUTPUT" />-->
 <!--    <uses-permission android:name="android.permission.CAPTURE_VIDEO_OUTPUT" />-->
 
-    <uses-permission android:name="android.permission.REQUEST_INSTALL_PACKAGES"/>
+<!--    <uses-permission android:name="android.permission.REQUEST_INSTALL_PACKAGES"/>-->
 
     <application
         android:networkSecurityConfig="@xml/network_security_config"

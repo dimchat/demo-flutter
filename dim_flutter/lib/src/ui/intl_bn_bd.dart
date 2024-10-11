@@ -15,6 +15,7 @@ final Map<String, String> intlBnBd = {
   'Nickname': 'ডাকনাম',
   'Your nickname': 'তোমার ডাকনাম',
 
+  'Please choose your avatar': 'দয়া করে আপনার অবতার হিসাবে একটি ছবি নির্বাচন করুন।',
   'Please input your nickname': 'অনুগ্রহ করে আপনার ডাকনাম ইনপুট করুন।',
   'Please agree the privacy policy': 'অনুগ্রহ করে গোপনীয়তা নীতি পড়ুন এবং অবশ্যই অগ্রমান করুন।',
   'Failed to import account': 'অ্যাকাউন্ট আমদানি ব্যর্থ, অনুগ্রহ করে আপনার মনেমনিক কোড পরীক্ষা করুন।',

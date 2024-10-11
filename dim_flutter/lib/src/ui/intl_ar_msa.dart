@@ -15,6 +15,7 @@ final Map<String, String> intlAr = {
   'Nickname': 'اللقب',
   'Your nickname': 'لقبك',
 
+  'Please choose your avatar': 'يرجى اختيار صورة كصورتك الرمزية.',
   'Please input your nickname': 'يرجى إدخال لقبك.',
   'Please agree the privacy policy': 'يرجى قراءة والموافقة على سياسة الخصوصية.',
   'Failed to import account': 'فشل في استيراد الحساب، يرجى التحقق من رموزك الذاكرية.',

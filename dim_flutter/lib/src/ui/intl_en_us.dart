@@ -14,6 +14,7 @@ final Map<String, String> intlEnUs = {
   'Nickname': 'Nickname',
   'Your nickname': 'Your nickname',
 
+  'Please choose your avatar': 'Please choose an image as your avatar.',
   'Please input your nickname': 'Please input your nickname.',
   'Please agree the privacy policy': 'Please read and agree the privacy policy.',
   'Failed to import account': 'Failed to import account, please check your mnemonic codes.',

@@ -57,7 +57,7 @@ class Emitter with Logging implements Observer {
   Future<void> _onUploadSuccess(String filename, Uri url) async {
     InstantMessage? iMsg = _popTask(filename);
     if (iMsg == null) {
-      logError('failed to get task: $filename, url: $url');
+      logWarning('failed to get task: $filename, url: $url');
       return;
     }
     logInfo('get task for file: $filename, url: $url');

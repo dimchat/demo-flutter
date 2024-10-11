@@ -15,6 +15,7 @@ final Map<String, String> intlHiIn = {
   'Nickname': 'उपनाम',
   'Your nickname': 'आपका उपनाम',
 
+  'Please choose your avatar': 'कृपया अपनी अवतार के लिए एक चित्र चुनें।',
   'Please input your nickname': 'कृपया अपना उपनाम दर्ज करें।',
   'Please agree the privacy policy': 'कृपया गोपनीयता नीति को पढ़ें और स्वीकृति दें।',
   'Failed to import account': 'खाता आयात करने में विफल, कृपया अपने म्नैमोनिक कोड की जाँच करें।',

@@ -14,6 +14,7 @@ final Map<String, String> intlZhTw = {
   'Nickname': '暱稱',
   'Your nickname': '怎麼稱呼',
 
+  'Please choose your avatar': '請選擇一張圖片作為您的頭像。',
   'Please input your nickname': '請問怎麼稱呼？',
   'Please agree the privacy policy': '請閱讀並同意 DIM 隱私政策。',
   'Failed to import account': '導入帳號失敗，請檢查助憶詞是否正確。',

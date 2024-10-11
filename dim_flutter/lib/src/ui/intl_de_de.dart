@@ -15,6 +15,7 @@ final Map<String, String> intlDeDe = {
   'Nickname': 'Spitzname',
   'Your nickname': 'Dein Spitzname',
 
+  'Please choose your avatar': 'Bitte wählen Sie ein Bild als Ihren Avatar.',
   'Please input your nickname': 'Bitte gib deinen Spitznamen ein.',
   'Please agree the privacy policy': 'Bitte lies die Datenschutzbestimmungen und stimme zu.',
   'Failed to import account': 'Fehler beim Importieren des Kontos, überprüfe bitte deine Mnemonic-Codes.',

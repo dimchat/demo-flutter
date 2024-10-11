@@ -15,6 +15,7 @@ final Map<String, String> intlJaJp = {
   'Nickname': 'ニックネーム',
   'Your nickname': 'あなたのニックネーム',
 
+  'Please choose your avatar': 'アバターとして画像を選択してください。',
   'Please input your nickname': 'ニックネームを入力してください。',
   'Please agree the privacy policy': 'プライバシーポリシーをお読みいただき、同意してください。',
   'Failed to import account': 'アカウントのインポートに失敗しました。ニーモニックコードを確認してください。',

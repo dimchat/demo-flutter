@@ -15,6 +15,7 @@ final Map<String, String> intlKoKr = {
   'Nickname': '닉네임',
   'Your nickname': '당신의 닉네임',
 
+  'Please choose your avatar': '아바타로 사용할 이미지를 선택하세요.',
   'Please input your nickname': '닉네임을 입력해주세요.',
   'Please agree the privacy policy': '개인 정보 보호 정책을 읽고 동의해주세요.',
   'Failed to import account': '계정 가져오기 실패, 닉네임 코드를 확인하세요.',

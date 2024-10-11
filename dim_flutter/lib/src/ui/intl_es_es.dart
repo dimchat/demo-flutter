@@ -15,6 +15,7 @@ final Map<String, String> intlEsEs = {
   'Nickname': 'Apodo',
   'Your nickname': 'Tu apodo',
 
+  'Please choose your avatar': 'Por favor, elige una imagen como tu avatar.',
   'Please input your nickname': 'Por favor, ingresa tu apodo.',
   'Please agree the privacy policy': 'Por favor, lee y acepta la política de privacidad.',
   'Failed to import account': 'Error al importar la cuenta, por favor verifica tus códigos mnemotécnicos.',

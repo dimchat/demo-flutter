@@ -15,6 +15,7 @@ final Map<String, String> intlViVN = {
   'Nickname': 'Biệt danh',
   'Your nickname': 'Biệt danh của bạn',
 
+  'Please choose your avatar': 'Vui lòng chọn một hình ảnh làm ảnh đại diện của bạn.',
   'Please input your nickname': 'Vui lòng nhập biệt danh của bạn.',
   'Please agree the privacy policy': 'Vui lòng đọc và đồng ý với chính sách bảo mật.',
   'Failed to import account': 'Nhập tài khoản thất bại, vui lòng kiểm tra mã mnemonics của bạn.',

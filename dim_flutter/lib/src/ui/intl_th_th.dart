@@ -15,6 +15,7 @@ final Map<String, String> intlThTh = {
   'Nickname': 'ชื่อเล่น',
   'Your nickname': 'ชื่อเล่นของคุณ',
 
+  'Please choose your avatar': 'กรุณาเลือกภาพเป็นอวาตาร์ของคุณ.',
   'Please input your nickname': 'โปรดป้อนชื่อเล่นของคุณ',
   'Please agree the privacy policy': 'โปรดอ่านและยอมรับนโยบายความเป็นส่วนตัว',
   'Failed to import account': 'การนำเข้าบัญชีล้มเหลว โปรดตรวจสอบรหัสลับของคุณ',

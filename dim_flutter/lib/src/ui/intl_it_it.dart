@@ -15,6 +15,7 @@ final Map<String, String> intlItIt = {
   'Nickname': 'Soprannome',
   'Your nickname': 'Il tuo soprannome',
 
+  'Please choose your avatar': 'Si prega di scegliere un\'immagine come avatar.',
   'Please input your nickname': 'Inserisci il tuo soprannome.',
   'Please agree the privacy policy': 'Leggi e accetta la politica sulla privacy, per favore.',
   'Failed to import account': 'Impossibile importare l\'account, controlla i tuoi codici mnemonici.',

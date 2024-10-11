@@ -14,6 +14,7 @@ final Map<String, String> intlZhCn = {
   'Nickname': '昵称',
   'Your nickname': '怎么称呼',
 
+  'Please choose your avatar': '请选择一张图片作为您的头像。',
   'Please input your nickname': '请问怎么称呼？',
   'Please agree the privacy policy': '请阅读并同意 DIM 隐私政策。',
   'Failed to import account': '导入账号失败，请检查助记词是否正确。',

@@ -15,6 +15,7 @@ final Map<String, String> intlAfZa = {
   'Nickname': 'Bysnaam',
   'Your nickname': 'Jou bynaam',
 
+  'Please choose your avatar': 'Kies asseblief \'n prentjie as jou avatar.',
   'Please input your nickname': 'Voer asseblief jou bynaam in.',
   'Please agree the privacy policy': 'Lees asseblief die privaatheidspolitiek en stem daarmee in.',
   'Failed to import account': 'Kon nie rekening invoer nie, kontroleer asseblief jou mnemoniese kodes.',

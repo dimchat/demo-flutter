@@ -43,7 +43,7 @@ import '../models/config.dart';
 import 'local.dart';
 
 
-class FileUploader {
+class FileUploader with Logging {
   factory FileUploader() => _instance;
   static final FileUploader _instance = FileUploader._internal();
   FileUploader._internal() {
@@ -81,7 +81,7 @@ class FileUploader {
     if (secrets == null) {
       return false;
     }
-    Log.info('set enigma secrets: $secrets');
+    logInfo('set enigma secrets: $secrets');
     List<String> lines = [];
     for (var element in secrets) {
       if (element is String && element.isNotEmpty) {
@@ -110,7 +110,7 @@ class FileUploader {
     //
     GlobalVariable shared = GlobalVariable();
     String ua = shared.terminal.userAgent;
-    Log.info('update user-agent: $ua');
+    logInfo('update user-agent: $ua');
     _ftp.setUserAgent(ua);
     //
     //  1. load enigma secrets
@@ -140,13 +140,13 @@ class FileUploader {
         enigma = '';
       }
       if (url.isEmpty) {
-        Log.info('skip this API: $api');
+        logInfo('skip this API: $api');
         continue;
       }
-      Log.info('got upload API: $api');
+      logInfo('got upload API: $api');
       break;
     }
-    Log.warning('set upload API: $url (enigma: $enigma)');
+    logWarning('set upload API: $url (enigma: $enigma)');
     _api = url;
     _apiUpdated = true;
   }
@@ -206,7 +206,7 @@ class FileUploader {
     // 1. check old task
     Uri? url = _uploads[filename];
     if (url != null) {
-      Log.info('this file had already been uploaded: $filename -> $url');
+      logInfo('this file had already been uploaded: $filename -> $url');
       return url;
     }
     String? api = _api;
@@ -222,10 +222,10 @@ class FileUploader {
     String enigma = pair.first;
     Uint8List secret = pair.second;
     String urlString = buildURL(api, sender, data: data, secret: secret, enigma: enigma);
-    Log.info('upload encrypted data: $filename (enigma: $enigma) -> $urlString');
+    logInfo('upload encrypted data: $varName=$filename (enigma: $enigma) -> $urlString');
     String? json = await uploadFile(Uri.parse(urlString), varName, filename, data);
     if (json == null) {
-      Log.error('failed to upload file: $filename -> $urlString');
+      logError('failed to upload file: $filename -> $urlString');
       return null;
     }
     Map? info = JSONMap.decode(json);
@@ -235,7 +235,7 @@ class FileUploader {
     if (download == null) {
       return null;
     }
-    Log.info('encrypted data uploaded: $filename -> $download');
+    logInfo('encrypted data uploaded: $filename -> $download');
     url = Uri.parse(download);
     _uploads[filename] = url;
     return url;

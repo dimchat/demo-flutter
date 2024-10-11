@@ -15,6 +15,7 @@ final Map<String, String> intlFrFr = {
   'Nickname': 'Pseudo',
   'Your nickname': 'Votre pseudo',
 
+  'Please choose your avatar': 'Veuillez choisir une image comme votre avatar.',
   'Please input your nickname': 'Veuillez saisir votre pseudo.',
   'Please agree the privacy policy': 'Veuillez lire et accepter la politique de confidentialité.',
   'Failed to import account': 'Échec de l\'importation du compte, veuillez vérifier vos codes mnémoniques.',

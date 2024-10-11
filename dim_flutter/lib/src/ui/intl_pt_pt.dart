@@ -15,6 +15,7 @@ final Map<String, String> intlPtPt = {
   'Nickname': 'Alcunha',
   'Your nickname': 'A sua alcunha',
 
+  'Please choose your avatar': 'Por favor, escolha uma imagem como seu avatar.',
   'Please input your nickname': 'Por favor, insira a sua alcunha.',
   'Please agree the privacy policy': 'Por favor, leia e concorde com a política de privacidade.',
   'Failed to import account': 'Falha ao importar a conta, por favor, verifique os seus códigos mnemónicos.',

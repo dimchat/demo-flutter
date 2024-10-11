@@ -15,6 +15,7 @@ final Map<String, String> intlRuRu = {
   'Nickname': 'Никнейм',
   'Your nickname': 'Ваш никнейм',
 
+  'Please choose your avatar': 'Пожалуйста, выберите изображение для вашего аватара.',
   'Please input your nickname': 'Пожалуйста, введите свой никнейм.',
   'Please agree the privacy policy': 'Пожалуйста, ознакомьтесь и согласитесь с политикой конфиденциальности.',
   'Failed to import account': 'Не удалось импортировать аккаунт, пожалуйста, проверьте свои мнемокоды.',

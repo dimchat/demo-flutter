@@ -15,6 +15,7 @@ final Map<String, String> intlMsMy = {
   'Nickname': 'Nama Panggilan',
   'Your nickname': 'Nama panggilan anda',
 
+  'Please choose your avatar': 'Sila pilih imej sebagai avatar anda.',
   'Please input your nickname': 'Sila masukkan nama panggilan anda.',
   'Please agree the privacy policy': 'Sila baca dan setujui dasar privasi.',
   'Failed to import account': 'Gagal import akaun, sila periksa kod mnemonik anda.',

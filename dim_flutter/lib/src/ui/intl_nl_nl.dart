@@ -15,6 +15,7 @@ final Map<String, String> intlNlNl = {
   'Nickname': 'Bijnaam',
   'Your nickname': 'Jouw bijnaam',
 
+  'Please choose your avatar': 'Kies alstublieft een afbeelding als uw avatar.',
   'Please input your nickname': 'Voer jouw bijnaam in.',
   'Please agree the privacy policy': 'Lees en ga akkoord met het privacybeleid.',
   'Failed to import account': 'Account importeren mislukt, controleer jouw mnemonische codes.',

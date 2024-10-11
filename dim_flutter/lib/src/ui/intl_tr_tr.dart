@@ -14,6 +14,7 @@ final Map<String, String> intlTrTr = {
   'Nickname': 'Takma Ad',
   'Your nickname': 'Takma adınız',
 
+  'Please choose your avatar': 'Lütfen avatarınız için bir resim seçin.',
   'Please input your nickname': 'Lütfen takma adınızı girin.',
   'Please agree the privacy policy': 'Lütfen gizlilik politikasını okuyup kabul edin.',
   'Failed to import account': 'Hesap içe aktarımı başarısız oldu, lütfen mnemonik kodlarınızı kontrol edin.',

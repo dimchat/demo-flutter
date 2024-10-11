@@ -15,6 +15,7 @@ final Map<String, String> intlIdId = {
   'Nickname': 'Nama Panggilan',
   'Your nickname': 'Nama panggilan Anda',
 
+  'Please choose your avatar': 'Silakan pilih gambar sebagai avatar Anda.',
   'Please input your nickname': 'Harap masukkan nama panggilan Anda.',
   'Please agree the privacy policy': 'Harap baca dan setujui kebijakan privasi.',
   'Failed to import account': 'Gagal mengimpor akun, harap periksa kode mnemonik Anda.',

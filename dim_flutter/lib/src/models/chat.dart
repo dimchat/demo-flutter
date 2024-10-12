@@ -147,16 +147,16 @@ abstract class Conversation with Logging implements lnc.Observer {
   String get subtitle => lastMessage ?? '';
   DateTime? get time => lastMessageTime;
 
-  @override
-  bool operator ==(Object other) {
-    if (other is Conversation) {
-      return identifier == other.identifier;
-    }
-    return false;
-  }
-
-  @override
-  int get hashCode => identifier.hashCode;
+  // @override
+  // bool operator ==(Object other) {
+  //   if (other is Conversation) {
+  //     return identifier == other.identifier;
+  //   }
+  //   return false;
+  // }
+  //
+  // @override
+  // int get hashCode => identifier.hashCode;
 
   @override
   String toString() {

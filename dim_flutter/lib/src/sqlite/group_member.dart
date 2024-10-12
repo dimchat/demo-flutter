@@ -149,7 +149,7 @@ class MemberCache extends _MemberTable {
   Future<bool> saveMembers(List<ID> members, ID group) async {
     List<ID> oldMembers = await getMembers(group);
     int cnt = await updateMembers(members, oldMembers, group);
-    if (cnt > 0) {
+    if (cnt >= 0) {
       // clear to reload
       _cache.erase(group);
       // post notification

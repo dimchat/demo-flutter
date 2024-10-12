@@ -46,10 +46,10 @@ Conversation _extractConversation(ResultSet resultSet, int index) {
   int mentioned = resultSet.getInt('mentioned') ?? 0;
   ID identifier = ID.parse(cid)!;
   if (identifier.isGroup) {
-    return GroupInfo(identifier, unread: unread!,
+    return GroupInfo.from(identifier, unread: unread!,
         lastMessage: last, lastMessageTime: time, mentionedSerialNumber: mentioned);
   }
-  return ContactInfo(identifier, unread: unread!,
+  return ContactInfo.from(identifier, unread: unread!,
       lastMessage: last, lastMessageTime: time, mentionedSerialNumber: mentioned);
 }
 

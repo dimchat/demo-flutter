@@ -63,7 +63,7 @@ class GroupInfo extends Conversation with Logging {
       ID? gid = userInfo?['ID'];
       assert(gid != null, 'notification error: $notification');
       if (gid == identifier) {
-        logInfo('administrators updated: $gid');
+        logInfo('members updated: $gid');
         setNeedsReload();
         await reloadData();
       }
@@ -176,6 +176,7 @@ class GroupInfo extends Conversation with Logging {
         _temporaryTitle = null;
       } else {
         List<ID> members = _members = await shared.facebook.getMembers(identifier);
+        logInfo('group members: $identifier, ${members.length}');
         List<ContactInfo> users = [];
         ContactInfo? info;
         for (ID item in members) {
@@ -364,33 +365,50 @@ class GroupInfo extends Conversation with Logging {
     });
   }
 
-  static GroupInfo? fromID(ID identifier) =>
-      identifier.isUser ? null :
-      _ContactManager().getContact(identifier);
+  static GroupInfo from(ID identifier, {
+    required int unread,
+    required String? lastMessage,
+    required DateTime? lastMessageTime,
+    required int mentionedSerialNumber,
+  }) {
+    GroupInfo info = _GroupInfoManager().getGroupInfo(identifier);
+    info.unread = unread;
+    info.lastMessage = lastMessage;
+    info.lastMessageTime = lastMessageTime;
+    info.mentionedSerialNumber = mentionedSerialNumber;
+    return info;
+  }
+
+  static GroupInfo? fromID(ID identifier) {
+    if (identifier.isUser) {
+      return null;
+    }
+    return _GroupInfoManager().getGroupInfo(identifier);
+  }
 
   static List<GroupInfo> fromList(List<ID> contacts) {
     List<GroupInfo> array = [];
-    _ContactManager man = _ContactManager();
+    _GroupInfoManager man = _GroupInfoManager();
     for (ID item in contacts) {
       if (item.isUser) {
         Log.warning('ignore user conversation: $item');
         continue;
       }
-      array.add(man.getContact(item));
+      array.add(man.getGroupInfo(item));
     }
     return array;
   }
 
 }
 
-class _ContactManager {
-  factory _ContactManager() => _instance;
-  static final _ContactManager _instance = _ContactManager._internal();
-  _ContactManager._internal();
+class _GroupInfoManager {
+  factory _GroupInfoManager() => _instance;
+  static final _GroupInfoManager _instance = _GroupInfoManager._internal();
+  _GroupInfoManager._internal();
 
   final Map<ID, GroupInfo> _contacts = {};
 
-  GroupInfo getContact(ID identifier) {
+  GroupInfo getGroupInfo(ID identifier) {
     GroupInfo? info = _contacts[identifier];
     if (info == null) {
       info = GroupInfo(identifier);

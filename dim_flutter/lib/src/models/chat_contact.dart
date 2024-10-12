@@ -283,9 +283,26 @@ class ContactInfo extends Conversation {
     });
   }
 
-  static ContactInfo? fromID(ID identifier) =>
-      identifier.isGroup ? null :
-      _ContactManager().getContact(identifier);
+  static ContactInfo from(ID identifier, {
+    required int unread,
+    required String? lastMessage,
+    required DateTime? lastMessageTime,
+    required int mentionedSerialNumber,
+  }) {
+    ContactInfo info = _ContactManager().getContactInfo(identifier);
+    info.unread = unread;
+    info.lastMessage = lastMessage;
+    info.lastMessageTime = lastMessageTime;
+    info.mentionedSerialNumber = mentionedSerialNumber;
+    return info;
+  }
+
+  static ContactInfo? fromID(ID identifier) {
+    if (identifier.isGroup) {
+      return null;
+    }
+    return _ContactManager().getContactInfo(identifier);
+  }
 
   static List<ContactInfo> fromList(List<ID> contacts) {
     List<ContactInfo> array = [];
@@ -295,7 +312,7 @@ class ContactInfo extends Conversation {
         Log.warning('ignore group conversation: $item');
         continue;
       }
-      array.add(man.getContact(item));
+      array.add(man.getContactInfo(item));
     }
     return array;
   }
@@ -354,7 +371,7 @@ class _ContactManager {
 
   final Map<ID, ContactInfo> _contacts = {};
 
-  ContactInfo getContact(ID identifier) {
+  ContactInfo getContactInfo(ID identifier) {
     ContactInfo? info = _contacts[identifier];
     if (info == null) {
       info = ContactInfo(identifier);

@@ -44,7 +44,10 @@ import 'package:provider/provider.dart';
 
 import 'package:startrek/skywalker.dart';
 
+import 'package:lnc/log.dart';
+
 import '../common/platform.dart';
+import '../utils/keyboard.dart';
 
 
 class _PlayerMetronome {
@@ -124,7 +127,7 @@ class CustomControls extends StatefulWidget {
 }
 
 class _CustomControlsState extends State<CustomControls>
-    with SingleTickerProviderStateMixin implements Ticker {
+    with SingleTickerProviderStateMixin, Logging implements Ticker {
   late PlayerNotifier notifier;
   late VideoPlayerValue _latestValue;
   double? _latestVolume;
@@ -144,6 +147,8 @@ class _CustomControlsState extends State<CustomControls>
   late VideoPlayerController controller;
   ChewieController? _chewieController;
 
+  final FocusNode _focusNode = FocusNode();
+
   // We know that _chewieController is set in didChangeDependencies
   ChewieController get chewieController => _chewieController!;
 
@@ -160,6 +165,7 @@ class _CustomControlsState extends State<CustomControls>
     var metronome = _PlayerMetronome();
     metronome.speedUp = false;
     metronome.addTicker(this);
+    _focusNode.requestFocus();
   }
 
   @override
@@ -168,15 +174,44 @@ class _CustomControlsState extends State<CustomControls>
       return chewieController.errorBuilder?.call(
         context,
         chewieController.videoPlayerController.value.errorDescription!,
-      ) ??
-          const Center(
-            child: Icon(
-              Icons.error,
-              color: Colors.white,
-              size: 42,
-            ),
-          );
+      ) ?? const Center(
+        child: Icon(
+          Icons.error,
+          color: Colors.white,
+          size: 42,
+        ),
+      );
     }
+    Widget controls = Stack(
+      children: [
+        if (_displayBufferingIndicator)
+          const Center(
+            child: CircularProgressIndicator(),
+          )
+        else
+          _buildHitArea(),
+        Column(
+          mainAxisAlignment: MainAxisAlignment.end,
+          children: <Widget>[
+            if (_subtitleOn)
+              Transform.translate(
+                offset: Offset(
+                  0.0,
+                  notifier.hideStuff ? barHeight * 0.8 : 0.0,
+                ),
+                child:
+                _buildSubtitles(context, chewieController.subtitle!),
+              ),
+            _buildBottomBar(context),
+          ],
+        ),
+      ],
+    );
+    controls = Focus(
+      focusNode: _focusNode,
+      child: controls,
+      onKeyEvent: (focusNode, event) => _keyEvent(event),
+    );
     var metronome = _PlayerMetronome();
     return MouseRegion(
       onHover: (_) {
@@ -204,40 +239,68 @@ class _CustomControlsState extends State<CustomControls>
         },
         child: AbsorbPointer(
           absorbing: notifier.hideStuff,
-          child: Stack(
-            children: [
-              if (_displayBufferingIndicator)
-                const Center(
-                  child: CircularProgressIndicator(),
-                )
-              else
-                _buildHitArea(),
-              Column(
-                mainAxisAlignment: MainAxisAlignment.end,
-                children: <Widget>[
-                  if (_subtitleOn)
-                    Transform.translate(
-                      offset: Offset(
-                        0.0,
-                        notifier.hideStuff ? barHeight * 0.8 : 0.0,
-                      ),
-                      child:
-                      _buildSubtitles(context, chewieController.subtitle!),
-                    ),
-                  _buildBottomBar(context),
-                ],
-              ),
-            ],
-          ),
+          child: controls,
         ),
       ),
     );
   }
 
+  KeyEventResult _keyEvent(KeyEvent event) {
+    logInfo('key event: $event');
+    _cancelAndRestartTimer();
+    var checker = RawKeyboardChecker();
+    var key = checker.checkKeyEvent(event);
+    logInfo('key: $key');
+    if (key == null) {
+      return KeyEventResult.ignored;
+    } else if (key == RawKeyboardKey.arrowUp) {
+      logInfo('volume up');
+      volumeUp();
+    } else if (key == RawKeyboardKey.arrowDown) {
+      logInfo('volume down');
+      volumeDown();
+    } else if (key == RawKeyboardKey.arrowLeft) {
+      logInfo('seek backward');
+      seekBackward();
+    } else if (key == RawKeyboardKey.arrowRight) {
+      logInfo('seek forward');
+      seekForward();
+    } else {
+      return KeyEventResult.ignored;
+    }
+    return KeyEventResult.handled;
+  }
+
+  Future<void> _changePosition({int seconds = 0}) async {
+    var position = await controller.position;
+    if (position == null) {
+      return;
+    } else if (_chewieController?.isLive == true) {
+      logInfo('live video cannot seek position');
+      return;
+    }
+    await controller.seekTo(position + Duration(seconds: seconds));
+  }
+  Future<void> seekForward() async => await _changePosition(seconds: 15);
+  Future<void> seekBackward() async => await _changePosition(seconds: -15);
+
+  Future<void> _changeVolume({required double delta}) async {
+    var volume = controller.value.volume + delta;
+    if (volume > 1.0) {
+      volume = 1.0;
+    } else if (volume < 0.0) {
+      volume = 0.0;
+    }
+    await controller.setVolume(volume);
+  }
+  Future<void> volumeUp() async => await _changeVolume(delta: 0.1);
+  Future<void> volumeDown() async => await _changeVolume(delta: -0.1);
+
   @override
   void dispose() {
     _PlayerMetronome().removeTicker(this);
     _dispose();
+    _focusNode.dispose();
     super.dispose();
   }
 
@@ -550,12 +613,10 @@ class _CustomControlsState extends State<CustomControls>
       notifier.hideStuff = true;
 
       chewieController.toggleFullScreen();
-      _showAfterExpandCollapseTimer =
-          Timer(const Duration(milliseconds: 300), () {
-            setState(() {
-              _cancelAndRestartTimer();
-            });
-          });
+      _showAfterExpandCollapseTimer = Timer(
+        const Duration(milliseconds: 300),
+        _cancelAndRestartTimer,
+      );
     });
   }
 

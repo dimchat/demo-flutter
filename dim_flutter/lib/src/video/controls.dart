@@ -601,9 +601,11 @@ class _CustomControlsState extends State<CustomControls>
 
     if (chewieController.showControlsOnInitialize) {
       _initTimer = Timer(const Duration(milliseconds: 200), () {
-        setState(() {
-          notifier.hideStuff = false;
-        });
+        if (mounted) {
+          setState(() {
+            notifier.hideStuff = false;
+          });
+        }
       });
     }
   }
@@ -650,9 +652,11 @@ class _CustomControlsState extends State<CustomControls>
         ? ChewieController.defaultHideControlsTimer
         : chewieController.hideControlsTimer;
     _hideTimer = Timer(hideControlsTimer, () {
-      setState(() {
-        notifier.hideStuff = true;
-      });
+      if (mounted) {
+        setState(() {
+          notifier.hideStuff = true;
+        });
+      }
     });
   }
 

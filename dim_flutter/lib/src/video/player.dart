@@ -150,18 +150,26 @@ class _VideoAppState extends State<VideoPlayerPage> with Logging implements lnc.
     logInfo('[Video Player] remote url: $url');
     _playerController.openVideo(url).then((chewie) {
       // auto start playing
-      setState(() {});
+      if (mounted) {
+        setState(() {});
+      }
     }).onError((error, stackTrace) {
-      setState(() => _error = '$error');
+      if (mounted) {
+        setState(() => _error = '$error');
+      }
     });
   }
 
   void loadLives(TVBox tvBox) {
     tvBox.refresh().then((genres) {
-    // show channels button
-    setState(() {});
+      // show channels button
+      if (mounted) {
+        setState(() {});
+      }
     }).onError((error, stackTrace) {
-      setState(() => _error = '$error');
+      if (mounted) {
+        setState(() => _error = '$error');
+      }
     });
   }
 

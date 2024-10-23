@@ -140,6 +140,8 @@ class InstantMessageTable extends DataTableHandler<InstantMessage> implements In
       nc.postNotification(NotificationNames.kMessageUpdated, this, {
         'action': 'add',
         'ID': chat,
+        'envelope': iMsg.envelope,
+        'content': iMsg.content,
         'msg': iMsg,
       });
       return true;
@@ -174,16 +176,17 @@ class InstantMessageTable extends DataTableHandler<InstantMessage> implements In
     nc.postNotification(NotificationNames.kMessageUpdated, this, {
       'action': 'update',
       'ID': chat,
+      'envelope': iMsg.envelope,
+      'content': iMsg.content,
       'msg': iMsg,
     });
     return true;
   }
 
   @override
-  Future<bool> removeInstantMessage(ID chat, InstantMessage iMsg) async {
+  Future<bool> removeInstantMessage(ID chat, Envelope envelope, Content content) async {
     String cid = chat.toString();
-    String sender = iMsg.sender.toString();
-    Content content = iMsg.content;
+    String sender = envelope.sender.toString();
     SQLConditions cond;
     cond = SQLConditions(left: 'sn', comparison: '=', right: content.sn);
     cond.addCondition(SQLConditions.kAnd, left: 'cid', comparison: '=', right: cid);
@@ -197,7 +200,8 @@ class InstantMessageTable extends DataTableHandler<InstantMessage> implements In
     nc.postNotification(NotificationNames.kMessageUpdated, this, {
       'action': 'remove',
       'ID': chat,
-      'msg': iMsg,
+      'envelope': envelope,
+      'content': content,
     });
     return true;
   }

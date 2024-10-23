@@ -191,6 +191,10 @@ final Map<String, String> intlHiIn = {
   'Sure to recall this message?': 'क्या आप वास्तव में इस संदेश को वापस बुलाना चाहते हैं?'
       ' (यह कार्रवाई आवश्यक रूप से सफल नहीं हो सकती है)',
 
+  'Delete Message': 'संदेश हटाएं',
+  'Sure to delete this message?': 'क्या आप वाकई इस संदेश को हटाना चाहते हैं?'
+      ' (यह क्रिया पुनर्प्राप्त नहीं की जा सकती)',
+
   'Waiting to send': 'भेजने की प्रतीक्षा कर रहा है (पुनः प्रयास करने के लिए टैप करें)',
   'No response': 'कोई प्रतिक्रिया नहीं है (पुनः भेजने के लिए टैप करें)',
   'Stranded': 'फँसा हुआ (पुनः भेजने के लिए टैप करें)',
@@ -296,11 +300,15 @@ final Map<String, String> intlHiIn = {
 
   'Total Cached Data': 'कुल कैश डेटा',
   'Cache Files': 'कैश फ़ाइलें',
+  'Database': 'डेटाबेस',
   'Avatars': 'अवतार',
   'Message Files': 'संदेश फ़ाइलें',
   'Temporary Files': 'अस्थायी फ़ाइलें',
   'Upload Directory': 'अपलोड निर्देशिका',
   'Download Directory': 'डाउनलोड निर्देशिका',
+
+  'Contains @count file, totaling @size': '@count फ़ाइल शामिल है, कुल आकार @size।',
+  'Contains @count files, totaling @size': '@count फ़ाइलें शामिल हैं, कुल आकार @size।',
 
   'Scan': 'स्कैन',
   'Clear': 'साफ़',

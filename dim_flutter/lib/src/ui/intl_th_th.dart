@@ -191,6 +191,10 @@ final Map<String, String> intlThTh = {
   'Sure to recall this message?': 'คุณแน่ใจหรือไม่ว่าจะเรียกคืนข้อความนี้?'
       ' (การกระทำนี้อาจไม่เป็นไปตามประสงค์ที่ต้องการ)',
 
+  'Delete Message': 'ลบข้อความ',
+  'Sure to delete this message?': 'คุณแน่ใจหรือว่าต้องการลบข้อความนี้?'
+      ' (การกระทำนี้ไม่สามารถกู้คืนได้)',
+
   'Waiting to send': 'กำลังรอส่ง (แตะเพื่อลองอีกครั้ง)',
   'No response': 'ไม่มีการตอบสนอง (แตะเพื่อส่งใหม่)',
   'Stranded': 'ติดอยู่ (แตะเพื่อส่งใหม่)',
@@ -300,11 +304,15 @@ final Map<String, String> intlThTh = {
 
   'Total Cached Data': 'ข้อมูลแคชทั้งหมด',
   'Cache Files': 'แฟ้มแคช',
+  'Database': 'ฐานข้อมูล',
   'Avatars': 'อวตาร',
   'Message Files': 'แฟ้มข้อความ',
   'Temporary Files': 'แฟ้มชั่วคราว',
   'Upload Directory': 'ไดเร็กทอรีอัพโหลด',
   'Download Directory': 'ไดเร็กทอรีดาวน์โหลด',
+
+  'Contains @count file, totaling @size': 'มีไฟล์ @count ไฟล์ ขนาดรวม @size',
+  'Contains @count files, totaling @size': 'มีไฟล์ @count ไฟล์ ขนาดรวม @size',
 
   'Scan': 'สแกน',
   'Clear': 'ล้าง',

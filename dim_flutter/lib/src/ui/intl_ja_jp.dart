@@ -191,6 +191,10 @@ final Map<String, String> intlJaJp = {
   'Sure to recall this message?': '本当にこのメッセージを撤回しますか？'
       '（この操作は必ず成功するとは限りません）',
 
+  'Delete Message': 'メッセージを削除',
+  'Sure to delete this message?': 'このメッセージを削除してもよろしいですか？'
+      '（この操作は元に戻せません）',
+
   'Waiting to send': '送信中（タップして再試行）',
   'No response': '応答なし（タップして再送信）',
   'Stranded': '送信失敗（タップして再送信）',
@@ -298,11 +302,15 @@ final Map<String, String> intlJaJp = {
 
   'Total Cached Data': '総キャッシュデータ',
   'Cache Files': 'キャッシュファイル',
+  'Database': 'データベース',
   'Avatars': 'アバター',
   'Message Files': 'メッセージファイル',
   'Temporary Files': '一時ファイル',
   'Upload Directory': 'アップロードディレクトリ',
   'Download Directory': 'ダウンロードディレクトリ',
+
+  'Contains @count file, totaling @size': '@count 個のファイルが含まれています。合計 @size。',
+  'Contains @count files, totaling @size': '@count 個のファイルが含まれています。合計 @size。',
 
   'Scan': 'スキャン',
   'Clear': 'クリア',

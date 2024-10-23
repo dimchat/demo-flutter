@@ -192,6 +192,10 @@ final Map<String, String> intlEsEs = {
   'Sure to recall this message?': '¿Seguro que desea recuperar este mensaje?'
       ' (esta acción puede no tener éxito necesariamente)',
 
+  'Delete Message': 'Eliminar mensaje',
+  'Sure to delete this message?': '¿Está seguro de que desea eliminar este mensaje?'
+      ' (esta acción no es recuperable)',
+
   'Waiting to send': 'En espera para enviar (toque para reintentar)',
   'No response': 'Sin respuesta (toque para volver a enviar)',
   'Stranded': 'Varado (toque para volver a enviar)',
@@ -301,11 +305,15 @@ final Map<String, String> intlEsEs = {
 
   'Total Cached Data': 'Datos en Caché Totales',
   'Cache Files': 'Archivos en Caché',
+  'Database': 'Bases de datos',
   'Avatars': 'Avatares',
   'Message Files': 'Archivos de Mensajes',
   'Temporary Files': 'Archivos Temporales',
   'Upload Directory': 'Directorio de Subida',
   'Download Directory': 'Directorio de Descarga',
+
+  'Contains @count file, totaling @size': 'Contiene @count archivo, con un total de @size.',
+  'Contains @count files, totaling @size': 'Contiene @count archivos, con un total de @size.',
 
   'Scan': 'Escanear',
   'Clear': 'Limpiar',

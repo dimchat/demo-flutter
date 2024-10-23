@@ -191,6 +191,10 @@ final Map<String, String> intlViVN = {
   'Sure to recall this message?': 'Bạn có chắc chắn muốn gọi lại tin nhắn này không?'
       ' (hành động này có thể không thành công)',
 
+  'Delete Message': 'Xóa tin nhắn',
+  'Sure to delete this message?': 'Bạn có chắc chắn muốn xóa tin nhắn này không?'
+      ' (hành động này không thể khôi phục)',
+
   'Waiting to send': 'Đang chờ gửi (chạm để thử lại)',
   'No response': 'Không có phản hồi (chạm để gửi lại)',
   'Stranded': 'Bị kẹt (chạm để gửi lại)',
@@ -300,11 +304,15 @@ final Map<String, String> intlViVN = {
 
   'Total Cached Data': 'Tổng Dữ liệu đã Cache',
   'Cache Files': 'Tập tin Cache',
+  'Database': 'Cơ sở dữ liệu',
   'Avatars': 'Hình đại diện',
   'Message Files': 'Tập tin Tin nhắn',
   'Temporary Files': 'Tập tin Tạm thời',
   'Upload Directory': 'Thư mục Tải lên',
   'Download Directory': 'Thư mục Tải xuống',
+
+  'Contains @count file, totaling @size': 'Chứa @count tệp, tổng dung lượng @size.',
+  'Contains @count files, totaling @size': 'Chứa @count tệp, tổng dung lượng @size.',
 
   'Scan': 'Quét',
   'Clear': 'Xóa',

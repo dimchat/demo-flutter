@@ -388,8 +388,8 @@ class SharedDatabase implements AccountDBI, SessionDBI, MessageDBI,
       await instantMessageTable.saveInstantMessage(chat, iMsg);
 
   @override
-  Future<bool> removeInstantMessage(ID chat, InstantMessage iMsg) async =>
-      await instantMessageTable.removeInstantMessage(chat, iMsg);
+  Future<bool> removeInstantMessage(ID chat, Envelope envelope, Content content) async =>
+      await instantMessageTable.removeInstantMessage(chat, envelope, content);
 
   @override
   Future<bool> removeInstantMessages(ID chat) async =>

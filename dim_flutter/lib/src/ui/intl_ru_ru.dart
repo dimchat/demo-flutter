@@ -191,6 +191,10 @@ final Map<String, String> intlRuRu = {
   'Sure to recall this message?': 'Вы действительно хотите отозвать это сообщение?'
       ' (эта операция может не увенчаться успехом)',
 
+  'Delete Message': 'Удалить сообщение',
+  'Sure to delete this message?': 'Вы уверены, что хотите удалить это сообщение?'
+      ' (это действие необратимо)',
+
   'Waiting to send': 'Ожидание отправки (нажмите, чтобы повторить)',
   'No response': 'Нет ответа (нажмите, чтобы отправить снова)',
   'Stranded': 'Застрял (нажмите, чтобы отправить снова)',
@@ -300,11 +304,15 @@ final Map<String, String> intlRuRu = {
 
   'Total Cached Data': 'Всего закэшированных данных',
   'Cache Files': 'Кэш-файлы',
+  'Database': 'Базы данных',
   'Avatars': 'Аватары',
   'Message Files': 'Файлы сообщений',
   'Temporary Files': 'Временные файлы',
   'Upload Directory': 'Каталог загрузки',
   'Download Directory': 'Каталог загрузки',
+
+  'Contains @count file, totaling @size': 'Содержит @count файл, общим размером @size.',
+  'Contains @count files, totaling @size': 'Содержит @count файла, общим размером @size.',
 
   'Scan': 'Сканировать',
   'Clear': 'Очистить',

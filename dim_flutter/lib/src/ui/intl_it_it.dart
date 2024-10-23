@@ -191,6 +191,10 @@ final Map<String, String> intlItIt = {
   'Sure to recall this message?': 'Sei sicuro di voler richiamare questo messaggio?'
       ' (questa azione potrebbe non riuscire)',
 
+  'Delete Message': 'Elimina messaggio',
+  'Sure to delete this message?': 'Sei sicuro di voler eliminare questo messaggio?'
+      ' (questa azione non è recuperabile)',
+
   'Waiting to send': 'In attesa di invio (tocca per riprovare)',
   'No response': 'Nessuna risposta (tocca per inviare di nuovo)',
   'Stranded': 'Bloccato (tocca per inviare di nuovo)',
@@ -300,11 +304,15 @@ final Map<String, String> intlItIt = {
 
   'Total Cached Data': 'Dati Totali in Cache',
   'Cache Files': 'File in Cache',
+  'Database': 'Basi di dati',
   'Avatars': 'Avatar',
   'Message Files': 'File dei Messaggi',
   'Temporary Files': 'File Temporanei',
   'Upload Directory': 'Directory di Upload',
   'Download Directory': 'Directory di Download',
+
+  'Contains @count file, totaling @size': 'Contiene @count file, per un totale di @size.',
+  'Contains @count files, totaling @size': 'Contiene @count file, per un totale di @size.',
 
   'Scan': 'Scansionare',
   'Clear': 'Cancellare',

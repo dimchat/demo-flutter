@@ -191,6 +191,10 @@ final Map<String, String> intlAr = {
   'Sure to recall this message?': 'هل أنت متأكد من استدعاء هذه الرسالة؟'
       ' (قد لا ينجح هذا الإجراء بالضرورة)',
 
+  'Delete Message': 'حذف الرسالة',
+  'Sure to delete this message?': 'هل أنت متأكد من أنك تريد حذف هذه الرسالة؟'
+      ' (هذا الإجراء لا يمكن التراجع عنه)',
+
   'Waiting to send': 'في انتظار الإرسال (انقر لإعادة المحاولة)',
   'No response': 'لا يوجد رد (انقر لإعادة الإرسال)',
   'Stranded': 'معلق (انقر لإعادة الإرسال)',
@@ -301,11 +305,15 @@ final Map<String, String> intlAr = {
 
   'Total Cached Data': 'إجمالي البيانات المخبأة',
   'Cache Files': 'ملفات الذاكرة المخبأة',
+  'Database': 'قواعد البيانات',
   'Avatars': 'الصور الرمزية',
   'Message Files': 'ملفات الرسائل',
   'Temporary Files': 'الملفات المؤقتة',
   'Upload Directory': 'مجلد الرفع',
   'Download Directory': 'مجلد التنزيل',
+
+  'Contains @count file, totaling @size': 'يحتوي على @count ملف، بإجمالي حجم @size.',
+  'Contains @count files, totaling @size': 'يحتوي على @count ملفات، بإجمالي حجم @size.',
 
   'Scan': 'فحص',
   'Clear': 'مسح',

@@ -191,6 +191,10 @@ final Map<String, String> intlIdId = {
   'Sure to recall this message?': 'Apakah Anda yakin akan memanggil ulang pesan ini?'
       ' (tindakan ini mungkin tidak selalu berhasil)',
 
+  'Delete Message': 'Hapus Pesan',
+  'Sure to delete this message?': 'Apakah Anda yakin ingin menghapus pesan ini?'
+      ' (tindakan ini tidak dapat dipulihkan)',
+
   'Waiting to send': 'Menunggu untuk mengirim (tekan untuk mencoba kembali)',
   'No response': 'Tidak ada respons (tekan untuk mengirim ulang)',
   'Stranded': 'Terdampar (tekan untuk mengirim ulang)',
@@ -300,11 +304,15 @@ final Map<String, String> intlIdId = {
 
   'Total Cached Data': 'Total Data yang Dicache',
   'Cache Files': 'Berkas Cache',
+  'Database': 'Basis Data',
   'Avatars': 'Avatar',
   'Message Files': 'Berkas Pesan',
   'Temporary Files': 'Berkas Sementara',
   'Upload Directory': 'Direktori Unggah',
   'Download Directory': 'Direktori Unduh',
+
+  'Contains @count file, totaling @size': 'Mengandung @count file, dengan total ukuran @size.',
+  'Contains @count files, totaling @size': 'Mengandung @count file, dengan total ukuran @size.',
 
   'Scan': 'Pindai',
   'Clear': 'Bersihkan',

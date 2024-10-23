@@ -28,12 +28,15 @@
  * SOFTWARE.
  * =============================================================================
  */
+import 'package:get/get.dart';
+
 import 'package:lnc/log.dart';
 import 'package:lnc/notification.dart';
 import 'package:pnf/dos.dart';
 
 import '../common/constants.dart';
 import '../sqlite/helper/connector.dart';
+
 import 'local.dart';
 
 
@@ -262,9 +265,15 @@ class _FileScanner with Logging {
 String _summary({required int count, required int size}) {
   String text = _readableSize(size);
   if (count < 2) {
-    return 'Contains $count file, totaling $text';
+    return 'Contains @count file, totaling @size'.trParams({
+      'count': '$count',
+      'size': text,
+    });
   }
-  return 'Contains $count files, totaling $text';
+  return 'Contains @count files, totaling @size'.trParams({
+    'count': '$count',
+    'size': text,
+  });
 }
 
 String _readableSize(int size) {

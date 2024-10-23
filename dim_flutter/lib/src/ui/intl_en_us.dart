@@ -190,6 +190,10 @@ final Map<String, String> intlEnUs = {
   'Sure to recall this message?': 'Are you sure to recall this message?'
       ' (this action may not necessarily succeed)',
 
+  'Delete Message': 'Delete Message',
+  'Sure to delete this message?': 'Are you sure to delete this message?'
+      ' (this action is not recoverable)',
+
   'Waiting to send': 'Waiting to send (tap to retry)',
   'No response': 'No response (tap to resend)',
   'Stranded': 'Stranded (tap to resend)',
@@ -299,11 +303,15 @@ final Map<String, String> intlEnUs = {
 
   'Total Cached Data': 'Total Cached Data',
   'Cache Files': 'Cache Files',
+  'Database': 'Databases',
   'Avatars': 'Avatars',
   'Message Files': 'Message Files',
   'Temporary Files': 'Temporary Files',
   'Upload Directory': 'Upload Directory',
   'Download Directory': 'Download Directory',
+
+  'Contains @count file, totaling @size': 'Contains @count file, totaling @size.',
+  'Contains @count files, totaling @size': 'Contains @count files, totaling @size.',
 
   'Scan': 'Scan',
   'Clear': 'Clear',

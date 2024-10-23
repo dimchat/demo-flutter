@@ -190,6 +190,10 @@ final Map<String, String> intlTrTr = {
   'Sure to recall this message?': 'Bu mesajı geri çekmek istediğinizden emin misiniz?'
       ' (bu eylem mutlaka başarılı olmayabilir)',
 
+  'Delete Message': 'Mesajı sil',
+  'Sure to delete this message?': 'Bu mesajı silmek istediğinize emin misiniz?'
+      ' (bu işlem geri alınamaz)',
+
   'Waiting to send': 'Gönderilmeyi bekliyor (tekrar denemek için dokunun)',
   'No response': 'Yanıt Yok (tekrar göndermek için dokunun)',
   'Stranded': 'Mahsur Kaldı (tekrar göndermek için dokunun)',
@@ -299,11 +303,15 @@ final Map<String, String> intlTrTr = {
 
   'Total Cached Data': 'Toplam Önbelleklenmiş Veri',
   'Cache Files': 'Önbellek Dosyaları',
+  'Database': 'Veritabanları',
   'Avatars': 'Avatarlar',
   'Message Files': 'Mesaj Dosyaları',
   'Temporary Files': 'Geçici Dosyalar',
   'Upload Directory': 'Yükleme Dizini',
   'Download Directory': 'İndirme Dizini',
+
+  'Contains @count file, totaling @size': '@count dosya içeriyor, toplamda @size.',
+  'Contains @count files, totaling @size': '@count dosya içeriyor, toplamda @size.',
 
   'Scan': 'Tara',
   'Clear': 'Temizle',

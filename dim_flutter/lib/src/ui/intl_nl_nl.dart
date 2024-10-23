@@ -191,6 +191,10 @@ final Map<String, String> intlNlNl = {
   'Sure to recall this message?': 'Weet u zeker dat u dit bericht wilt intrekken?'
       ' (deze actie kan mogelijk niet slagen)',
 
+  'Delete Message': 'Bericht verwijderen',
+  'Sure to delete this message?': 'Weet u zeker dat u dit bericht wilt verwijderen?'
+      ' (deze actie kan niet ongedaan worden gemaakt)',
+
   'Waiting to send': 'Wachten op verzenden (tik om opnieuw te proberen)',
   'No response': 'Geen reactie (tik om opnieuw te versturen)',
   'Stranded': 'Vastgelopen (tik om opnieuw te versturen)',
@@ -300,11 +304,15 @@ final Map<String, String> intlNlNl = {
 
   'Total Cached Data': 'Totaal gecachete gegevens',
   'Cache Files': 'Cachebestanden',
+  'Database': 'Databases',
   'Avatars': 'Avatars',
   'Message Files': 'Berichtenbestanden',
   'Temporary Files': 'Tijdelijke bestanden',
   'Upload Directory': 'Uploadmap',
   'Download Directory': 'Downloadmap',
+
+  'Contains @count file, totaling @size': 'Bevat @count bestand, met een totale grootte van @size.',
+  'Contains @count files, totaling @size': 'Bevat @count bestanden, met een totale grootte van @size.',
 
   'Scan': 'Scannen',
   'Clear': 'Wissen',

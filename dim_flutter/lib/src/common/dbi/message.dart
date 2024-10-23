@@ -51,10 +51,11 @@ abstract class InstantMessageDBI {
 
   ///  Delete the message
   ///
-  /// @param chat - conversation ID
-  /// @param iMsg - instant message
+  /// @param chat     - conversation ID
+  /// @param envelope - message head
+  /// @param content  - message body
   /// @return true on row(s) affected
-  Future<bool> removeInstantMessage(ID chat, InstantMessage iMsg);
+  Future<bool> removeInstantMessage(ID chat, Envelope envelope, Content content);
 
   ///  Delete all messages in this conversation
   ///

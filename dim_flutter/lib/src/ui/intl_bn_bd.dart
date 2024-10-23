@@ -191,6 +191,10 @@ final Map<String, String> intlBnBd = {
   'Sure to recall this message?': 'আপনি কি নিশ্চিত যে এই বার্তাটি পুনর্বরত করতে চান?'
       ' (এই কর্ম অবশ্যই সফল হবে না)',
 
+  'Delete Message': 'বার্তা মুছুন',
+  'Sure to delete this message?': 'আপনি কি নিশ্চিত যে আপনি এই বার্তাটি মুছতে চান?'
+      ' (এই পদক্ষেপটি আর ফিরিয়ে আনা যাবে না)',
+
   'Waiting to send': 'প্রেরণের জন্য অপেক্ষমান (পুনরাবর্তনের জন্য ট্যাপ করুন)',
   'No response': 'কোনও প্রতিক্রিয়া নেই (পুনরাবর্তনের জন্য ট্যাপ করুন)',
   'Stranded': 'অপসারিত (পুনরাবর্তনের জন্য ট্যাপ করুন)',
@@ -300,11 +304,15 @@ final Map<String, String> intlBnBd = {
 
   'Total Cached Data': 'মোট ক্যাশ ডেটা',
   'Cache Files': 'ক্যাশ ফাইল',
+  'Database': 'ডেটাবেস',
   'Avatars': 'অবতার',
   'Message Files': 'বার্তা ফাইল',
   'Temporary Files': 'অস্থায়ী ফাইল',
   'Upload Directory': 'আপলোড ডিরেক্টরি',
   'Download Directory': 'ডাউনলোড ডিরেক্টরি',
+
+  'Contains @count file, totaling @size': '@count ফাইল রয়েছে, মোট আকার @size।',
+  'Contains @count files, totaling @size': '@count ফাইল রয়েছে, মোট আকার @size।',
 
   'Scan': 'স্ক্যান',
   'Clear': 'সাফ',

@@ -191,6 +191,10 @@ final Map<String, String> intlFrFr = {
   'Sure to recall this message?': 'Êtes-vous sûr de vouloir rappeler ce message ?'
       ' (cette action peut ne pas réussir)',
 
+  'Delete Message': 'Supprimer le message',
+  'Sure to delete this message?': 'Êtes-vous sûr de vouloir supprimer ce message ?'
+      ' (cette action est irréversible)',
+
   'Waiting to send': 'En attente d\'envoi (appuyez pour réessayer)',
   'No response': 'Aucune réponse (appuyez pour renvoyer)',
   'Stranded': 'En rade (appuyez pour renvoyer)',
@@ -300,11 +304,15 @@ final Map<String, String> intlFrFr = {
 
   'Total Cached Data': 'Données mises en cache totales',
   'Cache Files': 'Fichiers en cache',
+  'Database': 'Bases de données',
   'Avatars': 'Avatars',
   'Message Files': 'Fichiers de messages',
   'Temporary Files': 'Fichiers temporaires',
   'Upload Directory': 'Répertoire de téléchargement',
   'Download Directory': 'Répertoire de téléchargement',
+
+  'Contains @count file, totaling @size': 'Contient @count fichier, pour un total de @size.',
+  'Contains @count files, totaling @size': 'Contient @count fichiers, pour un total de @size.',
 
   'Scan': 'Analyser',
   'Clear': 'Effacer',

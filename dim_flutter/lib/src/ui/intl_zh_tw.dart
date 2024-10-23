@@ -190,6 +190,9 @@ final Map<String, String> intlZhTw = {
   'Sure to recall this message?': '確定要撤回此訊息嗎？'
       '（此操作可能不會成功）',
 
+  'Delete Message': '刪除訊息',
+  'Sure to delete this message?': '確定要刪除這則訊息嗎？（此操作無法恢復）',
+
   'Waiting to send': '等待傳送（點擊重試）',
   'No response': '無回應（點擊重新傳送）',
   'Stranded': '未發送（點擊重新傳送）',
@@ -295,11 +298,15 @@ final Map<String, String> intlZhTw = {
 
   'Total Cached Data': '總快取數據',
   'Cache Files': '快取檔案',
+  'Database': '資料庫',
   'Avatars': '頭像',
   'Message Files': '訊息檔案',
   'Temporary Files': '暫存檔案',
   'Upload Directory': '上傳目錄',
   'Download Directory': '下載目錄',
+
+  'Contains @count file, totaling @size': '包含 @count 個檔案，總計 @size。',
+  'Contains @count files, totaling @size': '包含 @count 個檔案，總計 @size。',
 
   'Scan': '掃描',
   'Clear': '清除',

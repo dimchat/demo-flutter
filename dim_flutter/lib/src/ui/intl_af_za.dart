@@ -191,6 +191,10 @@ final Map<String, String> intlAfZa = {
   'Sure to recall this message?': 'Is u seker dat u hierdie boodskap wil herroep?'
       ' (hierdie aksie kan moontlik nie suksesvol wees nie)',
 
+  'Delete Message': 'Vee boodskap uit',
+  'Sure to delete this message?': 'Is jy seker jy wil hierdie boodskap uitvee?'
+      ' (hierdie aksie kan nie teruggedraai word nie)',
+
   'Waiting to send': 'Wag om te stuur (tik om te herprobeer)',
   'No response': 'Geen reaksie (tik om weer te stuur)',
   'Stranded': 'Gestrand (tik om weer te stuur)',
@@ -300,11 +304,15 @@ final Map<String, String> intlAfZa = {
 
   'Total Cached Data': 'Totale Gestoorde Data',
   'Cache Files': 'Cache-lêers',
+  'Database': 'Databasis',
   'Avatars': 'Avatarre',
   'Message Files': 'Boodskap-lêers',
   'Temporary Files': 'Tydelike Lêers',
   'Upload Directory': 'Oplaai-gids',
   'Download Directory': 'Aflaai-gids',
+
+  'Contains @count file, totaling @size': 'Bevat @count lêer, met ’n totale grootte van @size.',
+  'Contains @count files, totaling @size': 'Bevat @count lêers, met ’n totale grootte van @size.',
 
   'Scan': 'Deursoek',
   'Clear': 'Maak Skoon',

@@ -191,6 +191,10 @@ final Map<String, String> intlPtPt = {
   'Sure to recall this message?': 'Tem certeza de que deseja recuperar esta mensagem?'
       ' (esta ação pode não ser bem-sucedida)',
 
+  'Delete Message': 'Excluir mensagem',
+  'Sure to delete this message?': 'Tem certeza de que deseja excluir esta mensagem?'
+      ' (esta ação não pode ser desfeita)',
+
   'Waiting to send': 'Aguardando para enviar (toque para tentar novamente)',
   'No response': 'Sem resposta (toque para reenviar)',
   'Stranded': 'Encalhado (toque para reenviar)',
@@ -300,11 +304,15 @@ final Map<String, String> intlPtPt = {
 
   'Total Cached Data': 'Total de Dados em Cache',
   'Cache Files': 'Arquivos de Cache',
+  'Database': 'Bancos de dados',
   'Avatars': 'Avatares',
   'Message Files': 'Arquivos de Mensagem',
   'Temporary Files': 'Arquivos Temporários',
   'Upload Directory': 'Diretório de Upload',
   'Download Directory': 'Diretório de Download',
+
+  'Contains @count file, totaling @size': 'Contém @count arquivo, totalizando @size.',
+  'Contains @count files, totaling @size': 'Contém @count arquivos, totalizando @size.',
 
   'Scan': 'Escanear',
   'Clear': 'Limpar',

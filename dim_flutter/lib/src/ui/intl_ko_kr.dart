@@ -191,6 +191,9 @@ final Map<String, String> intlKoKr = {
   'Sure to recall this message?': '정말 이 메시지를撤回하시겠습니까?'
       '（이操作은 반드시 성공하는 것은 아닙니다）',
 
+  'Delete Message': '메시지 삭제',
+  'Sure to delete this message?': '이 메시지를 삭제하시겠습니까? (이 작업은 되돌릴 수 없습니다)',
+
   'Waiting to send': '전송 대기 중 (다시 시도하려면 탭)',
   'No response': '응답 없음 (재전송하려면 탭)',
   'Stranded': '전송 실패 (재전송하려면 탭)',
@@ -300,11 +303,15 @@ final Map<String, String> intlKoKr = {
 
   'Total Cached Data': '총 캐시된 데이터',
   'Cache Files': '캐시 파일',
+  'Database': '데이터베이스',
   'Avatars': '아바타',
   'Message Files': '메시지 파일',
   'Temporary Files': '임시 파일',
   'Upload Directory': '업로드 디렉토리',
   'Download Directory': '다운로드 디렉토리',
+
+  'Contains @count file, totaling @size': '@count 개의 파일 포함, 총 @size.',
+  'Contains @count files, totaling @size': '@count 개의 파일 포함, 총 @size.',
 
   'Scan': '스캔',
   'Clear': '지우기',

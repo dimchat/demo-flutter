@@ -190,6 +190,9 @@ final Map<String, String> intlZhCn = {
   'Sure to recall this message?': '确定撤回此消息吗？'
       '（此操作可能不会成功）',
 
+  'Delete Message': '删除消息',
+  'Sure to delete this message?': '确定要删除这条消息吗？（此操作不可恢复）',
+
   'Waiting to send': '等待发送（点击重试）',
   'No response': '无应答（点击重新发送）',
   'Stranded': '未发送（点击重新发送）',
@@ -295,11 +298,15 @@ final Map<String, String> intlZhCn = {
 
   'Total Cached Data': '总缓存数据',
   'Cache Files': '缓存文件',
+  'Database': '数据库',
   'Avatars': '头像',
   'Message Files': '消息文件',
   'Temporary Files': '临时文件',
   'Upload Directory': '上传目录',
   'Download Directory': '下载目录',
+
+  'Contains @count file, totaling @size': '包含 @count 个文件，总计 @size。',
+  'Contains @count files, totaling @size': '包含 @count 个文件，总计 @size。',
 
   'Scan': '扫描',
   'Clear': '清除',

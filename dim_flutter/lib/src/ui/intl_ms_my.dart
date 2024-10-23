@@ -191,6 +191,10 @@ final Map<String, String> intlMsMy = {
   'Sure to recall this message?': 'Adakah anda pasti untuk mengingati semula pesanan ini?'
       ' (tindakan ini mungkin tidak berjaya)',
 
+  'Delete Message': 'Padam Mesej',
+  'Sure to delete this message?': 'Adakah anda pasti mahu memadam mesej ini?'
+      ' (tindakan ini tidak boleh dipulihkan)',
+
   'Waiting to send': 'Menunggu untuk menghantar (tekan semula untuk cuba)',
   'No response': 'Tiada respons (tekan semula untuk hantar semula)',
   'Stranded': 'Terdampar (tekan semula untuk hantar semula)',
@@ -300,11 +304,15 @@ final Map<String, String> intlMsMy = {
 
   'Total Cached Data': 'Jumlah Data Cache',
   'Cache Files': 'Fail Cache',
+  'Database': 'Pangkalan Data',
   'Avatars': 'Avatar',
   'Message Files': 'Fail Mesej',
   'Temporary Files': 'Fail Sementara',
   'Upload Directory': 'Direktori Muat Naik',
   'Download Directory': 'Direktori Muat Turun',
+
+  'Contains @count file, totaling @size': 'Mengandungi @count fail, jumlah saiz @size.',
+  'Contains @count files, totaling @size': 'Mengandungi @count fail, jumlah saiz @size.',
 
   'Scan': 'Imbas',
   'Clear': 'Kosongkan',

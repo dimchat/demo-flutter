@@ -191,6 +191,10 @@ final Map<String, String> intlDeDe = {
   'Sure to recall this message?': 'Sind Sie sicher, dass Sie diese Nachricht zurückrufen möchten?'
       ' (diese Aktion kann möglicherweise nicht erfolgreich sein)',
 
+  'Delete Message': 'Nachricht löschen',
+  'Sure to delete this message?': 'Sind Sie sicher, dass Sie diese Nachricht löschen möchten?'
+      ' (Diese Aktion kann nicht rückgängig gemacht werden)',
+
   'Waiting to send': 'Warte auf Senden (zum Wiederholen tippen)',
   'No response': 'Keine Antwort (zum erneuten Senden tippen)',
   'Stranded': 'Gestrandet (zum erneuten Senden tippen)',
@@ -295,11 +299,15 @@ final Map<String, String> intlDeDe = {
 
   'Total Cached Data': 'Gesamte gecachte Daten',
   'Cache Files': 'Cache-Dateien',
+  'Database': 'Datenbanken',
   'Avatars': 'Avatare',
   'Message Files': 'Nachrichtendateien',
   'Temporary Files': 'Temporäre Dateien',
   'Upload Directory': 'Upload-Verzeichnis',
   'Download Directory': 'Download-Verzeichnis',
+
+  'Contains @count file, totaling @size': 'Enthält @count Datei, insgesamt @size.',
+  'Contains @count files, totaling @size': 'Enthält @count Dateien, insgesamt @size.',
 
   'Scan': 'Scannen',
   'Clear': 'Löschen',

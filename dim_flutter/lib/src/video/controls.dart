@@ -42,8 +42,7 @@ import 'package:chewie/src/center_play_button.dart';
 
 import 'package:provider/provider.dart';
 
-import 'package:startrek/skywalker.dart';
-
+import 'package:stargate/startrek.dart' show Metronome, Ticker;
 import 'package:lnc/log.dart';
 
 import '../common/platform.dart';
@@ -265,6 +264,9 @@ class _CustomControlsState extends State<CustomControls>
     } else if (key == RawKeyboardKey.arrowRight) {
       logInfo('seek forward');
       seekForward();
+    } else if (key == RawKeyboardKey.enter || key == RawKeyboardKey.space) {
+      logInfo('play/pause');
+      _playPause();
     } else {
       return KeyEventResult.ignored;
     }

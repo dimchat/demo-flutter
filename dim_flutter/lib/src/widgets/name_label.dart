@@ -10,7 +10,7 @@ import '../models/chat.dart';
 
 /// NameView
 class NameLabel extends StatefulWidget {
-  const NameLabel(this.info, {super.key,
+  const NameLabel(this.info, this.remarks, {super.key,
     this.style,
     this.strutStyle,
     this.textAlign,
@@ -27,6 +27,7 @@ class NameLabel extends StatefulWidget {
   });
 
   final Conversation info;
+  final bool remarks;
 
   final TextStyle? style;
   final StrutStyle? strutStyle;
@@ -95,7 +96,8 @@ class _NameState extends State<NameLabel> implements lnc.Observer {
   }
 
   @override
-  Widget build(BuildContext context) => Text(widget.info.title,
+  Widget build(BuildContext context) => Text(
+    widget.remarks ? widget.info.title : widget.info.name,
     style:              widget.style,
     strutStyle:         widget.strutStyle,
     textAlign:          widget.textAlign,

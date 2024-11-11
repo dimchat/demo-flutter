@@ -109,7 +109,7 @@ abstract class Conversation with Logging implements lnc.Observer {
   /// icon
   Widget getImage({double? width, double? height, BoxFit? fit});
 
-  NameLabel getNameLabel({
+  NameLabel getNameLabel(bool remarks, {
     TextStyle? style,
     StrutStyle? strutStyle,
     TextAlign? textAlign,
@@ -123,7 +123,7 @@ abstract class Conversation with Logging implements lnc.Observer {
     TextWidthBasis? textWidthBasis,
     TextHeightBehavior? textHeightBehavior,
     Color? selectionColor,
-  }) => NameLabel(this,
+  }) => NameLabel(this, remarks,
     style:              style,
     strutStyle:         strutStyle,
     textAlign:          textAlign,

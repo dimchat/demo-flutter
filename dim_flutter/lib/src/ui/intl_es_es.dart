@@ -161,10 +161,14 @@ final Map<String, String> intlEsEs = {
   'Image Not Found': 'Imagen no Encontrada',
   'Failed to load image @filename': 'Error al cargar la imagen "@filename".',
 
+  'Forward Text': 'Reenviar mensaje de texto',
   'Forward Image': 'Reenviar Imagen',
   'Forward Video': 'Reenviar Video',
   'Forward Web Page': 'Reenviar Página Web',
   'Forward Name Card': 'Reenviar Tarjeta de Nombre',
+
+  'Text message forwarded to @chat': 'Mensaje de texto reenviado a "@chat".',
+  'Failed to share text with @chat': 'Error al compartir el mensaje de texto con "@chat".',
 
   'Image message forwarded to @chat': 'Mensaje de imagen reenviado a "@chat".',
   'Failed to share image with @chat': 'Error al compartir imagen con "@chat".',

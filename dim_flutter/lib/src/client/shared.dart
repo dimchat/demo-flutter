@@ -63,6 +63,16 @@ void _registerPlugins() {
 
   ClientFacebook.prepare();
 
+  /// TODO: register address factory (extends BaseAddressFactory)
+  ///       seeing 'dim_client - /lib/src/common/compat/entity.dart:118'
+  // Address.setFactory(_CompatibleAddressFactory());
+
+  /// TODO: register meta factory (implements MetaFactory)
+  ///       seeing 'dim_client - /lib/src/common/compat/meta.dart:168'
+  // Meta.setFactory(MetaType.kMKM,   _CompatibleMetaFactory(MetaType.kMKM));
+  // Meta.setFactory(MetaType.kBTC,   _CompatibleMetaFactory(MetaType.kBTC));
+  // Meta.setFactory(MetaType.kExBTC, _CompatibleMetaFactory(MetaType.kExBTC));
+
   //
   //  Register command/content parsers
   //

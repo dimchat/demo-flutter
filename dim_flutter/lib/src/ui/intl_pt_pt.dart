@@ -160,10 +160,14 @@ final Map<String, String> intlPtPt = {
   'Image Not Found': 'Imagem Não Encontrada',
   'Failed to load image @filename': 'Falha ao carregar a imagem "@filename".',
 
+  'Forward Text': 'Encaminhar mensagem de texto',
   'Forward Image': 'Encaminhar Imagem',
   'Forward Video': 'Encaminhar Vídeo',
   'Forward Web Page': 'Encaminhar Página da Web',
   'Forward Name Card': 'Encaminhar Cartão de Visita',
+
+  'Text message forwarded to @chat': 'Mensagem de texto encaminhada para "@chat".',
+  'Failed to share text with @chat': 'Falha ao compartilhar a mensagem de texto com "@chat".',
 
   'Image message forwarded to @chat': 'Mensagem de imagem encaminhada para "@chat".',
   'Failed to share image with @chat': 'Falha ao compartilhar imagem com "@chat".',

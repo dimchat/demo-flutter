@@ -160,10 +160,14 @@ final Map<String, String> intlMsMy = {
   'Image Not Found': 'Imej Tidak Ditemui',
   'Failed to load image @filename': 'Gagal memuatkan imej "@filename".',
 
+  'Forward Text': 'Hantar Mesej Teks',
   'Forward Image': 'Hantar Imej',
   'Forward Video': 'Hantar Video',
   'Forward Web Page': 'Hantar Laman Web',
   'Forward Name Card': 'Hantar Kad Nama',
+
+  'Text message forwarded to @chat': 'Mesej teks telah dihantar ke "@chat".',
+  'Failed to share text with @chat': 'Gagal untuk berkongsi mesej teks dengan "@chat".',
 
   'Image message forwarded to @chat': 'Mesej imej telah dihantar ke "@chat".',
   'Failed to share image with @chat': 'Gagal berkongsi imej dengan "@chat".',

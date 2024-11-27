@@ -160,10 +160,14 @@ final Map<String, String> intlBnBd = {
   'Image Not Found': 'চিত্র পাওয়া যায়নি',
   'Failed to load image @filename': 'চিত্র "@filename" লোড করতে ব্যর্থ।',
 
+  'Forward Text': 'টেক্সট মেসেজ ফরওয়ার্ড করুন',
   'Forward Image': 'ছবি পুনরায় প্রেরণ করুন',
   'Forward Video': 'ভিডিও প্রেরিত করুন',
   'Forward Web Page': 'ওয়েব পৃষ্ঠা পুনরায় প্রেরণ করুন',
   'Forward Name Card': 'নাম কার্ড পুনরায় প্রেরণ করুন',
+
+  'Text message forwarded to @chat': 'টেক্সট মেসেজ "@chat" এ ফরওয়ার্ড করা হয়েছে।',
+  'Failed to share text with @chat': 'টেক্সট মেসেজ "@chat" এর সাথে শেয়ার করতে ব্যর্থ হয়েছে।',
 
   'Image message forwarded to @chat': 'ছবি বার্তা পুনরায় প্রেরিত হয়েছে "@chat" কে।',
   'Failed to share image with @chat': 'ছবি শেয়ার করতে ব্যর্থ হয়েছে "@chat" কে।',

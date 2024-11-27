@@ -159,10 +159,14 @@ final Map<String, String> intlZhCn = {
   'Image Not Found': '图片不存在',
   'Failed to load image @filename': '无法读取图片"@filename"。',
 
+  'Forward Text': '转发文本消息',
   'Forward Image': '转发图片',
   'Forward Video': '转发视频',
   'Forward Web Page': '转发网页',
   'Forward Name Card': '转发名片',
+
+  'Text message forwarded to @chat': '文本消息已转发至 "@chat"。',
+  'Failed to share text with @chat': '未能与 "@chat" 分享文本消息。',
 
   'Image message forwarded to @chat': '图片消息已转发给 "@chat"。',
   'Failed to share image with @chat': '无法转发图片给 "@chat"。',

@@ -159,10 +159,14 @@ final Map<String, String> intlTrTr = {
   'Image Not Found': 'Resim Bulunamadı',
   'Failed to load image @filename': 'Resim yüklenemedi: "@filename".',
 
+  'Forward Text': 'Metin Mesajını İlet',
   'Forward Image': 'Resmi İleri Gönder',
   'Forward Video': 'Videoyu İleriye Taşı',
   'Forward Web Page': 'Web Sayfasını İleri Gönder',
   'Forward Name Card': 'İsim Kartını İleri Gönder',
+
+  'Text message forwarded to @chat': 'Metin mesajı "@chat" iletildi.',
+  'Failed to share text with @chat': '"@chat" ile metin mesajını paylaşırken hata oluştu.',
 
   'Image message forwarded to @chat': 'Resim mesajı "@chat" kişisine ileri gönderildi.',
   'Failed to share image with @chat': '@chat kişisiyle resim paylaşma başarısız oldu.',

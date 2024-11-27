@@ -160,10 +160,14 @@ final Map<String, String> intlViVN = {
   'Image Not Found': 'Không tìm thấy ảnh',
   'Failed to load image @filename': 'Không thể tải ảnh "@filename".',
 
+  'Forward Text': 'Chuyển tiếp tin nhắn',
   'Forward Image': 'Chuyển tiếp Hình ảnh',
   'Forward Video': 'Chuyển tiếp Video',
   'Forward Web Page': 'Chuyển tiếp Trang web',
   'Forward Name Card': 'Chuyển tiếp Danh thiếp',
+
+  'Text message forwarded to @chat': 'Tin nhắn đã được chuyển tiếp tới "@chat".',
+  'Failed to share text with @chat': 'Không thể chia sẻ tin nhắn với "@chat".',
 
   'Image message forwarded to @chat': 'Hình ảnh đã được chuyển tiếp đến "@chat".',
   'Failed to share image with @chat': 'Không thể chia sẻ hình ảnh với "@chat".',

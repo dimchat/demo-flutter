@@ -160,10 +160,14 @@ final Map<String, String> intlKoKr = {
   'Image Not Found': '이미지를 찾을 수 없음',
   'Failed to load image @filename': '"@filename" 이미지 로드 실패',
 
+  'Forward Text': '텍스트 메시지 전송',
   'Forward Image': '이미지 전송',
   'Forward Video': '비디오 전송',
   'Forward Web Page': '웹 페이지 전송',
   'Forward Name Card': '명함 전송',
+
+  'Text message forwarded to @chat': '텍스트 메시지가 "@chat"으로 전송되었습니다.',
+  'Failed to share text with @chat': '"@chat"과 텍스트 메시지를 공유하지 못했습니다.',
 
   'Image message forwarded to @chat': '이미지 메시지가 "@chat"로 전송되었습니다.',
   'Failed to share image with @chat': '"@chat"과(와) 이미지 공유에 실패했습니다.',

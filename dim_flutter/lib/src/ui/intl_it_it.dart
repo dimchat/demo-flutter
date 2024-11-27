@@ -160,10 +160,14 @@ final Map<String, String> intlItIt = {
   'Image Not Found': 'Immagine Non Trovata',
   'Failed to load image @filename': 'Impossibile caricare l\'immagine "@filename".',
 
+  'Forward Text': 'Inoltra messaggio di testo',
   'Forward Image': 'Inoltra Immagine',
   'Forward Video': 'Inoltra Video',
   'Forward Web Page': 'Inoltra Pagina Web',
   'Forward Name Card': 'Inoltra Carta d\'Identità',
+
+  'Text message forwarded to @chat': 'Messaggio di testo inoltrato a "@chat".',
+  'Failed to share text with @chat': 'Impossibile condividere il messaggio di testo con "@chat".',
 
   'Image message forwarded to @chat': 'Messaggio immagine inoltrato a "@chat".',
   'Failed to share image with @chat': 'Impossibile condividere l\'immagine con "@chat".',

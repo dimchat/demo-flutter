@@ -59,12 +59,12 @@ class Client extends Terminal {
     return await connect(station.host, station.port);
   }
 
-  @override
-  ClientSession createSession(Station station) {
-    ClientSession session = ClientSession(sdb, station);
-    session.start(this);
-    return session;
-  }
+  // @override
+  // ClientSession createSession(Station station) {
+  //   ClientSession session = ClientSession(sdb, station);
+  //   session.start(this);
+  //   return session;
+  // }
 
   @override
   ClientMessenger createMessenger(ClientSession session, CommonFacebook facebook) {

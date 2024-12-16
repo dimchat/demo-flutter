@@ -140,6 +140,16 @@ class Emitter with Logging implements Observer {
     }
     // 2. add upload task with encrypted data
     Uint8List encrypted = password.encrypt(data, content);
+    /// NOTICE:
+    ///     Because the filename here is a MD5 string of the plaintext,
+    ///     but the encrypted data must be different every time, so
+    ///     we must rebuild the filename again.
+    String? ext = Paths.extension(filename);
+    if (ext == null || ext.isEmpty) {
+      filename = 'filename.dat';
+    } else {
+      filename = 'filename.$ext';
+    }
     filename = URLHelper.filenameFromData(encrypted, filename);
     FileUploader ftp = FileUploader();
     Uri? url = await ftp.uploadEncryptData(encrypted, filename, sender);

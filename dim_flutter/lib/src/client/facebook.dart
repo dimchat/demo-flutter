@@ -98,7 +98,7 @@ class SharedArchivist extends ClientArchivist {
   @override
   Future<bool> queryMembers(ID group, List<ID> members) async {
     Session? session = messenger?.session;
-    if (session?.identifier == null) {
+    if (session is ClientSession && session.isReady) {} else {
       logWarning('querying members cancel, waiting to connect: $group');
       return false;
     }

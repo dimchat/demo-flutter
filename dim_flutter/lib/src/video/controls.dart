@@ -42,79 +42,11 @@ import 'package:chewie/src/center_play_button.dart';
 
 import 'package:provider/provider.dart';
 
-import 'package:stargate/startrek.dart' show Metronome, Ticker;
 import 'package:lnc/log.dart';
+import 'package:stargate/startrek.dart' show Ticker;
 
-import '../common/platform.dart';
 import '../utils/keyboard.dart';
-
-
-class _PlayerMetronome {
-  factory _PlayerMetronome() => _instance;
-  static final _PlayerMetronome _instance = _PlayerMetronome._internal();
-  _PlayerMetronome._internal() {
-    _metronome = Metronome(Duration.millisecondsPerSecond);
-    /*await */_metronome.start();
-  }
-
-  late final Metronome _metronome;
-
-  void addTicker(Ticker ticker) => _metronome.addTicker(ticker);
-
-  void removeTicker(Ticker ticker) => _metronome.removeTicker(ticker);
-
-  /// playback speed
-  double _speed = 1.0;
-
-  bool speedUp = false;
-
-  double getPlaybackSpeed(bool isLive) {
-    if (isLive) {
-      return 1.0;
-    } else if (speedUp) {
-      return _speed * 2.0;
-    } else {
-      return _speed;
-    }
-  }
-
-  void changePlaybackSpeed() {
-    if (_speed < 1.0) {
-      _speed = 1.0;
-    } else if (_speed < 1.25) {
-      _speed = 1.25;
-    } else if (_speed < 1.5) {
-      _speed = 1.5;
-    } else if (_speed < 2.0) {
-      _speed = 2.0;
-    } else {
-      _speed = 0.5;
-    }
-  }
-
-  void setPlaybackSpeed(VideoPlayerController controller, bool isLive) {
-    double playbackSpeed = getPlaybackSpeed(isLive);
-    controller.setPlaybackSpeed(playbackSpeed);
-  }
-
-  void keepPlaybackSpeed(VideoPlayerController controller, bool isLive) {
-    if (isLive || !controller.value.isPlaying) {
-      return;
-    }
-    double playbackSpeed = getPlaybackSpeed(isLive);
-    if (controller.value.playbackSpeed != playbackSpeed) {
-      controller.setPlaybackSpeed(playbackSpeed);
-    } else if (DevicePlatform.isAndroid) {
-      // Android is OK
-    } else if (DevicePlatform.isWindows) {
-      // Windows is OK
-    } else if (playbackSpeed != 1.0) {
-      // fix for iOS, ...
-      controller.setPlaybackSpeed(playbackSpeed);
-    }
-  }
-
-}
+import 'metronome.dart';
 
 
 class CustomControls extends StatefulWidget {
@@ -153,15 +85,15 @@ class _CustomControlsState extends State<CustomControls>
 
   @override
   Future<void> tick(DateTime now, int elapsed) async {
-    var metronome = _PlayerMetronome();
-    metronome.keepPlaybackSpeed(controller, chewieController.isLive);
+    var metronome = VideoPlayerMetronome();
+    await metronome.touchPlayerControllers(controller, _chewieController);
   }
 
   @override
   void initState() {
     super.initState();
     notifier = Provider.of<PlayerNotifier>(context, listen: false);
-    var metronome = _PlayerMetronome();
+    var metronome = VideoPlayerMetronome();
     metronome.speedUp = false;
     metronome.addTicker(this);
     _focusNode.requestFocus();
@@ -211,7 +143,7 @@ class _CustomControlsState extends State<CustomControls>
       child: controls,
       onKeyEvent: (focusNode, event) => _keyEvent(event),
     );
-    var metronome = _PlayerMetronome();
+    var metronome = VideoPlayerMetronome();
     return MouseRegion(
       onHover: (_) {
         _cancelAndRestartTimer();
@@ -300,7 +232,8 @@ class _CustomControlsState extends State<CustomControls>
 
   @override
   void dispose() {
-    _PlayerMetronome().removeTicker(this);
+    var metronome = VideoPlayerMetronome();
+    metronome.removeTicker(this);
     _dispose();
     _focusNode.dispose();
     super.dispose();
@@ -467,7 +400,7 @@ class _CustomControlsState extends State<CustomControls>
       Color? iconColor,
       double barHeight,
       ) {
-    var metronome = _PlayerMetronome();
+    var metronome = VideoPlayerMetronome();
     double playbackSpeed = metronome.getPlaybackSpeed(chewieController.isLive);
     bool speedUp = metronome.speedUp;
     String text = speedUp ? '>> X$playbackSpeed' : 'X$playbackSpeed';

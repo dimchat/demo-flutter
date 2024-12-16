@@ -38,6 +38,7 @@ import '../common/platform.dart';
 import '../utils/html.dart';
 
 import 'controls.dart';
+import 'metronome.dart';
 
 
 // protected
@@ -137,6 +138,8 @@ class PlayerController {
       await closeVideo();
       return null;
     }
+    var metronome = VideoPlayerMetronome();
+    await metronome.seekLastPosition(videoPlayerController);
     return chewieController;
   }
 

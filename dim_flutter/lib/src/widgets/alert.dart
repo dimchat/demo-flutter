@@ -76,21 +76,21 @@ class Alert {
           CupertinoDialogAction(
             onPressed: () {
               Navigator.pop(context);
-              if (okAction != null) {
-                okAction();
-              }
-            },
-            child: Text(okTitle!.tr),
-          ),
-          CupertinoDialogAction(
-            onPressed: () {
-              Navigator.pop(context);
               if (cancelAction != null) {
                 cancelAction();
               }
             },
-            isDestructiveAction: true,
             child: Text(cancelTitle!.tr),
+          ),
+          CupertinoDialogAction(
+            onPressed: () {
+              Navigator.pop(context);
+              if (okAction != null) {
+                okAction();
+              }
+            },
+            isDestructiveAction: true,
+            child: Text(okTitle!.tr),
           ),
         ],
       ),
@@ -135,7 +135,7 @@ class Alert {
           ),
         CupertinoActionSheetAction(
           onPressed: () => Navigator.pop(context),
-          isDestructiveAction: true,
+          isDefaultAction: true,
           child: Text('Cancel'.tr),
         ),
       ],

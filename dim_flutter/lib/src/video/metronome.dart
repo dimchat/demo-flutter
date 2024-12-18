@@ -109,14 +109,18 @@ class VideoPlayerMetronome with Logging {
     if (position == null) {
       return;
     } else if (isLive) {
-      logInfo('no need to store position for live video: $url');
+      // logDebug('no need to store position for live video: $url');
       return;
     }
     _playingPositions[url] = position;
   }
 
-  Future<bool> seekLastPosition(VideoPlayerController controller) async {
+  Future<bool> seekLastPosition(VideoPlayerController controller, ChewieController chewie) async {
     String url = controller.dataSource;
+    if (chewie.isLive) {
+      logInfo('no need to seek position for live video: $url');
+      return false;
+    }
     Duration? position = _playingPositions[url];
     logInfo('last position: $position, $url');
     if (position == null || position.inSeconds < 16) {

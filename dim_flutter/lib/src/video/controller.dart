@@ -139,7 +139,7 @@ class PlayerController {
       return null;
     }
     var metronome = VideoPlayerMetronome();
-    await metronome.seekLastPosition(videoPlayerController);
+    await metronome.seekLastPosition(videoPlayerController, chewieController);
     return chewieController;
   }
 

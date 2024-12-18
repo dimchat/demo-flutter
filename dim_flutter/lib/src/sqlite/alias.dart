@@ -52,8 +52,8 @@ class _RemarkTable extends DataTableHandler<ContactRemark> implements RemarkDBI 
         cond.addCondition(SQLConditions.kAnd,
             left: 'contact', comparison: '=', right: item.identifier.toString());
         Map<String, dynamic> values = {
-          'alias': item.alias,
-          'description': item.description,
+          'alias': remark.alias,
+          'description': remark.description,
         };
         return await update(_table, values: values, conditions: cond) > 0;
       }

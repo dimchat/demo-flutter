@@ -76,6 +76,8 @@ class GroupInfo extends Conversation with Logging {
 
   String? _temporaryTitle;
 
+  Bulletin? _bulletin;
+
   ID? _owner;
   List<ID>? _admins;
   List<ID>? _members;
@@ -170,8 +172,8 @@ class GroupInfo extends Conversation with Logging {
       /// admins
       _admins = await shared.facebook.getAdministrators(identifier);
       /// members
-      Bulletin? doc = await shared.facebook.getBulletin(identifier);
-      if (doc == null) {
+      _bulletin = await shared.facebook.getBulletin(identifier);
+      if (_bulletin == null) {
         _members = null;
         _temporaryTitle = null;
       } else {

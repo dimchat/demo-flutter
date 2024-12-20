@@ -39,6 +39,8 @@ class ContactInfo extends Conversation {
     }
   }
 
+  Visa? _visa;
+
   PortableNetworkFile? _avatar;
 
   DateTime? _lastActiveTime;  // time of last login
@@ -110,7 +112,8 @@ class ContactInfo extends Conversation {
     }
     // get avatar
     Visa? visa = await shared.facebook.getVisa(identifier);
-    _avatar = visa?.avatar;
+    _visa = visa;
+    _avatar = _visa?.avatar;
     // get active time (visa time & login time)
     _lastActiveTime = visa?.time;
     var pair = await shared.database.getLoginCommandMessage(identifier);

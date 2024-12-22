@@ -31,8 +31,8 @@
 import 'package:chewie/chewie.dart';
 import 'package:video_player/video_player.dart';
 
-import 'package:lnc/log.dart';
-import 'package:stargate/startrek.dart';
+import 'package:dim_client/ok.dart';
+import 'package:dim_client/ws.dart';
 
 import '../common/platform.dart';
 
@@ -41,7 +41,7 @@ class VideoPlayerMetronome with Logging {
   factory VideoPlayerMetronome() => _instance;
   static final VideoPlayerMetronome _instance = VideoPlayerMetronome._internal();
   VideoPlayerMetronome._internal() {
-    _metronome = Metronome(Duration.millisecondsPerSecond);
+    _metronome = Metronome(const Duration(milliseconds: 1000));
     /*await */_metronome.start();
   }
 

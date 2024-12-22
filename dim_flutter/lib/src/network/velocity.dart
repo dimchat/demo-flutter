@@ -30,10 +30,9 @@
  */
 import 'dart:typed_data';
 
-import 'package:dim_client/dim_client.dart';
-import 'package:lnc/log.dart';
-import 'package:lnc/notification.dart';
-import 'package:stargate/websocket.dart';
+import 'package:dim_client/ok.dart';
+import 'package:dim_client/ws.dart';
+import 'package:dim_client/sdk.dart';
 
 import '../common/constants.dart';
 import '../models/station.dart';
@@ -98,7 +97,7 @@ class VelocityMeter {
     }
     String host = meter.host;
     int port = meter.port;
-    ID sid = meter.identifier ?? Station.kAny;
+    ID sid = meter.identifier ?? Station.ANY;
     DateTime now = DateTime.now();
     double rt = meter.responseTime ?? -1;
     String? socketAddress = meter.socketAddress;
@@ -187,7 +186,7 @@ class VelocityMeter {
       return false;
     }
     ID sender = rMsg.sender;
-    if (sender.type != EntityType.kStation) {
+    if (sender.type != EntityType.STATION) {
       Log.error('sender not a station: $sender');
       return false;
     }

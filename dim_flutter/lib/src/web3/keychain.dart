@@ -33,8 +33,9 @@ import 'dart:typed_data';
 import 'package:bip32/bip32.dart';
 import 'package:bip39/bip39.dart';
 
-import 'package:dim_client/dim_client.dart';
-import 'package:lnc/log.dart';
+import 'package:dim_client/ok.dart';
+import 'package:dim_client/sdk.dart';
+import 'package:dim_client/common.dart';
 
 
 // https://iancoleman.io/bip39/#english
@@ -83,7 +84,7 @@ class Keychain {
       return false;
     }
     PrivateKey puppet = PrivateKey.parse({
-      'algorithm': AsymmetricKey.kECC,
+      'algorithm': AsymmetricKey.ECC,
       'data': entropy,
     })!;
     Log.debug('save mnemonic: $words => $entropy');
@@ -124,7 +125,7 @@ class Keychain {
       return null;
     }
     return PrivateKey.parse({
-      'algorithm': AsymmetricKey.kECC,
+      'algorithm': AsymmetricKey.ECC,
       'data': Hex.encode(privateKey),
     });
   }

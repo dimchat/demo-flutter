@@ -1,7 +1,7 @@
 import 'package:get/get.dart';
 
-import 'package:lnc/log.dart';
-import 'package:lnc/notification.dart' as lnc;
+import 'package:dim_client/ok.dart';
+import 'package:dim_client/ok.dart' as lnc;
 
 import '../client/shared.dart';
 

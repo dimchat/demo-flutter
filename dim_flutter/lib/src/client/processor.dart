@@ -1,5 +1,7 @@
-import 'package:dim_client/dim_client.dart';
-import 'package:lnc/log.dart';
+
+import 'package:dim_client/ok.dart';
+import 'package:dim_client/sdk.dart';
+import 'package:dim_client/client.dart';
 
 import '../models/amanuensis.dart';
 import 'cpu/creator.dart';
@@ -8,8 +10,8 @@ class SharedProcessor extends ClientMessageProcessor with Logging {
   SharedProcessor(super.facebook, super.messenger);
 
   @override
-  ContentProcessorCreator createCreator() {
-    return SharedContentProcessorCreator(facebook!, messenger!);
+  ContentProcessorCreator createCreator(Facebook facebook, Messenger messenger) {
+    return SharedContentProcessorCreator(facebook, messenger);
   }
 
   @override

@@ -32,7 +32,7 @@ import 'dart:typed_data';
 
 import 'package:flutter/cupertino.dart';
 
-import 'package:lnc/notification.dart' as lnc;
+import 'package:dim_client/ok.dart' as lnc;
 import 'package:pnf/pnf.dart';
 
 import '../ui/icons.dart';

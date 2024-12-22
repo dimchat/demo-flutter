@@ -32,8 +32,8 @@ import 'package:flutter/widgets.dart';
 import 'package:get/get.dart';
 import 'package:url_launcher/url_launcher.dart';
 
-import 'package:dim_client/dim_common.dart';
-import 'package:lnc/log.dart';
+import 'package:dim_client/ok.dart';
+import 'package:dim_client/sdk.dart';
 
 import '../pnf/image.dart';
 import '../ui/icons.dart';

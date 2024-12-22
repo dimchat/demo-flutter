@@ -5,7 +5,7 @@ import 'dart:ui' as ui;
 import 'package:flutter/cupertino.dart';
 import 'package:image_picker/image_picker.dart';
 
-import 'package:lnc/log.dart';
+import 'package:dim_client/ok.dart';
 
 import '../pnf/image.dart';
 import '../ui/icons.dart';

@@ -31,8 +31,9 @@
 import 'package:chewie/chewie.dart';
 import 'package:flutter/services.dart';
 import 'package:get/get.dart';
-import 'package:lnc/log.dart';
 import 'package:video_player/video_player.dart';
+
+import 'package:dim_client/ok.dart';
 
 import '../common/platform.dart';
 import '../utils/html.dart';

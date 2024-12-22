@@ -28,7 +28,9 @@
  * SOFTWARE.
  * =============================================================================
  */
-import 'package:dim_client/dim_client.dart';
+import 'package:dim_client/ok.dart';
+import 'package:dim_client/sdk.dart';
+
 
 /// Speed test result: ((host, port), sid, (test_time, response_time))
 typedef SpeedRecord = Triplet<Pair<String, int>, ID?, Triplet<DateTime, double, String>>;

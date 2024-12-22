@@ -1,6 +1,9 @@
 import 'dart:typed_data';
 
-import 'package:dim_client/dim_client.dart';
+import 'package:dim_client/ok.dart';
+import 'package:dim_client/sdk.dart';
+import 'package:dim_client/common.dart';
+import 'package:dim_client/client.dart';
 
 import '../common/platform.dart';
 import '../models/config.dart';
@@ -11,18 +14,6 @@ import 'shared.dart';
 
 class SharedMessenger extends ClientMessenger {
   SharedMessenger(super.session, super.facebook, super.mdb);
-
-  @override
-  Future<Uint8List?> encryptKey(Uint8List key, ID receiver, InstantMessage iMsg) async {
-    try {
-      return await super.encryptKey(key, receiver, iMsg);
-    } catch (e, st) {
-      // FIXME:
-      logError('failed to encrypt key for receiver: $receiver, error: $e');
-      logDebug('failed to encrypt key for receiver: $receiver, error: $e, $st');
-      return null;
-    }
-  }
 
   @override
   Future<Content?> deserializeContent(Uint8List data, SymmetricKey password,
@@ -54,7 +45,7 @@ class SharedMessenger extends ClientMessenger {
       {required ID? sender, required ID receiver, int priority = 0}) async {
     if (receiver.isBroadcast) {
       // check whether need to wrap this message
-      if (receiver.isUser && receiver != Station.kAny) {
+      if (receiver.isUser && receiver != Station.ANY) {
         String? name = receiver.name;
         ID? aid;
         if (name != null) {
@@ -91,16 +82,13 @@ class SharedMessenger extends ClientMessenger {
 
   @override
   Future<void> handshake(String? sessionKey) async {
-    if (sessionKey == null || sessionKey.isEmpty) {
-      // first handshake, update visa document first
-      logInfo('update visa for first handshake');
-      await updateVisa();
-    } else if (sessionKey == session.key) {
+    if (sessionKey == session.sessionKey) {
       logWarning('duplicated session key: $sessionKey');
     }
     await super.handshake(sessionKey);
   }
 
+  @override
   Future<bool> updateVisa() async {
     User? user = await facebook.currentUser;
     if (user == null) {

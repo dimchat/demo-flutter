@@ -31,7 +31,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_section_list/flutter_section_list.dart';
 
-import 'package:lnc/notification.dart' as lnc;
+import 'package:dim_client/ok.dart' as lnc;
 import 'package:tvbox/lives.dart';
 
 import '../common/constants.dart';

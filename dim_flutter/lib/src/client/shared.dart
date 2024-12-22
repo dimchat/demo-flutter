@@ -1,8 +1,11 @@
-import 'package:dim_client/dim_client.dart';
+
+import 'package:dim_client/group.dart';
+import 'package:dim_client/client.dart';
 
 import '../models/config.dart';
 
 import 'client.dart';
+import 'compat/loader.dart';
 import 'database.dart';
 import 'emitter.dart';
 import 'facebook.dart';
@@ -11,15 +14,50 @@ import 'messenger.dart';
 
 class GlobalVariable {
   factory GlobalVariable() => _instance;
-  static final GlobalVariable _instance = GlobalVariable._internal(SharedDatabase());
-  GlobalVariable._internal(this.database)
-      : adb = database, mdb = database, sdb = database, emitter = Emitter() {
-    _registerPlugins();
-    archivist = SharedArchivist(database);
-    facebook = SharedFacebook();
-    terminal = Client(facebook, database);
-    terminal.start();
-    // get common assistants
+  static final GlobalVariable _instance = GlobalVariable._internal();
+  GlobalVariable._internal() {
+    /// Step 1: prepare
+    config = createConfig();
+    /// Step 2: create database
+    database = createDatabase();
+    /// Step 3: create facebook
+    facebook = createFacebook(database);
+    /// Step 4: create client
+    terminal = createClient(facebook, database);
+    /// Step 5: create emitter
+    emitter = createEmitter();
+    /// Step 6: set messenger
+  }
+
+  late final Config config;
+  late final SharedDatabase database;
+
+  late final SharedFacebook facebook;
+  late SharedMessenger? _messenger;
+
+  late final Emitter emitter;
+  late final Client terminal;
+
+  SharedMessenger? get messenger => _messenger;
+  /// Step 6: set messenger
+  set messenger(SharedMessenger? transceiver) {
+    _messenger = transceiver;
+    // set for group manger
+    SharedGroupManager man = SharedGroupManager();
+    man.messenger = transceiver;
+    // set for entity checker
+    var checker = facebook.checker;
+    if (checker is ClientChecker) {
+      checker.messenger = transceiver;
+    } else {
+      assert(false, 'entity checker error: $checker');
+    }
+  }
+
+  /// Step 1: prepare
+  static Config createConfig() {
+    var loader = ExtensionLoader();
+    loader.run();
     Config config = Config();
     config.assistants.then((bots) {
       if (bots.isNotEmpty) {
@@ -27,74 +65,36 @@ class GlobalVariable {
         man.delegate.setCommonAssistants(bots);
       }
     });
+    return config;
   }
 
-  final AccountDBI adb;
-  final MessageDBI mdb;
-  final SessionDBI sdb;
-  final SharedDatabase database;
+  /// Step 2: create database
+  static SharedDatabase createDatabase() {
+    // create db
+    return SharedDatabase();
+  }
 
-  late final ClientArchivist archivist;
-
-  final Emitter emitter;
-
-  SharedFacebook? _facebook;
-  SharedFacebook get facebook => _facebook!;
-  set facebook(SharedFacebook barrack) {
-    _facebook = barrack;
+  /// Step 3: create facebook
+  static SharedFacebook createFacebook(SharedDatabase db) {
+    var facebook = SharedFacebook(db);
+    facebook.archivist = SharedArchivist(facebook, db);
+    facebook.checker = ClientChecker(facebook, db);
+    // set for group manager
     SharedGroupManager man = SharedGroupManager();
-    man.facebook = barrack;
+    man.facebook = facebook;
+    return facebook;
   }
 
-  SharedMessenger? _messenger;
-  SharedMessenger? get messenger => _messenger;
-  set messenger(SharedMessenger? transceiver) {
-    assert(transceiver != null, 'messenger should not empty');
-    _messenger = transceiver;
-    SharedGroupManager man = SharedGroupManager();
-    man.messenger = transceiver;
+  /// Step 4: create client
+  static Client createClient(SharedFacebook facebook, SharedDatabase db) {
+    var client = Client(facebook, db);
+    client.start();
+    return client;
   }
 
-  late final Client terminal;
-
-}
-
-void _registerPlugins() {
-
-  ClientFacebook.prepare();
-
-  /// TODO: register address factory (extends BaseAddressFactory)
-  ///       seeing 'dim_client - /lib/src/common/compat/entity.dart:118'
-  // Address.setFactory(_CompatibleAddressFactory());
-
-  /// TODO: register meta factory (implements MetaFactory)
-  ///       seeing 'dim_client - /lib/src/common/compat/meta.dart:168'
-  // Meta.setFactory(MetaType.kMKM,   _CompatibleMetaFactory(MetaType.kMKM));
-  // Meta.setFactory(MetaType.kBTC,   _CompatibleMetaFactory(MetaType.kBTC));
-  // Meta.setFactory(MetaType.kExBTC, _CompatibleMetaFactory(MetaType.kExBTC));
-
-  //
-  //  Register command/content parsers
-  //
-
-  // Report (online, offline)
-  Command.setFactory("broadcast", CommandParser((dict) => BaseReportCommand(dict)));
-  Command.setFactory(ReportCommand.kOnline, CommandParser((dict) => BaseReportCommand(dict)));
-  Command.setFactory(ReportCommand.kOffline, CommandParser((dict) => BaseReportCommand(dict)));
-
-  // // Storage (contacts, private_key)
-  // Command.setFactory(StorageCommand.STORAGE, StorageCommand::new);
-  // Command.setFactory(StorageCommand.CONTACTS, StorageCommand::new);
-  // Command.setFactory(StorageCommand.PRIVATE_KEY, StorageCommand::new);
-
-  // Search (users)
-  Command.setFactory(SearchCommand.kSearch, CommandParser((dict) => BaseSearchCommand(dict)));
-  Command.setFactory(SearchCommand.kOnlineUsers, CommandParser((dict) => BaseSearchCommand(dict)));
-
-  // Name Card
-  Content.setFactory(ContentType.kNameCard, ContentParser((dict) => NameCardContent(dict)));
-
-  // Quote
-  Content.setFactory(ContentType.kQuote, ContentParser((dict) => BaseQuoteContent(dict)));
+  /// Step 5: create emitter
+  static Emitter createEmitter() {
+    return Emitter();
+  }
 
 }

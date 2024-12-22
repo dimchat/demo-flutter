@@ -3,7 +3,7 @@ import 'package:flutter/widgets.dart';
 import 'package:get/get.dart';
 import 'package:permission_handler/permission_handler.dart';
 
-import 'package:lnc/log.dart';
+import 'package:dim_client/ok.dart';
 
 import '../common/platform.dart';
 import 'alert.dart';

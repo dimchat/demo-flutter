@@ -42,8 +42,8 @@ import 'package:chewie/src/center_play_button.dart';
 
 import 'package:provider/provider.dart';
 
-import 'package:lnc/log.dart';
-import 'package:stargate/startrek.dart' show Ticker;
+import 'package:dim_client/ok.dart';
+import 'package:dim_client/ws.dart' show Ticker;
 
 import '../utils/keyboard.dart';
 import 'metronome.dart';
@@ -84,7 +84,7 @@ class _CustomControlsState extends State<CustomControls>
   ChewieController get chewieController => _chewieController!;
 
   @override
-  Future<void> tick(DateTime now, int elapsed) async {
+  Future<void> tick(DateTime now, Duration elapsed) async {
     var metronome = VideoPlayerMetronome();
     await metronome.touchPlayerControllers(controller, _chewieController);
   }

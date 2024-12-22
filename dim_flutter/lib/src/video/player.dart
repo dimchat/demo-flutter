@@ -32,10 +32,10 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
-import 'package:lnc/log.dart';
-import 'package:lnc/notification.dart' as lnc;
+import 'package:dim_client/ok.dart';
+import 'package:dim_client/ok.dart' as lnc;
+import 'package:dim_client/ws.dart' show Runner;
 import 'package:pnf/dos.dart';
-import 'package:stargate/startrek.dart' show Runner;
 
 import '../common/constants.dart';
 import '../screens/cast.dart';
@@ -142,7 +142,7 @@ class _VideoAppState extends State<VideoPlayerPage> with Logging implements lnc.
     if (mounted) {
       setState(() {});
     }
-    await Runner.sleep(milliseconds: 128);
+    await Runner.sleep(const Duration(milliseconds: 128));
     openVideo(url);
   }
 

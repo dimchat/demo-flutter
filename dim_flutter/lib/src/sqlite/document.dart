@@ -1,5 +1,7 @@
-import 'package:lnc/log.dart';
-import 'package:lnc/notification.dart';
+
+import 'package:dim_client/ok.dart';
+import 'package:dim_client/sdk.dart';
+import 'package:dim_client/common.dart';
 
 import '../common/constants.dart';
 import 'helper/sqlite.dart';
@@ -22,9 +24,9 @@ Document _extractDocument(ResultSet resultSet, int index) {
   Document doc = Document.create(type, identifier!, data: data, signature: ted);
   if (type == '*') {
     if (identifier.isUser) {
-      type = Document.kVisa;
+      type = Document.VISA;
     } else {
-      type = Document.kBulletin;
+      type = Document.BULLETIN;
     }
   }
   doc['type'] = type;

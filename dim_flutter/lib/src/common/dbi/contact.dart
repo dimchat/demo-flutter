@@ -28,7 +28,8 @@
  * SOFTWARE.
  * =============================================================================
  */
-import 'package:dim_client/dim_client.dart';
+import 'package:dim_client/sdk.dart';
+
 
 class ContactRemark {
   ContactRemark(this.identifier, {required this.alias, required this.description});

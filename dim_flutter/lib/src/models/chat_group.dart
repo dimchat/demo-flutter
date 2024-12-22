@@ -3,9 +3,12 @@ import 'dart:typed_data';
 import 'package:flutter/cupertino.dart';
 import 'package:get/get.dart';
 
-import 'package:dim_client/dim_client.dart';
-import 'package:lnc/log.dart';
-import 'package:lnc/notification.dart' as lnc;
+import 'package:dim_client/ok.dart' as lnc;
+import 'package:dim_client/ok.dart';
+import 'package:dim_client/sdk.dart';
+import 'package:dim_client/common.dart';
+import 'package:dim_client/group.dart';
+import 'package:dim_client/client.dart';
 
 import '../client/shared.dart';
 import '../common/dbi/contact.dart';
@@ -353,7 +356,7 @@ class GroupInfo extends Conversation with Logging {
   void _doQuit(BuildContext ctx, ID group, ID user) {
     // 1. quit group
     SharedGroupManager man = SharedGroupManager();
-    man.quitGroup(group).then((out) {
+    man.quitGroup(group: group).then((out) {
       // 2. remove conversation
       Amanuensis clerk = Amanuensis();
       clerk.removeConversation(group);

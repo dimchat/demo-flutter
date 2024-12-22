@@ -4,7 +4,7 @@ import 'package:flutter/painting.dart';
 import 'package:flutter_markdown/flutter_markdown.dart';
 import 'package:syntax_highlight/syntax_highlight.dart';
 
-import 'package:lnc/log.dart';
+import 'package:dim_client/ok.dart';
 
 import '../ui/brightness.dart';
 

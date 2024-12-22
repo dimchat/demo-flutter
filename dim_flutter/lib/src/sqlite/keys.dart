@@ -1,5 +1,7 @@
-import 'package:lnc/log.dart';
-import 'package:lnc/notification.dart';
+
+import 'package:dim_client/ok.dart';
+import 'package:dim_client/sdk.dart';
+import 'package:dim_client/common.dart';
 
 import '../channels/manager.dart';
 import '../common/constants.dart';
@@ -280,7 +282,7 @@ class MsgKeyCache implements CipherKeyDBI {
         _caches[receiver] = keyMap;
       }
       // create new key
-      key = SymmetricKey.generate(SymmetricKey.kAES);
+      key = SymmetricKey.generate(SymmetricKey.AES);
       keyMap[sender] = key!;
       Log.warning('cipher key generated: $sender -> $receiver');
     }

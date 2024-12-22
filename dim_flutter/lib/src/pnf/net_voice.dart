@@ -30,8 +30,9 @@
  */
 import 'package:flutter/cupertino.dart';
 
-import 'package:dim_client/dim_client.dart';
-import 'package:lnc/notification.dart' as lnc;
+import 'package:dim_client/sdk.dart';
+import 'package:dim_client/ok.dart';
+import 'package:dim_client/ok.dart' as lnc;
 import 'package:pnf/dos.dart';
 import 'package:pnf/pnf.dart' show PortableNetworkStatus;
 

@@ -1,5 +1,7 @@
-import 'package:dim_client/dim_client.dart';
 
+import 'package:dim_client/sdk.dart';
+import 'package:dim_client/common.dart';
+import 'package:dim_client/client.dart';
 
 class ClientHandshakeProcessor extends HandshakeCommandProcessor {
   ClientHandshakeProcessor(super.facebook, super.messenger);
@@ -11,7 +13,7 @@ class ClientHandshakeProcessor extends HandshakeCommandProcessor {
       BaseHandshakeCommand.from(kTestSpeed);
 
   @override
-  Future<List<Content>> process(Content content, ReliableMessage rMsg) async {
+  Future<List<Content>> processContent(Content content, ReliableMessage rMsg) async {
     assert(content is HandshakeCommand, 'handshake command error: $content');
     HandshakeCommand command = content as HandshakeCommand;
     String title = command.title;
@@ -22,7 +24,7 @@ class ClientHandshakeProcessor extends HandshakeCommandProcessor {
       logError('unexpected test speed command: $content');
       return [];
     }
-    return await super.process(content, rMsg);
+    return await super.processContent(content, rMsg);
   }
 
 }

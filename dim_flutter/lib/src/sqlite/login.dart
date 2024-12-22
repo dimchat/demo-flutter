@@ -1,5 +1,7 @@
-import 'package:lnc/log.dart';
-import 'package:lnc/notification.dart';
+
+import 'package:dim_client/ok.dart';
+import 'package:dim_client/sdk.dart';
+import 'package:dim_client/common.dart';
 
 import '../common/constants.dart';
 import 'helper/sqlite.dart';

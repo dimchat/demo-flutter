@@ -1,5 +1,6 @@
 import 'package:flutter/services.dart';
-import 'package:lnc/log.dart';
+
+import 'package:dim_client/ok.dart';
 
 import 'audio.dart';
 import 'keychain.dart';

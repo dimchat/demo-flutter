@@ -31,8 +31,9 @@
 import 'package:pnf/dos.dart';
 import 'package:sqflite/sqflite.dart';
 
-import 'package:dim_client/dim_client.dart';
-import 'package:lnc/log.dart';
+import 'package:dim_client/ok.dart';
+import 'package:dim_client/sqlite.dart';
+import 'package:dim_client/sdk.dart';
 
 import '../../common/platform.dart';
 import '../../filesys/local.dart';

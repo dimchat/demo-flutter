@@ -1,4 +1,6 @@
-import 'package:dim_client/dim_client.dart';
+
+import 'package:dim_client/sdk.dart';
+import 'package:dim_client/common.dart';
 
 import 'manager.dart';
 

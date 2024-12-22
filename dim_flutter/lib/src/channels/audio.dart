@@ -1,5 +1,6 @@
 import 'package:flutter/services.dart';
-import 'package:lnc/notification.dart';
+
+import 'package:dim_client/ok.dart';
 
 import '../common//constants.dart';
 import 'manager.dart';

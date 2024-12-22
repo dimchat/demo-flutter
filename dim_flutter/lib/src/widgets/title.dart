@@ -1,8 +1,8 @@
 import 'package:flutter/cupertino.dart';
 
-import 'package:dim_client/dim_client.dart';
-import 'package:lnc/log.dart';
-import 'package:lnc/notification.dart' as lnc;
+import 'package:dim_client/ok.dart';
+import 'package:dim_client/ok.dart' as lnc;
+import 'package:dim_client/client.dart';
 
 import '../common/constants.dart';
 import '../client/shared.dart';

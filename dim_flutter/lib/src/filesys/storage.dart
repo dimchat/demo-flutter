@@ -30,8 +30,7 @@
  */
 import 'package:get/get.dart';
 
-import 'package:lnc/log.dart';
-import 'package:lnc/notification.dart';
+import 'package:dim_client/ok.dart';
 import 'package:pnf/dos.dart';
 
 import '../common/constants.dart';

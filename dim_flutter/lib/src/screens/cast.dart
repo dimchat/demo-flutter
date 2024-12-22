@@ -30,7 +30,7 @@
  */
 import 'package:castscreen/castscreen.dart';
 
-import 'package:lnc/log.dart';
+import 'package:dim_client/ok.dart';
 
 import 'device.dart';
 

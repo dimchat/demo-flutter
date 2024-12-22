@@ -6,8 +6,8 @@ import 'package:flutter_markdown/flutter_markdown.dart';
 import 'package:pnf/dos.dart';
 import 'package:markdown/markdown.dart' as md;
 
-import 'package:dim_client/dim_client.dart';
-import 'package:lnc/log.dart';
+import 'package:dim_client/ok.dart';
+import 'package:dim_client/sdk.dart';
 
 import '../client/shared.dart';
 import '../pnf/auto_image.dart';
@@ -429,7 +429,7 @@ abstract class _MarkdownUtils {
   }
 
   static void _previewImage(BuildContext ctx, ImageContent imageContent) {
-    var head = Envelope.create(sender: ID.kAnyone, receiver: ID.kAnyone);
+    var head = Envelope.create(sender: ID.ANYONE, receiver: ID.ANYONE);
     var msg = InstantMessage.create(head, imageContent);
     previewImageContent(ctx, imageContent, [msg]);
   }

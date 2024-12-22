@@ -1,5 +1,6 @@
-import 'package:dim_client/dim_client.dart';
-import 'package:lnc/log.dart';
+import 'package:dim_client/ok.dart';
+import 'package:dim_client/sdk.dart';
+import 'package:dim_client/common.dart';
 
 import '../client/shared.dart';
 import '../models/config.dart';
@@ -8,7 +9,7 @@ import '../models/station.dart';
 /// get nearest station, chosen provider first
 Future<NeighborInfo?> getNeighborStation() async {
   GlobalVariable shared = GlobalVariable();
-  SessionDBI database = shared.sdb;
+  SessionDBI database = shared.database;
   try {
     await _updateStations(database);
   } catch (e, st) {

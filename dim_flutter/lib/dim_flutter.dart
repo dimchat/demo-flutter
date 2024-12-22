@@ -1,7 +1,15 @@
 library dim_flutter;
 
-export 'package:dim_client/dim_client.dart';
-export 'package:lnc/log.dart';
+export 'package:dim_client/ok.dart';
+// export 'package:dim_client/ws.dart';
+export 'package:dim_client/sdk.dart';
+export 'package:dim_client/sqlite.dart';
+
+export 'package:dim_client/compat.dart';
+export 'package:dim_client/common.dart';
+export 'package:dim_client/network.dart';
+export 'package:dim_client/group.dart';
+export 'package:dim_client/client.dart';
 
 export 'src/dim_channels.dart';
 export 'src/dim_client.dart';

@@ -1,4 +1,7 @@
-import 'package:dim_client/dim_client.dart';
+
+import 'package:dim_client/sdk.dart';
+import 'package:dim_client/common.dart';
+import 'package:dim_client/client.dart';
 
 import 'any.dart';
 import 'handshake.dart';
@@ -11,11 +14,11 @@ class SharedContentProcessorCreator extends ClientContentProcessorCreator {
   @override
   ContentProcessor? createContentProcessor(int msgType) {
     // customizable text
-    if (msgType == ContentType.kText) {
+    if (msgType == ContentType.TEXT) {
       return TextContentProcessor(facebook!, messenger!);
     }
     // default
-    if (msgType == 0) {
+    if (msgType == ContentType.ANY) {
       return AnyContentProcessor(facebook!, messenger!);
     }
     // others
@@ -25,12 +28,12 @@ class SharedContentProcessorCreator extends ClientContentProcessorCreator {
   @override
   ContentProcessor? createCommandProcessor(int msgType, String cmd) {
     // search (users)
-    if (cmd == SearchCommand.kOnlineUsers ||
-        cmd == SearchCommand.kSearch) {
+    if (cmd == SearchCommand.ONLINE_USERS ||
+        cmd == SearchCommand.SEARCH) {
       return SearchCommandProcessor(facebook!, messenger!);
     }
     // handshake
-    if (cmd == HandshakeCommand.kHandshake) {
+    if (cmd == HandshakeCommand.HANDSHAKE) {
       return ClientHandshakeProcessor(facebook!, messenger!);
     }
     // others

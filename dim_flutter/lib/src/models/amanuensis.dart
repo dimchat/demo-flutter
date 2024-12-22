@@ -1,6 +1,8 @@
-import 'package:dim_client/dim_client.dart';
-import 'package:lnc/log.dart';
-import 'package:lnc/notification.dart';
+
+import 'package:dim_client/ok.dart';
+import 'package:dim_client/sdk.dart';
+import 'package:dim_client/common.dart';
+import 'package:dim_client/client.dart';
 
 import '../common/constants.dart';
 import '../client/shared.dart';
@@ -380,7 +382,7 @@ class Amanuensis with Logging {
       // send keys again
       ID me = iMsg.receiver;
       ID group = content.group!;
-      SymmetricKey? key = await shared.mdb.getCipherKey(sender: me, receiver: group);
+      SymmetricKey? key = await shared.database.getCipherKey(sender: me, receiver: group);
       if (key != null) {
         //key.put("reused", null);
         key.remove("reused");

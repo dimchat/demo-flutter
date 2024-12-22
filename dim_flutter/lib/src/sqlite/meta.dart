@@ -1,5 +1,7 @@
-import 'package:lnc/log.dart';
-import 'package:lnc/notification.dart';
+
+import 'package:dim_client/ok.dart';
+import 'package:dim_client/sdk.dart';
+import 'package:dim_client/common.dart';
 
 import '../common/constants.dart';
 import 'helper/sqlite.dart';
@@ -43,7 +45,7 @@ class _MetaTable extends DataTableHandler<Meta> implements MetaDBI {
 
   @override
   Future<bool> saveMeta(Meta meta, ID entity) async {
-    int type = meta.type;
+    int type = MetaType.parseInt(meta.type, 0);
     String json = JSON.encode(meta.publicKey.toMap());
     String seed;
     String fingerprint;

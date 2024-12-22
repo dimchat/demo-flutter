@@ -1,9 +1,10 @@
 import 'package:flutter/cupertino.dart';
 import 'package:get/get.dart';
 
-import 'package:dim_client/dim_client.dart';
-import 'package:lnc/log.dart';
-import 'package:lnc/notification.dart' as lnc;
+import 'package:dim_client/ok.dart' as lnc;
+import 'package:dim_client/ok.dart';
+import 'package:dim_client/sdk.dart';
+import 'package:dim_client/common.dart';
 
 import '../client/packer.dart';
 import '../common/dbi/contact.dart';
@@ -66,7 +67,7 @@ class ContactInfo extends Conversation {
     } else if (isBlocked) {
       // blocked user will not show in stranger list
       return false;
-    } else if (identifier.type == EntityType.kStation) {
+    } else if (identifier.type == EntityType.STATION) {
       // should not add the station as a friend
       return false;
     }

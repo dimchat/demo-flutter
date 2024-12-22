@@ -1,11 +1,12 @@
 import 'dart:typed_data';
 
-import 'package:dim_client/dim_client.dart';
-import 'package:lnc/log.dart';
-import 'package:lnc/notification.dart';
+import 'package:dim_client/ok.dart';
+import 'package:dim_client/ws.dart';
+import 'package:dim_client/sdk.dart';
+import 'package:dim_client/group.dart';
+import 'package:dim_client/client.dart';
 import 'package:pnf/dos.dart';
 import 'package:pnf/pnf.dart' show URLHelper;
-import 'package:stargate/startrek.dart';
 
 import '../common/constants.dart';
 import '../models/amanuensis.dart';
@@ -400,7 +401,7 @@ class Emitter with Logging implements Observer {
     //
     //  3. send
     //
-    ReliableMessage? rMsg = await sendInstantMessage(iMsg, priority: DeparturePriority.kSlower);
+    ReliableMessage? rMsg = await sendInstantMessage(iMsg, priority: DeparturePriority.SLOWER);
     if (rMsg == null && !receiver.isGroup) {
       logWarning('not send yet (type=${content.type}): $receiver');
     }

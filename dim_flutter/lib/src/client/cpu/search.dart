@@ -1,6 +1,7 @@
-import 'package:dim_client/dim_client.dart';
-import 'package:lnc/log.dart';
-import 'package:lnc/notification.dart';
+
+import 'package:dim_client/ok.dart';
+import 'package:dim_client/sdk.dart';
+import 'package:dim_client/client.dart';
 
 import '../../common/constants.dart';
 import '../facebook.dart';
@@ -10,7 +11,7 @@ class SearchCommandProcessor extends BaseCommandProcessor {
   SearchCommandProcessor(super.facebook, super.messenger);
 
   @override
-  Future<List<Content>> process(Content content, ReliableMessage rMsg) async {
+  Future<List<Content>> processContent(Content content, ReliableMessage rMsg) async {
     assert(content is SearchCommand, 'search command error: $content');
     SearchCommand command = content as SearchCommand;
 

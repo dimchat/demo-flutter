@@ -1,16 +1,37 @@
-import 'package:dim_client/dim_client.dart';
 
-import 'shared.dart';
+import 'package:dim_client/sdk.dart';
+import 'package:dim_client/group.dart';
+import 'package:dim_client/client.dart';
 
 
 class SharedFacebook extends ClientFacebook {
-  SharedFacebook();
+  SharedFacebook(super.database);
 
   @override
-  CommonArchivist get archivist {
-    GlobalVariable shared = GlobalVariable();
-    return shared.archivist;
+  Future<User?> selectLocalUser(ID receiver) async {
+    if (receiver.isBroadcast) {
+      List<User> users = await archivist.localUsers;
+      if (users.isEmpty) {
+        assert(false, 'local users should not be empty');
+        return null;
+      } else {
+        // broadcast message can decrypt by anyone, so just return current user
+        logInfo('select first user for broadcast receiver: $receiver -> $users');
+        return users.first;
+      }
+    }
+    return await super.selectLocalUser(receiver);
   }
+
+  Future<PortableNetworkFile?> getAvatar(ID user) async {
+    Visa? doc = await getVisa(user);
+    return doc?.avatar;
+  }
+
+}
+
+class SharedArchivist extends ClientArchivist {
+  SharedArchivist(super.facebook, super.database);
 
   @override
   Future<Group?> createGroup(ID identifier) async {
@@ -24,85 +45,6 @@ class SharedFacebook extends ClientFacebook {
       }
     }
     return group;
-  }
-
-  Future<PortableNetworkFile?> getAvatar(ID user) async {
-    Visa? doc = await getVisa(user);
-    return doc?.avatar;
-  }
-
-}
-
-class SharedArchivist extends ClientArchivist {
-  SharedArchivist(super.database);
-
-  @override
-  CommonFacebook? get facebook {
-    GlobalVariable shared = GlobalVariable();
-    return shared.facebook;
-  }
-
-  @override
-  CommonMessenger? get messenger {
-    GlobalVariable shared = GlobalVariable();
-    return shared.messenger;
-  }
-
-  @override
-  Future<bool> checkMeta(ID identifier, Meta? meta) async {
-    if (identifier.isBroadcast) {
-      // broadcast entity has no meta to query
-      return false;
-    }
-    return await super.checkMeta(identifier, meta);
-  }
-
-  @override
-  Future<bool> checkDocuments(ID identifier, List<Document> documents) async {
-    if (identifier.isBroadcast) {
-      // broadcast entity has no document to update
-      return false;
-    }
-    return await super.checkDocuments(identifier, documents);
-  }
-
-  @override
-  Future<bool> checkMembers(ID group, List<ID> members) async {
-    if (group.isBroadcast) {
-      // broadcast group has no members to update
-      return false;
-    }
-    return await super.checkMembers(group, members);
-  }
-
-  @override
-  Future<bool> queryMeta(ID identifier) async {
-    var session = messenger?.session;
-    if (session is ClientSession && session.isReady) {} else {
-      logWarning('querying meta cancel, waiting to connect: $identifier -> $session');
-      return false;
-    }
-    return await super.queryMeta(identifier);
-  }
-
-  @override
-  Future<bool> queryDocuments(ID identifier, List<Document> documents) async {
-    var session = messenger?.session;
-    if (session is ClientSession && session.isReady) {} else {
-      logWarning('querying documents cancel, waiting to connect: $identifier -> $session');
-      return false;
-    }
-    return await super.queryDocuments(identifier, documents);
-  }
-
-  @override
-  Future<bool> queryMembers(ID group, List<ID> members) async {
-    Session? session = messenger?.session;
-    if (session is ClientSession && session.isReady) {} else {
-      logWarning('querying members cancel, waiting to connect: $group');
-      return false;
-    }
-    return await super.queryMembers(group, members);
   }
 
 }

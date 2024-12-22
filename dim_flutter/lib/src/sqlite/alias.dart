@@ -1,4 +1,6 @@
-import 'package:lnc/notification.dart';
+
+import 'package:dim_client/ok.dart';
+import 'package:dim_client/sdk.dart';
 
 import '../common/dbi/contact.dart';
 import '../common/constants.dart';

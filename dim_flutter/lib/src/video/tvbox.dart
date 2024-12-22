@@ -32,8 +32,8 @@ import 'dart:typed_data';
 
 import 'package:flutter/material.dart';
 
-import 'package:dim_client/dim_common.dart';
-import 'package:lnc/log.dart';
+import 'package:dim_client/ok.dart';
+import 'package:dim_client/sdk.dart';
 import 'package:pnf/http.dart';
 import 'package:tvbox/lives.dart';
 

@@ -32,7 +32,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_inappwebview/flutter_inappwebview.dart';
 
-import 'package:lnc/log.dart';
+import 'package:dim_client/ok.dart';
 
 import '../ui/icons.dart';
 import '../ui/nav.dart';

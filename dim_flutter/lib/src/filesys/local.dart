@@ -30,7 +30,7 @@
  */
 import 'package:path_provider/path_provider.dart';
 
-import 'package:lnc/log.dart';
+import 'package:dim_client/ok.dart';
 import 'package:pnf/dos.dart';
 
 import '../channels/manager.dart';

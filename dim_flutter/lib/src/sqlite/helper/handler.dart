@@ -30,8 +30,8 @@
  */
 import 'package:mutex/mutex.dart';
 
-import 'package:dim_client/dim_client.dart';
-import 'package:lnc/log.dart';
+import 'package:dim_client/ok.dart';
+import 'package:dim_client/sqlite.dart';
 
 import 'connector.dart';
 

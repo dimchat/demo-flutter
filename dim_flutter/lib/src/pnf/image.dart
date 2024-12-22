@@ -34,8 +34,8 @@ import 'dart:typed_data';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter_image_compress/flutter_image_compress.dart';
 
-import 'package:dim_client/dim_common.dart';
-import 'package:lnc/log.dart';
+import 'package:dim_client/sdk.dart';
+import 'package:dim_client/ok.dart';
 
 import '../ui/icons.dart';
 

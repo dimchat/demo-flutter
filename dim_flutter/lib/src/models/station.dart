@@ -1,5 +1,7 @@
-import 'package:dim_client/dim_client.dart';
-import 'package:lnc/log.dart';
+
+import 'package:dim_client/ok.dart';
+import 'package:dim_client/sdk.dart';
+import 'package:dim_client/common.dart';
 
 import '../common/dbi/network.dart';
 import '../client/shared.dart';
@@ -61,7 +63,7 @@ class NeighborInfo {
   static Future<NeighborInfo> newStation(StationInfo record) async =>
       await _StationManager().newStation(
           record.host, record.port,
-          provider: record.provider ?? ProviderInfo.kGSP, chosen: record.chosen
+          provider: record.provider ?? ProviderInfo.GSP, chosen: record.chosen
       );
 
   /// get stations for speed tested

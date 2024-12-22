@@ -28,8 +28,8 @@
  * SOFTWARE.
  * =============================================================================
  */
-import 'package:lnc/log.dart';
-import 'package:stargate/startrek.dart';
+import 'package:dim_client/ok.dart';
+import 'package:dim_client/ws.dart';
 
 
 /// Castable Device
@@ -70,7 +70,7 @@ abstract class ScreenDiscoverer {
 class ScreenManager extends Runner with Logging {
   factory ScreenManager() => _instance;
   static final ScreenManager _instance = ScreenManager._internal();
-  ScreenManager._internal() : super(Runner.intervalSlow) {
+  ScreenManager._internal() : super(Runner.INTERVAL_SLOW) {
     /*await */run();
   }
 
@@ -99,7 +99,7 @@ class ScreenManager extends Runner with Logging {
     } else {
       int count = 128;
       while (count > 0) {
-        await Runner.sleep(milliseconds: 512);
+        await Runner.sleep(const Duration(milliseconds: 512));
         if (_scanning) {
           count += 1;
         } else {

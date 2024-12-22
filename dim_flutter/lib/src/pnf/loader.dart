@@ -28,7 +28,7 @@
  * SOFTWARE.
  * =============================================================================
  */
-import 'package:lnc/notification.dart';
+import 'package:dim_client/ok.dart';
 import 'package:pnf/pnf.dart';
 
 import '../filesys/local.dart';

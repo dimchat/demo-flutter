@@ -2,10 +2,12 @@ import 'dart:ui';
 
 import 'package:device_info_plus/device_info_plus.dart';
 import 'package:get/get.dart';
-import 'package:lnc/notification.dart';
 import 'package:package_info_plus/package_info_plus.dart';
 
-import 'package:dim_client/dim_client.dart';
+import 'package:dim_client/ok.dart';
+import 'package:dim_client/sdk.dart';
+import 'package:dim_client/common.dart';
+import 'package:dim_client/client.dart';
 
 import '../common/constants.dart';
 import '../common/platform.dart';
@@ -69,7 +71,7 @@ class Client extends Terminal {
   @override
   ClientMessenger createMessenger(ClientSession session, CommonFacebook facebook) {
     GlobalVariable shared = GlobalVariable();
-    SharedMessenger messenger = SharedMessenger(session, facebook, shared.mdb);
+    SharedMessenger messenger = SharedMessenger(session, facebook, shared.database);
     shared.messenger = messenger;
     return messenger;
   }
@@ -87,12 +89,14 @@ class Client extends Terminal {
   Future<void> onAppLifecycleStateChanged(AppLifecycleState state) async {
     switch (state) {
       case AppLifecycleState.resumed:
+        logWarning('AppLifecycleState::enterForeground $state');
         await enterForeground();
         break;
       case AppLifecycleState.inactive:
         break;
       case AppLifecycleState.paused:
       case AppLifecycleState.detached:
+        logWarning('AppLifecycleState::enterBackground $state');
         await enterBackground();
         break;
       default:

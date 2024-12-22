@@ -30,8 +30,9 @@
  */
 import 'dart:typed_data';
 
-import 'package:dim_client/dim_client.dart';
-import 'package:lnc/log.dart';
+import 'package:dim_client/common.dart';
+import 'package:dim_client/ok.dart';
+import 'package:dim_client/sdk.dart';
 
 import 'keychain.dart';
 
@@ -41,7 +42,7 @@ class Account {
 
   final AccountDBI database;
 
-  static int type = MetaType.kETH;
+  static int type = MetaType.ETH;
 
   ///  Create user account
   ///
@@ -57,11 +58,11 @@ class Account {
     // 2. generate private key from mnemonic
     PrivateKey? idKey;
     int network = type;
-    if (network == MetaType.kETH || network == MetaType.kExETH) {
+    if (network == MetaType.ETH || network == MetaType.ExETH) {
       idKey = await keychain.ethKey;
     } else {
-      assert(network == MetaType.kBTC || network == MetaType.kExBTC
-          || network == MetaType.kMKM, 'meta type error: $network');
+      assert(network == MetaType.BTC || network == MetaType.ExBTC
+          || network == MetaType.MKM, 'meta type error: $network');
       idKey = await keychain.btcKey;
     }
     Log.debug('get private key: $idKey, mnemonic: $mnemonic');
@@ -77,15 +78,15 @@ class Account {
     //
     //  Step 1: generate meta with private key & meta type
     //
-    Meta meta = Meta.generate(type, idKey);
+    Meta meta = Meta.generate(MetaType.parseString(type), idKey);
     //
     //  Step 2: generate user ID with meta & address type
     //
-    ID identifier = ID.generate(meta, EntityType.kUser);
+    ID identifier = ID.generate(meta, EntityType.USER);
     //
     //  Step 3: generate private key (RSA) for communication
     //
-    PrivateKey msgKey = PrivateKey.generate(AsymmetricKey.kRSA)!;
+    PrivateKey msgKey = PrivateKey.generate(AsymmetricKey.RSA)!;
     //
     //  Step 4: generate visa with ID and sign with private key
     //

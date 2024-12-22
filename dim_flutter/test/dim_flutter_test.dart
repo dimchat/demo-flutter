@@ -1,5 +1,7 @@
 import 'dart:typed_data';
 
+import 'package:dim_client/ok.dart';
+
 import 'package:bip32/bip32.dart';
 import 'package:bip39/bip39.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -75,7 +77,11 @@ void main() {
     expect(await dimFlutterPlugin.getPlatformVersion(), '42');
 
     Log.level = Log.kDebug;
-    ClientFacebook.prepare();
+
+    var pluginLoader = ClientPluginLoader();
+    var loader = CommonLoader(pluginLoader);
+    loader.run();
+
     batch(10000);
   });
 }

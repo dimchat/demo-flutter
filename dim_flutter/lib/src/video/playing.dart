@@ -28,7 +28,7 @@
  * SOFTWARE.
  * =============================================================================
  */
-import 'package:dim_client/dim_common.dart';
+import 'package:dim_client/sdk.dart';
 import 'package:pnf/dos.dart';
 import 'package:tvbox/lives.dart';
 

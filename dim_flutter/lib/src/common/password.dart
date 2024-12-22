@@ -25,7 +25,8 @@
  */
 import 'dart:typed_data';
 
-import 'package:dim_client/dim_client.dart';
+import 'package:dim_client/sdk.dart';
+
 
 ///  This is for generating symmetric key with a text string
 class Password {
@@ -54,7 +55,7 @@ class Password {
     Uint8List iv = digest.sublist(digest.length - _blockSize);
     // generate AES key
     Map key = {
-      'algorithm': SymmetricKey.kAES,
+      'algorithm': SymmetricKey.AES,
       'data': Base64.encode(data),
       'iv': Base64.encode(iv),
     };

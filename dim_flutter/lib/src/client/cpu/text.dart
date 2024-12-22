@@ -1,6 +1,6 @@
-import 'package:dim_client/dim_client.dart';
-import 'package:lnc/log.dart';
-import 'package:lnc/notification.dart';
+
+import 'package:dim_client/ok.dart';
+import 'package:dim_client/sdk.dart';
 
 import '../../common/constants.dart';
 
@@ -9,7 +9,7 @@ class TextContentProcessor extends BaseContentProcessor {
   TextContentProcessor(super.facebook, super.messenger);
 
   @override
-  Future<List<Content>> process(Content content, ReliableMessage rMsg) async {
+  Future<List<Content>> processContent(Content content, ReliableMessage rMsg) async {
     assert(content is TextContent, 'text content error: $content');
     String? text = content['text'];
     if (text != null && text.length > 128) {

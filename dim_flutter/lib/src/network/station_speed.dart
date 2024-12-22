@@ -30,7 +30,8 @@
  */
 import 'dart:typed_data';
 
-import 'package:dim_client/dim_client.dart';
+import 'package:dim_client/sdk.dart';
+import 'package:dim_client/common.dart';
 
 import '../client/cpu/handshake.dart';
 import '../client/facebook.dart';
@@ -133,7 +134,7 @@ class StationSpeeder {
       return null;
     }
     ID uid = user.identifier;
-    ID sid = Station.kAny;
+    ID sid = Station.ANY;
     // check current user's meta & visa document
     Meta? meta = await facebook.getMeta(uid);
     Visa? visa = await facebook.getVisa(uid);
@@ -146,7 +147,7 @@ class StationSpeeder {
     // create message envelope and handshake command
     Envelope env = Envelope.create(sender: uid, receiver: sid);
     Content content = ClientHandshakeProcessor.createTestSpeedCommand();
-    content.group = Station.kEvery;
+    content.group = Station.EVERY;
     // create instant message with meta & visa
     InstantMessage iMsg = InstantMessage.create(env, content);
     iMsg.setMap('meta', meta);
@@ -163,7 +164,7 @@ class _StationDataSource {
 
   Future<void> reload() async {
     GlobalVariable shared = GlobalVariable();
-    SessionDBI database = shared.sdb;
+    SessionDBI database = shared.database;
     var records = await database.allProviders();
     List<ID> providers = _sortProviders(records);
     for (ID pid in providers) {
@@ -209,14 +210,14 @@ List<ID> _sortProviders(List<ProviderInfo> records) {
     providers.add(item.identifier);
   }
   // 2. set GSP to the front
-  int pos = providers.indexOf(ProviderInfo.kGSP);
+  int pos = providers.indexOf(ProviderInfo.GSP);
   if (pos < 0) {
     // gsp not exists, insert to the front
-    providers.insert(0, ProviderInfo.kGSP);
+    providers.insert(0, ProviderInfo.GSP);
   } else if (pos > 0) {
     // move to the front
     providers.removeAt(pos);
-    providers.insert(0, ProviderInfo.kGSP);
+    providers.insert(0, ProviderInfo.GSP);
   }
   return providers;
 }

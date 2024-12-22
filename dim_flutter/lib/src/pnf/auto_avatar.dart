@@ -30,9 +30,9 @@
  */
 import 'package:flutter/cupertino.dart';
 
-import 'package:dim_client/dim_client.dart';
-import 'package:lnc/log.dart';
-import 'package:lnc/notification.dart' as lnc;
+import 'package:dim_client/sdk.dart';
+import 'package:dim_client/ok.dart';
+import 'package:dim_client/ok.dart' as lnc;
 
 import '../client/shared.dart';
 import '../common/constants.dart';
@@ -294,13 +294,13 @@ class _AvatarImageView extends PortableImageView {
 
   static Widget getNoImage(ID identifier, {double? width, double? height}) {
     double? size = width ?? height;
-    if (identifier.type == EntityType.kStation) {
+    if (identifier.type == EntityType.STATION) {
       return Icon(AppIcons.stationIcon, size: size, color: Styles.colors.avatarColor);
-    } else if (identifier.type == EntityType.kBot) {
+    } else if (identifier.type == EntityType.BOT) {
       return Icon(AppIcons.botIcon, size: size, color: Styles.colors.avatarColor);
-    } else if (identifier.type == EntityType.kISP) {
+    } else if (identifier.type == EntityType.ISP) {
       return Icon(AppIcons.ispIcon, size: size, color: Styles.colors.avatarColor);
-    } else if (identifier.type == EntityType.kICP) {
+    } else if (identifier.type == EntityType.ICP) {
       return Icon(AppIcons.icpIcon, size: size, color: Styles.colors.avatarColor);
     }
     if (identifier.isUser) {

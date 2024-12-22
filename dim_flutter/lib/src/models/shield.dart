@@ -1,5 +1,7 @@
-import 'package:dim_client/dim_client.dart';
-import 'package:lnc/log.dart';
+
+import 'package:dim_client/ok.dart';
+import 'package:dim_client/sdk.dart';
+import 'package:dim_client/common.dart';
 
 import '../client/shared.dart';
 
@@ -32,7 +34,7 @@ class Shield {
     BlockCommand command = BlockCommand.fromList(contacts);
     // broadcast 'block-list' to all stations,
     // so that the blocked user's message will be stopped at the first station.
-    await messenger.sendContent(command, sender: null, receiver: Station.kEvery, priority: 1);
+    await messenger.sendContent(command, sender: null, receiver: Station.EVERY, priority: 1);
   }
 
   ///
@@ -58,7 +60,7 @@ class Shield {
     // send 'mute-list' to current station only,
     // because other stations will know that where this user is roaming to,
     // and only the last roamed station will push notification when the user is offline.
-    await messenger.sendContent(command, sender: null, receiver: Station.kAny, priority: 1);
+    await messenger.sendContent(command, sender: null, receiver: Station.ANY, priority: 1);
   }
 
 }

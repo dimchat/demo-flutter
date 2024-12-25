@@ -35,6 +35,7 @@ import 'package:bip39/bip39.dart';
 
 import 'package:dim_client/ok.dart';
 import 'package:dim_client/sdk.dart';
+import 'package:dim_client/plugins.dart';
 import 'package:dim_client/common.dart';
 
 

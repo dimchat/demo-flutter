@@ -119,7 +119,7 @@ class ContactInfo extends Conversation {
     _lastActiveTime = visa?.time;
     var pair = await shared.database.getLoginCommandMessage(identifier);
     DateTime? loginTime = pair.first?.time;
-    if (DocumentHelper.isBefore(loginTime, _lastActiveTime)) {
+    if (DocumentUtils.isBefore(loginTime, _lastActiveTime)) {
       _lastActiveTime = loginTime;
     }
     // get friendship

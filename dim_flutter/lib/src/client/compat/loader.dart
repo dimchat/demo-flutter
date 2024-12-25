@@ -1,5 +1,6 @@
 
 import 'package:dim_client/sdk.dart';
+import 'package:dim_client/plugins.dart';
 import 'package:dim_client/compat.dart';
 import 'package:dim_client/common.dart';
 import 'package:dim_client/client.dart';
@@ -28,9 +29,6 @@ class ExtensionLoader extends CommonLoader {
 
     // Name Card
     Content.setFactory(ContentType.NAME_CARD, ContentParser((dict) => NameCardContent(dict)));
-
-    // Quote
-    Content.setFactory(ContentType.QUOTE, ContentParser((dict) => BaseQuoteContent(dict)));
 
   }
 

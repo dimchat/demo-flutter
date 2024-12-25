@@ -82,11 +82,30 @@ class SharedMessenger extends ClientMessenger {
 
   @override
   Future<void> handshake(String? sessionKey) async {
-    if (sessionKey == session.sessionKey) {
-      logWarning('duplicated session key: $sessionKey');
+    if (sessionKey == null) {
+      logInfo('first handshake: ${session.remoteAddress}');
+      // _lastDuplicatedTime = null;
+    } else if (sessionKey == session.sessionKey) {
+      logWarning('duplicated session key: $sessionKey, ${session.remoteAddress}');
+      DateTime? now = DateTime.now();
+      DateTime? last = _lastDuplicatedTime;
+      if (!session.isReady) {
+        logInfo('session not ready, handshake again: $sessionKey');
+      } else if (last == null) {
+        logInfo('handshake again: $sessionKey');
+      } else if (last.add(const Duration(seconds: 5)).isAfter(now)) {
+        // now < last + 5s
+        // FIXME:
+        logWarning('ignore duplicated handshake: $session');
+        return;
+      }
+      _lastDuplicatedTime = now;
+    } else {
+      _lastDuplicatedTime = null;
     }
     await super.handshake(sessionKey);
   }
+  DateTime? _lastDuplicatedTime;
 
   @override
   Future<bool> updateVisa() async {

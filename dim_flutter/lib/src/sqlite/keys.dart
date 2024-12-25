@@ -5,6 +5,7 @@ import 'package:dim_client/common.dart';
 
 import '../channels/manager.dart';
 import '../common/constants.dart';
+import '../common/password.dart';
 import '../common/platform.dart';
 import 'helper/sqlite.dart';
 
@@ -267,7 +268,7 @@ class MsgKeyCache implements CipherKeyDBI {
                                       bool generate = false}) async {
     if (receiver.isBroadcast) {
       // broadcast message has no key
-      return PlainKey.getInstance();
+      return Password.plainKey;
     }
     SymmetricKey? key;
     // check cache first

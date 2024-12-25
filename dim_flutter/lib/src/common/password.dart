@@ -26,10 +26,15 @@
 import 'dart:typed_data';
 
 import 'package:dim_client/sdk.dart';
+import 'package:dim_client/plugins.dart';
 
 
 ///  This is for generating symmetric key with a text string
 class Password {
+
+  // ignore: constant_identifier_names
+  static const String PLAIN = PlainKey.PLAIN;
+  static final SymmetricKey plainKey = PlainKey.getInstance();
 
   static const int _keySize = 32;
   static const int _blockSize = 16;

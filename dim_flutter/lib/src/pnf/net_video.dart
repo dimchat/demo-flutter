@@ -31,9 +31,10 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
-import 'package:dim_client/sdk.dart';
 import 'package:dim_client/ok.dart';
+import 'package:dim_client/sdk.dart';
 
+import '../common/password.dart';
 import '../ui/icons.dart';
 import '../video/player.dart';
 import '../video/playing.dart';
@@ -172,7 +173,7 @@ class _PortableVideoLoader extends PortableFileLoader {
       return _showError('URL not found', null, CupertinoColors.systemRed);
     }
     var password = pnf.password;
-    if (password != null && password.algorithm != PlainKey.PLAIN) {
+    if (password != null && password.algorithm != Password.PLAIN) {
       return _showError('Download not supported', null, CupertinoColors.systemRed);
     }
     var icon = const Icon(AppIcons.playVideoIcon, color: CupertinoColors.white);

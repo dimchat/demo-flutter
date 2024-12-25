@@ -333,7 +333,7 @@ class Newest {
     }
     // if the client has a different major version number,
     // it must be upgraded now.
-    clientVersion = clientVersion.substring(0, pos);
+    clientVersion = clientVersion.substring(0, pos + 1);
     return !version.startsWith(clientVersion);
   }
 
@@ -351,7 +351,7 @@ class Newest {
     // if the client has a same major version number,
     // but a different minor version number,
     // it should be upgraded now.
-    clientVersion = clientVersion.substring(0, pos);
+    clientVersion = clientVersion.substring(0, pos + 1);
     return !version.startsWith(clientVersion);
   }
 

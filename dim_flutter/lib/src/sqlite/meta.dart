@@ -103,7 +103,7 @@ class MetaCache extends _MetaTable {
   @override
   Future<bool> saveMeta(Meta meta, ID entity) async {
     // 0. check valid
-    if (meta.isValid && meta.matchIdentifier(entity)) {} else {
+    if (!checkMeta(meta, entity)) {
       Log.error('meta not match: $entity');
       return false;
     }
@@ -129,6 +129,10 @@ class MetaCache extends _MetaTable {
       'meta': meta,
     });
     return true;
+  }
+
+  bool checkMeta(Meta meta, ID identifier) {
+    return meta.isValid && MetaUtils.matchIdentifier(identifier, meta);
   }
 
 }

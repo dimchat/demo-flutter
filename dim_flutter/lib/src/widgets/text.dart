@@ -10,6 +10,7 @@ import 'package:dim_client/ok.dart';
 import 'package:dim_client/sdk.dart';
 
 import '../client/shared.dart';
+import '../common/password.dart';
 import '../pnf/auto_image.dart';
 import '../pnf/image.dart';
 import '../ui/icons.dart';
@@ -293,7 +294,7 @@ abstract class _MarkdownUtils {
         // show image
         Log.info('preview image: $url');
         var imageContent = FileContent.image(url: url,
-          password: PlainKey.getInstance(),
+          password: Password.plainKey,
         );
         _previewImage(context, imageContent);
       } else if (type == _MimeType.video) {
@@ -383,7 +384,7 @@ abstract class _MarkdownUtils {
       Log.error('image url error: $url');
       return _errorImage(url, title: title, alt: alt);
     }
-    var plain = PlainKey.getInstance();
+    var plain = Password.plainKey;
     var imageContent = FileContent.image(url: url, password: plain);
     var pnf = PortableNetworkFile.parse(imageContent);
     // check file type

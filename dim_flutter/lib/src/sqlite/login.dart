@@ -123,7 +123,7 @@ class LoginCommandCache extends _LoginCommandTable {
   Future<bool> saveLoginCommandMessage(ID identifier, LoginCommand content, ReliableMessage rMsg) async {
     // 1. check old record
     LoginCommand? old = (await getLoginCommandMessage(identifier)).first;
-    if (DocumentHelper.isBefore(old?.time, content.time)) {
+    if (DocumentUtils.isBefore(old?.time, content.time)) {
       Log.warning('expired command: $identifier');
       return false;
     }

@@ -1,14 +1,15 @@
 import 'dart:typed_data';
 
-import 'package:dim_client/ok.dart';
-
 import 'package:bip32/bip32.dart';
 import 'package:bip39/bip39.dart';
+import 'package:plugin_platform_interface/plugin_platform_interface.dart';
 import 'package:flutter_test/flutter_test.dart';
+
+import 'package:dim_client/plugins.dart';
+
 import 'package:dim_flutter/dim_flutter.dart';
 import 'package:dim_flutter/dim_flutter_platform_interface.dart';
 import 'package:dim_flutter/dim_flutter_method_channel.dart';
-import 'package:plugin_platform_interface/plugin_platform_interface.dart';
 
 class MockDimFlutterPlatform
     with MockPlatformInterfaceMixin

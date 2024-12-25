@@ -9,6 +9,7 @@ import 'package:pnf/dos.dart';
 import 'package:pnf/pnf.dart' show URLHelper;
 
 import '../common/constants.dart';
+import '../common/password.dart';
 import '../models/amanuensis.dart';
 import '../filesys/upload.dart';
 
@@ -140,7 +141,7 @@ class Emitter with Logging implements Observer {
       return false;
     }
     // 2. add upload task with encrypted data
-    Uint8List encrypted = password.encrypt(data, content);
+    Uint8List encrypted = password.encrypt(data, content.toMap());
     /// NOTICE:
     ///     Because the filename here is a MD5 string of the plaintext,
     ///     but the encrypted data must be different every time, so
@@ -152,6 +153,7 @@ class Emitter with Logging implements Observer {
       filename = 'filename.$ext';
     }
     filename = URLHelper.filenameFromData(encrypted, filename);
+    // now upload the encrypted data with new filename
     FileUploader ftp = FileUploader();
     Uri? url = await ftp.uploadEncryptData(encrypted, filename, sender);
     if (url == null) {
@@ -165,6 +167,7 @@ class Emitter with Logging implements Observer {
     // 3. replace file data with URL & decrypt key
     content.url = url;
     content.password = password;
+    // content.filename = filename;  // DON'T change the original filename!
     content.data = null;
     return true;
   }
@@ -219,9 +222,7 @@ class Emitter with Logging implements Observer {
         Map<String, Object>? extra, required ID receiver}) async {
     assert(jpeg.isNotEmpty, 'image data should not empty');
     // rebuild filename
-    String ext = Paths.extension(filename) ?? 'jpeg';
-    filename = Hex.encode(MD5.digest(jpeg));
-    filename = '$filename.$ext';
+    filename = URLHelper.filenameFromData(jpeg, filename);
     // create image content
     TransportableData ted = TransportableData.create(jpeg);
     ImageContent content = FileContent.image(filename: filename, data: ted);
@@ -247,9 +248,7 @@ class Emitter with Logging implements Observer {
         required ID receiver}) async {
     assert(mp4.isNotEmpty, 'voice data should not empty');
     // rebuild filename
-    String ext = Paths.extension(filename) ?? 'mp4';
-    filename = Hex.encode(MD5.digest(mp4));
-    filename = '$filename.$ext';
+    filename = URLHelper.filenameFromData(mp4, filename);
     // create audio content
     TransportableData ted = TransportableData.create(mp4);
     AudioContent content = FileContent.audio(filename: filename, data: ted);
@@ -264,7 +263,7 @@ class Emitter with Logging implements Observer {
         Map<String, Object>? extra, required ID receiver}) async {
     VideoContent content = FileContent.video(url: url,
       filename: filename,
-      password: PlainKey.getInstance(),
+      password: Password.plainKey,
     );
     content['title'] = title;
     content['snapshot'] = snapshot;
@@ -286,32 +285,12 @@ class Emitter with Logging implements Observer {
       return const Pair(null, null);
     }
     ID sender = user.identifier;
-    //
-    //  1. pack instant message
-    //
+    // pack instant message
     Envelope envelope = Envelope.create(sender: sender, receiver: receiver);
     InstantMessage iMsg = InstantMessage.create(envelope, content);
-    //
-    //  2. check file content
-    //
-    if (content is FileContent) {
-      // encrypt & upload file data before send out
-      if (content.data != null/* && content.url == null*/) {
-        SymmetricKey? password = await shared.messenger?.getEncryptKey(iMsg);
-        if (password == null) {
-          assert(false, 'failed to get encrypt key: ''$sender => $receiver, ${iMsg['group']}');
-          return Pair(iMsg, null);
-        } else if (await uploadFileData(content, password: password, sender: sender)) {
-          logInfo('uploaded file data for sender: $sender, ${content.filename}');
-        } else {
-          logError('failed to upload file data for sender: $sender, ${content.filename}');
-          return Pair(iMsg, null);
-        }
-      }
-    }
-    //
-    //  3. send
-    //
+    // NOTICE: even if the message content is a FileContent,
+    //         there is no need to process the file data here too, because
+    //         the message packer will handle it before encryption.
     ReliableMessage? rMsg = await sendInstantMessage(iMsg, priority: priority);
     if (rMsg == null && !receiver.isGroup) {
       logWarning('not send yet (type=${content.type}): $receiver');

@@ -4,6 +4,8 @@ import 'package:dim_client/sdk.dart';
 
 import '../common/dbi/message.dart';
 import '../common/constants.dart';
+
+import 'helper/error.dart';
 import 'helper/sqlite.dart';
 
 
@@ -73,9 +75,17 @@ class MessageDatabase extends DatabaseConnector {
 
 
 InstantMessage _extractInstantMessage(ResultSet resultSet, int index) {
-  String? json = resultSet.getString('msg');
-  Map? msg = JSONMap.decode(json!);
-  return InstantMessage.parse(msg)!;
+  String json = resultSet.getString('msg') ?? '';
+  InstantMessage? msg;
+  try {
+    Map? info = JSONMap.decode(json);
+    msg = InstantMessage.parse(info);
+  } catch(e, st) {
+    Log.error('failed to extract message: $json');
+    Log.error('failed to extract message: $e, $st');
+  }
+  // build error message
+  return msg ?? DBErrorPatch.rebuildMessage(json);
 }
 
 
@@ -83,7 +93,9 @@ class InstantMessageTable extends DataTableHandler<InstantMessage> implements In
   InstantMessageTable() : super(MessageDatabase(), _extractInstantMessage);
 
   static const String _table = MessageDatabase.tInstantMessage;
-  static const List<String> _selectColumns = ["msg"];
+  // static const List<String> _selectColumns = ["msg"];
+  // static const List<String> _selectColumns = ['SUBSTR(msg, 0, 1048576) AS msg'];
+  static const List<String> _selectColumns = ['SUBSTR(msg, 0, 1024000) AS msg'];
   static const List<String> _insertColumns = ["cid", "sender",/* "receiver",*/
     "time", "type", "sn", "signature",/* "content",*/ "msg"];
 
@@ -114,6 +126,13 @@ class InstantMessageTable extends DataTableHandler<InstantMessage> implements In
       time = time ~/ 1000;
     }
     Content content = iMsg.content;
+    // check data in content to make sure it doesn't contain a big file
+    // that will caused a db error:
+    //      DatabaseException(Row too big to fit into CursorWindow ...)
+    if (content is FileContent && content.containsKey('data')) {
+      var data = content.remove('data');
+      logWarning('remove file data from message: $iMsg, $data');
+    }
     String? sig = iMsg.getString('signature', null);
     if (sig != null) {
       sig = sig.substring(sig.length - 8);

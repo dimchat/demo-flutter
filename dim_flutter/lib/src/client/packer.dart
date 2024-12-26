@@ -11,6 +11,7 @@ class SharedPacker extends ClientMessagePacker {
   @override
   Future<SecureMessage?> encryptMessage(InstantMessage iMsg) async {
     // make sure visa.key exists before encrypting message
+
     Content content = iMsg.content;
     if (content is FileContent) {
       if (content.data != null/* && content.url == null*/) {
@@ -21,8 +22,20 @@ class SharedPacker extends ClientMessagePacker {
           assert(false, 'failed to get encrypt key: '
               '${iMsg.sender} => ${iMsg.receiver}, ${iMsg['group']}');
         } else {
-          await shared.emitter.uploadFileData(content, password: password, sender: iMsg.sender);
+          bool ok = await shared.emitter.uploadFileData(content, password: password, sender: iMsg.sender);
+          if (!ok) {
+            Map<String, String> error = {
+              'message': 'failed to upload file data',
+              'user': iMsg.sender.toString(),
+            };
+            await suspendInstantMessage(iMsg, error);
+          }
         }
+      }
+      // make sure that the file data has been uploaded to CDN correctly.
+      if (content.data != null || content.url == null) {
+        logError('file content error: $content');
+        return null;
       }
     }
 

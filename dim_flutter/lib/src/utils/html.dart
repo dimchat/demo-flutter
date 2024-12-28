@@ -28,10 +28,13 @@
  * SOFTWARE.
  * =============================================================================
  */
+import 'dart:typed_data';
+
 import 'package:flutter/cupertino.dart';
 
 import 'package:dim_client/ok.dart';
 import 'package:dim_client/sdk.dart';
+import 'package:dim_client/plugins.dart';
 
 import '../widgets/browser.dart';
 
@@ -107,6 +110,13 @@ abstract class HtmlUri {
       {required PageContent content, OnWebShare? onWebShare}) {
     String url = getUriString(content);
     Browser.open(context, url, onWebShare: onWebShare);
+  }
+
+  /// "data:image/png;base64,{BASE64_ENCODE}"
+  static Uri encodeImageData(Uint8List img, {String mimeType = 'image/png'}) {
+    var ted = Base64Data.fromData(img);
+    var url = ted.encode(mimeType);
+    return Uri.parse(url);
   }
 
 }

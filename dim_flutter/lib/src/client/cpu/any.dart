@@ -30,6 +30,29 @@ class AnyContentProcessor extends BaseContentProcessor {
     } else if (content is PageContent) {
       // Web page
       text = "Web page received";
+    } else if (content is NameCard) {
+      // Name Card
+      text = "Name card received";
+    } else if (content is QuoteContent) {
+      // Quote
+      text = "Quote message received";
+    } else if (content is MoneyContent) {
+      if (content.type == ContentType.CLAIM_PAYMENT) {
+        // Claim Payment
+        text = "Claim payment received";
+      } else if (content.type == ContentType.SPLIT_BILL) {
+        // Split Bill
+        text = "Split bill received";
+      } else if (content.type == ContentType.LUCKY_MONEY) {
+        // Lucky Money
+        text = "Lucky money received";
+      } else if (content is TransferContent) {
+        // Transfer money
+        text = "Transfer money message received";
+      } else {
+        // other money
+        text = "Unrecognized money message";
+      }
     } else {
       // Other
       return await super.processContent(content, rMsg);

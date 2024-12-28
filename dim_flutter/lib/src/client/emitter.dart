@@ -96,7 +96,7 @@ class SharedEmitter extends Emitter implements Observer {
     iMsg['error'] = {
       'message': 'failed to upload file',
     };
-    return await _saveInstantMessage(iMsg);
+    await _saveInstantMessage(iMsg);
   }
 
   @override
@@ -107,35 +107,30 @@ class SharedEmitter extends Emitter implements Observer {
     return rMsg;
   }
 
-  static Future<void> _saveInstantMessage(InstantMessage iMsg) async {
+  static Future<bool> _saveInstantMessage(InstantMessage iMsg) async {
     Amanuensis clerk = Amanuensis();
-    await clerk.saveInstantMessage(iMsg).onError((error, stackTrace) {
+    return await clerk.saveInstantMessage(iMsg).onError((error, stackTrace) {
       Log.error('failed to save message: $error');
       return false;
     });
   }
 
   @override
-  Future<bool> uploadFileData(FileContent content,
-      {required SymmetricKey password, required ID sender}) async {
-    // 0. check file content
-    Uint8List? data = content.data;
-    if (data == null) {
-      logWarning('already uploaded: ${content.url}');
-      return content.url != null;
-    }
-    assert(content.password == null, 'file content error: $content');
-    assert(content.url == null, 'file content error: $content');
-    // 1. save origin file data
-    String? filename = content.filename;
-    assert(filename != null, 'content filename should not empty: $content');
-    int len = await FileUploader.cacheFileData(data, filename!);
-    if (len != data.length) {
-      logError('failed to save file data (len=${data.length}): $filename');
-      return content.url != null;
-    }
-    // 2. add upload task with encrypted data
-    Uint8List encrypted = password.encrypt(data, content.toMap());
+  Future<bool> cacheFileData(Uint8List data, String filename) async {
+    int len = await FileUploader.cacheFileData(data, filename);
+    return len == data.length;
+  }
+
+  @override
+  Future<Uint8List?> getFileData(String filename) async =>
+      await FileUploader.getFileData(filename);
+
+  @override
+  Future<bool> cacheInstantMessage(InstantMessage iMsg) async =>
+      await _saveInstantMessage(iMsg);
+
+  @override
+  Future<Uri?> uploadFileData(Uint8List encrypted, String filename, ID sender) async {
     /// NOTICE:
     ///     Because the filename here is a MD5 string of the plaintext,
     ///     but the encrypted data must be different every time, so
@@ -144,25 +139,11 @@ class SharedEmitter extends Emitter implements Observer {
     filename = URLHelper.filenameFromData(encrypted, filename);
     // now upload the encrypted data with new filename
     FileUploader ftp = FileUploader();
-    Uri? url = await ftp.uploadEncryptData(encrypted, filename, sender);
-    if (url == null) {
-      logError('failed to upload: ${content.filename} -> $filename');
-      // TODO: mark message failed
-      return false;
-    } else {
-      // upload success
-      logInfo('uploaded filename: ${content.filename} -> $filename => $url');
-    }
-    // 3. replace file data with URL & decrypt key
-    content.url = url;
-    content.password = password;
-    // content.filename = filename;  // DON'T change the original filename!
-    content.data = null;
-    return true;
+    return await ftp.uploadEncryptData(encrypted, filename, sender);
   }
 
   @override
-  Future<Pair<InstantMessage?, ReliableMessage?>> sendPicture(Uint8List jpeg, {
+  Future<bool> sendPicture(Uint8List jpeg, {
     required String filename, required PortableNetworkFile? thumbnail,
     Map<String, Object>? extra,
     required ID receiver
@@ -177,7 +158,7 @@ class SharedEmitter extends Emitter implements Observer {
   }
 
   @override
-  Future<Pair<InstantMessage?, ReliableMessage?>> sendVoice(Uint8List mp4, {
+  Future<bool> sendVoice(Uint8List mp4, {
     required String filename, required double duration,
     Map<String, Object>? extra,
     required ID receiver
@@ -192,7 +173,7 @@ class SharedEmitter extends Emitter implements Observer {
   }
 
   // @override
-  // Future<Pair<InstantMessage?, ReliableMessage?>> sendMovie(Uri url, {
+  // Future<bool> sendMovie(Uri url, {
   //   required PortableNetworkFile? snapshot, required String? title,
   //   String? filename, Map<String, Object>? extra,
   //   required ID receiver

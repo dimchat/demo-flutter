@@ -129,7 +129,7 @@ class FileUploader with Logging {
     // TODO: pick up the fastest API for upload
     for (var api in apiList) {
       if (api is Map) {
-        url = api['url'];
+        url = api['url'] ?? api['URL'];
         enigma = api['enigma'];
         if (enigma != null) {
           url = '$url&enigma=$enigma';
@@ -230,8 +230,8 @@ class FileUploader with Logging {
     }
     Map? info = JSONMap.decode(json);
     int code = info?['code'];
-    assert(code == 200, 'response error: $info');
-    String? download = info?['url'];
+    assert(code == 200, 'response error: $urlString -> $info');
+    String? download = info?['url'] ?? info?['URL'];
     if (download == null) {
       return null;
     }
@@ -244,6 +244,11 @@ class FileUploader with Logging {
   static Future<int> cacheFileData(Uint8List data, String filename) async {
     String? path = await _getCacheFilePath(filename);
     return await ExternalStorage.saveBinary(data, path);
+  }
+
+  static Future<Uint8List?> getFileData(String filename) async {
+    String? path = await _getCacheFilePath(filename);
+    return await ExternalStorage.loadBinary(path);
   }
 
   static Future<String> _getCacheFilePath(String filename) async {

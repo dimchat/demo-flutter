@@ -3,25 +3,36 @@ import 'dart:typed_data';
 import 'package:dim_client/ok.dart';
 import 'package:dim_client/ws.dart';
 import 'package:dim_client/sdk.dart';
-import 'package:dim_client/group.dart';
+import 'package:dim_client/common.dart';
 import 'package:dim_client/client.dart';
 import 'package:pnf/pnf.dart' show URLHelper;
 
 import '../common/constants.dart';
-import '../common/password.dart';
 import '../models/amanuensis.dart';
 import '../filesys/upload.dart';
 
 import 'shared.dart';
 
 
-class Emitter with Logging implements Observer {
-  Emitter() {
+class SharedEmitter extends Emitter implements Observer {
+  SharedEmitter() {
     var nc = NotificationCenter();
     nc.addObserver(this, NotificationNames.kFileUploadSuccess);
     nc.addObserver(this, NotificationNames.kFileUploadFailure);
   }
-  
+
+  @override
+  Future<User?> get currentUser async {
+    GlobalVariable shared = GlobalVariable();
+    return await shared.facebook.currentUser;
+  }
+
+  @override
+  Transmitter? get messenger {
+    GlobalVariable shared = GlobalVariable();
+    return shared.messenger;
+  }
+
   /// filename => task
   final Map<String, InstantMessage> _outgoing = {};
 
@@ -88,21 +99,10 @@ class Emitter with Logging implements Observer {
     return await _saveInstantMessage(iMsg);
   }
 
+  @override
   Future<ReliableMessage?> sendInstantMessage(InstantMessage iMsg, {int priority = 0}) async {
-    logInfo('send instant message (type=${iMsg.content.type}): ${iMsg.sender} -> ${iMsg.receiver}');
-    ReliableMessage? rMsg;
-    ID receiver = iMsg.receiver;
-    if (receiver.isGroup) {
-      // send by group manager
-      SharedGroupManager manager = SharedGroupManager();
-      rMsg = await manager.sendInstantMessage(iMsg, priority: priority);
-    } else {
-      // send by shared messenger
-      GlobalVariable shared = GlobalVariable();
-      ClientMessenger? mess = shared.messenger;
-      rMsg = await mess?.sendInstantMessage(iMsg, priority: priority);
-    }
-    // save instant message
+    ReliableMessage? rMsg = await super.sendInstantMessage(iMsg, priority: priority);
+    // save instant message after sent
     await _saveInstantMessage(iMsg);
     return rMsg;
   }
@@ -115,12 +115,7 @@ class Emitter with Logging implements Observer {
     });
   }
 
-  ///  Upload file data encrypted with password
-  ///
-  /// @param content  - file content
-  /// @param password - encrypt/decrypt key
-  /// @param sender   - from where
-  /// @return false on error
+  @override
   Future<bool> uploadFileData(FileContent content,
       {required SymmetricKey password, required ID sender}) async {
     // 0. check file content
@@ -166,157 +161,50 @@ class Emitter with Logging implements Observer {
     return true;
   }
 
-  ///  Send text message to receiver
-  ///
-  /// @param text     - text message
-  /// @param receiver - receiver ID
-  /// @throws IOException on failed to save message
-  Future<void> sendText(String text, {required ID receiver}) async {
-    TextContent content = TextContent.create(text);
-    // check text format
-    if (_checkMarkdown(text)) {
-      logInfo('send text as markdown: $text => $receiver');
-      content['format'] = 'markdown';
-    } else {
-      logInfo('send text as plain: $text -> $receiver');
-    }
-    await sendContent(content, receiver);
-  }
-  bool _checkMarkdown(String text) {
-    if (text.contains('://')) {
-      return true;
-    } else if (text.contains('\n> ')) {
-      return true;
-    } else if (text.contains('\n# ')) {
-      return true;
-    } else if (text.contains('\n## ')) {
-      return true;
-    } else if (text.contains('\n### ')) {
-      return true;
-    }
-    int pos = text.indexOf('```');
-    if (pos >= 0) {
-      pos += 3;
-      int next = text.codeUnitAt(pos);
-      if (next != '`'.codeUnitAt(0)) {
-        return text.indexOf('```', pos + 1) > 0;
-      }
-    }
-    return false;
-  }
-
-  ///  Send image message to receiver
-  ///
-  /// @param jpeg      - image data
-  /// @param thumbnail - image thumbnail
-  /// @param receiver  - receiver ID
-  /// @throws IOException on failed to save message
-  Future<void> sendImage(Uint8List jpeg,
-      {required String filename, String? thumbnail,
-        Map<String, Object>? extra, required ID receiver}) async {
-    assert(jpeg.isNotEmpty, 'image data should not empty');
+  @override
+  Future<Pair<InstantMessage?, ReliableMessage?>> sendPicture(Uint8List jpeg, {
+    required String filename, required PortableNetworkFile? thumbnail,
+    Map<String, Object>? extra,
+    required ID receiver
+  }) async {
     // rebuild filename
     filename = URLHelper.filenameFromData(jpeg, filename);
-    // create image content
-    TransportableData ted = TransportableData.create(jpeg);
-    ImageContent content = FileContent.image(filename: filename, data: ted);
-    // add image data length & thumbnail into message content
-    content['length'] = jpeg.length;
-    if (thumbnail != null) {
-      content['thumbnail'] = thumbnail;
-    }
-    if (extra != null) {
-      content.addAll(extra);
-    }
-    await sendContent(content, receiver);
+    return await super.sendPicture(jpeg,
+      filename: filename, thumbnail: thumbnail,
+      extra: extra,
+      receiver: receiver,
+    );
   }
 
-  ///  Send voice message to receiver
-  ///
-  /// @param mp4      - voice file
-  /// @param duration - length
-  /// @param receiver - receiver ID
-  /// @throws IOException on failed to save message
-  Future<void> sendVoice(Uint8List mp4,
-      {required String filename, required double duration,
-        required ID receiver}) async {
-    assert(mp4.isNotEmpty, 'voice data should not empty');
+  @override
+  Future<Pair<InstantMessage?, ReliableMessage?>> sendVoice(Uint8List mp4, {
+    required String filename, required double duration,
+    Map<String, Object>? extra,
+    required ID receiver
+  }) async {
     // rebuild filename
     filename = URLHelper.filenameFromData(mp4, filename);
-    // create audio content
-    TransportableData ted = TransportableData.create(mp4);
-    AudioContent content = FileContent.audio(filename: filename, data: ted);
-    // add voice data length & duration into message content
-    content['length'] = mp4.length;
-    content['duration'] = duration;
-    await sendContent(content, receiver);
-  }
-
-  Future<void> sendVideo(Uri url,
-      {String? filename, String? title, String? snapshot,
-        Map<String, Object>? extra, required ID receiver}) async {
-    VideoContent content = FileContent.video(url: url,
-      filename: filename,
-      password: Password.plainKey,
+    return await super.sendVoice(mp4,
+      filename: filename, duration: duration,
+      extra: extra,
+      receiver: receiver,
     );
-    content['title'] = title;
-    content['snapshot'] = snapshot;
-    if (extra != null) {
-      content.addAll(extra);
-    }
-    await sendContent(content, receiver);
   }
 
-  Future<Pair<InstantMessage?, ReliableMessage?>> sendContent(Content content, ID receiver, {int priority = 0}) async {
-    if (receiver.isGroup) {
-      assert(!content.containsKey('group') || content.group == receiver, 'group ID error: $receiver, $content');
-      content.group = receiver;
-    }
-    GlobalVariable shared = GlobalVariable();
-    User? user = await shared.facebook.currentUser;
-    if (user == null) {
-      assert(false, 'failed to get current user');
-      return const Pair(null, null);
-    }
-    ID sender = user.identifier;
-    //
-    //  1. pack instant message
-    //
-    Envelope envelope = Envelope.create(sender: sender, receiver: receiver);
-    InstantMessage iMsg = InstantMessage.create(envelope, content);
-    //
-    //  2. check file content
-    //
-    if (content is FileContent) {
-      // encrypt & upload file data before send out
-      if (content.data != null/* && content.url == null*/) {
-        // NOTICE: to avoid communication key leaks,
-        //         here we should generate a new key to encrypt file data,
-        //         because this key will be attached into file content,
-        //         if this content is forwarded, there is a security risk.
-        SymmetricKey? password = SymmetricKey.generate(SymmetricKey.AES);
-        logInfo('generated new password to upload file: $sender, $password');
-        // SymmetricKey? password = await shared.messenger?.getEncryptKey(iMsg);
-        if (password == null) {
-          assert(false, 'failed to generate AES key: $sender');
-          return Pair(iMsg, null);
-        } else if (await uploadFileData(content, password: password, sender: sender)) {
-          logInfo('uploaded file data for sender: $sender, ${content.filename}');
-        } else {
-          logError('failed to upload file data for sender: $sender, ${content.filename}');
-          return Pair(iMsg, null);
-        }
-      }
-    }
-    //
-    //  3. send message (without file data)
-    //
-    ReliableMessage? rMsg = await sendInstantMessage(iMsg, priority: priority);
-    if (rMsg == null && !receiver.isGroup) {
-      logWarning('not send yet (type=${content.type}): $receiver');
-    }
-    return Pair(iMsg, rMsg);
-  }
+  // @override
+  // Future<Pair<InstantMessage?, ReliableMessage?>> sendMovie(Uri url, {
+  //   required PortableNetworkFile? snapshot, required String? title,
+  //   String? filename, Map<String, Object>? extra,
+  //   required ID receiver
+  // }) async {
+  //   // rebuild filename
+  //   filename = URLHelper.filenameFromURL(url, filename);
+  //   return await super.sendMovie(url,
+  //     snapshot: snapshot, title: title,
+  //     extra: extra,
+  //     receiver: receiver,
+  //   );
+  // }
 
   //
   //  Recall Messages

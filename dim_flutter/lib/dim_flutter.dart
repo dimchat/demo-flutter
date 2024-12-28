@@ -4,6 +4,7 @@ export 'package:dim_client/ok.dart';
 // export 'package:dim_client/ws.dart';
 export 'package:dim_client/sdk.dart';
 export 'package:dim_client/sqlite.dart';
+export 'package:dim_client/plugins.dart';
 
 export 'package:dim_client/compat.dart';
 export 'package:dim_client/common.dart';

@@ -8,9 +8,9 @@ import 'package:markdown/markdown.dart' as md;
 
 import 'package:dim_client/ok.dart';
 import 'package:dim_client/sdk.dart';
+import 'package:dim_client/client.dart';
 
 import '../client/shared.dart';
-import '../common/password.dart';
 import '../pnf/auto_image.dart';
 import '../pnf/image.dart';
 import '../ui/icons.dart';

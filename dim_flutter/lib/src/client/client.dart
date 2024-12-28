@@ -1,19 +1,17 @@
 import 'dart:ui';
 
-import 'package:device_info_plus/device_info_plus.dart';
 import 'package:get/get.dart';
-import 'package:package_info_plus/package_info_plus.dart';
 
 import 'package:dim_client/ok.dart';
 import 'package:dim_client/sdk.dart';
 import 'package:dim_client/common.dart';
 import 'package:dim_client/client.dart';
+import 'package:dim_client/ws.dart' show Runner;
 
 import '../common/constants.dart';
-import '../common/platform.dart';
 import '../models/station.dart';
 import '../network/neighbor.dart';
-import '../widgets/permissions.dart';
+import 'compat/device.dart';
 
 import 'messenger.dart';
 import 'packer.dart';
@@ -84,6 +82,54 @@ class Client extends Terminal {
   @override
   Processor createProcessor(CommonFacebook facebook, ClientMessenger messenger) {
     return SharedProcessor(facebook, messenger);
+  }
+
+  //
+  //  App Lifecycle
+  //
+
+  Future<void> enterBackground() async {
+    ClientMessenger? transceiver = messenger;
+    if (transceiver == null) {
+      // not connect
+      return;
+    }
+    // check signed in user
+    ClientSession cs = transceiver.session;
+    ID? uid = cs.identifier;
+    if (uid != null) {
+      // already signed in, check session state
+      SessionState? state = cs.state;
+      if (state?.index == SessionStateOrder.running.index) {
+        // report client state
+        await transceiver.reportOffline(uid);
+        // sleep a while for waiting 'report' command sent
+        await Runner.sleep(const Duration(milliseconds: 512));
+      }
+    }
+    // pause the session
+    await cs.pause();
+  }
+  Future<void> enterForeground() async {
+    ClientMessenger? transceiver = messenger;
+    if (transceiver == null) {
+      // not connect
+      return;
+    }
+    ClientSession cs = transceiver.session;
+    // resume the session
+    await cs.resume();
+    // check signed in user
+    ID? uid = cs.identifier;
+    if (uid != null) {
+      // already signed in, wait a while to check session state
+      await Runner.sleep(const Duration(milliseconds: 512));
+      SessionState? state = cs.state;
+      if (state?.index == SessionStateOrder.running.index) {
+        // report client state
+        await transceiver.reportOnline(uid);
+      }
+    }
   }
 
   Future<void> onAppLifecycleStateChanged(AppLifecycleState state) async {
@@ -176,8 +222,8 @@ class Client extends Terminal {
   //  DeviceMixin
   //
 
-  final _DeviceInfo _deviceInfo = _DeviceInfo();
-  final _PackageInfo _packageInfo = _PackageInfo();
+  final DeviceInfo _deviceInfo = DeviceInfo();
+  final AppPackageInfo _packageInfo = AppPackageInfo();
 
   String get packageName => _packageInfo.packageName;
 
@@ -209,118 +255,5 @@ class Client extends Terminal {
 
   @override
   String get deviceManufacturer => _deviceInfo.deviceManufacturer;
-
-}
-
-class _DeviceInfo {
-  factory _DeviceInfo() => _instance;
-  static final _DeviceInfo _instance = _DeviceInfo._internal();
-  _DeviceInfo._internal() {
-    DeviceInfoPlugin info = DeviceInfoPlugin();
-    if (DevicePlatform.isWeb) {
-      info.webBrowserInfo.then(_loadWeb);
-    } else if (DevicePlatform.isAndroid) {
-      info.androidInfo.then(_loadAndroid);
-    } else if (DevicePlatform.isIOS) {
-      info.iosInfo.then(_loadIOS);
-    } else if (DevicePlatform.isMacOS) {
-      info.macOsInfo.then(_loadMacOS);
-    } else if (DevicePlatform.isLinux) {
-      info.linuxInfo.then(_loadLinux);
-    } else if (DevicePlatform.isWindows) {
-      info.windowsInfo.then(_loadWindows);
-    } else {
-      assert(false, 'unknown platform');
-    }
-    language = DevicePlatform.localeName;
-    // fix for android
-    fixPhotoPermissions();
-  }
-
-  void _loadWeb(WebBrowserInfo info) {
-    // FIXME: all
-    systemVersion = info.appVersion ?? '';
-    systemModel = info.appCodeName ?? '';
-    systemDevice = info.platform ?? '';
-    deviceBrand = info.product ?? '';
-    deviceBoard = info.productSub ?? '';
-    deviceManufacturer = info.vendor ?? '';
-  }
-  void _loadAndroid(AndroidDeviceInfo info) {
-    systemVersion = info.version.release;
-    systemModel = info.model;
-    systemDevice = info.device;
-    deviceBrand = info.brand;
-    deviceBoard = info.board;
-    deviceManufacturer = info.manufacturer;
-  }
-  void _loadIOS(IosDeviceInfo info) {
-    // FIXME: device, brand, board
-    systemVersion = info.systemVersion;
-    systemModel = info.model;
-    systemDevice = info.utsname.machine;
-    deviceBrand = "Apple";
-    deviceBoard = info.utsname.machine;
-    deviceManufacturer = "Apple Inc.";
-  }
-  void _loadMacOS(MacOsDeviceInfo info) {
-    // FIXME: device, brand, board
-    systemVersion = '${info.majorVersion}.${info.minorVersion}.${info.patchVersion}';
-    systemModel = info.model;
-    systemDevice = info.systemGUID ?? info.osRelease;
-    deviceBrand = "Apple";
-    deviceBoard = info.systemGUID ?? info.osRelease;
-    deviceManufacturer = "Apple Inc.";
-  }
-  void _loadLinux(LinuxDeviceInfo info) {
-    // FIXME: model, device, brand, board, manufacturer
-    systemVersion = info.version ?? info.versionId ?? info.versionCodename ?? '';
-    systemModel = info.name;
-    systemDevice = info.prettyName;
-    deviceBrand = "Linux";
-    deviceBoard = info.prettyName;
-    deviceManufacturer = "Linux";
-  }
-  void _loadWindows(WindowsDeviceInfo info) {
-    // FIXME: model, device, brand, board
-    systemVersion = '${info.majorVersion}.${info.minorVersion}.${info.buildNumber}';
-    systemModel = info.csdVersion;
-    systemDevice = info.deviceId;
-    deviceBrand = "Windows";
-    deviceBoard = info.productName;
-    deviceManufacturer = info.registeredOwner;
-  }
-
-  String language = "zh-CN";
-  String systemVersion = "4.0";
-  String systemModel = "HMS";
-  String systemDevice = "hammerhead";
-  String deviceBrand = "HUAWEI";
-  String deviceBoard = "hammerhead";
-  String deviceManufacturer = "HUAWEI";
-
-}
-
-class _PackageInfo {
-  factory _PackageInfo() => _instance;
-  static final _PackageInfo _instance = _PackageInfo._internal();
-  _PackageInfo._internal() {
-    PackageInfo.fromPlatform().then(_load);
-  }
-
-  void _load(PackageInfo info) {
-    packageName = info.packageName;
-    displayName = info.appName;
-    versionName = info.version;
-    buildNumber = info.buildNumber;
-  }
-
-  String packageName = "chat.dim.tarsier";
-
-  String displayName = "DIM";
-
-  String versionName = "1.0.0";
-
-  String buildNumber = "10001";
 
 }

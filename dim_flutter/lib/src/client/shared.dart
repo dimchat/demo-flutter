@@ -35,7 +35,7 @@ class GlobalVariable {
   late final SharedFacebook facebook;
   late SharedMessenger? _messenger;
 
-  late final Emitter emitter;
+  late final SharedEmitter emitter;
   late final Client terminal;
 
   SharedMessenger? get messenger => _messenger;
@@ -56,7 +56,7 @@ class GlobalVariable {
 
   /// Step 1: prepare
   static Config createConfig() {
-    var loader = ExtensionLoader();
+    var loader = ClientLoader();
     loader.run();
     Config config = Config();
     config.assistants.then((bots) {
@@ -93,8 +93,8 @@ class GlobalVariable {
   }
 
   /// Step 5: create emitter
-  static Emitter createEmitter() {
-    return Emitter();
+  static SharedEmitter createEmitter() {
+    return SharedEmitter();
   }
 
 }

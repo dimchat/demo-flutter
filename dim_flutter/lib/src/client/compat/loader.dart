@@ -5,9 +5,9 @@ import 'package:dim_client/compat.dart';
 import 'package:dim_client/common.dart';
 import 'package:dim_client/client.dart';
 
-class ExtensionLoader extends CommonLoader {
-  ExtensionLoader() : super(ClientPluginLoader());
-  // ExtensionLoader() : super(_PluginLoader());
+class ClientLoader extends CommonLoader {
+  ClientLoader() : super(ClientPluginLoader());
+  // ClientLoader() : super(_PluginLoader());
 
   @override
   void registerCommandFactories() {

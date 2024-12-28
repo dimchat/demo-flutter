@@ -1,6 +1,7 @@
 library dim_flutter;
 
 export 'client/compat/loader.dart';
+export 'client/compat/device.dart';
 
 export 'client/cpu/handshake.dart';
 export 'client/cpu/search.dart';

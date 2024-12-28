@@ -33,8 +33,8 @@ import 'package:flutter/material.dart';
 
 import 'package:dim_client/ok.dart';
 import 'package:dim_client/sdk.dart';
+import 'package:dim_client/client.dart';
 
-import '../common/password.dart';
 import '../ui/icons.dart';
 import '../video/player.dart';
 import '../video/playing.dart';

@@ -223,7 +223,7 @@ class GroupInfo extends Conversation with Logging {
         } else if (content is JoinCommand) {
           members = [rMsg.sender];
         } else {
-          logDebug('ignore group command: ${content.commandName}');
+          logDebug('ignore group command: ${content.cmd}');
           continue;
         }
         logInfo('${rMsg.sender} invites $members');

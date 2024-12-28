@@ -5,7 +5,6 @@ import 'package:dim_client/ws.dart';
 import 'package:dim_client/sdk.dart';
 import 'package:dim_client/group.dart';
 import 'package:dim_client/client.dart';
-import 'package:pnf/dos.dart';
 import 'package:pnf/pnf.dart' show URLHelper;
 
 import '../common/constants.dart';
@@ -48,7 +47,7 @@ class Emitter with Logging implements Observer {
     Map info = notification.userInfo!;
     if (name == NotificationNames.kFileUploadSuccess) {
       String filename = info['filename'];
-      Uri url = info['url'];
+      Uri url = info['url'] ?? info['URL'];
       await _onUploadSuccess(filename, url);
     } else if (name == NotificationNames.kFileUploadFailure) {
       String filename = info['filename'];
@@ -128,7 +127,7 @@ class Emitter with Logging implements Observer {
     Uint8List? data = content.data;
     if (data == null) {
       logWarning('already uploaded: ${content.url}');
-      return false;
+      return content.url != null;
     }
     assert(content.password == null, 'file content error: $content');
     assert(content.url == null, 'file content error: $content');
@@ -138,20 +137,15 @@ class Emitter with Logging implements Observer {
     int len = await FileUploader.cacheFileData(data, filename!);
     if (len != data.length) {
       logError('failed to save file data (len=${data.length}): $filename');
-      return false;
+      return content.url != null;
     }
     // 2. add upload task with encrypted data
     Uint8List encrypted = password.encrypt(data, content.toMap());
     /// NOTICE:
     ///     Because the filename here is a MD5 string of the plaintext,
     ///     but the encrypted data must be different every time, so
-    ///     we must rebuild the filename again.
-    String? ext = Paths.extension(filename);
-    if (ext == null || ext.isEmpty) {
-      filename = 'filename.dat';
-    } else {
-      filename = 'filename.$ext';
-    }
+    ///     we need to rebuild the filename here.
+    // rebuild filename
     filename = URLHelper.filenameFromData(encrypted, filename);
     // now upload the encrypted data with new filename
     FileUploader ftp = FileUploader();
@@ -285,12 +279,38 @@ class Emitter with Logging implements Observer {
       return const Pair(null, null);
     }
     ID sender = user.identifier;
-    // pack instant message
+    //
+    //  1. pack instant message
+    //
     Envelope envelope = Envelope.create(sender: sender, receiver: receiver);
     InstantMessage iMsg = InstantMessage.create(envelope, content);
-    // NOTICE: even if the message content is a FileContent,
-    //         there is no need to process the file data here too, because
-    //         the message packer will handle it before encryption.
+    //
+    //  2. check file content
+    //
+    if (content is FileContent) {
+      // encrypt & upload file data before send out
+      if (content.data != null/* && content.url == null*/) {
+        // NOTICE: to avoid communication key leaks,
+        //         here we should generate a new key to encrypt file data,
+        //         because this key will be attached into file content,
+        //         if this content is forwarded, there is a security risk.
+        SymmetricKey? password = SymmetricKey.generate(SymmetricKey.AES);
+        logInfo('generated new password to upload file: $sender, $password');
+        // SymmetricKey? password = await shared.messenger?.getEncryptKey(iMsg);
+        if (password == null) {
+          assert(false, 'failed to generate AES key: $sender');
+          return Pair(iMsg, null);
+        } else if (await uploadFileData(content, password: password, sender: sender)) {
+          logInfo('uploaded file data for sender: $sender, ${content.filename}');
+        } else {
+          logError('failed to upload file data for sender: $sender, ${content.filename}');
+          return Pair(iMsg, null);
+        }
+      }
+    }
+    //
+    //  3. send message (without file data)
+    //
     ReliableMessage? rMsg = await sendInstantMessage(iMsg, priority: priority);
     if (rMsg == null && !receiver.isGroup) {
       logWarning('not send yet (type=${content.type}): $receiver');

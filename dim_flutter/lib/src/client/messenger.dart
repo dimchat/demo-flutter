@@ -8,6 +8,7 @@ import 'package:dim_client/client.dart';
 import '../common/platform.dart';
 import '../models/config.dart';
 import '../models/shield.dart';
+import '../models/vestibule.dart';
 import '../network/velocity.dart';
 import '../ui/language.dart';
 import 'shared.dart';
@@ -60,7 +61,7 @@ class SharedMessenger extends ClientMessenger {
         }
       }
     }
-    return super.sendContent(content, sender: sender, receiver: receiver, priority: priority);
+    return await super.sendContent(content, sender: sender, receiver: receiver, priority: priority);
   }
 
   @override
@@ -146,7 +147,7 @@ class SharedMessenger extends ClientMessenger {
     // 5. save it
     bool ok = await facebook.saveDocument(visa);
     assert(ok, 'failed to save document: $visa');
-    logInfo('visa updated: $ok, $visa');
+    logWarning('visa updated: $ok, $visa');
     return ok;
   }
   Map _getAppInfo(Visa visa) {
@@ -221,6 +222,10 @@ class SharedMessenger extends ClientMessenger {
       logError('failed to broadcast block/mute list: $e, $st');
     }
     // 4. report station speeds to master after tested speeds
+
+    // 5. resume messages
+    Vestibule clerk = Vestibule();
+    await clerk.resumeMessages(user.identifier);
   }
 
   Future<void> reportSpeeds(List<VelocityMeter> meters, ID provider) async {

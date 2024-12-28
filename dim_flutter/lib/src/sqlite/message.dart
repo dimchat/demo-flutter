@@ -129,15 +129,22 @@ class InstantMessageTable extends DataTableHandler<InstantMessage> implements In
     // check data in content to make sure it doesn't contain a big file
     // that will caused a db error:
     //      DatabaseException(Row too big to fit into CursorWindow ...)
-    if (content is FileContent && content.containsKey('data')) {
-      var data = content.remove('data');
-      logWarning('remove file data from message: $iMsg, $data');
+    Map info;
+    if (content is FileContent/* && content.containsKey('data')*/) {
+      Map body = content.copyMap(false);
+      body.remove('data');
+      info = iMsg.copyMap(false);
+      info['content'] = body;
+    } else {
+      info = iMsg.toMap();
     }
+    // serializing without 'data'
+    String msg = JSON.encode(info);
+
     String? sig = iMsg.getString('signature', null);
     if (sig != null) {
       sig = sig.substring(sig.length - 8);
     }
-    String msg = JSON.encode(iMsg.toMap());
 
     // check old record
     SQLConditions cond;

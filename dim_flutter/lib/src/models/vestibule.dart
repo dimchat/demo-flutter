@@ -21,6 +21,10 @@ class Vestibule implements Observer {
   final Map<ID, List<ReliableMessage>> _incomingMessages = {};
   final Map<ID, List<InstantMessage>>  _outgoingMessages = {};
 
+  void purge() {
+    // TODO: remove expired messages in the maps
+  }
+
   @override
   Future<void> onReceiveNotification(Notification notification) async {
     String name = notification.name;
@@ -31,13 +35,8 @@ class Vestibule implements Observer {
     assert(info != null, 'user info error: $notification');
     GlobalVariable shared = GlobalVariable();
     SharedFacebook facebook = shared.facebook;
-    SharedMessenger? messenger = shared.messenger;
-    if (messenger == null) {
-      assert(false, 'messenger not create yet');
-      return;
-    }
 
-    // 1. check conversation ID
+    // check conversation ID
     ID? entity = ID.parse(info?['ID']);
     if (entity == null) {
       assert(false, 'conversation ID not found');
@@ -69,15 +68,32 @@ class Vestibule implements Observer {
       // TODO: check group members' visa.key
     }
 
-    // 2. processing outgoing messages
+    await resumeMessages(entity);
+  }
+
+  Future<bool> resumeMessages(ID entity) async {
+    GlobalVariable shared = GlobalVariable();
+    SharedMessenger? messenger = shared.messenger;
+    if (messenger == null) {
+      assert(false, 'messenger not create yet');
+      return false;
+    }
+    // 1. processing outgoing messages
     List<InstantMessage>? outgoing = _outgoingMessages.remove(entity);
     if (outgoing != null) {
       for (InstantMessage item in outgoing) {
         await shared.emitter.sendInstantMessage(item, priority: 1);
+        // receiver = item.receiver;
+        // if (receiver.isGroup) {
+        //   // send by group manager
+        //   await manager.sendInstantMessage(item, priority: 1);
+        // } else {
+        //   // send by shared messenger
+        //   await messenger.sendInstantMessage(item, priority: 1);
+        // }
       }
     }
-
-    // 3. processing incoming messages
+    // 2. processing incoming messages
     List<ReliableMessage>? incoming = _incomingMessages.remove(entity);
     if (incoming != null) {
       List<ReliableMessage>? responses;
@@ -91,12 +107,14 @@ class Vestibule implements Observer {
         }
       }
     }
+    return true;
   }
 
   void suspendReliableMessage(ReliableMessage rMsg) {
     // save this message in a queue waiting sender's meta response
     ID? waiting = ID.parse(rMsg['waiting']);
     if (waiting == null) {
+      waiting = ID.parse(rMsg['error']?['user']);
       waiting = rMsg.group;
       waiting ??= rMsg.sender;
     } else {
@@ -114,7 +132,8 @@ class Vestibule implements Observer {
     // save this message in a queue waiting receiver's visa/meta/members response
     ID? waiting = ID.parse(iMsg['waiting']);
     if (waiting == null) {
-      waiting = iMsg.group;
+      waiting = ID.parse(iMsg['error']?['user']);
+      waiting ??= iMsg.group;
       waiting ??= iMsg.receiver;
     } else {
       iMsg.remove('waiting');

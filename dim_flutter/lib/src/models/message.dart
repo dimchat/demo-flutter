@@ -147,7 +147,7 @@ abstract class MessageBuilder with Logging {
     } else if (content is LoginCommand) {
       text = _getLoginCommandText(content, sender);
     } else {
-      text = "Current version doesn't support this command: ${content.commandName}.";
+      text = "Current version doesn't support this command: ${content.cmd}.";
     }
     // store message text
     content['text'] = text;
@@ -181,7 +181,7 @@ abstract class MessageBuilder with Logging {
     }
     // ...
     return 'unsupported group command: @cmd'.trParams({
-      'cmd': content.commandName,
+      'cmd': content.cmd,
     });
   }
 

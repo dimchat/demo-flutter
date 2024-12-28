@@ -25,7 +25,7 @@ class _GroupHistoryTable extends DataTableHandler<Pair<GroupCommand, ReliableMes
 
   @override
   Future<bool> saveGroupHistory(GroupCommand content, ReliableMessage rMsg, {required ID group}) async {
-    String cmd = content.commandName;
+    String cmd = content.cmd;
     DateTime? time = content.time;
     int seconds = time == null ? 0 : time.millisecondsSinceEpoch ~/ 1000;
     String command = JSON.encode(content.toMap());

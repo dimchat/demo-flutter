@@ -127,7 +127,8 @@ class SharedEmitter extends Emitter implements Observer {
 
   @override
   Future<bool> cacheInstantMessage(InstantMessage iMsg) async =>
-      await _saveInstantMessage(iMsg);
+      // await _saveInstantMessage(iMsg);
+      true;
 
   @override
   Future<Uri?> uploadFileData(Uint8List encrypted, String filename, ID sender) async {

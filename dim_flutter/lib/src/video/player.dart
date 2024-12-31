@@ -118,7 +118,7 @@ class _VideoAppState extends State<VideoPlayerPage> with Logging implements lnc.
     String name = notification.name;
     Map? info = notification.userInfo;
     if (name == NotificationNames.kVideoPlayerPlay) {
-      Uri? url = info?['url'];
+      Uri? url = info?['url'] ?? info?['URL'];
       String? title = info?['title'];
       if (url == null || title == null) {
         assert(false, 'video play info error: $info');

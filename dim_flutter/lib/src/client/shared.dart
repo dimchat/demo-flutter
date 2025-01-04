@@ -56,7 +56,7 @@ class GlobalVariable {
 
   /// Step 1: prepare
   static Config createConfig() {
-    var loader = ClientLoader();
+    var loader = CompatLoader();
     loader.run();
     Config config = Config();
     config.assistants.then((bots) {

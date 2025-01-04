@@ -8,7 +8,7 @@ import 'package:markdown/markdown.dart' as md;
 
 import 'package:dim_client/ok.dart';
 import 'package:dim_client/sdk.dart';
-import 'package:dim_client/client.dart';
+import 'package:dim_client/common.dart';
 
 import '../client/shared.dart';
 import '../pnf/auto_image.dart';

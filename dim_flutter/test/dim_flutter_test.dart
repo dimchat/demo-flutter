@@ -5,8 +5,6 @@ import 'package:bip39/bip39.dart';
 import 'package:plugin_platform_interface/plugin_platform_interface.dart';
 import 'package:flutter_test/flutter_test.dart';
 
-import 'package:dim_client/plugins.dart';
-
 import 'package:dim_flutter/dim_flutter.dart';
 import 'package:dim_flutter/dim_flutter_platform_interface.dart';
 import 'package:dim_flutter/dim_flutter_method_channel.dart';
@@ -79,8 +77,7 @@ void main() {
 
     Log.level = Log.kDebug;
 
-    var pluginLoader = ClientPluginLoader();
-    var loader = CommonLoader(pluginLoader);
+    var loader = CompatLoader();
     loader.run();
 
     batch(10000);

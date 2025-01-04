@@ -3,11 +3,11 @@ import 'package:dim_client/sdk.dart';
 import 'package:dim_client/plugins.dart';
 import 'package:dim_client/compat.dart';
 import 'package:dim_client/common.dart';
-import 'package:dim_client/client.dart';
 
-class ClientLoader extends CommonLoader {
-  ClientLoader() : super(ClientPluginLoader());
-  // ClientLoader() : super(_PluginLoader());
+class CompatLoader extends ClientLoader {
+
+  // @override
+  // PluginLoader createPluginLoader() => _PluginLoader();
 
   @override
   void registerCommandFactories() {

@@ -1,5 +1,6 @@
 
 import 'package:dim_client/sdk.dart';
+import 'package:dim_client/common.dart';
 import 'package:dim_client/group.dart';
 import 'package:dim_client/client.dart';
 
@@ -30,7 +31,7 @@ class SharedFacebook extends ClientFacebook {
 
 }
 
-class SharedArchivist extends ClientArchivist {
+class SharedArchivist extends CommonArchivist {
   SharedArchivist(super.facebook, super.database);
 
   @override

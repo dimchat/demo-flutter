@@ -83,9 +83,10 @@ abstract class ContentViewUtils {
     required OnWebShare? onWebShare,
     required OnVideoShare? onVideoShare,
   }) {
-    bool mine = sender == currentUser?.identifier;
     var format = content.getString('format', null);
-    bool plain = mine || format != 'markdown';
+    // bool mine = sender == currentUser?.identifier;
+    // bool plain = mine || format != 'markdown';
+    bool plain = format != 'markdown';
     String text = DefaultMessageBuilder().getText(content, sender);
     Widget textView = plain
         ? SelectableText(text, style: TextStyle(color: getTextColor(sender)),)

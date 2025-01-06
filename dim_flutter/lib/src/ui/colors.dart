@@ -68,7 +68,7 @@ abstract class ThemeColors {
   //  Common
   //
   Color get commandBackgroundColor;
-  Color get messageIsMineBackgroundColor => CupertinoColors.systemGreen;
+  Color get messageIsMineBackgroundColor => const Color(0xFFA9E879);
 
   //
   //  Text Style

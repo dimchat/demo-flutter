@@ -6,6 +6,9 @@ final Map<String, String> intlThTh = {
 
   // 'OK': 'OK',
 
+  // 'Customer Service': 'Customer Service',
+  // '@total friends': '@total friends',
+
   //
   //  Register
   //
@@ -91,6 +94,10 @@ final Map<String, String> intlThTh = {
   'Confirm Delete': 'ยืนยันการลบ',
   'Confirm Share': 'ยืนยันการแชร์',
   'Confirm Forward': 'ยืนยันการส่งต่อ',
+
+  'Continue': 'ดำเนินการต่อ',
+  'Deny': 'ปฏิเสธ',
+  'Allow': 'อนุญาต',
 
   'Success': 'สำเร็จ',
   'Error': 'ข้อผิดพลาด',
@@ -268,8 +275,17 @@ final Map<String, String> intlThTh = {
   'Please input alias': 'กรุณาใส่ชื่อเล่น',
   'Please review invitations': 'กรุณาตรวจสอบคำเชิญก่อน',
 
+  'Current user not found': 'ไม่พบผู้ใช้ปัจจุบัน',
+  'Failed to add contact': 'เพิ่มผู้ติดต่อไม่สำเร็จ',
+  'Failed to remove contact': 'ลบผู้ติดต่อไม่สำเร็จ',
+  'Failed to remove friend': 'ลบเพื่อนไม่สำเร็จ',
+
+  'Failed to add administrators': 'เพิ่มผู้ดูแลระบบไม่สำเร็จ',
+
   'Invited by': 'เชิญโดย',
   'Invitation sent': 'ส่งคำเชิญใหม่ถึงผู้ดูแลระบบทุกคนแล้ว กำลังรอการตรวจสอบ',
+
+  'Sure to reject all invitations?': 'คุณแน่ใจหรือไม่ว่าต้องการปฏิเสธคำเชิญทั้งหมด?',
 
   'Sure to add this friend?': 'คุณต้องการเพิ่มเพื่อนนี้หรือไม่?',
   'Sure to remove this friend?': 'คุณแน่ใจหรือไม่ว่าต้องการลบเพื่อนนี้?'
@@ -298,6 +314,29 @@ final Map<String, String> intlThTh = {
   'Grant to access photo album': 'คุณควรอนุญาตให้เข้าถึงอัลบั้มรูป',
   'Grant to access camera': 'คุณควรอนุญาตให้เข้าถึงกล้อง',
   'Grant to access microphone': 'คุณควรอนุญาตให้เข้าถึงไมค์',
+
+  'Failed to get image file': 'ไม่สามารถดึงไฟล์ภาพได้',
+  'Cannot save this image': 'ไม่สามารถบันทึกภาพนี้ได้',
+
+  'Failed to send command': 'ส่งคำสั่งไม่สำเร็จ',
+
+  'Sure to remove this station (@remote)?': 'คุณแน่ใจหรือไม่ว่าต้องการลบสถานีนี้ (@remote)?',
+  'Station (@remote) is removed': 'สถานี (@remote) ถูกลบแล้ว',
+  'Failed to remove station (@remote)': 'ไม่สามารถลบสถานี (@remote) ได้',
+  'Cannot remove this station': 'ไม่สามารถลบสถานีนี้ได้',
+
+  'Invite command error': 'ข้อผิดพลาดคำสั่งเชิญ',
+  'Expel command error': 'ข้อผิดพลาดคำสั่งขับไล่',
+
+  'Unsupported group command: @cmd': 'คำสั่งกลุ่มที่ไม่รองรับ: @cmd',
+
+  '"@commander" reset group': '"@commander" ได้อัปเดตสมาชิกในกลุ่ม',
+  '"@commander" join group': '"@commander" ต้องการเข้าร่วมกลุ่มนี้',
+  '"@commander" left group': '"@commander" ออกจากกลุ่มแล้ว',
+  '"@commander" invite "@members"': '"@commander" กำลังเชิญ "@members" เข้าร่วมกลุ่มนี้',
+  '"@commander" invite "@member"': '"@commander" กำลังเชิญ "@member" เข้าร่วมกลุ่มนี้',
+  '"@commander" expel "@members"': '"@commander" กำลังขับไล่สมาชิก "@members" ออกจากกลุ่มนี้',
+  '"@commander" expel "@member"': '"@commander" กำลังขับไล่สมาชิก "@member" ออกจากกลุ่มนี้',
 
   //
   //  Cache Files Management

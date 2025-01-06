@@ -6,6 +6,9 @@ final Map<String, String> intlNlNl = {
 
   // 'OK': 'OK',
 
+  // 'Customer Service': 'Customer Service',
+  // '@total friends': '@total friends',
+
   //
   //  Register
   //
@@ -91,6 +94,10 @@ final Map<String, String> intlNlNl = {
   'Confirm Delete': 'Verwijderen bevestigen',
   'Confirm Share': 'Delen bevestigen',
   'Confirm Forward': 'Doorsturen bevestigen',
+
+  'Continue': 'Doorgaan',
+  'Deny': 'Weigeren',
+  'Allow': 'Toestaan',
 
   'Success': 'Succes',
   'Error': 'Fout',
@@ -268,8 +275,17 @@ final Map<String, String> intlNlNl = {
   'Please input alias': 'Voer alstublieft een alias in.',
   'Please review invitations': 'Beoordeel alstublieft eerst de uitnodigingen.',
 
+  'Current user not found': 'Huidige gebruiker niet gevonden.',
+  'Failed to add contact': 'Kon contact niet toevoegen.',
+  'Failed to remove contact': 'Kon contact niet verwijderen.',
+  'Failed to remove friend': 'Kon vriend niet verwijderen.',
+
+  'Failed to add administrators': 'Kon beheerders niet toevoegen.',
+
   'Invited by': 'Uitgenodigd door',
   'Invitation sent': 'Een nieuwe uitnodiging is verstuurd naar alle beheerders en wacht nu op beoordeling.',
+
+  'Sure to reject all invitations?': 'Weet je zeker dat je alle uitnodigingen wilt weigeren?',
 
   'Sure to add this friend?': 'Weet u zeker dat u deze vriend wilt toevoegen?',
   'Sure to remove this friend?': 'Weet u zeker dat u deze vriend wilt verwijderen?'
@@ -298,6 +314,29 @@ final Map<String, String> intlNlNl = {
   'Grant to access photo album': 'U moet toestemming verlenen om toegang te krijgen tot het fotoalbum.',
   'Grant to access camera': 'U moet toestemming verlenen om toegang te krijgen tot de camera.',
   'Grant to access microphone': 'U moet toestemming verlenen om toegang te krijgen tot de microfoon.',
+
+  'Failed to get image file': 'Kon afbeeldingsbestand niet ophalen.',
+  'Cannot save this image': 'Kan deze afbeelding niet opslaan.',
+
+  'Failed to send command': 'Kon commando niet verzenden.',
+
+  'Sure to remove this station (@remote)?': 'Weet je zeker dat je dit station (@remote) wilt verwijderen?',
+  'Station (@remote) is removed': 'Station (@remote) is verwijderd.',
+  'Failed to remove station (@remote)': 'Kon station (@remote) niet verwijderen.',
+  'Cannot remove this station': 'Kan dit station niet verwijderen.',
+
+  'Invite command error': 'Fout in uitnodigingscommando.',
+  'Expel command error': 'Fout in expulseringscommando.',
+
+  'Unsupported group command: @cmd': 'Niet ondersteund groepscommando: @cmd.',
+
+  '"@commander" reset group': '"@commander" heeft de groepsleden bijgewerkt.',
+  '"@commander" join group': '"@commander" wil deze groep joinen.',
+  '"@commander" left group': '"@commander" heeft de groep verlaten.',
+  '"@commander" invite "@members"': '"@commander" nodigt "@members" uit voor deze groep.',
+  '"@commander" invite "@member"': '"@commander" nodigt "@member" uit voor deze groep.',
+  '"@commander" expel "@members"': '"@commander" zet de leden "@members" uit de groep.',
+  '"@commander" expel "@member"': '"@commander" zet het lid "@member" uit de groep.',
 
   //
   //  Cache Files Management

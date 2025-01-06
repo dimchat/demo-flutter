@@ -6,6 +6,9 @@ final Map<String, String> intlIdId = {
 
   // 'OK': 'OK',
 
+  // 'Customer Service': 'Customer Service',
+  // '@total friends': '@total friends',
+
   //
   //  Register
   //
@@ -91,6 +94,10 @@ final Map<String, String> intlIdId = {
   'Confirm Delete': 'Konfirmasi Hapus',
   'Confirm Share': 'Konfirmasi Bagikan',
   'Confirm Forward': 'Konfirmasi Teruskan',
+
+  'Continue': 'Lanjutkan',
+  'Deny': 'Tolak',
+  'Allow': 'Izinkan',
 
   'Success': 'Sukses',
   'Error': 'Kesalahan',
@@ -268,8 +275,17 @@ final Map<String, String> intlIdId = {
   'Please input alias': 'Harap masukkan alias.',
   'Please review invitations': 'Harap tinjau undangan terlebih dahulu.',
 
+  'Current user not found': 'Pengguna saat ini tidak ditemukan.',
+  'Failed to add contact': 'Gagal menambah kontak.',
+  'Failed to remove contact': 'Gagal menghapus kontak.',
+  'Failed to remove friend': 'Gagal menghapus teman.',
+
+  'Failed to add administrators': 'Gagal menambah administrator.',
+
   'Invited by': 'Diundang oleh',
   'Invitation sent': 'Undangan baru telah dikirim ke semua administrator, sekarang menunggu tinjauan.',
+
+  'Sure to reject all invitations?': 'Apakah Anda yakin ingin menolak semua undangan ini?',
 
   'Sure to add this friend?': 'Apakah Anda ingin menambahkan teman ini?',
   'Sure to remove this friend?': 'Apakah Anda yakin ingin menghapus teman ini?'
@@ -298,6 +314,29 @@ final Map<String, String> intlIdId = {
   'Grant to access photo album': 'Anda harus memberikan izin untuk mengakses album foto.',
   'Grant to access camera': 'Anda harus memberikan izin untuk mengakses kamera.',
   'Grant to access microphone': 'Anda harus memberikan izin untuk mengakses mikrofon.',
+
+  'Failed to get image file': 'Gagal mendapatkan file gambar.',
+  'Cannot save this image': 'Tidak dapat menyimpan gambar ini.',
+
+  'Failed to send command': 'Gagal mengirim perintah.',
+
+  'Sure to remove this station (@remote)?': 'Apakah Anda yakin ingin menghapus stasiun ini (@remote)?',
+  'Station (@remote) is removed': 'Stasiun (@remote) telah dihapus.',
+  'Failed to remove station (@remote)': 'Gagal menghapus stasiun (@remote).',
+  'Cannot remove this station': 'Tidak dapat menghapus stasiun ini.',
+
+  'Invite command error': 'Kesalahan perintah undangan.',
+  'Expel command error': 'Kesalahan perintah usir.',
+
+  'Unsupported group command: @cmd': 'Perintah grup yang tidak didukung: @cmd.',
+
+  '"@commander" reset group': '"@commander" telah memperbarui anggota grup.',
+  '"@commander" join group': '"@commander" ingin bergabung dengan grup ini.',
+  '"@commander" left group': '"@commander" telah meninggalkan grup.',
+  '"@commander" invite "@members"': '"@commander" sedang mengundang "@members" ke grup ini.',
+  '"@commander" invite "@member"': '"@commander" sedang mengundang "@member" ke grup ini.',
+  '"@commander" expel "@members"': '"@commander" sedang mengusir anggota "@members" dari grup ini.',
+  '"@commander" expel "@member"': '"@commander" sedang mengusir anggota "@member" dari grup ini.',
 
   //
   //  Cache Files Management

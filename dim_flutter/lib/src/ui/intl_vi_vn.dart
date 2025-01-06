@@ -6,6 +6,9 @@ final Map<String, String> intlViVN = {
 
   // 'OK': 'OK',
 
+  // 'Customer Service': 'Customer Service',
+  // '@total friends': '@total friends',
+
   //
   //  Register
   //
@@ -91,6 +94,10 @@ final Map<String, String> intlViVN = {
   'Confirm Delete': 'Xác nhận Xóa',
   'Confirm Share': 'Xác nhận Chia sẻ',
   'Confirm Forward': 'Xác nhận Chuyển tiếp',
+
+  'Continue': 'Tiếp tục',
+  'Deny': 'Từ chối',
+  'Allow': 'Cho phép',
 
   'Success': 'Thành công',
   'Error': 'Lỗi',
@@ -268,8 +275,17 @@ final Map<String, String> intlViVN = {
   'Please input alias': 'Vui lòng nhập biệt danh.',
   'Please review invitations': 'Vui lòng xem xét lời mời trước.',
 
+  'Current user not found': 'Không tìm thấy người dùng hiện tại.',
+  'Failed to add contact': 'Không thể thêm liên hệ.',
+  'Failed to remove contact': 'Không thể xóa liên hệ.',
+  'Failed to remove friend': 'Không thể xóa bạn bè.',
+
+  'Failed to add administrators': 'Không thể thêm quản trị viên.',
+
   'Invited by': 'Mời bởi',
   'Invitation sent': 'Một lời mời mới đã được gửi đến tất cả quản trị viên, hiện đang đợi xem xét.',
+
+  'Sure to reject all invitations?': 'Bạn có chắc chắn muốn từ chối tất cả các lời mời này không?',
 
   'Sure to add this friend?': 'Bạn có chắc muốn thêm bạn này không?',
   'Sure to remove this friend?': 'Bạn có chắc muốn xóa bạn này không?'
@@ -298,6 +314,29 @@ final Map<String, String> intlViVN = {
   'Grant to access photo album': 'Bạn nên cấp quyền truy cập vào album ảnh.',
   'Grant to access camera': 'Bạn nên cấp quyền truy cập vào máy ảnh.',
   'Grant to access microphone': 'Bạn nên cấp quyền truy cập vào microphone.',
+
+  'Failed to get image file': 'Không thể lấy tệp hình ảnh.',
+  'Cannot save this image': 'Không thể lưu hình ảnh này.',
+
+  'Failed to send command': 'Không thể gửi lệnh.',
+
+  'Sure to remove this station (@remote)?': 'Bạn có chắc chắn muốn xóa trạm này (@remote) không?',
+  'Station (@remote) is removed': 'Trạm (@remote) đã bị xóa.',
+  'Failed to remove station (@remote)': 'Không thể xóa trạm (@remote).',
+  'Cannot remove this station': 'Không thể xóa trạm này.',
+
+  'Invite command error': 'Lỗi lệnh mời.',
+  'Expel command error': 'Lỗi lệnh đuổi.',
+
+  'Unsupported group command: @cmd': 'Lệnh nhóm không được hỗ trợ: @cmd.',
+
+  '"@commander" reset group': '"@commander" đã cập nhật thành viên nhóm.',
+  '"@commander" join group': '"@commander" muốn tham gia nhóm này.',
+  '"@commander" left group': '"@commander" đã rời nhóm.',
+  '"@commander" invite "@members"': '"@commander" đang mời "@members" tham gia nhóm này.',
+  '"@commander" invite "@member"': '"@commander" đang mời "@member" tham gia nhóm này.',
+  '"@commander" expel "@members"': '"@commander" đang đuổi các thành viên "@members" ra khỏi nhóm.',
+  '"@commander" expel "@member"': '"@commander" đang đuổi thành viên "@member" ra khỏi nhóm.',
 
   //
   //  Cache Files Management

@@ -6,6 +6,9 @@ final Map<String, String> intlJaJp = {
 
   // 'OK': 'OK',
 
+  // 'Customer Service': 'Customer Service',
+  // '@total friends': '@total friends',
+
   //
   //  Register
   //
@@ -91,6 +94,10 @@ final Map<String, String> intlJaJp = {
   'Confirm Delete': '削除の確認',
   'Confirm Share': '共有の確認',
   'Confirm Forward': '転送の確認',
+
+  'Continue': '続ける',
+  'Deny': '拒否する',
+  'Allow': '許可する',
 
   'Success': '成功',
   'Error': 'エラー',
@@ -268,8 +275,17 @@ final Map<String, String> intlJaJp = {
   'Please input alias': 'エイリアスを入力してください。',
   'Please review invitations': 'まず招待状を確認してください。',
 
+  'Current user not found': '現在のユーザーが見つかりません。',
+  'Failed to add contact': '連絡先の追加に失敗しました。',
+  'Failed to remove contact': '連絡先の削除に失敗しました。',
+  'Failed to remove friend': '友達の削除に失敗しました。',
+
+  'Failed to add administrators': '管理者の追加に失敗しました。',
+
   'Invited by': '招待者',
   'Invitation sent': '新しい招待状がすべての管理者に送信され、現在レビュー待ちです。',
+
+  'Sure to reject all invitations?': 'すべての招待を拒否してもよろしいですか？',
 
   'Sure to add this friend?': 'この友達を追加しますか？',
   'Sure to remove this friend?': 'この友達を削除しますか？チャット履歴も消去されます。',
@@ -296,6 +312,29 @@ final Map<String, String> intlJaJp = {
   'Grant to access photo album': '写真アルバムへのアクセス権を付与してください。',
   'Grant to access camera': 'カメラへのアクセス権を付与してください。',
   'Grant to access microphone': 'マイクへのアクセス権を付与してください。',
+
+  'Failed to get image file': '画像ファイルの取得に失敗しました。',
+  'Cannot save this image': 'この画像を保存できません。',
+
+  'Failed to send command': 'コマンドの送信に失敗しました。',
+
+  'Sure to remove this station (@remote)?': 'このステーション(@remote)を削除してもよろしいですか？',
+  'Station (@remote) is removed': 'ステーション(@remote)が削除されました。',
+  'Failed to remove station (@remote)': 'ステーション(@remote)の削除に失敗しました。',
+  'Cannot remove this station': 'このステーションを削除できません。',
+
+  'Invite command error': '招待コマンドエラー。',
+  'Expel command error': '追放コマンドエラー。',
+
+  'Unsupported group command: @cmd': 'サポートされていないグループコマンド: @cmd。',
+
+  '"@commander" reset group': '"@commander" がグループメンバーを更新しました。',
+  '"@commander" join group': '"@commander" がこのグループに参加したいと考えています。',
+  '"@commander" left group': '"@commander" はグループを離れました。',
+  '"@commander" invite "@members"': '"@commander" は "@members" をこのグループに招待しています。',
+  '"@commander" invite "@member"': '"@commander" は "@member" をこのグループに招待しています。',
+  '"@commander" expel "@members"': '"@commander" はメンバー "@members" をグループから追放しています。',
+  '"@commander" expel "@member"': '"@commander" はメンバー "@member" をグループから追放しています。',
 
   //
   //  Cache Files Management

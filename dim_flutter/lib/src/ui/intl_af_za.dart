@@ -6,6 +6,9 @@ final Map<String, String> intlAfZa = {
 
   // 'OK': 'OK',
 
+  // 'Customer Service': 'Customer Service',
+  // '@total friends': '@total friends',
+
   //
   //  Register
   //
@@ -91,6 +94,10 @@ final Map<String, String> intlAfZa = {
   'Confirm Delete': 'Bevestig Verwydering',
   'Confirm Share': 'Bevestig Deling',
   'Confirm Forward': 'Bevestig Deurstuur',
+
+  'Continue': 'Gaan voort',
+  'Deny': 'Weier',
+  'Allow': 'Toestaan',
 
   'Success': 'Sukses',
   'Error': 'Fout',
@@ -268,8 +275,17 @@ final Map<String, String> intlAfZa = {
   'Please input alias': 'Voer asseblief skuilnaam in.',
   'Please review invitations': 'Gaan asseblief eers deur die uitnodigings.',
 
+  'Current user not found': 'Huidige gebruiker nie gevind nie.',
+  'Failed to add contact': 'Dit was nie moontlik om kontak toe te voeg nie.',
+  'Failed to remove contact': 'Dit was nie moontlik om kontak te verwyder nie.',
+  'Failed to remove friend': 'Dit was nie moontlik om vriend te verwyder nie.',
+
+  'Failed to add administrators': 'Dit was nie moontlik om administrateurs toe te voeg nie.',
+
   'Invited by': 'Genooi deur',
   'Invitation sent': ' \'n Nuwe uitnodiging is aan al die administrateurs gestuur, wag nou vir hersiening.',
+
+  'Sure to reject all invitations?': 'Is jy seker jy wil al hierdie uitnodigings weier?',
 
   'Sure to add this friend?': 'Is jy seker jy wil hierdie vriend byvoeg?',
   'Sure to remove this friend?': 'Is jy seker jy wil hierdie vriend verwyder?'
@@ -298,6 +314,29 @@ final Map<String, String> intlAfZa = {
   'Grant to access photo album': 'Jy moet die toestemming gee om die foto-album toegang te kry.',
   'Grant to access camera': 'Jy moet die toestemming gee om die kamera toegang te kry.',
   'Grant to access microphone': 'Jy moet die toestemming gee om die mikrofoon toegang te kry.',
+
+  'Failed to get image file': 'Dit was nie moontlik om die beeldlêer te kry nie.',
+  'Cannot save this image': 'Dit is nie moontlik om hierdie beeld te stoor nie.',
+
+  'Failed to send command': 'Dit was nie moontlik om die opdrag te stuur nie.',
+
+  'Sure to remove this station (@remote)?': 'Is jy seker jy wil hierdie stasie (@remote) verwyder?',
+  'Station (@remote) is removed': 'Stasie (@remote) is verwyder.',
+  'Failed to remove station (@remote)': 'Dit was nie moontlik om stasie (@remote) te verwyder nie.',
+  'Cannot remove this station': 'Dit is nie moontlik om hierdie stasie te verwyder nie.',
+
+  'Invite command error': 'Fout in die uitnodiging opdrag.',
+  'Expel command error': 'Fout in die uitwerp opdrag.',
+
+  'Unsupported group command: @cmd': 'Nie-ondersteunde groep opdrag: @cmd.',
+
+  '"@commander" reset group': '"@commander" het die groeplede opgedateer.',
+  '"@commander" join group': '"@commander" wil by hierdie groep aansluit.',
+  '"@commander" left group': '"@commander" het die groep verlaat.',
+  '"@commander" invite "@members"': '"@commander" nooi "@members" uit om by hierdie groep aan te sluit.',
+  '"@commander" invite "@member"': '"@commander" nooi "@member" uit om by hierdie groep aan te sluit.',
+  '"@commander" expel "@members"': '"@commander" verwerp die lede "@members" uit hierdie groep.',
+  '"@commander" expel "@member"': '"@commander" verwerp die lid "@member" uit hierdie groep.',
 
   //
   //  Cache Files Management

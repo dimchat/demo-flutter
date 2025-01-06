@@ -6,6 +6,9 @@ final Map<String, String> intlMsMy = {
 
   // 'OK': 'OK',
 
+  // 'Customer Service': 'Customer Service',
+  // '@total friends': '@total friends',
+
   //
   //  Register
   //
@@ -91,6 +94,10 @@ final Map<String, String> intlMsMy = {
   'Confirm Delete': 'Sahkan Padam',
   'Confirm Share': 'Sahkan Berkongsi',
   'Confirm Forward': 'Sahkan Penerusan',
+
+  'Continue': 'Teruskan',
+  'Deny': 'Tolak',
+  'Allow': 'Benarkan',
 
   'Success': 'Berjaya',
   'Error': 'Ralat',
@@ -268,8 +275,17 @@ final Map<String, String> intlMsMy = {
   'Please input alias': 'Sila masukkan nama gelaran.',
   'Please review invitations': 'Sila semak jemputan dahulu.',
 
+  'Current user not found': 'Pengguna semasa tidak ditemui.',
+  'Failed to add contact': 'Gagal menambah kenalan.',
+  'Failed to remove contact': 'Gagal menghapus kenalan.',
+  'Failed to remove friend': 'Gagal menghapus rakan.',
+
+  'Failed to add administrators': 'Gagal menambah pentadbir.',
+
   'Invited by': 'Dijemput oleh',
   'Invitation sent': 'Jemputan baru telah dihantar kepada semua pentadbir, kini menunggu untuk dikaji.',
+
+  'Sure to reject all invitations?': 'Adakah anda pasti mahu menolak semua jemputan ini?',
 
   'Sure to add this friend?': 'Pasti mahu menambah rakan ini?',
   'Sure to remove this friend?': 'Adakah anda pasti mahu membuang rakan ini?'
@@ -298,6 +314,29 @@ final Map<String, String> intlMsMy = {
   'Grant to access photo album': 'Anda perlu memberikan kebenaran untuk mengakses album foto.',
   'Grant to access camera': 'Anda perlu memberikan kebenaran untuk mengakses kamera.',
   'Grant to access microphone': 'Anda perlu memberikan kebenaran untuk mengakses mikrofon.',
+
+  'Failed to get image file': 'Gagal mendapatkan fail imej.',
+  'Cannot save this image': 'Tidak boleh menyimpan imej ini.',
+
+  'Failed to send command': 'Gagal menghantar arahan.',
+
+  'Sure to remove this station (@remote)?': 'Adakah anda pasti mahu menghapuskan stesen ini (@remote)?',
+  'Station (@remote) is removed': 'Stesen (@remote) telah dipadamkan.',
+  'Failed to remove station (@remote)': 'Gagal menghapuskan stesen (@remote).',
+  'Cannot remove this station': 'Tidak boleh menghapuskan stesen ini.',
+
+  'Invite command error': 'Ralat arahan jemputan.',
+  'Expel command error': 'Ralat arahan halau.',
+
+  'Unsupported group command: @cmd': 'Arahan kumpulan yang tidak disokong: @cmd.',
+
+  '"@commander" reset group': '"@commander" telah mengemas kini ahli kumpulan.',
+  '"@commander" join group': '"@commander" ingin menyertai kumpulan ini.',
+  '"@commander" left group': '"@commander" telah meninggalkan kumpulan.',
+  '"@commander" invite "@members"': '"@commander" sedang menjemput "@members" ke dalam kumpulan ini.',
+  '"@commander" invite "@member"': '"@commander" sedang menjemput "@member" ke dalam kumpulan ini.',
+  '"@commander" expel "@members"': '"@commander" sedang menghalau ahli "@members" dari kumpulan ini.',
+  '"@commander" expel "@member"': '"@commander" sedang menghalau ahli "@member" dari kumpulan ini.',
 
   //
   //  Cache Files Management

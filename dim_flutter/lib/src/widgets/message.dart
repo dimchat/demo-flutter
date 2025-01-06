@@ -22,15 +22,13 @@ abstract class ContentViewUtils {
 
   static User? currentUser;
 
-  static Color getBackgroundColor(ID sender) =>
-      sender == currentUser?.identifier
-          ? Styles.colors.messageIsMineBackgroundColor
-          : Styles.colors.textMessageBackgroundColor;
+  static Color getBackgroundColor(bool isMine) => isMine
+      ? Styles.colors.messageIsMineBackgroundColor
+      : Styles.colors.textMessageBackgroundColor;
 
-  static Color getTextColor(ID sender) =>
-      sender == currentUser?.identifier
-          ? CupertinoColors.black
-          : Styles.colors.textMessageColor;
+  static Color getTextColor(ID sender) => sender == currentUser?.identifier
+      ? CupertinoColors.black
+      : Styles.colors.textMessageColor;
 
   /// return null if it's not a command
   ///        empty string ('') for ignored command
@@ -84,7 +82,7 @@ abstract class ContentViewUtils {
     required OnVideoShare? onVideoShare,
   }) {
     var format = content.getString('format', null);
-    // bool mine = sender == currentUser?.identifier;
+    bool mine = sender == currentUser?.identifier;
     // bool plain = mine || format != 'markdown';
     bool plain = format != 'markdown';
     String text = DefaultMessageBuilder().getText(content, sender);
@@ -95,7 +93,7 @@ abstract class ContentViewUtils {
       onDoubleTap: onDoubleTap,
       onLongPress: onLongPress,
       child: Container(
-        color: getBackgroundColor(sender),
+        color: getBackgroundColor(mine && plain),
         padding: Styles.textMessagePadding,
         child: textView,
       ),
@@ -107,7 +105,7 @@ abstract class ContentViewUtils {
   }) {
     Widget view = NetworkAudioFactory().getAudioView(content,
       color: getTextColor(sender),
-      backgroundColor: getBackgroundColor(sender),
+      backgroundColor: getBackgroundColor(sender == currentUser?.identifier),
     );
     if (onLongPress == null) {
       return view;

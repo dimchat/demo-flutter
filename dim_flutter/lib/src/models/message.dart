@@ -180,28 +180,28 @@ abstract class MessageBuilder with Logging {
       return _getQuitCommandText(content, sender);
     }
     // ...
-    return 'unsupported group command: @cmd'.trParams({
+    return 'Unsupported group command: @cmd'.trParams({
       'cmd': content.cmd,
     });
   }
 
   String _getResetCommandText(ResetCommand content, ID sender) {
     String commander = getName(sender);
-    return '"@commander" has updated the group members.'.trParams({
+    return '"@commander" reset group'.trParams({
       'commander': commander,
     });
   }
 
   String _getJoinCommandText(JoinCommand content, ID sender) {
     String commander = getName(sender);
-    return '"@commander" wants to join this group.'.trParams({
+    return '"@commander" join group'.trParams({
       'commander': commander,
     });
   }
 
   String _getQuitCommandText(QuitCommand content, ID sender) {
     String commander = getName(sender);
-    return '"@commander" left the group.'.trParams({
+    return '"@commander" left group'.trParams({
       'commander': commander,
     });
   }
@@ -221,18 +221,18 @@ abstract class MessageBuilder with Logging {
       someone = null;
     }
     if (members != null) {
-      return '"@commander" is inviting "@members" into this group.'.trParams({
+      return '"@commander" invite "@members"'.trParams({
       'commander': commander,
       'members': getNames(members),
       });
     } else if (someone != null) {
-      return '"@commander" is inviting "@member" into this group.'.trParams({
+      return '"@commander" invite "@member"'.trParams({
       'commander': commander,
       'member': getName(someone),
       });
     } else {
       assert(false, 'should not happen: $content');
-      return 'Invite command error.'.tr;
+      return 'Invite command error'.tr;
     }
   }
 
@@ -251,18 +251,18 @@ abstract class MessageBuilder with Logging {
       someone = null;
     }
     if (members != null) {
-      return '"@commander" is expelling members "@members" from this group.'.trParams({
+      return '"@commander" expel "@members"'.trParams({
         'commander': commander,
         'members': getNames(members),
       });
     } else if (someone != null) {
-      return '"@commander" is expelling member "@member" from this group.'.trParams({
+      return '"@commander" expel "@member"'.trParams({
         'commander': commander,
         'member': getName(someone),
       });
     } else {
       assert(false, 'should not happen: $content');
-      return 'Expel command error.'.tr;
+      return 'Expel command error'.tr;
     }
   }
 

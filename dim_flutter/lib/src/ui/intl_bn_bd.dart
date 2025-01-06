@@ -6,6 +6,9 @@ final Map<String, String> intlBnBd = {
 
   // 'OK': 'OK',
 
+  // 'Customer Service': 'Customer Service',
+  // '@total friends': '@total friends',
+
   //
   //  Register
   //
@@ -91,6 +94,10 @@ final Map<String, String> intlBnBd = {
   'Confirm Delete': 'নিশ্চিত করুন মোছা',
   'Confirm Share': 'নিশ্চিত করুন ভাগাভাগি',
   'Confirm Forward': 'নিশ্চিত করুন পুনরায় প্রেরণ',
+
+  'Continue': 'চলতে থাকুন',
+  'Deny': 'অস্বীকার করুন',
+  'Allow': 'অনুমতি দিন',
 
   'Success': 'সাফল্য',
   'Error': 'ত্রুটি',
@@ -268,8 +275,17 @@ final Map<String, String> intlBnBd = {
   'Please input alias': 'দয়া করে উপনাম ইনপুট করুন।',
   'Please review invitations': 'দয়া করে প্রথমে আমন্ত্রণ পর্যালোচনা করুন।',
 
+  'Current user not found': 'বর্তমান ব্যবহারকারী পাওয়া যায়নি।',
+  'Failed to add contact': 'কন্টাক্ট যোগ করতে ব্যর্থ হয়েছে।',
+  'Failed to remove contact': 'কন্টাক্ট মুছতে ব্যর্থ হয়েছে।',
+  'Failed to remove friend': 'বন্ধু মুছতে ব্যর্থ হয়েছে।',
+
+  'Failed to add administrators': 'প্রশাসক যোগ করতে ব্যর্থ হয়েছে।',
+
   'Invited by': 'দ্বারা আমন্ত্রিত',
   'Invitation sent': 'একটি নতুন আমন্ত্রণ সমস্ত প্রশাসকদের কাছে পাঠানো হয়েছে, এখন পর্যালোচনা করার জন্য অপেক্ষা করছে।',
+
+  'Sure to reject all invitations?': 'আপনি কি নিশ্চিত সমস্ত আমন্ত্রণ অস্বীকার করতে চান?',
 
   'Sure to add this friend?': 'আপনি কি এই বন্ধুকে যোগ করতে চান?',
   'Sure to remove this friend?': 'আপনি কি নিশ্চিত যে এই বন্ধুকে মুছতে চান?'
@@ -298,6 +314,29 @@ final Map<String, String> intlBnBd = {
   'Grant to access photo album': 'আপনাকে ফটো অ্যালবামে প্রবেশের অনুমতি দিতে হবে।',
   'Grant to access camera': 'আপনাকে ক্যামেরা ব্যবহার করার অনুমতি দিতে হবে।',
   'Grant to access microphone': 'আপনাকে মাইক্রোফোন ব্যবহার করার অনুমতি দিতে হবে।',
+
+  'Failed to get image file': 'চিত্র ফাইল পাওয়া যায়নি।',
+  'Cannot save this image': 'এই চিত্রটি সংরক্ষণ করা যাচ্ছে না।',
+
+  'Failed to send command': 'কমান্ড পাঠাতে ব্যর্থ হয়েছে।',
+
+  'Sure to remove this station (@remote)?': 'আপনি কি নিশ্চিত এই স্টেশন (@remote) মুছে ফেলতে চান?',
+  'Station (@remote) is removed': 'স্টেশন (@remote) মুছে ফেলা হয়েছে।',
+  'Failed to remove station (@remote)': 'স্টেশন (@remote) মুছে ফেলতে ব্যর্থ হয়েছে।',
+  'Cannot remove this station': 'এই স্টেশনটি মুছে ফেলা যাচ্ছে না।',
+
+  'Invite command error': 'আমন্ত্রণ কমান্ডের ত্রুটি।',
+  'Expel command error': 'পেরিয় কমান্ডের ত্রুটি।',
+
+  'Unsupported group command: @cmd': 'সমর্থিত নয় গ্রুপ কমান্ড: @cmd।',
+
+  '"@commander" reset group': '"@commander" গ্রুপ সদস্যদের আপডেট করেছে।',
+  '"@commander" join group': '"@commander" এই গ্রুপে যোগ দিতে চায়।',
+  '"@commander" left group': '"@commander" গ্রুপ ছেড়ে গেছে।',
+  '"@commander" invite "@members"': '"@commander" "@members" কে এই গ্রুপে আমন্ত্রণ জানাচ্ছে।',
+  '"@commander" invite "@member"': '"@commander" "@member" কে এই গ্রুপে আমন্ত্রণ জানাচ্ছে।',
+  '"@commander" expel "@members"': '"@commander" "@members" কে এই গ্রুপ থেকে বের করে দিচ্ছে।',
+  '"@commander" expel "@member"': '"@commander" "@member" কে এই গ্রুপ থেকে বের করে দিচ্ছে।',
 
   //
   //  Cache Files Management

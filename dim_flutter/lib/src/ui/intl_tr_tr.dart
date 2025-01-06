@@ -5,6 +5,9 @@ final Map<String, String> intlTrTr = {
 
   // 'OK': 'OK',
 
+  // 'Customer Service': 'Customer Service',
+  // '@total friends': '@total friends',
+
   //
   //  Register
   //
@@ -90,6 +93,10 @@ final Map<String, String> intlTrTr = {
   'Confirm Delete': 'Silme Onayla',
   'Confirm Share': 'Paylaşma Onayla',
   'Confirm Forward': 'İleri Gönderme Onayla',
+
+  'Continue': 'Devam et',
+  'Deny': 'Reddet',
+  'Allow': 'İzin ver',
 
   'Success': 'Başarılı',
   'Error': 'Hata',
@@ -267,8 +274,17 @@ final Map<String, String> intlTrTr = {
   'Please input alias': 'Lütfen takma adı girin.',
   'Please review invitations': 'Lütfen önce davetiyeleri gözden geçirin.',
 
+  'Current user not found': 'Mevcut kullanıcı bulunamadı.',
+  'Failed to add contact': 'Kişi eklenemedi.',
+  'Failed to remove contact': 'Kişi silinemedi.',
+  'Failed to remove friend': 'Arkadaş silinemedi.',
+
+  'Failed to add administrators': 'Yönetici eklenemedi.',
+
   'Invited by': 'Davet eden',
   'Invitation sent': 'Tüm yöneticilere yeni bir davet gönderildi, şu anda gözden geçirilmeyi bekliyor.',
+
+  'Sure to reject all invitations?': 'Tüm davetleri reddetmek istediğinizden emin misiniz?',
 
   'Sure to add this friend?': 'Bu arkadaşı eklemek istediğinizden emin misiniz?',
   'Sure to remove this friend?': 'Bu arkadaşı silmek istediğinizden emin misiniz?'
@@ -297,6 +313,29 @@ final Map<String, String> intlTrTr = {
   'Grant to access photo album': 'Fotoğraf albümü erişimi iznini vermelisiniz.',
   'Grant to access camera': 'Kamera erişimi iznini vermelisiniz.',
   'Grant to access microphone': 'Mikrofon erişimi iznini vermelisiniz.',
+
+  'Failed to get image file': 'Resim dosyası alınamadı.',
+  'Cannot save this image': 'Bu resim kaydedilemez.',
+
+  'Failed to send command': 'Komut gönderilemedi.',
+
+  'Sure to remove this station (@remote)?': 'Bu istasyonu (@remote) silmek istediğinizden emin misiniz?',
+  'Station (@remote) is removed': 'İstasyon (@remote) silindi.',
+  'Failed to remove station (@remote)': 'İstasyon (@remote) silinemedi.',
+  'Cannot remove this station': 'Bu istasyon silinemedi.',
+
+  'Invite command error': 'Davet komutu hatası.',
+  'Expel command error': 'Atma komutu hatası.',
+
+  'Unsupported group command: @cmd': 'Desteklenmeyen grup komutu: @cmd.',
+
+  '"@commander" reset group': '"@commander" grup üyelerini güncelledi.',
+  '"@commander" join group': '"@commander" bu gruba katılmak istiyor.',
+  '"@commander" left group': '"@commander" gruptan ayrıldı.',
+  '"@commander" invite "@members"': '"@commander" "@members" kişilerini bu gruba davet ediyor.',
+  '"@commander" invite "@member"': '"@commander" "@member" kişisini bu gruba davet ediyor.',
+  '"@commander" expel "@members"': '"@commander" "@members" kişilerini bu gruptan atıyor.',
+  '"@commander" expel "@member"': '"@commander" "@member" kişisini bu gruptan atıyor.',
 
   //
   //  Cache Files Management

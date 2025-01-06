@@ -6,6 +6,9 @@ final Map<String, String> intlKoKr = {
 
   // 'OK': 'OK',
 
+  // 'Customer Service': 'Customer Service',
+  // '@total friends': '@total friends',
+
   //
   //  Register
   //
@@ -91,6 +94,10 @@ final Map<String, String> intlKoKr = {
   'Confirm Delete': '삭제 확인',
   'Confirm Share': '공유 확인',
   'Confirm Forward': '전송 확인',
+
+  'Continue': '계속',
+  'Deny': '거부',
+  'Allow': '허용',
 
   'Success': '성공',
   'Error': '오류',
@@ -267,8 +274,17 @@ final Map<String, String> intlKoKr = {
   'Please input alias': '별명을 입력하세요.',
   'Please review invitations': '초대장을 먼저 검토해주세요.',
 
+  'Current user not found': '현재 사용자를 찾을 수 없습니다.',
+  'Failed to add contact': '연락처 추가 실패.',
+  'Failed to remove contact': '연락처 삭제 실패.',
+  'Failed to remove friend': '친구 삭제 실패.',
+
+  'Failed to add administrators': '관리자 추가 실패.',
+
   'Invited by': '초대자:',
   'Invitation sent': '새 초대장이 모든 관리자에게 전송되었습니다. 현재 검토 중입니다.',
+
+  'Sure to reject all invitations?': '모든 초대를 거부하시겠습니까?',
 
   'Sure to add this friend?': '이 친구를 추가하시겠습니까?',
   'Sure to remove this friend?': '이 친구를 삭제하시겠습니까?'
@@ -297,6 +313,29 @@ final Map<String, String> intlKoKr = {
   'Grant to access photo album': '사진 앨범에 대한 권한을 부여해야 합니다.',
   'Grant to access camera': '카메라에 대한 권한을 부여해야 합니다.',
   'Grant to access microphone': '마이크에 대한 권한을 부여해야 합니다.',
+
+  'Failed to get image file': '이미지 파일을 가져오는 데 실패했습니다.',
+  'Cannot save this image': '이 이미지를 저장할 수 없습니다.',
+
+  'Failed to send command': '명령을 보내는 데 실패했습니다.',
+
+  'Sure to remove this station (@remote)?': '이 스테이션(@remote)을 삭제하시겠습니까?',
+  'Station (@remote) is removed': '스테이션(@remote)이 삭제되었습니다.',
+  'Failed to remove station (@remote)': '스테이션(@remote)을 삭제하는 데 실패했습니다.',
+  'Cannot remove this station': '이 스테이션을 삭제할 수 없습니다.',
+
+  'Invite command error': '초대 명령 오류.',
+  'Expel command error': '추방 명령 오류.',
+
+  'Unsupported group command: @cmd': '지원되지 않는 그룹 명령: @cmd.',
+
+  '"@commander" reset group': '"@commander"가 그룹 멤버를 업데이트했습니다.',
+  '"@commander" join group': '"@commander"가 이 그룹에 가입하고 싶어 합니다.',
+  '"@commander" left group': '"@commander"는 그룹을 떠났습니다.',
+  '"@commander" invite "@members"': '"@commander"가 "@members"를 이 그룹에 초대하고 있습니다.',
+  '"@commander" invite "@member"': '"@commander"가 "@member"를 이 그룹에 초대하고 있습니다.',
+  '"@commander" expel "@members"': '"@commander"가 "@members"를 이 그룹에서 추방하고 있습니다.',
+  '"@commander" expel "@member"': '"@commander"가 "@member"를 이 그룹에서 추방하고 있습니다.',
 
   //
   //  Cache Files Management

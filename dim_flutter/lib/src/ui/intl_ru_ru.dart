@@ -6,6 +6,9 @@ final Map<String, String> intlRuRu = {
 
   // 'OK': 'OK',
 
+  // 'Customer Service': 'Customer Service',
+  // '@total friends': '@total friends',
+
   //
   //  Register
   //
@@ -91,6 +94,10 @@ final Map<String, String> intlRuRu = {
   'Confirm Delete': 'Подтвердить Удаление',
   'Confirm Share': 'Подтвердить Общий доступ',
   'Confirm Forward': 'Подтвердить Пересылку',
+
+  'Continue': 'Продолжить',
+  'Deny': 'Отказать',
+  'Allow': 'Разрешить',
 
   'Success': 'Успех',
   'Error': 'Ошибка',
@@ -268,8 +275,17 @@ final Map<String, String> intlRuRu = {
   'Please input alias': 'Пожалуйста, введите псевдоним.',
   'Please review invitations': 'Пожалуйста, просмотрите приглашения сначала.',
 
+  'Current user not found': 'Текущий пользователь не найден.',
+  'Failed to add contact': 'Не удалось добавить контакт.',
+  'Failed to remove contact': 'Не удалось удалить контакт.',
+  'Failed to remove friend': 'Не удалось удалить друга.',
+
+  'Failed to add administrators': 'Не удалось добавить администраторов.',
+
   'Invited by': 'Пригласил',
   'Invitation sent': 'Новое приглашение отправлено всем администраторам, теперь оно ожидает проверки.',
+
+  'Sure to reject all invitations?': 'Вы уверены, что хотите отклонить все приглашения?',
 
   'Sure to add this friend?': 'Вы уверены, что хотите добавить этого друга?',
   'Sure to remove this friend?': 'Вы уверены, что хотите удалить этого друга?'
@@ -298,6 +314,29 @@ final Map<String, String> intlRuRu = {
   'Grant to access photo album': 'Вы должны предоставить разрешение на доступ к фотоальбому.',
   'Grant to access camera': 'Вы должны предоставить разрешение на доступ к камере.',
   'Grant to access microphone': 'Вы должны предоставить разрешение на доступ к микрофону.',
+
+  'Failed to get image file': 'Не удалось получить файл изображения.',
+  'Cannot save this image': 'Не удается сохранить это изображение.',
+
+  'Failed to send command': 'Не удалось отправить команду.',
+
+  'Sure to remove this station (@remote)?': 'Вы уверены, что хотите удалить эту станцию (@remote)?',
+  'Station (@remote) is removed': 'Станция (@remote) удалена.',
+  'Failed to remove station (@remote)': 'Не удалось удалить станцию (@remote).',
+  'Cannot remove this station': 'Не удается удалить эту станцию.',
+
+  'Invite command error': 'Ошибка команды приглашения.',
+  'Expel command error': 'Ошибка команды изгнания.',
+
+  'Unsupported group command: @cmd': 'Неподдерживаемая команда группы: @cmd.',
+
+  '"@commander" reset group': '"@commander" обновил участников группы.',
+  '"@commander" join group': '"@commander" хочет присоединиться к этой группе.',
+  '"@commander" left group': '"@commander" покинул группу.',
+  '"@commander" invite "@members"': '"@commander" приглашает "@members" в эту группу.',
+  '"@commander" invite "@member"': '"@commander" приглашает "@member" в эту группу.',
+  '"@commander" expel "@members"': '"@commander" исключает участников "@members" из группы.',
+  '"@commander" expel "@member"': '"@commander" исключает участника "@member" из группы.',
 
   //
   //  Cache Files Management

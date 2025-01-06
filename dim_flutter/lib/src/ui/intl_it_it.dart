@@ -6,6 +6,9 @@ final Map<String, String> intlItIt = {
 
   // 'OK': 'OK',
 
+  // 'Customer Service': 'Customer Service',
+  // '@total friends': '@total friends',
+
   //
   //  Register
   //
@@ -91,6 +94,10 @@ final Map<String, String> intlItIt = {
   'Confirm Delete': 'Conferma Eliminazione',
   'Confirm Share': 'Conferma Condivisione',
   'Confirm Forward': 'Conferma Inoltro',
+
+  'Continue': 'Continua',
+  'Deny': 'Rifiuta',
+  'Allow': 'Permetti',
 
   'Success': 'Successo',
   'Error': 'Errore',
@@ -268,8 +275,17 @@ final Map<String, String> intlItIt = {
   'Please input alias': 'Inserisci un alias.',
   'Please review invitations': 'Per favore, rivedi prima gli inviti.',
 
+  'Current user not found': 'Utente corrente non trovato.',
+  'Failed to add contact': 'Impossibile aggiungere il contatto.',
+  'Failed to remove contact': 'Impossibile rimuovere il contatto.',
+  'Failed to remove friend': 'Impossibile rimuovere l\'amico.',
+
+  'Failed to add administrators': 'Impossibile aggiungere gli amministratori.',
+
   'Invited by': 'Invitato da',
   'Invitation sent': 'Un nuovo invito è stato inviato a tutti gli amministratori, ora è in attesa di revisione.',
+
+  'Sure to reject all invitations?': 'Sei sicuro di voler rifiutare tutte le inviti?',
 
   'Sure to add this friend?': 'Vuoi aggiungere questo amico?',
   'Sure to remove this friend?': 'Sei sicuro di voler rimuovere questo amico?'
@@ -298,6 +314,29 @@ final Map<String, String> intlItIt = {
   'Grant to access photo album': 'Devi concedere il permesso per accedere all\'album fotografico.',
   'Grant to access camera': 'Devi concedere il permesso per accedere alla fotocamera.',
   'Grant to access microphone': 'Devi concedere il permesso per accedere al microfono.',
+
+  'Failed to get image file': 'Impossibile ottenere il file immagine.',
+  'Cannot save this image': 'Impossibile salvare questa immagine.',
+
+  'Failed to send command': 'Impossibile inviare il comando.',
+
+  'Sure to remove this station (@remote)?': 'Sei sicuro di voler rimuovere questa stazione (@remote)?',
+  'Station (@remote) is removed': 'La stazione (@remote) è stata rimossa.',
+  'Failed to remove station (@remote)': 'Impossibile rimuovere la stazione (@remote).',
+  'Cannot remove this station': 'Impossibile rimuovere questa stazione.',
+
+  'Invite command error': 'Errore nel comando di invito.',
+  'Expel command error': 'Errore nel comando di espulsione.',
+
+  'Unsupported group command: @cmd': 'Comando di gruppo non supportato: @cmd.',
+
+  '"@commander" reset group': '"@commander" ha aggiornato i membri del gruppo.',
+  '"@commander" join group': '"@commander" vuole unirsi a questo gruppo.',
+  '"@commander" left group': '"@commander" ha lasciato il gruppo.',
+  '"@commander" invite "@members"': '"@commander" sta invitando "@members" in questo gruppo.',
+  '"@commander" invite "@member"': '"@commander" sta invitando "@member" in questo gruppo.',
+  '"@commander" expel "@members"': '"@commander" sta espellendo i membri "@members" da questo gruppo.',
+  '"@commander" expel "@member"': '"@commander" sta espellendo il membro "@member" da questo gruppo.',
 
   //
   //  Cache Files Management

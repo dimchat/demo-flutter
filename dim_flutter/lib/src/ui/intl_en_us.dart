@@ -5,6 +5,9 @@ final Map<String, String> intlEnUs = {
 
   // 'OK': 'OK',
 
+  // 'Customer Service': 'Customer Service',
+  // '@total friends': '@total friends',
+
   //
   //  Register
   //
@@ -90,6 +93,10 @@ final Map<String, String> intlEnUs = {
   'Confirm Delete': 'Confirm Deletion',
   'Confirm Share': 'Confirm Sharing',
   'Confirm Forward': 'Confirm Forwarding',
+
+  'Continue': 'Continue',
+  'Deny': 'Deny',
+  'Allow': 'Allow',
 
   'Success': 'Success',
   'Error': 'Error',
@@ -267,8 +274,17 @@ final Map<String, String> intlEnUs = {
   'Please input alias': 'Please input alias.',
   'Please review invitations': 'Please review invitations first.',
 
+  'Current user not found': 'Current user not found.',
+  'Failed to add contact': 'Failed to add contact.',
+  'Failed to remove contact': 'Failed to remove contact.',
+  'Failed to remove friend': 'Failed to remove friend.',
+
+  'Failed to add administrators': 'Failed to add administrators.',
+
   'Invited by': 'Invited by',
   'Invitation sent': 'A new invitation is sent to all administrators, now is waiting for review.',
+
+  'Sure to reject all invitations?': 'Are you sure want to reject all these invitations?',
 
   'Sure to add this friend?': 'Do you want to add this friend?',
   'Sure to remove this friend?': 'Are you sure to remove this friend?'
@@ -297,6 +313,29 @@ final Map<String, String> intlEnUs = {
   'Grant to access photo album': 'You should grant the permission to access photo album.',
   'Grant to access camera': 'You should grant the permission to access camera.',
   'Grant to access microphone': 'You should grant the permission to access microphone.',
+
+  'Failed to get image file': 'Failed to get image file.',
+  'Cannot save this image': 'Cannot save this image.',
+
+  'Failed to send command': 'Failed to send command.',
+
+  'Sure to remove this station (@remote)?': 'Sure to remove this station (@remote)?',
+  'Station (@remote) is removed': 'Station (@remote) is removed.',
+  'Failed to remove station (@remote)': 'Failed to remove station (@remote).',
+  'Cannot remove this station': 'Cannot remove this station.',
+
+  'Invite command error': 'Invite command error.',
+  'Expel command error': 'Expel command error.',
+
+  'Unsupported group command: @cmd': 'Unsupported group command: @cmd.',
+
+  '"@commander" reset group': '"@commander" has updated the group members.',
+  '"@commander" join group': '"@commander" wants to join this group.',
+  '"@commander" left group': '"@commander" left the group.',
+  '"@commander" invite "@members"': '"@commander" is inviting "@members" into this group.',
+  '"@commander" invite "@member"': '"@commander" is inviting "@member" into this group.',
+  '"@commander" expel "@members"': '"@commander" is expelling members "@members" from this group.',
+  '"@commander" expel "@member"': '"@commander" is expelling member "@member" from this group.',
 
   //
   //  Cache Files Management

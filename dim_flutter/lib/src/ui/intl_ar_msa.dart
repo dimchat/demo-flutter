@@ -6,6 +6,9 @@ final Map<String, String> intlAr = {
 
   // 'OK': 'OK',
 
+  // 'Customer Service': 'Customer Service',
+  // '@total friends': '@total friends',
+
   //
   //  Register
   //
@@ -91,6 +94,10 @@ final Map<String, String> intlAr = {
   'Confirm Delete': 'تأكيد الحذف',
   'Confirm Share': 'تأكيد المشاركة',
   'Confirm Forward': 'تأكيد الإعادة',
+
+  'Continue': 'استمر',
+  'Deny': 'رفض',
+  'Allow': 'السماح',
 
   'Success': 'نجاح',
   'Error': 'خطأ',
@@ -268,8 +275,17 @@ final Map<String, String> intlAr = {
   'Please input alias': 'الرجاء إدخال الاسم المستعار.',
   'Please review invitations': 'الرجاء مراجعة الدعوات أولا.',
 
+  'Current user not found': 'لم يتم العثور على المستخدم الحالي.',
+  'Failed to add contact': 'فشل في إضافة جهة الاتصال.',
+  'Failed to remove contact': 'فشل في إزالة جهة الاتصال.',
+  'Failed to remove friend': 'فشل في إزالة الصديق.',
+
+  'Failed to add administrators': 'فشل في إضافة المسؤولين.',
+
   'Invited by': 'تمت الدعوة بواسطة',
   'Invitation sent': 'تم إرسال دعوة جديدة إلى جميع المشرفين، الآن في انتظار المراجعة.',
+
+  'Sure to reject all invitations?': 'هل أنت متأكد أنك تريد رفض جميع الدعوات؟',
 
   'Sure to add this friend?': 'هل ترغب في إضافة هذا الصديق؟',
   'Sure to remove this friend?': 'هل أنت متأكد من إزالة هذا الصديق؟'
@@ -299,6 +315,29 @@ final Map<String, String> intlAr = {
   'Grant to access photo album': 'يجب عليك منح الإذن للوصول إلى ألبوم الصور.',
   'Grant to access camera': 'يجب عليك منح الإذن للوصول إلى الكاميرا.',
   'Grant to access microphone': 'يجب عليك منح الإذن للوصول إلى الميكروفون.',
+
+  'Failed to get image file': 'فشل في الحصول على ملف الصورة.',
+  'Cannot save this image': 'لا يمكن حفظ هذه الصورة.',
+
+  'Failed to send command': 'فشل في إرسال الأمر.',
+
+  'Sure to remove this station (@remote)?': 'هل أنت متأكد من أنك تريد إزالة هذه المحطة (@remote)؟',
+  'Station (@remote) is removed': 'تم إزالة المحطة (@remote).',
+  'Failed to remove station (@remote)': 'فشل في إزالة المحطة (@remote).',
+  'Cannot remove this station': 'لا يمكن إزالة هذه المحطة.',
+
+  'Invite command error': 'خطأ في أمر الدعوة.',
+  'Expel command error': 'خطأ في أمر الطرد.',
+
+  'Unsupported group command: @cmd': 'الأمر الجماعي غير مدعوم: @cmd.',
+
+  '"@commander" reset group': '"@commander" قام بتحديث أعضاء المجموعة.',
+  '"@commander" join group': '"@commander" يريد الانضمام إلى هذه المجموعة.',
+  '"@commander" left group': '"@commander" غادر المجموعة.',
+  '"@commander" invite "@members"': '"@commander" يدعو "@members" للانضمام إلى هذه المجموعة.',
+  '"@commander" invite "@member"': '"@commander" يدعو "@member" للانضمام إلى هذه المجموعة.',
+  '"@commander" expel "@members"': '"@commander" يطرد "@members" من هذه المجموعة.',
+  '"@commander" expel "@member"': '"@commander" يطرد "@member" من هذه المجموعة.',
 
   //
   //  Cache Files Management

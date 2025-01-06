@@ -135,7 +135,7 @@ class _TextPreviewState extends State<TextPreviewPage> {
   Widget _plainText() => SelectableText(
     widget.text,
     style: const TextStyle(
-      fontSize: 18,
+      fontSize: 22,
     ),
   );
   Widget _richText() => RichTextView(

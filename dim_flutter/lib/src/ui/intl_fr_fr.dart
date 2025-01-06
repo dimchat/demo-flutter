@@ -6,6 +6,9 @@ final Map<String, String> intlFrFr = {
 
   // 'OK': 'OK',
 
+  // 'Customer Service': 'Customer Service',
+  // '@total friends': '@total friends',
+
   //
   //  Register
   //
@@ -91,6 +94,10 @@ final Map<String, String> intlFrFr = {
   'Confirm Delete': 'Confirmer la suppression',
   'Confirm Share': 'Confirmer le partage',
   'Confirm Forward': 'Confirmer la transmission',
+
+  'Continue': 'Continuer',
+  'Deny': 'Refuser',
+  'Allow': 'Autoriser',
 
   'Success': 'Succès',
   'Error': 'Erreur',
@@ -268,8 +275,17 @@ final Map<String, String> intlFrFr = {
   'Please input alias': 'Veuillez saisir un alias.',
   'Please review invitations': 'Veuillez d\'abord passer en revue les invitations.',
 
+  'Current user not found': 'Utilisateur actuel non trouvé.',
+  'Failed to add contact': 'Échec de l\'ajout du contact.',
+  'Failed to remove contact': 'Échec de la suppression du contact.',
+  'Failed to remove friend': 'Échec de la suppression de l\'ami.',
+
+  'Failed to add administrators': 'Échec de l\'ajout des administrateurs.',
+
   'Invited by': 'Invité par',
   'Invitation sent': 'Une nouvelle invitation a été envoyée à tous les administrateurs, maintenant en attente de révision.',
+
+  'Sure to reject all invitations?': 'Êtes-vous sûr de vouloir rejeter toutes ces invitations ?',
 
   'Sure to add this friend?': 'Êtes-vous sûr de vouloir ajouter cet ami ?',
   'Sure to remove this friend?': 'Êtes-vous sûr de vouloir supprimer cet ami ?'
@@ -298,6 +314,29 @@ final Map<String, String> intlFrFr = {
   'Grant to access photo album': 'Vous devez accorder l\'autorisation d\'accéder à l\'album photo.',
   'Grant to access camera': 'Vous devez accorder l\'autorisation d\'accéder à l\'appareil photo.',
   'Grant to access microphone': 'Vous devez accorder l\'autorisation d\'accéder au microphone.',
+
+  'Failed to get image file': 'Échec de l\'obtention du fichier image.',
+  'Cannot save this image': 'Impossible de sauvegarder cette image.',
+
+  'Failed to send command': 'Échec de l\'envoi de la commande.',
+
+  'Sure to remove this station (@remote)?': 'Êtes-vous sûr de vouloir supprimer cette station (@remote) ?',
+  'Station (@remote) is removed': 'La station (@remote) a été supprimée.',
+  'Failed to remove station (@remote)': 'Échec de la suppression de la station (@remote).',
+  'Cannot remove this station': 'Impossible de supprimer cette station.',
+
+  'Invite command error': 'Erreur de commande d\'invitation.',
+  'Expel command error': 'Erreur de commande d\'expulsion.',
+
+  'Unsupported group command: @cmd': 'Commande de groupe non supportée : @cmd.',
+
+  '"@commander" reset group': '"@commander" a mis à jour les membres du groupe.',
+  '"@commander" join group': '"@commander" veut rejoindre ce groupe.',
+  '"@commander" left group': '"@commander" a quitté le groupe.',
+  '"@commander" invite "@members"': '"@commander" invite "@members" à rejoindre ce groupe.',
+  '"@commander" invite "@member"': '"@commander" invite "@member" à rejoindre ce groupe.',
+  '"@commander" expel "@members"': '"@commander" expulse les membres "@members" du groupe.',
+  '"@commander" expel "@member"': '"@commander" expulse le membre "@member" du groupe.',
 
   //
   //  Cache Files Management

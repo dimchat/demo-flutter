@@ -6,6 +6,9 @@ final Map<String, String> intlHiIn = {
 
   // 'OK': 'OK',
 
+  // 'Customer Service': 'Customer Service',
+  // '@total friends': '@total friends',
+
   //
   //  Register
   //
@@ -91,6 +94,10 @@ final Map<String, String> intlHiIn = {
   'Confirm Delete': 'हटाने की पुष्टि करें',
   'Confirm Share': 'साझा करने की पुष्टि करें',
   'Confirm Forward': 'आगे भेजने की पुष्टि करें',
+
+  'Continue': 'जारी रखें',
+  'Deny': 'अस्वीकृत करें',
+  'Allow': 'अनुमति दें',
 
   'Success': 'सफलता',
   'Error': 'त्रुटि',
@@ -268,8 +275,17 @@ final Map<String, String> intlHiIn = {
   'Please input alias': 'कृपया उपनाम दर्ज करें।',
   'Please review invitations': 'कृपया पहले आमंत्रणों की समीक्षा करें।',
 
+  'Current user not found': 'वर्तमान उपयोगकर्ता नहीं मिला।',
+  'Failed to add contact': 'संपर्क जोड़ने में विफल।',
+  'Failed to remove contact': 'संपर्क हटाने में विफल।',
+  'Failed to remove friend': 'दोस्त हटाने में विफल।',
+
+  'Failed to add administrators': 'प्रशासक जोड़ने में विफल।',
+
   'Invited by': 'द्वारा आमंत्रित किया गया है',
   'Invitation sent': 'नया आमंत्रण सभी प्रबंधकों को भेजा गया है, अब समीक्षा का इंतजार है।',
+
+  'Sure to reject all invitations?': 'क्या आप सभी निमंत्रणों को अस्वीकार करना चाहते हैं?',
 
   'Sure to add this friend?': 'क्या आप इस दोस्त को जोड़ना चाहते हैं?',
   'Sure to remove this friend?': 'क्या आप इस दोस्त को हटाना चाहते हैं? यह क्रिया चैट इतिहास को भी साफ करेगी।',
@@ -294,6 +310,29 @@ final Map<String, String> intlHiIn = {
   'Grant to access photo album': 'आपको फोटो एल्बम तक पहुँचने की अनुमति देनी चाहिए।',
   'Grant to access camera': 'आपको कैमरा तक पहुँचने की अनुमति देनी चाहिए।',
   'Grant to access microphone': 'आपको माइक्रोफ़ोन तक पहुँचने की अनुमति देनी चाहिए।',
+
+  'Failed to get image file': 'छवि फ़ाइल प्राप्त करने में विफल।',
+  'Cannot save this image': 'इस छवि को सहेजा नहीं जा सकता।',
+
+  'Failed to send command': 'कमान्ड भेजने में विफल।',
+
+  'Sure to remove this station (@remote)?': 'क्या आप सुनिश्चित हैं कि आप इस स्टेशन (@remote) को हटाना चाहते हैं?',
+  'Station (@remote) is removed': 'स्टेशन (@remote) हटा दिया गया है।',
+  'Failed to remove station (@remote)': 'स्टेशन (@remote) को हटाने में विफल।',
+  'Cannot remove this station': 'इस स्टेशन को हटाया नहीं जा सकता।',
+
+  'Invite command error': 'आमंत्रण कमांड में त्रुटि।',
+  'Expel command error': 'निकालने कमांड में त्रुटि।',
+
+  'Unsupported group command: @cmd': 'समर्थित नहीं ग्रुप कमांड: @cmd।',
+
+  '"@commander" reset group': '"@commander" ने समूह के सदस्य अपडेट किए।',
+  '"@commander" join group': '"@commander" इस समूह में शामिल होना चाहता है।',
+  '"@commander" left group': '"@commander" ने समूह छोड़ दिया।',
+  '"@commander" invite "@members"': '"@commander" "@members" को इस समूह में आमंत्रित कर रहा है।',
+  '"@commander" invite "@member"': '"@commander" "@member" को इस समूह में आमंत्रित कर रहा है।',
+  '"@commander" expel "@members"': '"@commander" "@members" को इस समूह से बाहर कर रहा है।',
+  '"@commander" expel "@member"': '"@commander" "@member" को इस समूह से बाहर कर रहा है।',
 
   //
   //  Cache Files Management

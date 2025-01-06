@@ -5,6 +5,9 @@ final Map<String, String> intlZhTw = {
 
   // 'OK': '好',
 
+  // 'Customer Service': 'Customer Service',
+  // '@total friends': '@total friends',
+
   //
   //  Register
   //
@@ -90,6 +93,10 @@ final Map<String, String> intlZhTw = {
   'Confirm Delete': '確認刪除',
   'Confirm Share': '確認分享',
   'Confirm Forward': '確認轉發',
+
+  'Continue': '繼續',
+  'Deny': '拒絕',
+  'Allow': '允許',
 
   'Success': '成功',
   'Error': '錯誤',
@@ -266,8 +273,17 @@ final Map<String, String> intlZhTw = {
   'Please input alias': '請輸入別名。',
   'Please review invitations': '請先檢閱邀請。',
 
+  'Current user not found': '未找到當前使用者。',
+  'Failed to add contact': '新增聯絡人失敗。',
+  'Failed to remove contact': '移除聯絡人失敗。',
+  'Failed to remove friend': '移除朋友失敗。',
+
+  'Failed to add administrators': '新增管理員失敗。',
+
   'Invited by': '邀請人',
   'Invitation sent': '新的邀請已發送給所有管理員，現在等待審核。',
+
+  'Sure to reject all invitations?': '確定拒絕所有邀請嗎？',
 
   'Sure to add this friend?': '確定要添加此朋友嗎？',
   'Sure to remove this friend?': '確定要移除此朋友嗎？此操作將清除聊天歷史。',
@@ -292,6 +308,29 @@ final Map<String, String> intlZhTw = {
   'Grant to access photo album': '你應該授權訪問相冊的權限。',
   'Grant to access camera': '你應該授權訪問相機的權限。',
   'Grant to access microphone': '你應該授權訪問麥克風的權限。',
+
+  'Failed to get image file': '獲取圖片檔案失敗。',
+  'Cannot save this image': '無法儲存此圖片。',
+
+  'Failed to send command': '發送指令失敗。',
+
+  'Sure to remove this station (@remote)?': '確定要移除此站點 (@remote) 嗎？',
+  'Station (@remote) is removed': '站點 (@remote) 已被移除。',
+  'Failed to remove station (@remote)': '移除站點 (@remote) 失敗。',
+  'Cannot remove this station': '無法移除此站點。',
+
+  'Invite command error': '邀請指令錯誤。',
+  'Expel command error': '驅逐指令錯誤。',
+
+  'Unsupported group command: @cmd': '不支援的群組指令: @cmd。',
+
+  '"@commander" reset group': '"@commander" 已更新群組成員。',
+  '"@commander" join group': '"@commander" 想要加入此群組。',
+  '"@commander" left group': '"@commander" 已離開該群組。',
+  '"@commander" invite "@members"': '"@commander" 正在邀請 "@members" 加入此群組。',
+  '"@commander" invite "@member"': '"@commander" 正在邀請 "@member" 加入此群組。',
+  '"@commander" expel "@members"': '"@commander" 正在將成員 "@members" 踢出此群組。',
+  '"@commander" expel "@member"': '"@commander" 正在將成員 "@member" 踢出此群組。',
 
   //
   //  Cache Files Management

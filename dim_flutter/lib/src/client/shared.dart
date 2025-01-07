@@ -33,7 +33,7 @@ class GlobalVariable {
   late final SharedDatabase database;
 
   late final SharedFacebook facebook;
-  late SharedMessenger? _messenger;
+  SharedMessenger? _messenger;
 
   late final SharedEmitter emitter;
   late final Client terminal;

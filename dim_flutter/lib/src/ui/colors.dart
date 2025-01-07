@@ -68,7 +68,7 @@ abstract class ThemeColors {
   //  Common
   //
   Color get commandBackgroundColor;
-  Color get messageIsMineBackgroundColor => const Color(0xFFA9E879);
+  Color get messageIsMineBackgroundColor;
 
   //
   //  Text Style
@@ -187,6 +187,9 @@ class _LightThemeColors extends ThemeColors {
   //
   @override
   Color get commandBackgroundColor => CupertinoColors.lightBackgroundGray;
+
+  @override
+  Color get messageIsMineBackgroundColor => const Color(0xFFA9E879);
 
   //
   //  Web Page Message
@@ -314,6 +317,9 @@ class _DarkThemeColors extends ThemeColors {
   //
   @override
   Color get commandBackgroundColor => CupertinoColors.systemFill;
+
+  @override
+  Color get messageIsMineBackgroundColor => const Color(0xFF58B169);
 
   //
   //  Text Style

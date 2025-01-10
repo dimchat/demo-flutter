@@ -193,7 +193,7 @@ class _ImageLoader extends PortableImageLoader {
   static _ImageLoader from(PortableNetworkFile pnf) {
     _ImageLoader loader = _ImageLoader(pnf);
     if (pnf.url != null && pnf.data == null) {
-      FileUploader().addDownloadTask(loader);
+      SharedFileUploader().addDownloadTask(loader);
     }
     return loader;
   }

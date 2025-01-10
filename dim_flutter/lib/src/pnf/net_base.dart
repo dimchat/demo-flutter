@@ -69,7 +69,7 @@ class PortableNetworkFactory {
   PortableNetworkLoader _createLoader(PortableNetworkFile pnf) {
     PortableNetworkLoader loader = PortableFileLoader(pnf);
     if (pnf.url != null && pnf.data == null) {
-      FileUploader().addDownloadTask(loader);
+      SharedFileUploader().addDownloadTask(loader);
     }
     return loader;
   }

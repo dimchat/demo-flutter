@@ -188,8 +188,10 @@ class Config with Logging {
   Future<List> get stations async => (await _info)['stations'] ?? [];
 
   // 'http://106.52.25.169:8081/{ID}/upload?md5={MD5}&salt={SALT}'
-  Future<List> get uploadAPI async => (await _info)['uploads'] ?? [];
+  Future<Map> get uploadAPI async => (await _info)['upload'] ?? {};
   // Future<String> get uploadKey async => '12345678';
+  Future<List> get uploadAvatarAPI async => (await uploadAPI)['avatar'];
+  Future<List> get uploadFileAPI async => (await uploadAPI)['file'];
 
   /// Open Source
   Future<String> get sourceURL async => (await _info)['sources']

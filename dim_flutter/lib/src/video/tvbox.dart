@@ -158,7 +158,7 @@ class _LiveHelper with Logging {
   //  HTTP
   //
 
-  final HTTPClient _http = HTTPClient();
+  final FileDownloader _http = FileDownloader(HTTPClient());
   final Map<Uri, String> _caches = {};
 
   Future<String?> httpGet(Uri url) async {

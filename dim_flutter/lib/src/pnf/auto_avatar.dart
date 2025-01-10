@@ -333,7 +333,7 @@ class _AvatarImageLoader extends PortableImageLoader {
 
   @override
   Future<String?> get cacheFilePath async {
-    String? name = cacheFilename;
+    String? name = pnf.filename;
     if (name == null || name.isEmpty) {
       assert(false, 'PNF error: $pnf');
       return null;
@@ -348,7 +348,7 @@ class _AvatarImageLoader extends PortableImageLoader {
   static _AvatarImageLoader from(PortableNetworkFile pnf) {
     _AvatarImageLoader loader = _AvatarImageLoader(pnf);
     if (pnf.url != null && pnf.data == null) {
-      FileUploader().addDownloadTask(loader);
+      SharedFileUploader().addDownloadTask(loader);
     }
     return loader;
   }

@@ -37,16 +37,16 @@ import 'package:pnf/enigma.dart';
 import 'package:pnf/http.dart';
 
 import '../client/shared.dart';
-import '../common/constants.dart';
 import '../models/config.dart';
+import '../pnf/loader.dart';
 
 import 'local.dart';
 
 
-class FileUploader with Logging {
-  factory FileUploader() => _instance;
-  static final FileUploader _instance = FileUploader._internal();
-  FileUploader._internal() {
+class SharedFileUploader with Logging {
+  factory SharedFileUploader() => _instance;
+  static final SharedFileUploader _instance = SharedFileUploader._internal();
+  SharedFileUploader._internal() {
     _ftp = FileTransfer(HTTPClient());
     _enigma = Enigma();
   }
@@ -56,7 +56,8 @@ class FileUploader with Logging {
 
   bool _apiUpdated = false;
 
-  String? _api;
+  String? _upAvatarAPI;
+  String? _upFileAPI;
 
   //  'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7)'
   //  + ' AppleWebKit/537.36 (KHTML, like Gecko)'
@@ -69,12 +70,6 @@ class FileUploader with Logging {
     await _prepare();
     return await _ftp.addDownloadTask(task);
   }
-
-  /// Upload a file to URL
-  ///
-  /// @return response text
-  Future<String?> uploadFile(Uri url, String key, String filename, Uint8List fileData) async =>
-      _ftp.uploadFile(url, key, filename, fileData);
 
   /// Update secrets
   bool updateSecrets(dynamic secrets) {
@@ -91,15 +86,6 @@ class FileUploader with Logging {
     _enigma.update(lines);
     return lines.isNotEmpty;
   }
-
-  /// Get enigma secret for this API
-  Pair<String, Uint8List>? fetchEnigma(String api) =>
-      _enigma.fetch(api);
-
-  /// Build upload URL
-  String buildURL(String api, ID sender,
-      {required Uint8List data, required Uint8List secret, required String enigma}) =>
-      _enigma.build(api, sender, data: data, secret: secret, enigma: enigma);
 
   Future<void> _prepare() async {
     if (_apiUpdated) {
@@ -123,32 +109,51 @@ class FileUploader with Logging {
     //  2. config for upload API
     //
     Config config = Config();
-    List apiList = await config.uploadAPI;
-    String url = '';
-    String? enigma;
-    // TODO: pick up the fastest API for upload
+    List apiList = await config.uploadAvatarAPI;
+    logInfo('checking avatar API: $apiList');
+    String? api = _fastestAPI(apiList);
+    if (api != null) {
+      _upAvatarAPI = api;
+    }
+    apiList = await config.uploadFileAPI;
+    logInfo('checking file API: $apiList');
+    api = _fastestAPI(apiList);
+    if (api != null) {
+      _upFileAPI = api;
+    }
+    // done
+    _apiUpdated = true;
+  }
+  String? _fastestAPI(List apiList) {
     for (var api in apiList) {
-      if (api is Map) {
-        url = api['url'] ?? api['URL'];
-        enigma = api['enigma'];
-        if (enigma != null) {
-          url = '$url&enigma=$enigma';
-        }
-      } else {
-        assert(api is String, 'API error: $api');
-        url = api;
-        enigma = '';
-      }
-      if (url.isEmpty) {
+      String? url = _fetchAPI(api);
+      if (url == null || url.isEmpty) {
         logInfo('skip this API: $api');
         continue;
       }
+      // TODO: pick up the fastest API for upload
       logInfo('got upload API: $api');
-      break;
+      return api;
     }
-    logWarning('set upload API: $url (enigma: $enigma)');
-    _api = url;
-    _apiUpdated = true;
+    return null;
+  }
+  String? _fetchAPI(Object api) {
+    if (api is String) {
+      return api;
+    } else if (api is! Map) {
+      assert(false, 'api error: $api');
+      return null;
+    }
+    String? url = api['url'] ?? api['URL'];
+    if (url == null) {
+      assert(false, 'api error: $api');
+      return null;
+    }
+    String? enigma = api['enigma'];
+    if (enigma == null) {
+      return url;
+    }
+    return Template.replaceQueryParam(url, 'enigma', enigma);
   }
 
   ///  Upload avatar image data for user
@@ -156,89 +161,84 @@ class FileUploader with Logging {
   /// @param data     - image data
   /// @param filename - image filename ('avatar.jpg')
   /// @param sender   - user ID
-  /// @return remote URL if same file uploaded before
-  /// @throws IOException on failed to create temporary file
+  /// @return null on failed
   Future<Uri?> uploadAvatar(Uint8List data, String filename, ID sender) async {
-    Uri? url = await _upload('avatar', data, filename, sender);
-    String notification;
-    if (url == null) {
-      notification = NotificationNames.kFileUploadFailure;
-    } else {
-      notification = NotificationNames.kFileUploadSuccess;
+    String? api = _upAvatarAPI;
+    if (api == null) {
+      assert(false, 'avatar API not ready');
+      return null;
     }
-    // post notification async
-    var nc = NotificationCenter();
-    nc.postNotification(notification, this, {
-      'filename': filename,
-      'url': url,
-    });
-    return url;
+    var pnf = PortableNetworkFile.createFromData(data, filename);
+    pnf.password = PlainKey.getInstance();
+    var task = await PortableFileUpper.create(api, pnf,
+      sender: sender, enigma: _enigma,
+    );
+    if (task == null) {
+      return null;
+    }
+    //
+    //  1. prepare the task
+    //
+    UploadInfo? params;
+    try {
+      if (await task.prepare()) {
+        params = task.params;
+      }
+    } catch (e, st) {
+      logError('[HTTP] failed to prepare HTTP task: $task, error: $e, $st');
+      return null;
+    }
+    if (params == null) {
+      return null;
+    }
+    //
+    //  2. do the job
+    //
+    String? text;
+    try {
+      var uploader = _ftp.uploader;
+      if (uploader is FileUploader) {
+        text = await uploader.upload(params.url, params.data,
+          onSendProgress: (count, total) => task.progress(count, total),
+        );
+      }
+    } catch (e, st) {
+      logError('[HTTP] failed to upload: $params, error: $e, $st');
+    }
+    //
+    //  3. callback with downloaded data
+    //
+    try {
+      await task.process(text);
+    } catch (e, st) {
+      logError('[HTTP] failed to process: ${text?.length} bytes, $params, error: $e, $st');
+    }
+    return pnf.url;
   }
 
   ///  Upload encrypted file data for user
   ///
-  /// @param data     - encrypted data
-  /// @param filename - data file name ('voice.mp4')
-  /// @param sender   - user ID
-  /// @return remote URL if same file uploaded before
-  /// @throws IOException on failed to create temporary file
-  Future<Uri?> uploadEncryptData(Uint8List data, String filename, ID sender) async {
-    Uri? url = await _upload('file', data, filename, sender);
-    String notification;
-    if (url == null) {
-      notification = NotificationNames.kFileUploadFailure;
-    } else {
-      notification = NotificationNames.kFileUploadSuccess;
+  /// @param content - message content with filename & data
+  /// @param sender  - user ID
+  /// @return true on waiting upload
+  Future<bool> uploadEncryptData(FileContent content, ID sender) async {
+    String? api = _upFileAPI;
+    if (api == null) {
+      assert(false, 'file API not ready');
+      return false;
     }
-    // post notification async
-    var nc = NotificationCenter();
-    nc.postNotification(notification, this, {
-      'filename': filename,
-      'url': url,
-    });
-    return url;
-  }
-
-  final Map<String, Uri> _uploads = {};    // filename => download url
-
-  Future<Uri?> _upload(String varName, Uint8List data, String filename, ID sender) async {
-    await _prepare();
-    // 1. check old task
-    Uri? url = _uploads[filename];
-    if (url != null) {
-      logInfo('this file had already been uploaded: $filename -> $url');
-      return url;
+    var pnf = PortableNetworkFile.parse(content);
+    if (pnf == null) {
+      assert(false, 'file content error: $content');
+      return false;
     }
-    String? api = _api;
-    if (api == null || api.isEmpty) {
-      assert(false, 'failed to get upload API');
-      return null;
+    var task = await PortableFileUpper.create(api, pnf,
+      sender: sender, enigma: _enigma,
+    );
+    if (task == null) {
+      return false;
     }
-    Pair<String, Uint8List>? pair = fetchEnigma(api);
-    if (pair == null) {
-      assert(false, 'failed to fetch enigma: $api');
-      return null;
-    }
-    String enigma = pair.first;
-    Uint8List secret = pair.second;
-    String urlString = buildURL(api, sender, data: data, secret: secret, enigma: enigma);
-    logInfo('upload encrypted data: $varName=$filename (enigma: $enigma) -> $urlString');
-    String? json = await uploadFile(Uri.parse(urlString), varName, filename, data);
-    if (json == null) {
-      logError('failed to upload file: $filename -> $urlString');
-      return null;
-    }
-    Map? info = JSONMap.decode(json);
-    int code = info?['code'];
-    assert(code == 200, 'response error: $urlString -> $info');
-    String? download = info?['url'] ?? info?['URL'];
-    if (download == null) {
-      return null;
-    }
-    logInfo('encrypted data uploaded: $filename -> $download');
-    url = Uri.parse(download);
-    _uploads[filename] = url;
-    return url;
+    return await _ftp.addUploadTask(task);
   }
 
   static Future<int> cacheFileData(Uint8List data, String filename) async {

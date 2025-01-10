@@ -17,8 +17,8 @@ import 'shared.dart';
 class SharedEmitter extends Emitter implements Observer {
   SharedEmitter() {
     var nc = NotificationCenter();
-    nc.addObserver(this, NotificationNames.kFileUploadSuccess);
-    nc.addObserver(this, NotificationNames.kFileUploadFailure);
+    nc.addObserver(this, NotificationNames.kPortableNetworkSuccess);
+    nc.addObserver(this, NotificationNames.kPortableNetworkError);
   }
 
   @override
@@ -56,11 +56,11 @@ class SharedEmitter extends Emitter implements Observer {
   Future<void> onReceiveNotification(Notification notification) async {
     String name = notification.name;
     Map info = notification.userInfo!;
-    if (name == NotificationNames.kFileUploadSuccess) {
+    if (name == NotificationNames.kPortableNetworkSuccess) {
       String filename = info['filename'];
       Uri url = info['url'] ?? info['URL'];
       await _onUploadSuccess(filename, url);
-    } else if (name == NotificationNames.kFileUploadFailure) {
+    } else if (name == NotificationNames.kPortableNetworkError) {
       String filename = info['filename'];
       await _onUploadFailed(filename);
     }
@@ -100,6 +100,32 @@ class SharedEmitter extends Emitter implements Observer {
   }
 
   @override
+  Future<bool> handleFileContent(FileContent content, InstantMessage iMsg, {
+    int priority = 0
+  }) async {
+    Uri? url = content.url;
+    Uint8List? data = content.data;
+    String? filename = content.filename;
+    if (url == null && filename != null) {
+      // download URL not exists, upload it
+    } else {
+      if (data != null) {
+        // download URL found, so file data should not exist here
+        assert(false, 'file data should not exist here: $content');
+        content.data = null;
+      }
+      logInfo('file data uploaded: $filename -> $url');
+      return false;
+    }
+    var ftp = SharedFileUploader();
+    bool waiting = await ftp.uploadEncryptData(content, iMsg.sender);
+    if (waiting) {
+      await _saveInstantMessage(iMsg);
+    }
+    return waiting;
+  }
+
+  @override
   Future<ReliableMessage?> sendInstantMessage(InstantMessage iMsg, {int priority = 0}) async {
     ReliableMessage? rMsg = await super.sendInstantMessage(iMsg, priority: priority);
     // save instant message after sent
@@ -116,35 +142,7 @@ class SharedEmitter extends Emitter implements Observer {
   }
 
   @override
-  Future<bool> cacheFileData(Uint8List data, String filename) async {
-    int len = await FileUploader.cacheFileData(data, filename);
-    return len == data.length;
-  }
-
-  @override
-  Future<Uint8List?> getFileData(String filename) async =>
-      await FileUploader.getFileData(filename);
-
-  @override
-  Future<bool> cacheInstantMessage(InstantMessage iMsg) async =>
-      // await _saveInstantMessage(iMsg);
-      true;
-
-  @override
-  Future<Uri?> uploadFileData(Uint8List encrypted, String filename, ID sender) async {
-    /// NOTICE:
-    ///     Because the filename here is a MD5 string of the plaintext,
-    ///     but the encrypted data must be different every time, so
-    ///     we need to rebuild the filename here.
-    // rebuild filename
-    filename = URLHelper.filenameFromData(encrypted, filename);
-    // now upload the encrypted data with new filename
-    FileUploader ftp = FileUploader();
-    return await ftp.uploadEncryptData(encrypted, filename, sender);
-  }
-
-  @override
-  Future<bool> sendPicture(Uint8List jpeg, {
+  Future<Pair<InstantMessage?, ReliableMessage?>> sendPicture(Uint8List jpeg, {
     required String filename, required PortableNetworkFile? thumbnail,
     Map<String, Object>? extra,
     required ID receiver
@@ -159,7 +157,7 @@ class SharedEmitter extends Emitter implements Observer {
   }
 
   @override
-  Future<bool> sendVoice(Uint8List mp4, {
+  Future<Pair<InstantMessage?, ReliableMessage?>> sendVoice(Uint8List mp4, {
     required String filename, required double duration,
     Map<String, Object>? extra,
     required ID receiver
@@ -174,7 +172,7 @@ class SharedEmitter extends Emitter implements Observer {
   }
 
   // @override
-  // Future<bool> sendMovie(Uri url, {
+  // Future<Pair<InstantMessage?, ReliableMessage?>> sendMovie(Uri url, {
   //   required PortableNetworkFile? snapshot, required String? title,
   //   String? filename, Map<String, Object>? extra,
   //   required ID receiver

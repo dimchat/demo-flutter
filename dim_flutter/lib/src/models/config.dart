@@ -30,7 +30,7 @@ class _ConfigLoader with Logging implements lnc.Observer {
     nc.addObserver(this, NotificationNames.kPortableNetworkReceiveProgress);
     nc.addObserver(this, NotificationNames.kPortableNetworkReceived);
     nc.addObserver(this, NotificationNames.kPortableNetworkDecrypted);
-    nc.addObserver(this, NotificationNames.kPortableNetworkSuccess);
+    nc.addObserver(this, NotificationNames.kPortableNetworkDownloadSuccess);
     nc.addObserver(this, NotificationNames.kPortableNetworkError);
   }
 
@@ -62,7 +62,7 @@ class _ConfigLoader with Logging implements lnc.Observer {
     Map? userInfo = notification.userInfo;
     if (notification.sender != _pnfLoader) {
       return;
-    } else if (name == NotificationNames.kPortableNetworkSuccess) {
+    } else if (name == NotificationNames.kPortableNetworkDownloadSuccess) {
       Uri? url = userInfo?['URL'];
       Uint8List? data = userInfo?['data'];
       String? path = await _pnfLoader?.cacheFilePath;

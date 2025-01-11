@@ -73,23 +73,27 @@ class PortableFileUpper extends PortableNetworkUpper {
   static Future<PortableFileUpper?> create(String api, PortableNetworkFile pnf, {
     required ID sender, required Enigma enigma,
   }) async {
+    Uri? url = pnf.url;
     Uint8List? data = pnf.data;
+    String? filename = pnf.filename;
+    assert(url == null, 'remote URL already exists: $pnf');
     //
     //  1. check filename
     //
-    String? filename = pnf.filename;
     if (filename == null) {
       Log.error('failed to create upload task: $pnf');
       assert(false, 'file content error: $pnf');
       return null;
-    }
-    if (URLHelper.isFilenameEncoded(filename)) {
-    } else if (data == null) {
-      Log.error('failed to rebuild filename: $pnf');
-      assert(false, 'file content error: $pnf');
-      return null;
-    } else {
+    } else if (URLHelper.isFilenameEncoded(filename)) {
+      // filename encoded: "md5(data).ext"
+    } else if (data != null) {
       filename = URLHelper.filenameFromData(data, filename);
+      Log.info('rebuild filename: ${pnf.filename} -> $filename');
+      pnf.filename = filename;
+    } else {
+      // filename error
+      assert(false, 'filename error: $pnf');
+      return null;
     }
     //
     //  2. create with PNF

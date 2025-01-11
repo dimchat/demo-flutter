@@ -95,7 +95,7 @@ abstract class PortableNetworkState<T extends PortableNetworkView> extends State
     nc.addObserver(this, NotificationNames.kPortableNetworkReceiveProgress);
     nc.addObserver(this, NotificationNames.kPortableNetworkReceived);
     nc.addObserver(this, NotificationNames.kPortableNetworkDecrypted);
-    nc.addObserver(this, NotificationNames.kPortableNetworkSuccess);
+    nc.addObserver(this, NotificationNames.kPortableNetworkDownloadSuccess);
     nc.addObserver(this, NotificationNames.kPortableNetworkError);
   }
 
@@ -103,7 +103,7 @@ abstract class PortableNetworkState<T extends PortableNetworkView> extends State
   void dispose() {
     var nc = lnc.NotificationCenter();
     nc.removeObserver(this, NotificationNames.kPortableNetworkError);
-    nc.removeObserver(this, NotificationNames.kPortableNetworkSuccess);
+    nc.removeObserver(this, NotificationNames.kPortableNetworkDownloadSuccess);
     nc.removeObserver(this, NotificationNames.kPortableNetworkDecrypted);
     nc.removeObserver(this, NotificationNames.kPortableNetworkReceived);
     nc.removeObserver(this, NotificationNames.kPortableNetworkReceiveProgress);
@@ -142,7 +142,7 @@ abstract class PortableNetworkState<T extends PortableNetworkView> extends State
         Log.info('[PNF] onDecrypted: ${data?.length} bytes into file "$path", $url, $this');
         await _reload();
       }
-    } else if (name == NotificationNames.kPortableNetworkSuccess) {
+    } else if (name == NotificationNames.kPortableNetworkDownloadSuccess) {
       if (url == widget.pnf.url || notification.sender == widget.loader) {
         Uint8List? data = userInfo?['data'];
         Log.info('[PNF] onSuccess: ${data?.length} bytes, $url, $this');

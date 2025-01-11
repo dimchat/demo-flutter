@@ -134,6 +134,7 @@ class SharedFileUploader with Logging {
       assert(false, 'avatar API not ready');
       return null;
     }
+    // create upload task
     var pnf = PortableNetworkFile.createFromData(data, filename);
     pnf.password = PlainKey.getInstance();
     var task = await PortableFileUpper.create(api, pnf,
@@ -142,43 +143,17 @@ class SharedFileUploader with Logging {
     if (task == null) {
       return null;
     }
-    //
-    //  1. prepare the task
-    //
-    UploadInfo? params;
-    try {
-      if (await task.prepare()) {
-        params = task.params;
-      }
-    } catch (e, st) {
-      logError('[HTTP] failed to prepare HTTP task: $task, error: $e, $st');
-      return null;
-    }
-    if (params == null) {
-      return null;
-    }
-    //
-    //  2. do the job
-    //
-    String? text;
+    // handle upload task
     try {
       var uploader = _ftp.uploader;
       if (uploader is FileUploader) {
-        text = await uploader.upload(params.url, params.data,
-          onSendProgress: (count, total) => task.progress(count, total),
-        );
+        await uploader.handleUploadTask(task);
       }
     } catch (e, st) {
-      logError('[HTTP] failed to upload: $params, error: $e, $st');
+      logError('[HTTP] failed to handle upload task: $task, error: $e, $st');
+      return null;
     }
-    //
-    //  3. callback with downloaded data
-    //
-    try {
-      await task.process(text);
-    } catch (e, st) {
-      logError('[HTTP] failed to process: ${text?.length} bytes, $params, error: $e, $st');
-    }
+    // OK
     return pnf.url;
   }
 

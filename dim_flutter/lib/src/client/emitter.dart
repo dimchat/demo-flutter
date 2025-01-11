@@ -17,7 +17,7 @@ import 'shared.dart';
 class SharedEmitter extends Emitter implements Observer {
   SharedEmitter() {
     var nc = NotificationCenter();
-    nc.addObserver(this, NotificationNames.kPortableNetworkSuccess);
+    nc.addObserver(this, NotificationNames.kPortableNetworkUploadSuccess);
     nc.addObserver(this, NotificationNames.kPortableNetworkError);
   }
 
@@ -56,7 +56,7 @@ class SharedEmitter extends Emitter implements Observer {
   Future<void> onReceiveNotification(Notification notification) async {
     String name = notification.name;
     Map info = notification.userInfo!;
-    if (name == NotificationNames.kPortableNetworkSuccess) {
+    if (name == NotificationNames.kPortableNetworkUploadSuccess) {
       var pnf = info['PNF'];
       String filename = info['filename'] ?? pnf?['filename'] ?? '';
       Uri url = info['url'] ?? info['URL'];
@@ -106,20 +106,50 @@ class SharedEmitter extends Emitter implements Observer {
     int priority = 0
   }) async {
     Uri? url = content.url;
+    Uint8List? data = content.data;
     String? filename = content.filename;
-    if (url == null && filename != null) {
-      // download URL not exists, upload it
-      _addTask(filename, iMsg);
-    } else {
-      Uint8List? data = content.data;
+    //
+    //  1. check URL
+    //
+    if (url != null) {
+      // download URL exists,
+      // means the file data has already been uploaded
       if (data != null) {
-        // download URL found, so file data should not exist here
-        assert(!content.containsKey('data'), 'file data should not exist here: $content');
+        // file data should not exist here
+        assert(!content.containsKey('data'), 'file content error: $filename, $url');
         content.data = null;
       }
       logInfo('file data uploaded: $filename -> $url');
+      // no need to handle again,
+      // return false to send the message immediately
       return false;
     }
+    //
+    //  2. check filename
+    //
+    if (filename == null) {
+      // if download URL not exists, means file data has not been uploaded yet,
+      // there must be a filename here
+      logError('failed to create upload task: $content');
+      assert(false, 'file content error: $content');
+      // file content error,
+      // return true to drop this message
+      return true;
+    } else if (URLHelper.isFilenameEncoded(filename)) {
+      // filename encoded: "md5(data).ext"
+    } else if (data != null) {
+      filename = URLHelper.filenameFromData(data, filename);
+      Log.info('rebuild filename: ${content.filename} -> $filename');
+      content.filename = filename;
+    } else {
+      // filename error
+      assert(false, 'filename error: $content');
+      return true;
+    }
+    _addTask(filename, iMsg);
+    //
+    //  3. upload encrypted data
+    //
     var ftp = SharedFileUploader();
     bool waiting = await ftp.uploadEncryptData(content, iMsg.sender);
     if (waiting) {
@@ -144,51 +174,6 @@ class SharedEmitter extends Emitter implements Observer {
       return false;
     });
   }
-
-  @override
-  Future<Pair<InstantMessage?, ReliableMessage?>> sendPicture(Uint8List jpeg, {
-    required String filename, required PortableNetworkFile? thumbnail,
-    Map<String, Object>? extra,
-    required ID receiver
-  }) async {
-    // rebuild filename
-    filename = URLHelper.filenameFromData(jpeg, filename);
-    return await super.sendPicture(jpeg,
-      filename: filename, thumbnail: thumbnail,
-      extra: extra,
-      receiver: receiver,
-    );
-  }
-
-  @override
-  Future<Pair<InstantMessage?, ReliableMessage?>> sendVoice(Uint8List mp4, {
-    required String filename, required double duration,
-    Map<String, Object>? extra,
-    required ID receiver
-  }) async {
-    // rebuild filename
-    filename = URLHelper.filenameFromData(mp4, filename);
-    return await super.sendVoice(mp4,
-      filename: filename, duration: duration,
-      extra: extra,
-      receiver: receiver,
-    );
-  }
-
-  // @override
-  // Future<Pair<InstantMessage?, ReliableMessage?>> sendMovie(Uri url, {
-  //   required PortableNetworkFile? snapshot, required String? title,
-  //   String? filename, Map<String, Object>? extra,
-  //   required ID receiver
-  // }) async {
-  //   // rebuild filename
-  //   filename = URLHelper.filenameFromURL(url, filename);
-  //   return await super.sendMovie(url,
-  //     snapshot: snapshot, title: title,
-  //     extra: extra,
-  //     receiver: receiver,
-  //   );
-  // }
 
   //
   //  Recall Messages

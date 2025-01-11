@@ -86,7 +86,7 @@ abstract class PortableImageLoader extends PortableFileLoader {
     var image = _provider;
     if (image == null) {
       // check file content
-      Uint8List? bytes = content;
+      Uint8List? bytes = plaintext;
       if (bytes != null && bytes.isNotEmpty) {
         image = _provider = ImageUtils.memoryImageProvider(bytes);
       // } else {

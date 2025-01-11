@@ -62,14 +62,25 @@ abstract class NotificationNames {
 
   static const String       kPortableNetworkStatusChanged =
       pnf.NotificationNames.kPortableNetworkStatusChanged;
+
+  static const String       kPortableNetworkSendProgress =
+      pnf.NotificationNames.kPortableNetworkSendProgress;
   static const String       kPortableNetworkReceiveProgress =
       pnf.NotificationNames.kPortableNetworkReceiveProgress;
+
+  static const String       kPortableNetworkEncrypted =
+      pnf.NotificationNames.kPortableNetworkEncrypted;
+
   static const String       kPortableNetworkReceived =
       pnf.NotificationNames.kPortableNetworkReceived;
   static const String       kPortableNetworkDecrypted =
       pnf.NotificationNames.kPortableNetworkDecrypted;
-  static const String       kPortableNetworkSuccess =
-      pnf.NotificationNames.kPortableNetworkSuccess;
+
+  static const String       kPortableNetworkUploadSuccess =
+      pnf.NotificationNames.kPortableNetworkUploadSuccess;
+  static const String       kPortableNetworkDownloadSuccess =
+      pnf.NotificationNames.kPortableNetworkDownloadSuccess;
+
   static const String       kPortableNetworkError =
       pnf.NotificationNames.kPortableNetworkError;
 

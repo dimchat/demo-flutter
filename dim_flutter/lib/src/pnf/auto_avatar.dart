@@ -333,7 +333,7 @@ class _AvatarImageLoader extends PortableImageLoader {
 
   @override
   Future<String?> get cacheFilePath async {
-    String? name = pnf.filename;
+    String? name = filename;
     if (name == null || name.isEmpty) {
       assert(false, 'PNF error: $pnf');
       return null;

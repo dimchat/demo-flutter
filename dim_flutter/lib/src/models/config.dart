@@ -6,6 +6,7 @@ import 'package:dim_client/sdk.dart';
 import 'package:dim_client/ok.dart';
 import 'package:dim_client/ok.dart' as lnc;
 import 'package:pnf/dos.dart';
+import 'package:pnf/enigma.dart';
 import 'package:pnf/pnf.dart' show PortableNetworkLoader;
 
 import '../client/client.dart';
@@ -187,11 +188,10 @@ class Config with Logging {
   /// Base stations
   Future<List> get stations async => (await _info)['stations'] ?? [];
 
-  // 'http://106.52.25.169:8081/{ID}/upload?md5={MD5}&salt={SALT}'
-  Future<Map> get uploadAPI async => (await _info)['upload'] ?? {};
-  // Future<String> get uploadKey async => '12345678';
-  Future<List> get uploadAvatarAPI async => (await uploadAPI)['avatar'];
-  Future<List> get uploadFileAPI async => (await uploadAPI)['file'];
+  // 'http://tfs.dim.chat:8081/upload/{ID}/avatar?md5={MD5}&salt={SALT}&enigma=123456'
+  // 'http://106.52.25.169:8081/upload/{ID}/file?md5={MD5}&salt={SALT}&enigma=123456'
+  Future<String?> get uploadAvatarAPI async => _UploadAPI(await _info).uploadAvatarAPI;
+  Future<String?> get uploadFileAPI async => _UploadAPI(await _info).uploadFileAPI;
 
   /// Open Source
   Future<String> get sourceURL async => (await _info)['sources']
@@ -208,6 +208,67 @@ class Config with Logging {
       ?? 'https://dim.chat/';
 
   Newest? get newest => NewestManager().parse(_cfgLoader.info);
+
+}
+
+
+class _UploadAPI with Logging {
+  _UploadAPI(this._info);
+
+  final Map _info;
+
+  List get avatars => _fetch('avatar');
+
+  List get files => _fetch('file');
+
+  List _fetch(String name) {
+    var info = _info['upload'] ?? _info;
+    info = info['uploads'] ?? info[name];
+    return info is List ? info : [];
+  }
+
+  String? _fastestAPI(List apiList) {
+    List<String> array = _APIUtils.fetch(apiList);
+    // TODO: choose the fastest URL
+    return array.isEmpty ? null : array.first;
+  }
+
+  //
+  //  APIs
+  //
+  String? get uploadAvatarAPI => _fastestAPI(avatars);
+  String? get uploadFileAPI   => _fastestAPI(files);
+
+}
+
+
+abstract interface class _APIUtils {
+
+  static List<String> fetch(List apiList) {
+    List<String> array = [];
+    String? item;
+    for (var api in apiList) {
+      if (api is String && api.contains('://')) {
+        array.add(api);
+      } else if (api is Map) {
+        item = join(api);
+        if (item != null) {
+          array.add(item);
+        }
+      }
+    }
+    return array;
+  }
+
+  static String? join(Map api) {
+    String? url = api['url'] ?? api['URL'];
+    if (url == null) {
+      assert(false, 'api error: $api');
+      return null;
+    }
+    String? enigma = api['enigma'];
+    return enigma == null ? url : Template.replaceQueryParam(url, 'enigma', enigma);
+  }
 
 }
 

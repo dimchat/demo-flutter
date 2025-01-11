@@ -109,53 +109,19 @@ class SharedFileUploader with Logging {
     //  2. config for upload API
     //
     Config config = Config();
-    List apiList = await config.uploadAvatarAPI;
-    logInfo('checking avatar API: $apiList');
-    String? api = _fastestAPI(apiList);
+    String? api = await config.uploadAvatarAPI;
+    logInfo('checking avatar API: $api');
     if (api != null) {
       _upAvatarAPI = api;
     }
-    apiList = await config.uploadFileAPI;
-    logInfo('checking file API: $apiList');
-    api = _fastestAPI(apiList);
+    api = await config.uploadFileAPI;
+    logInfo('checking file API: $api');
     if (api != null) {
       _upFileAPI = api;
     }
     // done
     _apiUpdated = true;
   }
-  String? _fastestAPI(List apiList) {
-    for (var api in apiList) {
-      String? url = _fetchAPI(api);
-      if (url == null || url.isEmpty) {
-        logInfo('skip this API: $api');
-        continue;
-      }
-      // TODO: pick up the fastest API for upload
-      logInfo('got upload API: $api');
-      return api;
-    }
-    return null;
-  }
-  String? _fetchAPI(Object api) {
-    if (api is String) {
-      return api;
-    } else if (api is! Map) {
-      assert(false, 'api error: $api');
-      return null;
-    }
-    String? url = api['url'] ?? api['URL'];
-    if (url == null) {
-      assert(false, 'api error: $api');
-      return null;
-    }
-    String? enigma = api['enigma'];
-    if (enigma == null) {
-      return url;
-    }
-    return Template.replaceQueryParam(url, 'enigma', enigma);
-  }
-
   ///  Upload avatar image data for user
   ///
   /// @param data     - image data
@@ -227,8 +193,9 @@ class SharedFileUploader with Logging {
       assert(false, 'file API not ready');
       return false;
     }
-    var pnf = PortableNetworkFile.parse(content);
+    var pnf = PortableNetworkFile.parse(content.toMap());
     if (pnf == null) {
+      logError('file content error: $content');
       assert(false, 'file content error: $content');
       return false;
     }
@@ -236,6 +203,7 @@ class SharedFileUploader with Logging {
       sender: sender, enigma: _enigma,
     );
     if (task == null) {
+      logError('failed to create upload task: $api, $sender');
       return false;
     }
     return await _ftp.addUploadTask(task);

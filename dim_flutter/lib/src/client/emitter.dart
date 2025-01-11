@@ -36,9 +36,9 @@ class SharedEmitter extends Emitter implements Observer {
   /// filename => task
   final Map<String, InstantMessage> _outgoing = {};
 
-  // void _addTask(String filename, InstantMessage item) {
-  //   _outgoing[filename] = item;
-  // }
+  void _addTask(String filename, InstantMessage item) {
+    _outgoing[filename] = item;
+  }
 
   InstantMessage? _popTask(String filename) {
     InstantMessage? item = _outgoing[filename];
@@ -57,11 +57,13 @@ class SharedEmitter extends Emitter implements Observer {
     String name = notification.name;
     Map info = notification.userInfo!;
     if (name == NotificationNames.kPortableNetworkSuccess) {
-      String filename = info['filename'];
+      var pnf = info['PNF'];
+      String filename = info['filename'] ?? pnf?['filename'] ?? '';
       Uri url = info['url'] ?? info['URL'];
       await _onUploadSuccess(filename, url);
     } else if (name == NotificationNames.kPortableNetworkError) {
-      String filename = info['filename'];
+      var pnf = info['PNF'];
+      String filename = info['filename'] ?? pnf?['filename'] ?? '';
       await _onUploadFailed(filename);
     }
   }
@@ -76,7 +78,7 @@ class SharedEmitter extends Emitter implements Observer {
     // file data uploaded to FTP server, replace it with download URL
     // and send the content to station
     FileContent content = iMsg.content as FileContent;
-    assert(content.data == null, 'file content error: $content');
+    assert(!content.containsKey('data'), 'file content error: $content');
     // content.data = null;
     content.url = url;
     await sendInstantMessage(iMsg, priority: 1).onError((error, stackTrace) {
@@ -104,14 +106,15 @@ class SharedEmitter extends Emitter implements Observer {
     int priority = 0
   }) async {
     Uri? url = content.url;
-    Uint8List? data = content.data;
     String? filename = content.filename;
     if (url == null && filename != null) {
       // download URL not exists, upload it
+      _addTask(filename, iMsg);
     } else {
+      Uint8List? data = content.data;
       if (data != null) {
         // download URL found, so file data should not exist here
-        assert(false, 'file data should not exist here: $content');
+        assert(!content.containsKey('data'), 'file data should not exist here: $content');
         content.data = null;
       }
       logInfo('file data uploaded: $filename -> $url');
@@ -120,6 +123,7 @@ class SharedEmitter extends Emitter implements Observer {
     var ftp = SharedFileUploader();
     bool waiting = await ftp.uploadEncryptData(content, iMsg.sender);
     if (waiting) {
+      logInfo('cache instant message for waiting file data uploaded: $filename');
       await _saveInstantMessage(iMsg);
     }
     return waiting;

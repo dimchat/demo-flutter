@@ -124,7 +124,7 @@ abstract class Styles {
 
   static const EdgeInsets messageSenderNameMargin = EdgeInsets.all(2);
 
-  static const EdgeInsets messageContentMargin = EdgeInsets.fromLTRB(2, 8, 2, 8);
+  static const EdgeInsets messageContentMargin = EdgeInsets.fromLTRB(2, 2, 2, 2);
 
   static const EdgeInsets textMessagePadding = EdgeInsets.fromLTRB(16, 12, 16, 12);
   static const EdgeInsets audioMessagePadding = EdgeInsets.fromLTRB(16, 12, 16, 12);

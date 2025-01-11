@@ -32,6 +32,7 @@ import 'dart:typed_data';
 
 import 'package:dim_client/ok.dart';
 import 'package:dim_client/sdk.dart';
+import 'package:pnf/dos.dart';
 import 'package:pnf/enigma.dart';
 import 'package:pnf/pnf.dart';
 
@@ -62,6 +63,30 @@ class PortableFileUpper extends PortableNetworkUpper {
 
   @override
   FileCache get fileCache => LocalStorage();
+
+  @override
+  Future<Uint8List?> get fileData async {
+    String? path = await cacheFilePath;
+    Uint8List? data = pnf.data;
+    if (data == null || data.isEmpty) {
+      // get from local storage
+      if (path != null && await Paths.exists(path)) {
+        data = await ExternalStorage.loadBinary(path);
+      }
+    } else if (path == null) {
+      assert(false, 'failed to get file path: $pnf');
+    } else {
+      // save to local storage
+      int cnt = await ExternalStorage.saveBinary(data, path);
+      if (cnt == data.length) {
+        // data saved, remove from message content
+        pnf.data = null;
+      } else {
+        assert(false, 'failed to save data: $path');
+      }
+    }
+    return data;
+  }
 
   @override
   Future<void> postNotification(String name, [Map? info]) async {

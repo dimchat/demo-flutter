@@ -35,7 +35,6 @@ import 'package:flutter/cupertino.dart';
 import 'package:dim_client/sdk.dart';
 import 'package:dim_client/ok.dart';
 import 'package:dim_client/ok.dart' as lnc;
-import 'package:pnf/pnf.dart' show PortableNetworkLoader;
 
 import '../common/constants.dart';
 import '../filesys/upload.dart';
@@ -49,27 +48,44 @@ class PortableNetworkFactory {
   static final PortableNetworkFactory _instance = PortableNetworkFactory._internal();
   PortableNetworkFactory._internal();
 
-  final Map<Uri, PortableNetworkLoader> _loaders = WeakValueMap();
+  final Map<String, PortableFileLoader> _loaders = WeakValueMap();
 
-  PortableNetworkLoader getLoader(PortableNetworkFile pnf) {
-    PortableNetworkLoader? runner;
-    Uri? url = pnf.url;
-    if (url == null) {
-      runner = _createLoader(pnf);
-    } else {
-      runner = _loaders[url];
+  PortableFileLoader getLoader(PortableNetworkFile pnf) {
+    PortableFileLoader? runner;
+    var filename = pnf.filename;
+    var url = pnf.url;
+    if (url != null) {
+      runner = _loaders[url.toString()];
       if (runner == null) {
         runner = _createLoader(pnf);
-        _loaders[url] = runner;
+        _loaders[url.toString()] = runner;
       }
+    } else if (filename != null) {
+      runner = _loaders[filename];
+      if (runner == null) {
+        runner = _createUpper(pnf);
+        _loaders[filename] = runner;
+      }
+    } else {
+      throw FormatException('PNF error: $pnf');
     }
     return runner;
   }
 
-  PortableNetworkLoader _createLoader(PortableNetworkFile pnf) {
-    PortableNetworkLoader loader = PortableFileLoader(pnf);
-    if (pnf.url != null && pnf.data == null) {
-      SharedFileUploader().addDownloadTask(loader);
+  PortableFileLoader _createLoader(PortableNetworkFile pnf) {
+    PortableFileLoader loader = PortableFileLoader(pnf);
+    if (pnf.data == null) {
+      var ftp = SharedFileUploader();
+      loader.prepare().then((value) => ftp.addDownloadTask(loader.downloadTask!));
+    }
+    return loader;
+  }
+
+  PortableFileLoader _createUpper(PortableNetworkFile pnf) {
+    PortableFileLoader loader = PortableFileLoader(pnf);
+    if (pnf['enigma'] != null) {
+      var ftp = SharedFileUploader();
+      loader.prepare().then((value) => ftp.addUploadTask(loader.uploadTask!));
     }
     return loader;
   }
@@ -78,20 +94,30 @@ class PortableNetworkFactory {
 
 
 /// View to show PortableNetworkFile
-abstract class PortableNetworkView extends StatefulWidget {
+abstract class PortableNetworkView<T> extends StatefulWidget {
   const PortableNetworkView(this.loader, {super.key});
 
-  final PortableNetworkLoader loader;
+  final PortableFileLoader loader;
 
-  PortableNetworkFile get pnf => loader.pnf;
+  PortableNetworkFile? get pnf {
+    var task = loader.downloadTask;
+    if (task != null) {
+      return task.pnf;
+    } else {
+      return loader.uploadTask?.pnf;
+    }
+  }
 
 }
 
 /// View State for PortableNetworkFile
-abstract class PortableNetworkState<T extends PortableNetworkView> extends State<T> implements lnc.Observer {
+abstract class PortableNetworkState<T extends PortableNetworkView>
+    extends State<T> with Logging implements lnc.Observer {
   PortableNetworkState() {
     var nc = lnc.NotificationCenter();
     nc.addObserver(this, NotificationNames.kPortableNetworkStatusChanged);
+    nc.addObserver(this, NotificationNames.kPortableNetworkEncrypted);
+    nc.addObserver(this, NotificationNames.kPortableNetworkSendProgress);
     nc.addObserver(this, NotificationNames.kPortableNetworkReceiveProgress);
     nc.addObserver(this, NotificationNames.kPortableNetworkReceived);
     nc.addObserver(this, NotificationNames.kPortableNetworkDecrypted);
@@ -107,6 +133,8 @@ abstract class PortableNetworkState<T extends PortableNetworkView> extends State
     nc.removeObserver(this, NotificationNames.kPortableNetworkDecrypted);
     nc.removeObserver(this, NotificationNames.kPortableNetworkReceived);
     nc.removeObserver(this, NotificationNames.kPortableNetworkReceiveProgress);
+    nc.removeObserver(this, NotificationNames.kPortableNetworkSendProgress);
+    nc.removeObserver(this, NotificationNames.kPortableNetworkEncrypted);
     nc.removeObserver(this, NotificationNames.kPortableNetworkStatusChanged);
     super.dispose();
   }
@@ -115,49 +143,69 @@ abstract class PortableNetworkState<T extends PortableNetworkView> extends State
   Future<void> onReceiveNotification(lnc.Notification notification) async {
     String name = notification.name;
     Map? userInfo = notification.userInfo;
+    PortableNetworkFile? pnf = userInfo?['PNF'];
+    String? filename = pnf?.filename;
     Uri? url = userInfo?['URL'];
-    if (name == NotificationNames.kPortableNetworkStatusChanged) {
-      if (url == widget.pnf.url || notification.sender == widget.loader) {
-        var previous = userInfo?['previous'];
-        var current = userInfo?['current'];
-        Log.info('[PNF] onStatusChanged: $previous -> $current, $url, $this');
-        await _reload();
-      }
-    } else if (name == NotificationNames.kPortableNetworkReceiveProgress) {
-      if (url == widget.pnf.url) {
-        // Log.info('[PNF] onReceiveProgress: $count/$total, ${pnf.url}, $this');
-        await _reload();
-      }
-    } else if (name == NotificationNames.kPortableNetworkReceived) {
-      if (url == widget.pnf.url) {
-        Uint8List? data = userInfo?['data'];
-        String? tmpPath = userInfo?['path'];
-        Log.info('[PNF] onReceived: ${data?.length} bytes into file "$tmpPath", $this');
-        await _reload();
-      }
-    } else if (name == NotificationNames.kPortableNetworkDecrypted) {
-      if (url == widget.pnf.url || notification.sender == widget.loader) {
-        Uint8List? data = userInfo?['data'];
-        String? path = userInfo?['path'];
-        Log.info('[PNF] onDecrypted: ${data?.length} bytes into file "$path", $url, $this');
-        await _reload();
-      }
-    } else if (name == NotificationNames.kPortableNetworkDownloadSuccess) {
-      if (url == widget.pnf.url || notification.sender == widget.loader) {
-        Uint8List? data = userInfo?['data'];
-        Log.info('[PNF] onSuccess: ${data?.length} bytes, $url, $this');
-        await _reload();
-      }
-    } else if (name == NotificationNames.kPortableNetworkError) {
-      if (url == widget.pnf.url || notification.sender == widget.loader) {
-        String? error = userInfo?['error'];
-        Log.error('[PNF] onError: $error, $url, $this');
-        await _reload();
-      }
+    // checking
+    bool isMatched = false;
+    if (notification.sender == widget.loader) {
+      isMatched = true;
+    } else if (pnf?['sn'] == widget.pnf?['sn']) {
+      isMatched = true;
+    } else if (url != null) {
+      isMatched = url == widget.pnf?.url;
+    } else {
+      var filename1 = pnf?.filename;
+      var filename2 = widget.pnf?.filename;
+      isMatched = filename1 == filename2;
     }
-  }
-
-  Future<void> _reload() async {
+    if (!isMatched) {
+      // not for this view
+      return;
+    } else if (name == NotificationNames.kPortableNetworkStatusChanged) {
+      var previous = userInfo?['previous'];
+      var current = userInfo?['current'];
+      logInfo('[PNF] onStatusChanged: $previous -> $current, $url');
+    } else if (name == NotificationNames.kPortableNetworkEncrypted) {
+      // waiting to send
+      Uint8List? data = userInfo?['data'];
+      String? path = userInfo?['path'];
+      logInfo('[PNF] onEncrypted: ${data?.length} bytes into file "$path", $url');
+    } else if (name == NotificationNames.kPortableNetworkSendProgress) {
+      // uploading file data
+      int? count = userInfo?['count'];
+      int? total = userInfo?['total'];
+      logInfo('[PNF] onSendProgress: $count/$total, $filename');
+    } else if (name == NotificationNames.kPortableNetworkUploadSuccess) {
+      Uint8List? data = userInfo?['data'];
+      logInfo('[PNF] onSuccess: ${data?.length} bytes, $url');
+    } else if (name == NotificationNames.kPortableNetworkReceiveProgress) {
+      // downloading file data
+      int? count = userInfo?['count'];
+      int? total = userInfo?['total'];
+      logInfo('[PNF] onReceiveProgress: $count/$total, ${pnf?.url}');
+    } else if (name == NotificationNames.kPortableNetworkReceived) {
+      // download finished, decrypting
+      Uint8List? data = userInfo?['data'];
+      String? tmpPath = userInfo?['path'];
+      logInfo('[PNF] onReceived: ${data?.length} bytes into file "$tmpPath"');
+    } else if (name == NotificationNames.kPortableNetworkDecrypted) {
+      // file data decrypted
+      Uint8List? data = userInfo?['data'];
+      String? path = userInfo?['path'];
+      logInfo('[PNF] onDecrypted: ${data?.length} bytes into file "$path", $url');
+    } else if (name == NotificationNames.kPortableNetworkDownloadSuccess) {
+      // file data downloaded
+      Uint8List? data = userInfo?['data'];
+      logInfo('[PNF] onSuccess: ${data?.length} bytes, $url');
+    } else if (name == NotificationNames.kPortableNetworkError) {
+      // error
+      String? error = userInfo?['error'];
+      logError('[PNF] onError: $error, $url, $this');
+    } else {
+      assert(false, 'LNC name error: $name');
+    }
+    // refresh
     if (mounted) {
       setState(() {
       });

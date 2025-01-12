@@ -29,6 +29,7 @@
  * =============================================================================
  */
 import 'package:flutter/cupertino.dart';
+import 'package:get/get.dart';
 
 import 'package:dim_client/sdk.dart';
 import 'package:dim_client/ok.dart';
@@ -53,7 +54,7 @@ class NetworkAudioFactory {
   final Map<Uri, _PortableAudioView> _views = WeakValueMap();
 
   PortableNetworkView getAudioView(AudioContent content, {Color? color, Color? backgroundColor}) {
-    PortableNetworkFile? pnf = PortableNetworkFile.parse(content);
+    PortableNetworkFile? pnf = PortableNetworkFile.parse(content.toMap());
     if (pnf == null) {
       throw FormatException('PNF error: $content');
     }
@@ -82,7 +83,7 @@ class _PortableAudioView extends PortableNetworkView {
 
   final _AudioPlayInfo _info = _AudioPlayInfo();
 
-  Uri? get url => pnf.url;
+  Uri? get url => pnf?.url;
 
   Future<String?> get cacheFilePath async {
     String? path = _info.cacheFilePath;
@@ -182,7 +183,7 @@ class _PortableAudioState extends PortableNetworkState<_PortableAudioView> {
   }
 
   String? get _duration {
-    return widget.pnf.getDouble('duration', 0)?.toStringAsFixed(3);
+    return widget.pnf?.getDouble('duration', 0)?.toStringAsFixed(3);
   }
 
   Widget _button(Widget? progress) => progress != null
@@ -191,20 +192,24 @@ class _PortableAudioState extends PortableNetworkState<_PortableAudioView> {
       : Icon(AppIcons.playAudioIcon, color: widget.color);
 
   Widget? getProgress() {
-    var loader = widget.loader;
-    PortableNetworkStatus pns = loader.status;
-    if (pns == PortableNetworkStatus.success ||
-        pns == PortableNetworkStatus.init) {
-      return null;
-    }
     String text;
     IconData? icon;
-    Color? color;
+    Color? color = widget.color;
+    var loader = widget.loader;
     // check status
-    if (pns == PortableNetworkStatus.error) {
-      text = 'Error';
-      icon = AppIcons.decryptErrorIcon;
-      color = CupertinoColors.systemRed;
+    PortableNetworkStatus pns = loader.status;
+    if (pns == PortableNetworkStatus.init ||
+        pns == PortableNetworkStatus.success) {
+      return null;
+    } else if (pns == PortableNetworkStatus.waiting) {
+      text = 'Waiting'.tr;
+    } else if (pns == PortableNetworkStatus.encrypting) {
+      text = 'Encrypting'.tr;
+      icon = AppIcons.encryptingIcon;
+    } else if (pns == PortableNetworkStatus.uploading) {
+      double len = loader.total.toDouble();
+      double value = len > 0 ? loader.count * 100.0 / len : 0.0;
+      text = '${value.toStringAsFixed(1)}%';
     } else if (pns == PortableNetworkStatus.downloading) {
       double len = loader.total.toDouble();
       double value = len > 0 ? loader.count * 100.0 / len : 0.0;
@@ -217,13 +222,14 @@ class _PortableAudioState extends PortableNetworkState<_PortableAudioView> {
     } else if (pns == PortableNetworkStatus.decrypting) {
       text = 'Decrypting';
       icon = AppIcons.decryptingIcon;
-    } else if (pns == PortableNetworkStatus.waiting) {
-      text = 'Waiting';
+    } else if (pns == PortableNetworkStatus.error) {
+      text = 'Error';
+      icon = AppIcons.decryptErrorIcon;
+      color = CupertinoColors.systemRed;
     } else {
       assert(false, 'status error: $pns');
       return null;
     }
-    color ??= widget.color;
     return Row(
       mainAxisAlignment: MainAxisAlignment.center,
       children: [

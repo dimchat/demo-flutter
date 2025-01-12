@@ -53,7 +53,7 @@ class NetworkVideoFactory {
 
   PortableNetworkView getVideoView(VideoContent content,
       {double? width, double? height, OnVideoShare? onVideoShare}) {
-    PortableNetworkFile? pnf = PortableNetworkFile.parse(content);
+    PortableNetworkFile? pnf = PortableNetworkFile.parse(content.toMap());
     Uri? url = pnf?.url;
     if (url == null || pnf == null) {
       throw FormatException('PNF error: $content');
@@ -69,7 +69,7 @@ class NetworkVideoFactory {
 class _PortableVideoView extends PortableNetworkView {
   const _PortableVideoView(super.loader, {this.width, this.height, this.onVideoShare});
 
-  Uri? get url => pnf.url;
+  Uri? get url => pnf?.url;
 
   final double? width;
   final double? height;
@@ -91,7 +91,7 @@ class _PortableVideoView extends PortableNetworkView {
 
 }
 
-class _PortableVideoState extends PortableNetworkState<_PortableVideoView> with Logging {
+class _PortableVideoState extends PortableNetworkState<_PortableVideoView> {
 
   @override
   Widget build(BuildContext context) {
@@ -100,8 +100,8 @@ class _PortableVideoState extends PortableNetworkState<_PortableVideoView> with 
     if (indicator == null) {
       return loader.getImage(widget);
     }
-    String? title = widget.pnf.getString('title', null);
-    String? cover = widget.pnf.getString('snapshot', null);
+    String? title = widget.pnf?.getString('title', null);
+    String? cover = widget.pnf?.getString('snapshot', null);
     return Stack(
       alignment: AlignmentDirectional.center,
       // fit: StackFit.passthrough,
@@ -167,9 +167,9 @@ class _PortableVideoLoader extends PortableFileLoader {
   }
 
   Widget? getProgress(BuildContext ctx, _PortableVideoView widget) {
-    PortableNetworkFile pnf = widget.pnf;
-    var url = pnf.url;
-    if (url == null) {
+    PortableNetworkFile? pnf = widget.pnf;
+    var url = pnf?.url;
+    if (pnf == null || url == null) {
       return _showError('URL not found', null, CupertinoColors.systemRed);
     }
     var password = pnf.password;
@@ -214,7 +214,7 @@ class _PortableVideoLoader extends PortableFileLoader {
   static _PortableVideoLoader from(PortableNetworkFile pnf) {
     _PortableVideoLoader loader = _PortableVideoLoader(pnf);
     // if (pnf.url != null && pnf.data == null) {
-    //   FileUploader().addDownloadTask(loader);
+    //   SharedFileUploader().addDownloadTask(loader);
     // }
     return loader;
   }

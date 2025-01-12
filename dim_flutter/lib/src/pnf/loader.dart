@@ -37,9 +37,54 @@ import 'package:pnf/enigma.dart';
 import 'package:pnf/pnf.dart';
 
 import '../filesys/local.dart';
+import '../filesys/upload.dart';
 
-class PortableFileLoader extends PortableNetworkLoader {
-  PortableFileLoader(super.pnf);
+
+class PortableFileLoader {
+  PortableFileLoader(this.pnf);
+
+  final PortableNetworkFile pnf;
+
+  PortableNetworkUpper? uploadTask;
+  PortableNetworkLoader? downloadTask;
+
+  Future<void> prepare() async {
+    var ftp = SharedFileUploader();
+    if (pnf.url == null) {
+      var task = PortableFileUploadTask(pnf, ftp.enigma);
+      await ftp.addUploadTask(task);
+      _plaintext = await task.plaintext;
+      uploadTask = task;
+    } else {
+      var task = PortableFileDownloadTask(pnf);
+      await ftp.addDownloadTask(task);
+      // _plaintext = task.plaintext;
+      downloadTask = task;
+    }
+  }
+
+  Uint8List? _plaintext;
+  Uint8List? get plaintext => _plaintext ?? downloadTask?.plaintext;
+
+  PortableNetworkStatus get status {
+    var s = uploadTask?.status;
+    s ??= downloadTask?.status;
+    return s ?? PortableNetworkStatus.init;
+  }
+
+  int get count => uploadTask?.count ?? downloadTask?.count ?? 0;
+  int get total => uploadTask?.total ?? downloadTask?.total ?? 0;
+
+  String? get filename => (uploadTask ?? downloadTask)?.filename;
+
+  Future<String?> get cacheFilePath async =>
+      await (uploadTask ?? downloadTask)?.cacheFilePath;
+
+}
+
+
+class PortableFileDownloadTask extends PortableNetworkLoader {
+  PortableFileDownloadTask(super.pnf);
 
   @override
   FileCache get fileCache => LocalStorage();
@@ -53,8 +98,8 @@ class PortableFileLoader extends PortableNetworkLoader {
 }
 
 
-class PortableFileUpper extends PortableNetworkUpper {
-  PortableFileUpper(super.pnf, this._enigma);
+class PortableFileUploadTask extends PortableNetworkUpper {
+  PortableFileUploadTask(super.pnf, this._enigma);
 
   final Enigma _enigma;
 
@@ -63,6 +108,12 @@ class PortableFileUpper extends PortableNetworkUpper {
 
   @override
   FileCache get fileCache => LocalStorage();
+
+  @override
+  Future<void> postNotification(String name, [Map? info]) async {
+    var nc = NotificationCenter();
+    await nc.postNotification(name, this, info);
+  }
 
   @override
   Future<Uint8List?> get fileData async {
@@ -88,14 +139,8 @@ class PortableFileUpper extends PortableNetworkUpper {
     return data;
   }
 
-  @override
-  Future<void> postNotification(String name, [Map? info]) async {
-    var nc = NotificationCenter();
-    await nc.postNotification(name, this, info);
-  }
-
   /// create upload task
-  static Future<PortableFileUpper?> create(String api, PortableNetworkFile pnf, {
+  static Future<PortableFileUploadTask?> create(String api, PortableNetworkFile pnf, {
     required ID sender, required Enigma enigma,
   }) async {
     Uri? url = pnf.url;
@@ -127,7 +172,7 @@ class PortableFileUpper extends PortableNetworkUpper {
       'API': api,
       'sender': sender.toString(),
     };
-    return PortableFileUpper(pnf, enigma);
+    return PortableFileUploadTask(pnf, enigma);
   }
 
 }

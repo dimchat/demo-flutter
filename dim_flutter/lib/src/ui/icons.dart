@@ -35,6 +35,7 @@ abstract class AppIcons {
   static const IconData       cameraIcon = CupertinoIcons.camera;
   static const IconData        albumIcon = CupertinoIcons.photo;
   static const IconData     saveFileIcon = CupertinoIcons.floppy_disk;
+  static const IconData   encryptingIcon = CupertinoIcons.lock;
   static const IconData   decryptingIcon = CupertinoIcons.lock_open;
   static const IconData decryptErrorIcon = CupertinoIcons.slash_circle;
   // Audio
@@ -45,6 +46,7 @@ abstract class AppIcons {
   static const IconData    playVideoIcon = CupertinoIcons.play;
   static const IconData      airPlayIcon = Icons.airplay;
   static const IconData        livesIcon = Icons.live_tv;
+  static const IconData  unavailableIcon = CupertinoIcons.slash_circle;
   // Msg Status
   static const IconData   msgDefaultIcon = CupertinoIcons.ellipsis;
   static const IconData msgEncryptedIcon = CupertinoIcons.lock;

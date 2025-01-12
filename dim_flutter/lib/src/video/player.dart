@@ -364,7 +364,7 @@ class _VideoAppState extends State<VideoPlayerPage> with Logging implements lnc.
       }), style: textStyle,);
     } else if (channelGroups.isEmpty) {
       // error
-      indicator = const Icon(AppIcons.decryptErrorIcon, color: CupertinoColors.systemRed,);
+      indicator = const Icon(AppIcons.unavailableIcon, color: CupertinoColors.systemRed,);
       message = Text('Failed to load "@url".'.trParams({
         'url': urlString,
       }), style: textStyle,);
@@ -410,7 +410,7 @@ class _VideoAppState extends State<VideoPlayerPage> with Logging implements lnc.
       }), style: textStyle,);
     } else {
       // error
-      indicator = const Icon(AppIcons.decryptErrorIcon, color: CupertinoColors.systemRed,);
+      indicator = const Icon(AppIcons.unavailableIcon, color: CupertinoColors.systemRed,);
       message = Text('Failed to load "@url".'.trParams({
         'url': urlString,
       }), style: textStyle,);

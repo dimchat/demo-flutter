@@ -61,23 +61,48 @@ class AvatarFactory {
   static final AvatarFactory _instance = AvatarFactory._internal();
   AvatarFactory._internal();
 
-  final Map<Uri, _AvatarImageLoader> _loaders = WeakValueMap();
+  final Map<String, _AvatarImageLoader> _loaders = WeakValueMap();
   final Map<Uri, Set<_AvatarImageView>> _views = {};
   final Map<ID, Set<_AutoAvatarView>> _avatars = {};
 
   PortableImageLoader getImageLoader(PortableNetworkFile pnf) {
     _AvatarImageLoader? runner;
-    Uri? url = pnf.url;
-    if (url == null) {
-      runner = _AvatarImageLoader.from(pnf);
-    } else {
-      runner = _loaders[url];
+    var filename = pnf.filename;
+    var url = pnf.url;
+    if (url != null) {
+      runner = _loaders[url.toString()];
       if (runner == null) {
-        runner = _AvatarImageLoader.from(pnf);
-        _loaders[url] = runner;
+        runner = _createLoader(pnf);
+        _loaders[url.toString()] = runner;
       }
+    } else if (filename != null) {
+      runner = _loaders[filename];
+      if (runner == null) {
+        runner = _createUpper(pnf);
+        _loaders[filename] = runner;
+      }
+    } else {
+      throw FormatException('PNF error: $pnf');
     }
     return runner;
+  }
+
+  _AvatarImageLoader _createLoader(PortableNetworkFile pnf) {
+    _AvatarImageLoader loader = _AvatarImageLoader(pnf);
+    if (pnf.data == null) {
+      var ftp = SharedFileUploader();
+      loader.prepare().then((value) => ftp.addDownloadTask(loader.downloadTask!));
+    }
+    return loader;
+  }
+
+  _AvatarImageLoader _createUpper(PortableNetworkFile pnf) {
+    _AvatarImageLoader loader = _AvatarImageLoader(pnf);
+    if (pnf['enigma'] != null) {
+      var ftp = SharedFileUploader();
+      loader.prepare().then((value) => ftp.addUploadTask(loader.uploadTask!));
+    }
+    return loader;
   }
 
   PortableImageView getImageView(ID user, PortableNetworkFile pnf, {
@@ -340,17 +365,6 @@ class _AvatarImageLoader extends PortableImageLoader {
     }
     LocalStorage cache = LocalStorage();
     return await cache.getAvatarFilePath(name);
-  }
-
-  //
-  //  Factory
-  //
-  static _AvatarImageLoader from(PortableNetworkFile pnf) {
-    _AvatarImageLoader loader = _AvatarImageLoader(pnf);
-    if (pnf.url != null && pnf.data == null) {
-      SharedFileUploader().addDownloadTask(loader);
-    }
-    return loader;
   }
 
 }

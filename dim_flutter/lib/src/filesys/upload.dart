@@ -28,6 +28,8 @@
  * SOFTWARE.
  * =============================================================================
  */
+import 'dart:async';
+
 import 'package:flutter/services.dart';
 
 import 'package:dim_client/ok.dart';
@@ -54,6 +56,8 @@ class SharedFileUploader with Logging {
   late final FileTransfer _ftp;
   late final Enigma _enigma;
 
+  Enigma get enigma => _enigma;
+
   bool _apiUpdated = false;
 
   String? _upAvatarAPI;
@@ -69,6 +73,11 @@ class SharedFileUploader with Logging {
   Future<bool> addDownloadTask(DownloadTask task) async {
     await _prepare();
     return await _ftp.addDownloadTask(task);
+  }
+
+  Future<bool> addUploadTask(UploadTask task) async {
+    await _prepare();
+    return await _ftp.addUploadTask(task);
   }
 
   /// Update secrets
@@ -137,7 +146,7 @@ class SharedFileUploader with Logging {
     // create upload task
     var pnf = PortableNetworkFile.createFromData(data, filename);
     pnf.password = PlainKey.getInstance();
-    var task = await PortableFileUpper.create(api, pnf,
+    var task = await PortableFileUploadTask.create(api, pnf,
       sender: sender, enigma: _enigma,
     );
     if (task == null) {
@@ -174,14 +183,14 @@ class SharedFileUploader with Logging {
       assert(false, 'file content error: $content');
       return false;
     }
-    var task = await PortableFileUpper.create(api, pnf,
+    var task = await PortableFileUploadTask.create(api, pnf,
       sender: sender, enigma: _enigma,
     );
     if (task == null) {
       logError('failed to create upload task: $api, $sender');
       return false;
     }
-    return await _ftp.addUploadTask(task);
+    return await addUploadTask(task);
   }
 
   static Future<int> cacheFileData(Uint8List data, String filename) async {

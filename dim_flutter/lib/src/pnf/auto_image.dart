@@ -61,7 +61,7 @@ void previewImageContent(BuildContext context, ImageContent image, List<InstantM
       assert(index == -1, 'duplicated message?');
       index = images.length;
     }
-    pnf = PortableNetworkFile.parse(item);
+    pnf = PortableNetworkFile.parse(item.toMap());
     if (pnf == null) {
       assert(false, '[PNF] image content error: $item');
       continue;
@@ -75,7 +75,7 @@ void previewImageContent(BuildContext context, ImageContent image, List<InstantM
 
 /// Save image from content
 void saveImageContent(BuildContext context, ImageContent image) {
-  PortableNetworkFile? pnf = PortableNetworkFile.parse(image);
+  PortableNetworkFile? pnf = PortableNetworkFile.parse(image.toMap());
   if (pnf == null) {
     assert(false, 'PNF error: $image');
     return;
@@ -92,22 +92,47 @@ class NetworkImageFactory {
   static final NetworkImageFactory _instance = NetworkImageFactory._internal();
   NetworkImageFactory._internal();
 
-  final Map<Uri, _ImageLoader> _loaders = WeakValueMap();
+  final Map<String, _ImageLoader> _loaders = WeakValueMap();
   final Map<Uri, Set<_AutoImageView>> _views = {};
 
   PortableImageLoader getImageLoader(PortableNetworkFile pnf) {
     _ImageLoader? runner;
-    Uri? url = pnf.url;
-    if (url == null) {
-      runner = _ImageLoader.from(pnf);
-    } else {
-      runner = _loaders[url];
+    var filename = pnf.filename;
+    var url = pnf.url;
+    if (url != null) {
+      runner = _loaders[url.toString()];
       if (runner == null) {
-        runner = _ImageLoader.from(pnf);
-        _loaders[url] = runner;
+        runner = _createLoader(pnf);
+        _loaders[url.toString()] = runner;
       }
+    } else if (filename != null) {
+      runner = _loaders[filename];
+      if (runner == null) {
+        runner = _createUpper(pnf);
+        _loaders[filename] = runner;
+      }
+    } else {
+      throw FormatException('PNF error: $pnf');
     }
     return runner;
+  }
+
+  _ImageLoader _createLoader(PortableNetworkFile pnf) {
+    _ImageLoader loader = _ImageLoader(pnf);
+    if (pnf.data == null) {
+      var ftp = SharedFileUploader();
+      loader.prepare().then((value) => ftp.addDownloadTask(loader.downloadTask!));
+    }
+    return loader;
+  }
+
+  _ImageLoader _createUpper(PortableNetworkFile pnf) {
+    _ImageLoader loader = _ImageLoader(pnf);
+    if (pnf['enigma'] != null) {
+      var ftp = SharedFileUploader();
+      loader.prepare().then((value) => ftp.addUploadTask(loader.uploadTask!));
+    }
+    return loader;
   }
 
   PortableImageView getImageView(PortableNetworkFile pnf, {
@@ -185,17 +210,6 @@ class _ImageLoader extends PortableImageLoader {
     } else {
       return ImageUtils.image(image, width: width, height: height, fit: fit ?? BoxFit.cover,);
     }
-  }
-
-  //
-  //  Factory
-  //
-  static _ImageLoader from(PortableNetworkFile pnf) {
-    _ImageLoader loader = _ImageLoader(pnf);
-    if (pnf.url != null && pnf.data == null) {
-      SharedFileUploader().addDownloadTask(loader);
-    }
-    return loader;
   }
 
 }

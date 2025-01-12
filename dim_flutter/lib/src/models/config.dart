@@ -34,14 +34,14 @@ class _ConfigLoader with Logging implements lnc.Observer {
     nc.addObserver(this, NotificationNames.kPortableNetworkError);
   }
 
-  PortableNetworkLoader? _pnfLoader;
+  PortableFileLoader? _pnfLoader;
 
   Map? info;
 
   Future<void> download(Uri url) async {
     PortableNetworkFile pnf = PortableNetworkFile.createFromURL(url, null);
     // 1. remove cached files
-    PortableNetworkLoader loader = PortableFileLoader(pnf);
+    PortableNetworkLoader loader = PortableFileDownloadTask(pnf);
     String? path = await loader.cacheFilePath;
     if (path != null) {
       logInfo('remove cached config file: $path');

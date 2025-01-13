@@ -60,13 +60,24 @@ class _ConfigLoader with Logging implements lnc.Observer {
   Future<void> onReceiveNotification(lnc.Notification notification) async {
     String name = notification.name;
     Map? userInfo = notification.userInfo;
-    if (notification.sender != _pnfLoader) {
+    PortableNetworkFile? pnf = userInfo?['PNF'];
+    Uri? url = userInfo?['URL'] ?? pnf?.url;
+    logInfo('Config notification: $name, $url');
+    // checking
+    bool isMatched = false;
+    if (notification.sender == _pnfLoader) {
+      isMatched = true;
+    } else {
+      isMatched = url?.toString() == Config.entrance;
+    }
+    if (!isMatched) {
+      // not for this view
       return;
     } else if (name == NotificationNames.kPortableNetworkDownloadSuccess) {
       Uri? url = userInfo?['URL'];
       Uint8List? data = userInfo?['data'];
       String? path = await _pnfLoader?.cacheFilePath;
-      logInfo('[PNF] onSuccess: ${data?.length} bytes, $url');
+      logInfo('[Config] onSuccess: ${data?.length} bytes, $url');
       await _refresh(data, path);
     }
   }
@@ -102,7 +113,8 @@ class Config with Logging {
 
   // TODO: start a bg-thread to query 'http://tarsier.dim.chat/config.json'
   //       for updating configurations
-  static String entrance = 'http://tarsier.dim.chat/v1/config.json';
+  static const String entrance = 'http://tarsier.dim.chat/v1/config.json';
+  bool _refresh = false;
 
   final _cfgLoader = _ConfigLoader();
 
@@ -113,14 +125,14 @@ class Config with Logging {
       conf = await _load(path);
       conf ??= await _init(path);
       // update for next reading
-      Uri? url = entrance.isEmpty ? null : HtmlUri.parseUri(entrance);
-      if (entrance.isEmpty) {
+      Uri? url = HtmlUri.parseUri(entrance);
+      if (_refresh) {
         logDebug('config.json already downloaded');
       } else if (url == null) {
         logError('entrance url error: $entrance');
       } else {
         logInfo('try to refresh config: $url -> $path');
-        entrance = '';
+        _refresh = true;
         /*await */_cfgLoader.download(url);
       }
     }

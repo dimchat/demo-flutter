@@ -214,7 +214,8 @@ class GroupInfo extends Conversation with Logging {
       ReliableMessage rMsg;
       List<Invitation> array = [];
       List<ID> members;
-      for (var item in histories) {
+      var reversed = histories.reversed;
+      for (var item in reversed) {
         content = item.first;
         rMsg = item.second;
         assert(content.group == identifier, 'group ID not match: $identifier, $content');

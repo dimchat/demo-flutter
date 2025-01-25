@@ -100,8 +100,9 @@ class _PortableVideoState extends PortableNetworkState<_PortableVideoView> {
     if (indicator == null) {
       return loader.getImage(widget);
     }
-    String? title = widget.pnf?.getString('title', null);
-    String? cover = widget.pnf?.getString('snapshot', null);
+    var pnf = widget.pnf ?? loader.pnf;
+    String? title = pnf.getString('title', null);
+    String? cover = pnf.getString('snapshot', null);
     return Stack(
       alignment: AlignmentDirectional.center,
       // fit: StackFit.passthrough,
@@ -142,14 +143,14 @@ class _PortableVideoState extends PortableNetworkState<_PortableVideoView> {
 }
 
 
-class _PortableVideoLoader extends PortableFileLoader {
+class _PortableVideoLoader extends PortableFileLoader with Logging {
   _PortableVideoLoader(super.pnf);
 
   ImageProvider<Object>? _snapshot;
 
   ImageProvider<Object>? get imageProvider {
     var image = _snapshot;
-    image ??= _snapshot = Gallery.getSnapshotProvider(pnf);
+    image ??= _snapshot = Gallery.getSnapshotProvider(pnf.toMap());
     return image;
   }
 
@@ -167,13 +168,15 @@ class _PortableVideoLoader extends PortableFileLoader {
   }
 
   Widget? getProgress(BuildContext ctx, _PortableVideoView widget) {
-    PortableNetworkFile? pnf = widget.pnf;
-    var url = pnf?.url;
-    if (pnf == null || url == null) {
-      return _showError('URL not found', null, CupertinoColors.systemRed);
+    var pnf = widget.pnf ?? super.pnf;
+    var url = pnf.url;
+    if (url == null) {
+      logError('video error: $pnf');
+      return _showError('Video error', null, CupertinoColors.systemRed);
     }
     var password = pnf.password;
     if (password != null && password.algorithm != Password.PLAIN) {
+      logError('video error: $pnf');
       return _showError('Download not supported', null, CupertinoColors.systemRed);
     }
     var icon = const Icon(AppIcons.playVideoIcon, color: CupertinoColors.white);

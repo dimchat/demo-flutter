@@ -64,6 +64,8 @@ abstract class AppIcons {
   static const IconData    plainTextIcon = CupertinoIcons.doc_plaintext;
   static const IconData     richTextIcon = CupertinoIcons.doc_richtext;
 
+  static const IconData      forwardIcon = CupertinoIcons.arrow_right;
+
   // Search
   static const IconData searchIcon = CupertinoIcons.search;
 

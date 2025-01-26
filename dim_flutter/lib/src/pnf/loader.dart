@@ -75,10 +75,10 @@ class PortableFileLoader {
   int get count => uploadTask?.count ?? downloadTask?.count ?? 0;
   int get total => uploadTask?.total ?? downloadTask?.total ?? 0;
 
-  String? get filename => (uploadTask ?? downloadTask)?.filename;
+  String? get filename => uploadTask?.filename ?? downloadTask?.filename;
 
   Future<String?> get cacheFilePath async =>
-      await (uploadTask ?? downloadTask)?.cacheFilePath;
+      await (uploadTask?.cacheFilePath ?? downloadTask?.cacheFilePath);
 
 }
 

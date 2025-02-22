@@ -232,13 +232,7 @@ LanguageItem? getLanguageItem(String? code) {
       return item;
     }
     pair = item.code.split('_');
-    if (pair.length == 1) {
-      continue;
-    }
-    if (pair.first == code) {
-      // language code matched
-      return item;
-    } else if (pair.first == languageCode) {
+    if (pair.first == languageCode) {
       // language code matched, but
       // country code not matched
       candidate = item;

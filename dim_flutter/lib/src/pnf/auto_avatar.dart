@@ -43,6 +43,7 @@ import '../ui/styles.dart';
 
 import 'gallery.dart';
 import 'image.dart';
+import 'loader.dart';
 import 'net_image.dart';
 
 
@@ -357,14 +358,35 @@ class _AvatarImageLoader extends PortableImageLoader {
   }
 
   @override
-  Future<String?> get cacheFilePath async {
-    String? name = filename;
-    if (name == null || name.isEmpty) {
-      assert(false, 'PNF error: $pnf');
-      return null;
+  Future<void> prepare() async {
+    if (pnf.url == null) {
+      return await super.prepare();
+    } else {
+      var ftp = SharedFileUploader();
+      var task = _AvatarDownloadTask(pnf);
+      await ftp.addDownloadTask(task);
+      downloadTask = task;
     }
-    LocalStorage cache = LocalStorage();
-    return await cache.getAvatarFilePath(name);
   }
 
+  @override
+  Future<String?> get cacheFilePath async => await _getAvatarPath(filename, pnf);
+
+}
+
+class _AvatarDownloadTask extends PortableFileDownloadTask {
+  _AvatarDownloadTask(super.pnf);
+
+  @override
+  Future<String?> get cacheFilePath async => await _getAvatarPath(filename, pnf);
+
+}
+
+Future<String?> _getAvatarPath(String? filename, PortableNetworkFile pnf) async {
+  if (filename == null || filename.isEmpty) {
+    assert(false, 'PNF error: $pnf');
+    return null;
+  }
+  LocalStorage cache = LocalStorage();
+  return await cache.getAvatarFilePath(filename);
 }

@@ -70,26 +70,39 @@ class NameCardView extends StatelessWidget {
     );
   }
 
-  Widget _widget(BuildContext context) => Container(
-    color: Styles.colors.pageMessageBackgroundColor,
-    padding: Styles.pageMessagePadding,
-    width: 200,
-    child: Row(
-      children: [
-        avatarImage(content, width: 48, height: 48,),
-        const SizedBox(width: 8,),
-        Expanded(
-          child: Text(content.name,
-            maxLines: 2,
-            style: Styles.pageTitleTextStyle,
+  Widget _widget(BuildContext context) {
+    var avatar = avatarImage(content, width: 48, height: 48,);
+    var title = Text(content.name,
+      maxLines: 1,
+      style: Styles.pageTitleTextStyle,
+    );
+    var subtitle = Text(content.identifier.toString(),
+      maxLines: 1,
+      style: Styles.pageDescTextStyle,
+    );
+    return Container(
+      color: Styles.colors.pageMessageBackgroundColor,
+      padding: Styles.pageMessagePadding,
+      width: 220,
+      child: Row(
+        children: [
+          avatar,
+          const SizedBox(width: 8,),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                title,
+                const SizedBox(height: 4,),
+                subtitle,
+              ],
+            ),
           ),
-        ),
-        const SizedBox(
-          width: 16,
-        ),
-      ],
-    ),
-  );
+          const SizedBox(width: 8,),
+        ],
+      ),
+    );
+  }
 
 }
 

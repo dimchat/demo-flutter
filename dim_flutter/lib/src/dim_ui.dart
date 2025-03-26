@@ -8,5 +8,6 @@ export 'ui/styles.dart';
 export 'ui/settings.dart';
 export 'ui/brightness.dart';
 export 'ui/language.dart';
+export 'ui/translation.dart';
 export 'ui/nav.dart';
 export 'ui/burn_after_reading.dart';

@@ -4,6 +4,7 @@ import 'package:dim_client/common.dart';
 import 'package:dim_client/client.dart';
 
 import 'any.dart';
+import 'customized.dart';
 import 'handshake.dart';
 import 'search.dart';
 import 'text.dart';
@@ -13,13 +14,21 @@ class SharedContentProcessorCreator extends ClientContentProcessorCreator {
 
   @override
   ContentProcessor? createContentProcessor(int msgType) {
-    // customizable text
-    if (msgType == ContentType.TEXT) {
-      return TextContentProcessor(facebook!, messenger!);
-    }
-    // default
-    if (msgType == ContentType.ANY) {
-      return AnyContentProcessor(facebook!, messenger!);
+    switch (msgType) {
+
+      // customizable text
+      case ContentType.TEXT:
+        return TextContentProcessor(facebook!, messenger!);
+
+      // application customized
+      case ContentType.APPLICATION:
+      case ContentType.CUSTOMIZED:
+        return AppCustomizedContentProcessor(facebook!, messenger!);
+
+      // default
+      case ContentType.ANY:
+        return AnyContentProcessor(facebook!, messenger!);
+
     }
     // others
     return super.createContentProcessor(msgType);

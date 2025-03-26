@@ -171,6 +171,27 @@ class Config with Logging {
     return users;
   }
 
+  /// Service bots for translation
+  Future<List<ID>> get translators async {
+    List? array = (await _info)['translators'];
+    if (array == null || array.isEmpty) {
+      return [];
+    }
+    List<ID> bots = [];
+    ID? uid;
+    for (var item in array) {
+      if (item is Map) {
+        uid = ID.parse(item['ID']);
+      } else {
+        uid = ID.parse(item);
+      }
+      if (uid != null) {
+        bots.add(uid);
+      }
+    }
+    return bots;
+  }
+
   /// Common assistants for group
   Future<List<ID>> get assistants async {
     List? array = (await _info)['assistants'];

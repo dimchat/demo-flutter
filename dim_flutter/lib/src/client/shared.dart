@@ -4,8 +4,9 @@ import 'package:dim_client/client.dart';
 
 import '../models/config.dart';
 
-import 'client.dart';
+import '../ui/translation.dart';
 import 'compat/loader.dart';
+import 'client.dart';
 import 'database.dart';
 import 'emitter.dart';
 import 'facebook.dart';
@@ -60,10 +61,12 @@ class GlobalVariable {
     loader.run();
     Config config = Config();
     config.assistants.then((bots) {
-      if (bots.isNotEmpty) {
-        SharedGroupManager man = SharedGroupManager();
-        man.delegate.setCommonAssistants(bots);
-      }
+      SharedGroupManager man = SharedGroupManager();
+      man.delegate.setCommonAssistants(bots);
+    });
+    config.translators.then((bots) {
+      Translator tr = Translator();
+      tr.setCandidates(bots);
     });
     return config;
   }

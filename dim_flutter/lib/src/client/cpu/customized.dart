@@ -12,7 +12,7 @@ class AppCustomizedContentProcessor extends CustomizedContentProcessor with Logg
 
   @override
   List<Content>? filter(String app, CustomizedContent content, ReliableMessage rMsg) {
-    if (app == Translation.app) {
+    if (app == Translator.app) {
       // OK
       return null;
     }
@@ -23,7 +23,7 @@ class AppCustomizedContentProcessor extends CustomizedContentProcessor with Logg
   Future<List<Content>> handleAction(String act, ID sender, CustomizedContent content, ReliableMessage rMsg) async {
     String app = content.application;
     String mod = content.module;
-    if (app != Translation.app && mod != Translation.mod && act != 'respond') {
+    if (/*app != Translator.app && */mod != Translator.mod/* && act != 'respond'*/) {
       String text = 'Content not support.';
       return respondReceipt(text, content: content, envelope: rMsg.envelope, extra: {
         'template': 'Customized content (app: \${app}, mod: \${mod}, act: \${act}) not support yet!',
@@ -36,15 +36,15 @@ class AppCustomizedContentProcessor extends CustomizedContentProcessor with Logg
     }
     // parse & cache translate content
     TranslateContent tr = TranslateContent(content.toMap());
-    if (tr.application == Translation.app && tr.module == Translation.mod) {
+    if (/*tr.application == Translator.app && */tr.module == Translator.mod) {
       if (tr.action == 'respond') {
-        bool ok = Translation().update(tr);
+        bool ok = Translator().update(tr);
         logInfo('update translation: $ok, $tr');
         if (ok) {
           // post notification
           var nc = NotificationCenter();
           nc.postNotification(NotificationNames.kTranslateUpdated, this, {
-            'action': 'update',
+            // 'action': 'update',
             'content': tr,
           });
         }

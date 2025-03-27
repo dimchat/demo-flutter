@@ -4,7 +4,7 @@ import 'package:dim_client/ok.dart';
 import 'package:dim_client/sdk.dart';
 
 import '../client/shared.dart';
-import '../models/config.dart';
+import '../common/constants.dart';
 import 'language.dart';
 
 /*
@@ -72,7 +72,7 @@ class TranslateContent extends AppCustomizedContent {
   bool get success => result?.valid == true;
 
   TranslateContent.query(String text, int tag)
-      : super.from(app: Translation.app, mod: Translation.mod, act: 'request') {
+      : super.from(app: Translator.app, mod: Translator.mod, act: 'request') {
     String code = LanguageDataSource().getCurrentLanguageCode();
     this['text'] = text;
     if (code.isNotEmpty) {
@@ -85,10 +85,10 @@ class TranslateContent extends AppCustomizedContent {
 
 }
 
-class Translation with Logging {
-  factory Translation() => _instance;
-  static final Translation _instance = Translation._internal();
-  Translation._internal();
+class Translator with Logging {
+  factory Translator() => _instance;
+  static final Translator _instance = Translator._internal();
+  Translator._internal();
 
   static const String app = 'chat.dim.translate';
   static const String mod = 'translate';
@@ -98,14 +98,44 @@ class Translation with Logging {
   /// lang_code => tag => translate
   final Map<String, Map<int, TranslateContent>> _tagCache = {};
 
-  Future<bool> query(String text, int tag) async {
-    List<ID> candidates = await Config().translators;
-    if (candidates.isEmpty) {
+  /// service bots
+  final Set<ID> _candidates = {};
+  ID? _fastestTranslator;
+
+  void setCandidates(List<ID> bots) {
+    _candidates.clear();
+    _candidates.addAll(bots);
+  }
+  Future<bool> testCandidates() async {
+    var bots = _candidates;
+    if (bots.isEmpty) {
+      return false;
+    } else if (_fastestTranslator != null) {
+      return true;
+    }
+    // TODO: check for the fastest bot
+    ID fastest = bots.first;
+    _fastestTranslator = fastest;
+    // post notification
+    var nc = NotificationCenter();
+    nc.postNotification(NotificationNames.kTranslatorReady, this, {
+      // 'action': 'update',
+      'translator': fastest,
+    });
+    return true;
+  }
+
+  bool get ready => _fastestTranslator != null;
+
+  bool canTranslate(Content content) =>
+      content is TextContent && _candidates.isNotEmpty;
+
+  Future<bool> request(String text, int tag) async {
+    ID? receiver = _fastestTranslator;
+    if (receiver == null) {
       logWarning('translator not found');
       return false;
     }
-    // TODO: check for fastest bot
-    ID receiver = candidates.first;
     var content = TranslateContent.query(text, tag);
     logInfo('sending to translator: $receiver, $content');
     GlobalVariable shared = GlobalVariable();

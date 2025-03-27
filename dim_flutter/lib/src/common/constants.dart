@@ -46,6 +46,7 @@ abstract class NotificationNames {
   static const String kSearchUpdated = 'SearchUpdated';
 
   static const String kTranslateUpdated = 'TranslateUpdated';
+  static const String kTranslatorReady = 'TranslatorReady';
 
   static const String kRecordFinished = 'RecordFinished';
   static const String kPlayFinished = 'PlayFinished';

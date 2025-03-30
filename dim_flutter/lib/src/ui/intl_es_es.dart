@@ -112,6 +112,8 @@ final Map<String, String> intlEsEs = {
   'Permission Denied': 'Permiso Denegado',
 
   'Refresh Stations': 'Actualizar Estaciones de Relé',
+  'Refreshing all stations': 'La estación más rápida se conectará automáticamente la próxima vez.',
+
   'Shared': 'Compartido Exitosamente',
   'Forwarded': 'Reenviado Exitosamente',
 
@@ -207,6 +209,13 @@ final Map<String, String> intlEsEs = {
   'Sure to delete this message?': '¿Está seguro de que desea eliminar este mensaje?'
       ' (esta acción no es recuperable)',
 
+  'Video error': 'Error de video',
+  'Download not supported': 'Descarga no soportada aún',
+
+  'Encrypting': 'Encriptando',
+  'Decrypting': 'Desencriptando',
+
+  'Waiting to upload': 'Datos encriptados, esperando para enviar',
   'Waiting to send': 'En espera para enviar (toque para reintentar)',
   'No response': 'Sin respuesta (toque para volver a enviar)',
   'Stranded': 'Varado (toque para volver a enviar)',
@@ -217,6 +226,8 @@ final Map<String, String> intlEsEs = {
 
   'Draft': 'Borrador',
   'Mentioned': 'Fuiste mencionado',
+
+  'Translate': 'Traducir',
 
   //
   //  Video Player

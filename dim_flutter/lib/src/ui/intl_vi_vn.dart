@@ -111,6 +111,8 @@ final Map<String, String> intlViVN = {
   'Permission Denied': 'Từ chối quyền',
 
   'Refresh Stations': 'Làm mới Trạm Relay',
+  'Refreshing all stations': 'Trạm nhanh nhất sẽ được kết nối tự động lần sau.',
+
   'Shared': 'Chia sẻ Thành công',
   'Forwarded': 'Chuyển tiếp Thành công',
 
@@ -206,6 +208,13 @@ final Map<String, String> intlViVN = {
   'Sure to delete this message?': 'Bạn có chắc chắn muốn xóa tin nhắn này không?'
       ' (hành động này không thể khôi phục)',
 
+  'Video error': 'Lỗi video',
+  'Download not supported': 'Tải xuống chưa được hỗ trợ',
+
+  'Encrypting': 'Đang mã hóa',
+  'Decrypting': 'Đang giải mã',
+
+  'Waiting to upload': 'Dữ liệu đã mã hóa, đang chờ gửi',
   'Waiting to send': 'Đang chờ gửi (chạm để thử lại)',
   'No response': 'Không có phản hồi (chạm để gửi lại)',
   'Stranded': 'Bị kẹt (chạm để gửi lại)',
@@ -216,6 +225,8 @@ final Map<String, String> intlViVN = {
 
   'Draft': 'Nháp',
   'Mentioned': 'Bạn đã được đề cập',
+
+  'Translate': 'Dịch',
 
   //
   //  Video Player

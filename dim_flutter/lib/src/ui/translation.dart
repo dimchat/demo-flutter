@@ -71,18 +71,29 @@ class TranslateContent extends AppCustomizedContent {
   /// check translate result valid
   bool get success => result?.valid == true;
 
-  TranslateContent.query(String text, int tag)
+  TranslateContent.query(String text, int tag, {required String? format})
       : super.from(app: Translator.app, mod: Translator.mod, act: 'request') {
-    String code = LanguageDataSource().getCurrentLanguageCode();
+    // source text
     this['text'] = text;
-    if (code.isNotEmpty) {
-      this['code'] = code;
-    }
+    // source sn
     if (tag > 0) {
       this['tag'] = tag;
     }
+    this['format'] = format;
+    this['muted'] = true;
+    this['hidden'] = true;
+    this['code'] = _currentLanguageCode();
   }
 
+}
+
+String _currentLanguageCode() {
+  String code = LanguageDataSource().getCurrentLanguageCode();
+  if (code.isEmpty) {
+    GlobalVariable shared = GlobalVariable();
+    code = shared.terminal.language;
+  }
+  return code;
 }
 
 class Translator with Logging {
@@ -130,13 +141,13 @@ class Translator with Logging {
   bool canTranslate(Content content) =>
       content is TextContent && _candidates.isNotEmpty;
 
-  Future<bool> request(String text, int tag) async {
+  Future<bool> request(String text, int tag, {required String? format}) async {
     ID? receiver = _fastestTranslator;
     if (receiver == null) {
       logWarning('translator not found');
       return false;
     }
-    var content = TranslateContent.query(text, tag);
+    var content = TranslateContent.query(text, tag, format: format);
     logInfo('sending to translator: $receiver, $content');
     GlobalVariable shared = GlobalVariable();
     await shared.emitter.sendContent(content, receiver: receiver);
@@ -149,7 +160,7 @@ class Translator with Logging {
   // }) => fetch(text: text, tag: tag)?.text;
 
   TranslateContent? fetch(String text, int tag) {
-    String code = LanguageDataSource().getCurrentLanguageCode();
+    String code = _currentLanguageCode();
     return _textCache[code]?[text] ?? _tagCache[code]?[tag];
   }
 

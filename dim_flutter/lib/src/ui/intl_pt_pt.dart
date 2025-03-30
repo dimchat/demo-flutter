@@ -111,6 +111,8 @@ final Map<String, String> intlPtPt = {
   'Permission Denied': 'Permissão Negada',
 
   'Refresh Stations': 'Atualizar Estações de Relevo',
+  'Refreshing all stations': 'A estação mais rápida será conectada automaticamente na próxima vez.',
+
   'Shared': 'Compartilhado com Sucesso',
   'Forwarded': 'Encaminhado com Sucesso',
 
@@ -206,6 +208,13 @@ final Map<String, String> intlPtPt = {
   'Sure to delete this message?': 'Tem certeza de que deseja excluir esta mensagem?'
       ' (esta ação não pode ser desfeita)',
 
+  'Video error': 'Erro de vídeo',
+  'Download not supported': 'Download ainda não suportado',
+
+  'Encrypting': 'Criptografando',
+  'Decrypting': 'Descriptografando',
+
+  'Waiting to upload': 'Dados criptografados, aguardando envio',
   'Waiting to send': 'Aguardando para enviar (toque para tentar novamente)',
   'No response': 'Sem resposta (toque para reenviar)',
   'Stranded': 'Encalhado (toque para reenviar)',
@@ -216,6 +225,8 @@ final Map<String, String> intlPtPt = {
 
   'Draft': 'Rasura',
   'Mentioned': 'Você foi mencionado',
+
+  'Translate': 'Traduzir',
 
   //
   //  Video Player

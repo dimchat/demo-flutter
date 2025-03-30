@@ -111,6 +111,8 @@ final Map<String, String> intlBnBd = {
   'Permission Denied': 'অনুমতি অস্বীকৃত',
 
   'Refresh Stations': 'রিলে স্টেশনগুলি পুনঃলোড করুন',
+  'Refreshing all stations': 'সব স্টেশন রিফ্রেশ হচ্ছে, পরবর্তী সময়ে সবচেয়ে দ্রুত স্টেশন স্বয়ংক্রিয়ভাবে সংযুক্ত হবে।',
+
   'Shared': 'ভাগাভাগি সফলভাবে সম্পন্ন',
   'Forwarded': 'পুনরায় প্রেরণ সফলভাবে সম্পন্ন',
 
@@ -206,6 +208,13 @@ final Map<String, String> intlBnBd = {
   'Sure to delete this message?': 'আপনি কি নিশ্চিত যে আপনি এই বার্তাটি মুছতে চান?'
       ' (এই পদক্ষেপটি আর ফিরিয়ে আনা যাবে না)',
 
+  'Video error': 'ভিডিও ত্রুটি',
+  'Download not supported': 'ডাউনলোড এখনো সমর্থিত নয়',
+
+  'Encrypting': 'এনক্রিপ্ট করা হচ্ছে',
+  'Decrypting': 'ডিক্রিপ্ট করা হচ্ছে',
+
+  'Waiting to upload': 'ডেটা এনক্রিপ্ট করা হয়েছে, পাঠানোর জন্য অপেক্ষা করছে',
   'Waiting to send': 'প্রেরণের জন্য অপেক্ষমান (পুনরাবর্তনের জন্য ট্যাপ করুন)',
   'No response': 'কোনও প্রতিক্রিয়া নেই (পুনরাবর্তনের জন্য ট্যাপ করুন)',
   'Stranded': 'অপসারিত (পুনরাবর্তনের জন্য ট্যাপ করুন)',
@@ -216,6 +225,8 @@ final Map<String, String> intlBnBd = {
 
   'Draft': 'খসড়া',
   'Mentioned': 'তোমার উল্লেখ হয়েছে',
+
+  'Translate': 'অনুবাদ',
 
   //
   //  Video Player

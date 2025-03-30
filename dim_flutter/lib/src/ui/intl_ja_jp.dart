@@ -111,6 +111,8 @@ final Map<String, String> intlJaJp = {
   'Permission Denied': '権限が拒否されました',
 
   'Refresh Stations': 'リレー局を更新',
+  'Refreshing all stations': '最速の駅は次回自動的に接続されます。',
+
   'Shared': '共有されました',
   'Forwarded': '転送されました',
 
@@ -206,6 +208,13 @@ final Map<String, String> intlJaJp = {
   'Sure to delete this message?': 'このメッセージを削除してもよろしいですか？'
       '（この操作は元に戻せません）',
 
+  'Video error': 'ビデオエラー',
+  'Download not supported': 'ダウンロードはまだサポートされていません',
+
+  'Encrypting': '暗号化中',
+  'Decrypting': '復号中',
+
+  'Waiting to upload': 'データは暗号化され、送信待機中です',
   'Waiting to send': '送信中（タップして再試行）',
   'No response': '応答なし（タップして再送信）',
   'Stranded': '送信失敗（タップして再送信）',
@@ -216,6 +225,8 @@ final Map<String, String> intlJaJp = {
 
   'Draft': '下書き',
   'Mentioned': 'あなたは言及されました',
+
+  'Translate': '翻訳',
 
   //
   //  Video Player

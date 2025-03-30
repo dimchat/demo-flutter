@@ -111,6 +111,8 @@ final Map<String, String> intlAr = {
   'Permission Denied': 'الإذن مرفوض',
 
   'Refresh Stations': 'تحديث محطات الإعادة',
+  'Refreshing all stations': 'سيتم الاتصال بأسرع محطة تلقائيًا في المرة القادمة.',
+
   'Shared': 'تمت المشاركة بنجاح',
   'Forwarded': 'تمت الإعادة بنجاح',
 
@@ -206,6 +208,13 @@ final Map<String, String> intlAr = {
   'Sure to delete this message?': 'هل أنت متأكد من أنك تريد حذف هذه الرسالة؟'
       ' (هذا الإجراء لا يمكن التراجع عنه)',
 
+  'Video error': 'خطأ في الفيديو',
+  'Download not supported': 'التنزيل غير مدعوم بعد',
+
+  'Encrypting': 'جاري التشفير',
+  'Decrypting': 'جاري فك التشفير',
+
+  'Waiting to upload': 'تم تشفير البيانات، في انتظار الإرسال',
   'Waiting to send': 'في انتظار الإرسال (انقر لإعادة المحاولة)',
   'No response': 'لا يوجد رد (انقر لإعادة الإرسال)',
   'Stranded': 'معلق (انقر لإعادة الإرسال)',
@@ -216,6 +225,8 @@ final Map<String, String> intlAr = {
 
   'Draft': 'مسودة',
   'Mentioned': 'تمت الإشارة إليك',
+
+  'Translate': 'ترجمة',
 
   //
   //  Video Player

@@ -110,6 +110,8 @@ final Map<String, String> intlZhCn = {
   'Permission Denied': '权限被拒绝',
 
   'Refresh Stations': '刷新基站列表',
+  'Refreshing all stations': '所有站点正在刷新，下一次将自动连接最快的站点。',
+
   'Shared': '已分享',
   'Forwarded': '已转发',
 
@@ -204,6 +206,13 @@ final Map<String, String> intlZhCn = {
   'Delete Message': '删除消息',
   'Sure to delete this message?': '确定要删除这条消息吗？（此操作不可恢复）',
 
+  'Video error': '视频错误',
+  'Download not supported': '暂不支持下载',
+
+  'Encrypting': '加密中',
+  'Decrypting': '解密中',
+
+  'Waiting to upload': '数据已加密，等待上传',
   'Waiting to send': '等待发送（点击重试）',
   'No response': '无应答（点击重新发送）',
   'Stranded': '未发送（点击重新发送）',
@@ -214,6 +223,8 @@ final Map<String, String> intlZhCn = {
 
   'Draft': '草稿',
   'Mentioned': '有人@我',
+
+  'Translate': '翻译',
 
   //
   //  Video Player

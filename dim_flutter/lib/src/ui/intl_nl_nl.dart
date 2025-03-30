@@ -111,6 +111,8 @@ final Map<String, String> intlNlNl = {
   'Permission Denied': 'Toestemming Geweigerd',
 
   'Refresh Stations': 'Vernieuw Relaisstations',
+  'Refreshing all stations': 'Het snelste station wordt de volgende keer automatisch verbonden.',
+
   'Shared': 'Succesvol gedeeld',
   'Forwarded': 'Succesvol doorgestuurd',
 
@@ -206,6 +208,13 @@ final Map<String, String> intlNlNl = {
   'Sure to delete this message?': 'Weet u zeker dat u dit bericht wilt verwijderen?'
       ' (deze actie kan niet ongedaan worden gemaakt)',
 
+  'Video error': 'Videofout',
+  'Download not supported': 'Download wordt nog niet ondersteund',
+
+  'Encrypting': 'Versleutelen',
+  'Decrypting': 'Ontsleutelen',
+
+  'Waiting to upload': 'Gegevens versleuteld, wacht op verzending',
   'Waiting to send': 'Wachten op verzenden (tik om opnieuw te proberen)',
   'No response': 'Geen reactie (tik om opnieuw te versturen)',
   'Stranded': 'Vastgelopen (tik om opnieuw te versturen)',
@@ -216,6 +225,8 @@ final Map<String, String> intlNlNl = {
 
   'Draft': 'Concept',
   'Mentioned': 'Je werd genoemd',
+
+  'Translate': 'Vertalen',
 
   //
   //  Video Player

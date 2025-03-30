@@ -111,6 +111,8 @@ final Map<String, String> intlKoKr = {
   'Permission Denied': '권한 거부됨',
 
   'Refresh Stations': '릴레이 스테이션 새로 고침',
+  'Refreshing all stations': '가장 빠른 역이 다음에 자동으로 연결됩니다.',
+
   'Shared': '성공적으로 공유됨',
   'Forwarded': '성공적으로 전송됨',
 
@@ -205,6 +207,13 @@ final Map<String, String> intlKoKr = {
   'Delete Message': '메시지 삭제',
   'Sure to delete this message?': '이 메시지를 삭제하시겠습니까? (이 작업은 되돌릴 수 없습니다)',
 
+  'Video error': '비디오 오류',
+  'Download not supported': '다운로드는 아직 지원되지 않습니다',
+
+  'Encrypting': '암호화 중',
+  'Decrypting': '복호화 중',
+
+  'Waiting to upload': '데이터가 암호화되어 전송 대기 중입니다',
   'Waiting to send': '전송 대기 중 (다시 시도하려면 탭)',
   'No response': '응답 없음 (재전송하려면 탭)',
   'Stranded': '전송 실패 (재전송하려면 탭)',
@@ -215,6 +224,8 @@ final Map<String, String> intlKoKr = {
 
   'Draft': '초안',
   'Mentioned': '당신은 언급되었습니다',
+
+  'Translate': '번역',
 
   //
   //  Video Player

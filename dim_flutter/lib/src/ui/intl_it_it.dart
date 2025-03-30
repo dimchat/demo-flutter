@@ -111,6 +111,8 @@ final Map<String, String> intlItIt = {
   'Permission Denied': 'Permesso Negato',
 
   'Refresh Stations': 'Aggiorna Stazioni di Rilancio',
+  'Refreshing all stations': 'La stazione più veloce verrà connessa automaticamente la prossima volta.',
+
   'Shared': 'Condiviso con Successo',
   'Forwarded': 'Inoltrato con Successo',
 
@@ -206,6 +208,13 @@ final Map<String, String> intlItIt = {
   'Sure to delete this message?': 'Sei sicuro di voler eliminare questo messaggio?'
       ' (questa azione non è recuperabile)',
 
+  'Video error': 'Errore video',
+  'Download not supported': 'Download non supportato al momento',
+
+  'Encrypting': 'Cifratura',
+  'Decrypting': 'Decifratura',
+
+  'Waiting to upload': 'Dati criptati, in attesa di invio',
   'Waiting to send': 'In attesa di invio (tocca per riprovare)',
   'No response': 'Nessuna risposta (tocca per inviare di nuovo)',
   'Stranded': 'Bloccato (tocca per inviare di nuovo)',
@@ -216,6 +225,8 @@ final Map<String, String> intlItIt = {
 
   'Draft': 'Bozza',
   'Mentioned': 'Sei stato menzionato',
+
+  'Translate': 'Tradurre',
 
   //
   //  Video Player

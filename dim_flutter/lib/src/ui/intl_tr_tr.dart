@@ -110,6 +110,8 @@ final Map<String, String> intlTrTr = {
   'Permission Denied': 'İzin Reddedildi',
 
   'Refresh Stations': 'Röle İstasyonlarını Yenile',
+  'Refreshing all stations': 'En hızlı istasyon bir sonraki sefer otomatik olarak bağlanacak.',
+
   'Shared': 'Başarıyla Paylaşıldı',
   'Forwarded': 'Başarıyla İleri Gönderildi',
 
@@ -205,6 +207,13 @@ final Map<String, String> intlTrTr = {
   'Sure to delete this message?': 'Bu mesajı silmek istediğinize emin misiniz?'
       ' (bu işlem geri alınamaz)',
 
+  'Video error': 'Video hatası',
+  'Download not supported': 'Şu anda indirme desteği yok',
+
+  'Encrypting': 'Şifreleniyor',
+  'Decrypting': 'Şifresi çözülüyor',
+
+  'Waiting to upload': 'Veriler şifrelendi, gönderilmek üzere bekliyor',
   'Waiting to send': 'Gönderilmeyi bekliyor (tekrar denemek için dokunun)',
   'No response': 'Yanıt Yok (tekrar göndermek için dokunun)',
   'Stranded': 'Mahsur Kaldı (tekrar göndermek için dokunun)',
@@ -215,6 +224,8 @@ final Map<String, String> intlTrTr = {
 
   'Draft': 'Taslak',
   'Mentioned': 'Bahsedildiniz',
+
+  'Translate': 'Çevir',
 
   //
   //  Video Player

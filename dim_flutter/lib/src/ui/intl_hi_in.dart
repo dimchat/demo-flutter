@@ -111,6 +111,8 @@ final Map<String, String> intlHiIn = {
   'Permission Denied': 'अनुमति निरस्त',
 
   'Refresh Stations': 'रिले स्टेशन को ताजगी दें',
+  'Refreshing all stations': 'सभी स्टेशनों को ताज़ा किया जा रहा है, अगली बार सबसे तेज़ स्टेशन स्वचालित रूप से कनेक्ट होगा।',
+
   'Shared': 'सफलतापूर्वक साझा किया गया',
   'Forwarded': 'सफलतापूर्वक आगे भेजा गया',
 
@@ -206,6 +208,13 @@ final Map<String, String> intlHiIn = {
   'Sure to delete this message?': 'क्या आप वाकई इस संदेश को हटाना चाहते हैं?'
       ' (यह क्रिया पुनर्प्राप्त नहीं की जा सकती)',
 
+  'Video error': 'वीडियो त्रुटि',
+  'Download not supported': 'डाउनलोड अभी तक समर्थित नहीं है',
+
+  'Encrypting': 'एन्क्रिप्ट किया जा रहा है',
+  'Decrypting': 'डिक्रिप्ट किया जा रहा है',
+
+  'Waiting to upload': 'डेटा एन्क्रिप्ट किया गया है, भेजने का इंतजार कर रहा है',
   'Waiting to send': 'भेजने की प्रतीक्षा कर रहा है (पुनः प्रयास करने के लिए टैप करें)',
   'No response': 'कोई प्रतिक्रिया नहीं है (पुनः भेजने के लिए टैप करें)',
   'Stranded': 'फँसा हुआ (पुनः भेजने के लिए टैप करें)',
@@ -216,6 +225,8 @@ final Map<String, String> intlHiIn = {
 
   'Draft': 'मसौदा',
   'Mentioned': 'आपका उल्लेख किया गया',
+
+  'Translate': 'अनुवाद',
 
   //
   //  Video Player

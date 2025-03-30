@@ -111,6 +111,8 @@ final Map<String, String> intlMsMy = {
   'Permission Denied': 'Kebenaran Dinafikan',
 
   'Refresh Stations': 'Muat Semula Stesen Relai',
+  'Refreshing all stations': 'Stesen terpantas akan disambungkan secara automatik pada kali berikutnya.',
+
   'Shared': 'Berjaya Berkongsi',
   'Forwarded': 'Berjaya Dihantar',
 
@@ -206,6 +208,13 @@ final Map<String, String> intlMsMy = {
   'Sure to delete this message?': 'Adakah anda pasti mahu memadam mesej ini?'
       ' (tindakan ini tidak boleh dipulihkan)',
 
+  'Video error': 'Ralat video',
+  'Download not supported': 'Muat turun belum disokong',
+
+  'Encrypting': 'Menyulitkan',
+  'Decrypting': 'Membuka kunci',
+
+  'Waiting to upload': 'Data telah disulitkan, menunggu untuk dihantar',
   'Waiting to send': 'Menunggu untuk menghantar (tekan semula untuk cuba)',
   'No response': 'Tiada respons (tekan semula untuk hantar semula)',
   'Stranded': 'Terdampar (tekan semula untuk hantar semula)',
@@ -216,6 +225,8 @@ final Map<String, String> intlMsMy = {
 
   'Draft': 'Draf',
   'Mentioned': 'Anda telah disebutkan',
+
+  'Translate': 'Terjemah',
 
   //
   //  Video Player

@@ -110,6 +110,8 @@ final Map<String, String> intlEnUs = {
   'Permission Denied': 'Permission Denied',
 
   'Refresh Stations': 'Refresh Relay Stations',
+  'Refreshing all stations': 'The fastest station will be connected automatically next time.',
+
   'Shared': 'Shared Successfully',
   'Forwarded': 'Forwarded Successfully',
 
@@ -205,6 +207,13 @@ final Map<String, String> intlEnUs = {
   'Sure to delete this message?': 'Are you sure to delete this message?'
       ' (this action is not recoverable)',
 
+  'Video error': 'Video error',
+  'Download not supported': 'Download not supported yet',
+
+  'Encrypting': 'Encrypting',
+  'Decrypting': 'Decrypting',
+
+  'Waiting to upload': 'Data encrypted, waiting to send',
   'Waiting to send': 'Waiting to send (tap to retry)',
   'No response': 'No response (tap to resend)',
   'Stranded': 'Stranded (tap to resend)',
@@ -215,6 +224,8 @@ final Map<String, String> intlEnUs = {
 
   'Draft': 'Draft',
   'Mentioned': 'You were mentioned',
+
+  'Translate': 'Translate',
 
   //
   //  Video Player

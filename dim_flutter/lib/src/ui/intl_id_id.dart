@@ -111,6 +111,8 @@ final Map<String, String> intlIdId = {
   'Permission Denied': 'Izin Ditolak',
 
   'Refresh Stations': 'Segarkan Stasiun Rele',
+  'Refreshing all stations': 'Stasiun tercepat akan terhubung secara otomatis pada lain waktu.',
+
   'Shared': 'Berbagi Berhasil',
   'Forwarded': 'Diteruskan dengan Sukses',
 
@@ -206,6 +208,13 @@ final Map<String, String> intlIdId = {
   'Sure to delete this message?': 'Apakah Anda yakin ingin menghapus pesan ini?'
       ' (tindakan ini tidak dapat dipulihkan)',
 
+  'Video error': 'Kesalahan video',
+  'Download not supported': 'Unduhan belum didukung',
+
+  'Encrypting': 'Enkripsi',
+  'Decrypting': 'Dekripsi',
+
+  'Waiting to upload': 'Data telah dienkripsi, menunggu untuk mengirim',
   'Waiting to send': 'Menunggu untuk mengirim (tekan untuk mencoba kembali)',
   'No response': 'Tidak ada respons (tekan untuk mengirim ulang)',
   'Stranded': 'Terdampar (tekan untuk mengirim ulang)',
@@ -216,6 +225,8 @@ final Map<String, String> intlIdId = {
 
   'Draft': 'Draf',
   'Mentioned': 'Anda disebutkan',
+
+  'Translate': 'Terjemahkan',
 
   //
   //  Video Player

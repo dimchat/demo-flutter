@@ -111,6 +111,8 @@ final Map<String, String> intlFrFr = {
   'Permission Denied': 'Autorisation refusée',
 
   'Refresh Stations': 'Actualiser les Stations Relais',
+  'Refreshing all stations': 'La station la plus rapide sera connectée automatiquement la prochaine fois.',
+
   'Shared': 'Partagé avec succès',
   'Forwarded': 'Transmis avec succès',
 
@@ -206,6 +208,13 @@ final Map<String, String> intlFrFr = {
   'Sure to delete this message?': 'Êtes-vous sûr de vouloir supprimer ce message ?'
       ' (cette action est irréversible)',
 
+  'Video error': 'Erreur vidéo',
+  'Download not supported': 'Téléchargement non pris en charge pour le moment',
+
+  'Encrypting': 'Chiffrement',
+  'Decrypting': 'Déchiffrement',
+
+  'Waiting to upload': 'Données cryptées, en attente d\'envoi',
   'Waiting to send': 'En attente d\'envoi (appuyez pour réessayer)',
   'No response': 'Aucune réponse (appuyez pour renvoyer)',
   'Stranded': 'En rade (appuyez pour renvoyer)',
@@ -216,6 +225,8 @@ final Map<String, String> intlFrFr = {
 
   'Draft': 'Brouillon',
   'Mentioned': 'Tu as été mentionné',
+
+  'Translate': 'Traduire',
 
   //
   //  Video Player

@@ -111,6 +111,8 @@ final Map<String, String> intlDeDe = {
   'Permission Denied': 'Zugriff verweigert',
 
   'Refresh Stations': 'Relaisstationen aktualisieren',
+  'Refreshing all stations': 'Die schnellste Station wird beim nächsten Mal automatisch verbunden.',
+
   'Shared': 'Erfolgreich geteilt',
   'Forwarded': 'Erfolgreich weitergeleitet',
 
@@ -206,6 +208,13 @@ final Map<String, String> intlDeDe = {
   'Sure to delete this message?': 'Sind Sie sicher, dass Sie diese Nachricht löschen möchten?'
       ' (Diese Aktion kann nicht rückgängig gemacht werden)',
 
+  'Video error': 'Video Fehler',
+  'Download not supported': 'Download wird noch nicht unterstützt',
+
+  'Encrypting': 'Verschlüsseln',
+  'Decrypting': 'Entschlüsseln',
+
+  'Waiting to upload': 'Daten verschlüsselt, warten auf den Versand',
   'Waiting to send': 'Warte auf Senden (zum Wiederholen tippen)',
   'No response': 'Keine Antwort (zum erneuten Senden tippen)',
   'Stranded': 'Gestrandet (zum erneuten Senden tippen)',
@@ -216,6 +225,8 @@ final Map<String, String> intlDeDe = {
 
   'Draft': 'Entwurf',
   'Mentioned': 'Du wurdest erwähnt',
+
+  'Translate': 'Übersetzen',
 
   //
   //  Video Player

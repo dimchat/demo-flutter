@@ -111,6 +111,8 @@ final Map<String, String> intlThTh = {
   'Permission Denied': 'การอนุญาตถูกปฏิเสธ',
 
   'Refresh Stations': 'รีเฟรชสถานีรีเลย์',
+  'Refreshing all stations': 'สถานีที่เร็วที่สุดจะเชื่อมต่อโดยอัตโนมัติในครั้งถัดไป.',
+
   'Shared': 'แชร์สำเร็จ',
   'Forwarded': 'ส่งต่อสำเร็จ',
 
@@ -206,6 +208,13 @@ final Map<String, String> intlThTh = {
   'Sure to delete this message?': 'คุณแน่ใจหรือว่าต้องการลบข้อความนี้?'
       ' (การกระทำนี้ไม่สามารถกู้คืนได้)',
 
+  'Video error': 'ข้อผิดพลาดของวิดีโอ',
+  'Download not supported': 'ยังไม่รองรับการดาวน์โหลด',
+
+  'Encrypting': 'กำลังเข้ารหัส',
+  'Decrypting': 'กำลังถอดรหัส',
+
+  'Waiting to upload': 'ข้อมูลถูกเข้ารหัส รอการส่ง',
   'Waiting to send': 'กำลังรอส่ง (แตะเพื่อลองอีกครั้ง)',
   'No response': 'ไม่มีการตอบสนอง (แตะเพื่อส่งใหม่)',
   'Stranded': 'ติดอยู่ (แตะเพื่อส่งใหม่)',
@@ -216,6 +225,8 @@ final Map<String, String> intlThTh = {
 
   'Draft': 'ร่าง',
   'Mentioned': 'คุณถูกกล่าวถึง',
+
+  'Translate': 'แปล',
 
   //
   //  Video Player

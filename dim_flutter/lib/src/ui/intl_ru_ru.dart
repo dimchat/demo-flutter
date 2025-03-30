@@ -111,6 +111,8 @@ final Map<String, String> intlRuRu = {
   'Permission Denied': 'Доступ запрещен',
 
   'Refresh Stations': 'Обновить Ретрансляционные станции',
+  'Refreshing all stations': 'Самая быстрая станция будет автоматически подключена в следующий раз.',
+
   'Shared': 'Успешно общий доступ',
   'Forwarded': 'Успешно переслано',
 
@@ -206,6 +208,13 @@ final Map<String, String> intlRuRu = {
   'Sure to delete this message?': 'Вы уверены, что хотите удалить это сообщение?'
       ' (это действие необратимо)',
 
+  'Video error': 'Ошибка видео',
+  'Download not supported': 'Загрузка пока не поддерживается',
+
+  'Encrypting': 'Шифрование',
+  'Decrypting': 'Дешифрование',
+
+  'Waiting to upload': 'Данные зашифрованы, ожидание отправки',
   'Waiting to send': 'Ожидание отправки (нажмите, чтобы повторить)',
   'No response': 'Нет ответа (нажмите, чтобы отправить снова)',
   'Stranded': 'Застрял (нажмите, чтобы отправить снова)',
@@ -216,6 +225,8 @@ final Map<String, String> intlRuRu = {
 
   'Draft': 'Черновик',
   'Mentioned': 'Вас упомянули',
+
+  'Translate': 'Перевести',
 
   //
   //  Video Player

@@ -111,6 +111,8 @@ final Map<String, String> intlAfZa = {
   'Permission Denied': 'Toestemming Geweier',
 
   'Refresh Stations': 'Verfris Koppelstasies',
+  'Refreshing all stations': 'Die vinnigste stasie sal volgende keer outomaties gekoppel word.',
+
   'Shared': 'Suksesvol Gedeel',
   'Forwarded': 'Suksesvol Deurgestuur',
 
@@ -206,6 +208,13 @@ final Map<String, String> intlAfZa = {
   'Sure to delete this message?': 'Is jy seker jy wil hierdie boodskap uitvee?'
       ' (hierdie aksie kan nie teruggedraai word nie)',
 
+  'Video error': 'Video fout',
+  'Download not supported': 'Aflaai word nog nie ondersteun nie',
+
+  'Encrypting': 'Enkripteer',
+  'Decrypting': 'De-enkipteer',
+
+  'Waiting to upload': 'Data is enkripteer, wag om te stuur',
   'Waiting to send': 'Wag om te stuur (tik om te herprobeer)',
   'No response': 'Geen reaksie (tik om weer te stuur)',
   'Stranded': 'Gestrand (tik om weer te stuur)',
@@ -216,6 +225,8 @@ final Map<String, String> intlAfZa = {
 
   'Draft': 'Konsep',
   'Mentioned': 'Jy is genoem',
+
+  'Translate': 'Vertaal',
 
   //
   //  Video Player

@@ -110,6 +110,8 @@ final Map<String, String> intlZhTw = {
   'Permission Denied': '權限被拒絕',
 
   'Refresh Stations': '刷新基站列表',
+  'Refreshing all stations': '所有站點正在重新整理，下一次將自動連接最快的站點。',
+
   'Shared': '已分享',
   'Forwarded': '已轉發',
 
@@ -204,6 +206,13 @@ final Map<String, String> intlZhTw = {
   'Delete Message': '刪除訊息',
   'Sure to delete this message?': '確定要刪除這則訊息嗎？（此操作無法恢復）',
 
+  'Video error': '影片錯誤',
+  'Download not supported': '目前不支援下載',
+
+  'Encrypting': '加密中',
+  'Decrypting': '解密中',
+
+  'Waiting to upload': '資料已加密，等待上傳',
   'Waiting to send': '等待傳送（點擊重試）',
   'No response': '無回應（點擊重新傳送）',
   'Stranded': '未發送（點擊重新傳送）',
@@ -214,6 +223,8 @@ final Map<String, String> intlZhTw = {
 
   'Draft': '草稿',
   'Mentioned': '有人@我',
+
+  'Translate': '翻譯',
 
   //
   //  Video Player

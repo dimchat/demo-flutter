@@ -117,13 +117,13 @@ class SharedFileUploader with Logging {
     //
     //  2. config for upload API
     //
-    Config config = Config();
-    String? api = await config.uploadAvatarAPI;
+    Config config = await Config().load();
+    String? api = config.uploadAvatarAPI;
     logInfo('checking avatar API: $api');
     if (api != null) {
       _upAvatarAPI = api;
     }
-    api = await config.uploadFileAPI;
+    api = config.uploadFileAPI;
     logInfo('checking file API: $api');
     if (api != null) {
       _upFileAPI = api;

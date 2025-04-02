@@ -6,7 +6,7 @@ import 'package:dim_client/common.dart';
 import 'package:dim_client/client.dart';
 
 import '../common/platform.dart';
-import '../models/config.dart';
+import '../models/newest.dart';
 import '../models/shield.dart';
 import '../models/vestibule.dart';
 import '../network/velocity.dart';

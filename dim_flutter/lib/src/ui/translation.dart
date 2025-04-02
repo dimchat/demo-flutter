@@ -5,6 +5,7 @@ import 'package:dim_client/sdk.dart';
 
 import '../client/shared.dart';
 import '../common/constants.dart';
+import '../models/config.dart';
 import 'language.dart';
 
 /*
@@ -110,21 +111,18 @@ class Translator with Logging {
   final Map<String, Map<int, TranslateContent>> _tagCache = {};
 
   /// service bots
-  final Set<ID> _candidates = {};
   ID? _fastestTranslator;
 
-  void setCandidates(List<ID> bots) {
-    _candidates.clear();
-    _candidates.addAll(bots);
-  }
   Future<bool> testCandidates() async {
-    var bots = _candidates;
+    Config config = await Config().load();
+    var bots = config.translators;
     if (bots.isEmpty) {
       return false;
-    } else if (_fastestTranslator != null) {
-      return true;
     }
     // TODO: check for the fastest bot
+    if (_fastestTranslator != null) {
+      return true;
+    }
     ID fastest = bots.first;
     _fastestTranslator = fastest;
     // post notification
@@ -138,8 +136,7 @@ class Translator with Logging {
 
   bool get ready => _fastestTranslator != null;
 
-  bool canTranslate(Content content) =>
-      content is TextContent && _candidates.isNotEmpty;
+  bool canTranslate(Content content) => content is TextContent;
 
   Future<bool> request(String text, int tag, {required String? format}) async {
     ID? receiver = _fastestTranslator;

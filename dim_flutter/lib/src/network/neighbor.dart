@@ -53,9 +53,9 @@ Future<NeighborInfo?> getNeighborStation() async {
 
 Future<bool> _updateStations(SessionDBI database) async {
   // 1. get stations from config
-  Config config = Config();
-  ID? pid = await config.provider;
-  List stations = await config.stations;
+  Config config = await Config().load();
+  ID? pid = config.provider;
+  List stations = config.stations;
   if (pid == null || stations.isEmpty) {
     assert(false, 'config error: $config');
     return false;

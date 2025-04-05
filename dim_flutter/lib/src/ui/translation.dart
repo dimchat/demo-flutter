@@ -49,7 +49,14 @@ class TranslateResult extends Dictionary {
   /// target text
   String? get translation => getString('translation', null);
 
-  bool get valid => from != null && to != null && code != null && translation != null;
+  // bool get valid => from != null && to != null && code != null && translation != null;
+  bool get valid {
+    if (from == null || to == null || code == null) {
+      return false;
+    }
+    // sometimes the AI server would return translation in 'text' field
+    return translation != null || text != null;
+  }
 
 }
 
@@ -97,10 +104,13 @@ String _currentLanguageCode() {
   return code;
 }
 
-class Translator with Logging {
+class Translator with Logging implements Observer {
   factory Translator() => _instance;
   static final Translator _instance = Translator._internal();
-  Translator._internal();
+  Translator._internal() {
+    var nc = NotificationCenter();
+    nc.addObserver(this, NotificationNames.kTranslatorWarning);
+  }
 
   static const String app = 'chat.dim.translate';
   static const String mod = 'translate';
@@ -112,31 +122,85 @@ class Translator with Logging {
 
   /// service bots
   ID? _fastestTranslator;
+  String? _warningMessage;
+  DateTime? _lastQueryTime;
+  int _queryInterval = 32;
 
-  Future<bool> testCandidates() async {
-    Config config = await Config().load();
-    var bots = config.translators;
-    if (bots.isEmpty) {
-      return false;
+  String? get warning => _warningMessage;
+
+  bool get ready => _fastestTranslator != null;
+
+  bool canTranslate(Content content) => content is TextContent;
+
+  @override
+  Future<void> onReceiveNotification(Notification notification) async {
+    String name = notification.name;
+    Map? info = notification.userInfo;
+    if (name == NotificationNames.kTranslatorWarning) {
+      ID? sender = info?['sender'];
+      TranslateContent? content = info?['content'];
+      TranslateResult? result = content?.result;
+      if (sender == null) {
+        logError('translator error: $info');
+      } else {
+        var text = result?.translation;
+        text ??= result?.text;
+        _updateTranslator(sender, text);
+      }
     }
-    // TODO: check for the fastest bot
-    if (_fastestTranslator != null) {
-      return true;
+  }
+
+  void _updateTranslator(ID sender, String? text) {
+    var fastest = _fastestTranslator;
+    if (fastest == null) {
+      fastest = sender;
+    } else if (text == null) {
+      logWarning('warning text not found: $sender');
+      return;
+    } else if (fastest != sender) {
+      logWarning('fastest translator exists: $fastest, $sender');
+      return;
     }
-    ID fastest = bots.first;
+    logInfo('update fastest translator: $fastest, "$text"');
     _fastestTranslator = fastest;
+    _warningMessage = text;
     // post notification
     var nc = NotificationCenter();
     nc.postNotification(NotificationNames.kTranslatorReady, this, {
       // 'action': 'update',
       'translator': fastest,
     });
-    return true;
   }
 
-  bool get ready => _fastestTranslator != null;
-
-  bool canTranslate(Content content) => content is TextContent;
+  Future<bool> testCandidates() async {
+    Config config = await Config().load();
+    var bots = config.translators;
+    if (bots.isEmpty) {
+      return false;
+    } else if (_fastestTranslator != null) {
+      // TODO: what if warning message is empty
+      return true;
+    }
+    // check last query time
+    var now = DateTime.now();
+    var last = _lastQueryTime;
+    if (last != null && now.subtract(Duration(seconds: _queryInterval)).isBefore(last)) {
+      logWarning('last query is not expired, call it after $_queryInterval seconds.');
+      return false;
+    } else {
+      _lastQueryTime = now;
+      _queryInterval <<= 1;
+    }
+    // query candidates
+    var content = TranslateContent.query('Hi there!', 0, format: null);
+    content['mod'] = 'test';
+    logInfo('say hi to translators: $bots, $content');
+    GlobalVariable shared = GlobalVariable();
+    for (ID receiver in bots) {
+      await shared.emitter.sendContent(content, receiver: receiver);
+    }
+    return true;
+  }
 
   Future<bool> request(String text, int tag, {required String? format}) async {
     ID? receiver = _fastestTranslator;

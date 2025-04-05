@@ -82,6 +82,12 @@ abstract class Styles {
     overflow: TextOverflow.ellipsis,
   );
 
+  static TextStyle get translatorTextStyle => TextStyle(
+    fontSize: 10,
+    color: colors.commandTextColor,
+    decoration: TextDecoration.none,
+  );
+
   //
   //  Text Field Style
   //

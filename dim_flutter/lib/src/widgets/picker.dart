@@ -37,6 +37,10 @@ void _openImagePicker(BuildContext context, bool camera, OnImagePicked? onPicked
       }
       String path = file.path;
       file.readAsBytes().then((data) {
+        if (!context.mounted) {
+          Log.warning('context unmounted: $context');
+          return;
+        }
         Log.debug('image file length: ${data.length}, path: $path');
         Image body = ImageUtils.memoryImage(data);
         Alert.confirm(context, 'Pick Image', body,
@@ -48,11 +52,15 @@ void _openImagePicker(BuildContext context, bool camera, OnImagePicked? onPicked
           },
         );
       }).onError((error, stackTrace) {
-        Alert.show(context, 'Image File Error', '$error');
+        if (context.mounted) {
+          Alert.show(context, 'Image File Error', '$error');
+        }
       });
     }).onError((error, stackTrace) {
-      String title = camera ? 'Camera Error' : 'Gallery Error';
-      Alert.show(context, title, '$error');
+      if (context.mounted) {
+        String title = camera ? 'Camera Error' : 'Gallery Error';
+        Alert.show(context, title, '$error');
+      }
     });
 
 

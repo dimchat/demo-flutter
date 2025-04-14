@@ -227,8 +227,10 @@ class ContactInfo extends Conversation {
     shared.facebook.currentUser.then((user) {
       if (user == null) {
         logError('current user not found, failed to add contact: $identifier');
-        Alert.show(context, 'Error', 'Current user not found'.tr);
-      } else {
+        if (context.mounted) {
+          Alert.show(context, 'Error', 'Current user not found'.tr);
+        }
+      } else if (context.mounted) {
         // confirm adding
         Alert.confirm(context, 'Confirm Add', 'Sure to add this friend?'.tr,
           okAction: () => _doAdd(context, identifier, user.identifier),
@@ -241,7 +243,7 @@ class ContactInfo extends Conversation {
     shared.database.addContact(contact, user: user).then((ok) {
       if (ok) {
         // closePage(context);
-      } else {
+      } else if (ctx.mounted) {
         Alert.show(ctx, 'Error', 'Failed to add contact'.tr);
       }
     });
@@ -258,7 +260,9 @@ class ContactInfo extends Conversation {
     shared.facebook.currentUser.then((user) {
       if (user == null) {
         logError('current user not found, failed to add contact: $identifier');
-        Alert.show(context, 'Error', 'Current user not found'.tr);
+        if (context.mounted) {
+          Alert.show(context, 'Error', 'Current user not found'.tr);
+        }
       } else {
         String msg;
         if (identifier.isUser) {
@@ -267,23 +271,27 @@ class ContactInfo extends Conversation {
           msg = 'Sure to remove this group?'.tr;
         }
         // confirm removing
-        Alert.confirm(context, 'Confirm Delete', msg,
-          okAction: () => _doRemove(context, identifier, user.identifier),
-        );
+        if (context.mounted) {
+          Alert.confirm(context, 'Confirm Delete', msg,
+            okAction: () => _doRemove(context, identifier, user.identifier),
+          );
+        }
       }
     });
   }
   void _doRemove(BuildContext ctx, ID contact, ID user) {
     Amanuensis clerk = Amanuensis();
     clerk.removeConversation(contact).onError((error, stackTrace) {
-      Alert.show(ctx, 'Error', 'Failed to remove conversation'.tr);
+      if (ctx.mounted) {
+        Alert.show(ctx, 'Error', 'Failed to remove conversation'.tr);
+      }
       return false;
     });
     GlobalVariable shared = GlobalVariable();
     shared.database.removeContact(contact, user: user).then((ok) {
       if (ok) {
         logWarning('contact removed: $contact, user: $user');
-      } else {
+      } else if (ctx.mounted) {
         Alert.show(ctx, 'Error', 'Failed to remove contact'.tr);
       }
     });

@@ -144,7 +144,9 @@ void _confirmToSave(BuildContext context, PortableImageLoader loader) {
 void _saveImage(BuildContext context, PortableImageLoader loader) {
   if (loader.status == PortableNetworkStatus.success) {
     loader.cacheFilePath.then((path) {
-      if (path == null) {
+      if (!context.mounted) {
+        Log.warning('context unmounted: $context');
+      } else if (path == null) {
         Alert.show(context, 'Error', 'Failed to get image file'.tr);
       } else {
         _saveFile(context, path);
@@ -157,7 +159,9 @@ void _saveImage(BuildContext context, PortableImageLoader loader) {
 void _saveFile(BuildContext context, String path) {
   ImageGallerySaver.saveFile(path).then((result) {
     Log.info('saving image: $path, result: $result');
-    if (result != null && result['isSuccess']) {
+    if (!context.mounted) {
+      Log.warning('context unmounted: $context');
+    } else if (result != null && result['isSuccess']) {
       Alert.show(context, 'Success', 'Image saved to album'.tr);
     } else {
       String? error = result['error'];

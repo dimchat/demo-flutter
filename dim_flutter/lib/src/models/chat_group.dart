@@ -271,7 +271,7 @@ class GroupInfo extends Conversation with Logging {
     }
     // save into document
     _updateGroupName(identifier, name).then((message) {
-      if (message != null) {
+      if (message != null && context.mounted) {
         Alert.show(context, 'Error', message.tr);
       }
     });
@@ -343,7 +343,9 @@ class GroupInfo extends Conversation with Logging {
     // check current user
     GlobalVariable shared = GlobalVariable();
     shared.facebook.currentUser.then((user) {
-      if (user == null) {
+      if (!context.mounted) {
+        logWarning('context unmounted: $context');
+      } else if (user == null) {
         logError('current user not found, failed to add contact: $identifier');
         Alert.show(context, 'Error', 'Current user not found'.tr);
       } else {
@@ -365,9 +367,13 @@ class GroupInfo extends Conversation with Logging {
       GlobalVariable shared = GlobalVariable();
       shared.database.removeContact(group, user: user);
       // OK
-      closePage(ctx);
+      if (ctx.mounted) {
+        closePage(ctx);
+      }
     }).onError((error, stackTrace) {
-      Alert.show(ctx, 'Error', '$error');
+      if (ctx.mounted) {
+        Alert.show(ctx, 'Error', '$error');
+      }
     });
   }
 

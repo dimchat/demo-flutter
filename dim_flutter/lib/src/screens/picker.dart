@@ -96,7 +96,11 @@ class _AirPlayState extends State<AirPlayPicker> {
     var devices = man.devices;
     for (var tv in devices) {
       buttons.add(TextButton(
-        onPressed: () => tv.castURL(widget.url).then((_) => closePage(context)),
+        onPressed: () => tv.castURL(widget.url).then((_) {
+          if (context.mounted) {
+            closePage(context);
+          }
+        }),
         child: Text(tv.friendlyName),
       ));
     }

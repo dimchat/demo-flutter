@@ -21,7 +21,7 @@ void requestDatabasePermissions(BuildContext context,
         callback: () => openAppSettings(),
       ),
     ).then((granted) {
-      if (granted) {
+      if (granted && context.mounted) {
         onGranted(context);
       }
     });
@@ -35,7 +35,7 @@ void requestPhotoReadingPermissions(BuildContext context,
         callback: () => openAppSettings(),
       ),
     ).then((granted) {
-      if (granted) {
+      if (granted && context.mounted) {
         onGranted(context);
       }
     });
@@ -49,7 +49,7 @@ void requestPhotoAccessingPermissions(BuildContext context,
         callback: () => openAppSettings(),
       ),
     ).then((granted) {
-      if (granted) {
+      if (granted && context.mounted) {
         onGranted(context);
       }
     });
@@ -63,7 +63,7 @@ void requestCameraPermissions(BuildContext context,
         callback: () => openAppSettings(),
       ),
     ).then((granted) {
-      if (granted) {
+      if (granted && context.mounted) {
         onGranted(context);
       }
     });
@@ -77,7 +77,7 @@ void requestMicrophonePermissions(BuildContext context,
         callback: () => openAppSettings(),
       ),
     ).then((granted) {
-      if (granted) {
+      if (granted && context.mounted) {
         onGranted(context);
       }
     });

@@ -189,7 +189,9 @@ class Translator with Logging implements Observer {
       return false;
     } else {
       _lastQueryTime = now;
-      _queryInterval <<= 1;
+      if (_queryInterval < 500) {
+        _queryInterval <<= 1;
+      }
     }
     // query candidates
     var content = TranslateContent.query('Hi there!', 0, format: null);

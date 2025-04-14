@@ -193,14 +193,18 @@ abstract class Conversation with Logging implements lnc.Observer {
     shared.facebook.currentUser.then((user) {
       if (user == null) {
         logError('current user not found, failed to set remark: $cr => $identifier');
-        Alert.show(context, 'Error', 'Current user not found'.tr);
+        if (context.mounted) {
+          Alert.show(context, 'Error', 'Current user not found'.tr);
+        }
       } else {
         shared.database.setRemark(cr!, user: user.identifier).then((ok) {
           if (ok) {
             logInfo('set remark: $cr => $identifier, user: $user');
           } else {
             logError('failed to set remark: $cr => $identifier, user: $user');
-            Alert.show(context, 'Error', 'Failed to set remark'.tr);
+            if (context.mounted) {
+              Alert.show(context, 'Error', 'Failed to set remark'.tr);
+            }
           }
         });
       }
@@ -242,9 +246,11 @@ abstract class Conversation with Logging implements lnc.Observer {
     shield.addBlocked(identifier).then((ok) {
       if (ok) {
         shield.broadcastBlockList();
-        Alert.show(context, 'Blocked',
-          'Never receive message from this contact'.tr,
-        );
+        if (context.mounted) {
+          Alert.show(context, 'Blocked',
+            'Never receive message from this contact'.tr,
+          );
+        }
       }
     });
   }
@@ -255,9 +261,11 @@ abstract class Conversation with Logging implements lnc.Observer {
     shield.removeBlocked(identifier).then((ok) {
       if (ok) {
         shield.broadcastBlockList();
-        Alert.show(context, 'Unblocked',
-          'Receive message from this contact'.tr,
-        );
+        if (context.mounted) {
+          Alert.show(context, 'Unblocked',
+            'Receive message from this contact'.tr,
+          );
+        }
       }
     });
   }
@@ -269,9 +277,11 @@ abstract class Conversation with Logging implements lnc.Observer {
     shield.addMuted(identifier).then((ok) {
       if (ok) {
         shield.broadcastMuteList();
-        Alert.show(context, 'Muted',
-          'Never receive notification from this contact'.tr,
-        );
+        if (context.mounted) {
+          Alert.show(context, 'Muted',
+            'Never receive notification from this contact'.tr,
+          );
+        }
       }
     });
   }
@@ -282,9 +292,11 @@ abstract class Conversation with Logging implements lnc.Observer {
     shield.removeMuted(identifier).then((ok) {
       if (ok) {
         shield.broadcastMuteList();
-        Alert.show(context, 'Unmuted',
-          'Receive notification from this contact'.tr,
-        );
+        if (context.mounted) {
+          Alert.show(context, 'Unmuted',
+            'Receive notification from this contact'.tr,
+          );
+        }
       }
     });
   }

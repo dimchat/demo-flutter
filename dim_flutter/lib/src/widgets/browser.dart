@@ -92,7 +92,7 @@ class Browser extends StatefulWidget {
   static void launchURL(BuildContext context, Uri url, {
     LaunchMode mode = LaunchMode.externalApplication,
   }) => canLaunchUrl(url).then((can) {
-    if (!can) {
+    if (!can && context.mounted) {
       // FIXME: adding 'queries' in AndroidManifest.xml
       Alert.show(context, 'Error', 'Cannot launch "@url".'.trParams({
         'url': _shortUrlString(url.toString()),
@@ -101,7 +101,9 @@ class Browser extends StatefulWidget {
       Log.warning('cannot launch URL: $url');
     }
     launchUrl(url, mode: mode).then((ok) {
-      if (ok) {
+      if (!context.mounted) {
+        Log.warning('context unmounted: $context');
+      } else if (ok) {
         Log.info('launch URL: $url');
       } else {
         Alert.show(context, 'Error', 'Failed to launch "@url".'.trParams({

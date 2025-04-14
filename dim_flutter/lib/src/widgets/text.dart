@@ -290,7 +290,9 @@ abstract class _MarkdownUtils {
       return;
     }
     _checkUrlType(url).then((type) {
-      if (type == _MimeType.image) {
+      if (!context.mounted) {
+        Log.warning('context unmounted: $context');
+      } else if (type == _MimeType.image) {
         // show image
         Log.info('preview image: $url');
         var imageContent = FileContent.image(url: url,
@@ -386,7 +388,7 @@ abstract class _MarkdownUtils {
     }
     var plain = Password.plainKey;
     var imageContent = FileContent.image(url: url, password: plain);
-    var pnf = PortableNetworkFile.parse(imageContent);
+    var pnf = PortableNetworkFile.parse(imageContent.toMap());
     // check file type
     _MimeType? type = _checkFileType(url.path);
     if (type == null && (url.hasQuery || url.hasFragment)) {

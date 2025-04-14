@@ -204,7 +204,7 @@ abstract class _BrowserUtils {
       // http:
       // https:
       return URLRequest(
-        url: url,
+        url: WebUri.uri(url),
       );
     } else {
       // data:text/html

@@ -14,6 +14,8 @@ final class ChannelNames {
 
     static final String AUDIO = "chat.dim/audio";
 
+    static final String SESSION = "chat.dim/session";
+
     static final String FILE_TRANSFER = "chat.dim/ftp";
 }
 
@@ -29,6 +31,12 @@ final class ChannelMethods {
 
     static final String ON_RECORD_FINISHED = "onRecordFinished";
     static final String ON_PLAY_FINISHED = "onPlayFinished";
+
+    //
+    //  Session Channel
+    //
+    static final String SEND_CONTENT = "sendContent";
+    static final String SEND_COMMAND = "sendCommand";
 
     //
     //  FTP Channel
@@ -54,6 +62,7 @@ public enum ChannelManager {
     //  Channels
     //
     public AudioChannel audioChannel = null;
+    public SessionChannel sessionChannel = null;
     public FileTransferChannel fileChannel = null;
 
     private static class MessageCodec extends StandardMessageCodec {
@@ -69,10 +78,14 @@ public enum ChannelManager {
 
     public void initChannels(BinaryMessenger messenger) {
         System.out.println("initChannels: audioChannel=" + audioChannel);
+        System.out.println("initChannels: sessionChannel=" + sessionChannel);
         System.out.println("initChannels: fileChannel=" + fileChannel);
         StandardMethodCodec codec = new StandardMethodCodec(new MessageCodec());
         //if (audioChannel == null) {
             audioChannel = new AudioChannel(messenger, ChannelNames.AUDIO, codec);
+        //}
+        //if (sessionChannel == null) {
+            sessionChannel = new SessionChannel(messenger, ChannelNames.SESSION, codec);
         //}
         //if (fileChannel == null) {
             fileChannel = new FileTransferChannel(messenger, ChannelNames.FILE_TRANSFER, codec);

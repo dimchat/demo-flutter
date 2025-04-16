@@ -3,6 +3,9 @@ import 'package:dim_client/sdk.dart';
 import 'package:dim_client/common.dart';
 import 'package:dim_client/client.dart';
 
+import '../shared.dart';
+
+
 class ClientHandshakeProcessor extends HandshakeCommandProcessor {
   ClientHandshakeProcessor(super.facebook, super.messenger);
 
@@ -103,13 +106,18 @@ class ClientHandshakeProcessor extends HandshakeCommandProcessor {
   Future<List<Content>> processContent(Content content, ReliableMessage rMsg) async {
     assert(content is HandshakeCommand, 'handshake command error: $content');
     HandshakeCommand command = content as HandshakeCommand;
-    logInfo('checking handshake command: $command');
+    logInfo('checking handshake command: ${rMsg.sender} -> $command');
     if (checkGreetingHandshake(command)) {
       logDebug('greeting handshake command processed: $command');
       return [];
     } else if (ignoredHandshake(command)) {
       logDebug('duplicated / error handshake command: $command');
-      return[];
+      return [];
+    }
+    GlobalVariable shared = GlobalVariable();
+    if (shared.isBackground == true) {
+      logWarning('App Lifecycle: ignore handshake in background mode: $content');
+      return [];
     }
     return await super.processContent(content, rMsg);
   }

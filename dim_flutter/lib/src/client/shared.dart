@@ -37,6 +37,8 @@ class GlobalVariable {
   late final SharedEmitter emitter;
   late final Client terminal;
 
+  bool? isBackground;
+
   SharedMessenger? get messenger => _messenger;
   /// Step 6: set messenger
   set messenger(SharedMessenger? transceiver) {

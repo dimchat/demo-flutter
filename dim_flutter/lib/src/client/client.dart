@@ -94,6 +94,7 @@ class Client extends Terminal {
       // not connect
       return;
     }
+    logInfo("App Lifecycle: report offline before pause session");
     // check signed in user
     ClientSession cs = transceiver.session;
     ID? uid = cs.identifier;
@@ -116,6 +117,7 @@ class Client extends Terminal {
       // not connect
       return;
     }
+    logInfo("App Lifecycle: report online after resume session");
     ClientSession cs = transceiver.session;
     // resume the session
     await cs.resume();
@@ -133,19 +135,28 @@ class Client extends Terminal {
   }
 
   Future<void> onAppLifecycleStateChanged(AppLifecycleState state) async {
+    GlobalVariable shared = GlobalVariable();
     switch (state) {
       case AppLifecycleState.resumed:
-        logWarning('AppLifecycleState::enterForeground $state');
-        await enterForeground();
+        logWarning('AppLifecycleState::enterForeground $state bg=${shared.isBackground}');
+        if (shared.isBackground != false) {
+          shared.isBackground = false;
+          await enterForeground();
+        }
         break;
-      case AppLifecycleState.inactive:
-        break;
+      // case AppLifecycleState.inactive:
+      //   break;
       case AppLifecycleState.paused:
+      case AppLifecycleState.hidden:
       case AppLifecycleState.detached:
-        logWarning('AppLifecycleState::enterBackground $state');
-        await enterBackground();
+        logWarning('AppLifecycleState::enterBackground $state bg=${shared.isBackground}');
+        if (shared.isBackground != true) {
+          shared.isBackground = true;
+          await enterBackground();
+        }
         break;
       default:
+        logInfo("AppLifecycleState::unknown state=$state bg=${shared.isBackground}");
         break;
     }
   }

@@ -194,7 +194,7 @@ class _ImageLoader extends PortableImageLoader {
     }
     // check thumbnail
     image = _thumbnail;
-    image ??= _thumbnail = Gallery.getThumbnailProvider(pnf);
+    image ??= _thumbnail = Gallery.getThumbnailProvider(pnf.toMap());
     return image;
   }
 

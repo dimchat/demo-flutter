@@ -165,7 +165,7 @@ abstract class PortableNetworkState<T extends PortableNetworkView>
     } else if (name == NotificationNames.kPortableNetworkStatusChanged) {
       var previous = userInfo?['previous'];
       var current = userInfo?['current'];
-      logInfo('[PNF] onStatusChanged: $previous -> $current, $url');
+      logDebug('[PNF] onStatusChanged: $previous -> $current, $url');
     } else if (name == NotificationNames.kPortableNetworkEncrypted) {
       // waiting to send
       Uint8List? data = userInfo?['data'];
@@ -197,7 +197,7 @@ abstract class PortableNetworkState<T extends PortableNetworkView>
     } else if (name == NotificationNames.kPortableNetworkDownloadSuccess) {
       // file data downloaded
       Uint8List? data = userInfo?['data'];
-      logInfo('[PNF] onSuccess: ${data?.length} bytes, $url');
+      logDebug('[PNF] onSuccess: ${data?.length} bytes, $url');
     } else if (name == NotificationNames.kPortableNetworkError) {
       // error
       String? error = userInfo?['error'];

@@ -2,7 +2,6 @@
 import 'package:dim_client/ok.dart';
 import 'package:dim_client/sdk.dart';
 import 'package:dim_client/common.dart';
-import 'package:dim_client/client.dart';
 
 import '../channels/manager.dart';
 import '../common/constants.dart';

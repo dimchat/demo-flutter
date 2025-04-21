@@ -73,7 +73,7 @@ public final class Log {
         }
         String time = getTime();
         String loc = getLocation();
-        System.out.println("[" + time + "] DEBUG - " + loc + " >\t" + msg);
+        System.out.println("[" + time + "]  DEBUG  | " + loc + " >\t" + msg);
     }
 
     public static void info(String msg) {
@@ -82,7 +82,7 @@ public final class Log {
         }
         String time = getTime();
         String loc = getLocation();
-        System.out.println("[" + time + "] " + loc + " >\t" + msg);
+        System.out.println("[" + time + "]         | " + loc + " >\t" + msg);
     }
 
     public static void warning(String msg) {
@@ -91,7 +91,7 @@ public final class Log {
         }
         String time = getTime();
         String loc = getLocation();
-        System.out.println("[" + time + "] WARNING - " + loc + " >\t" + msg);
+        System.out.println("[" + time + "] WARNING | " + loc + " >\t" + msg);
     }
 
     public static void error(String msg) {
@@ -100,6 +100,6 @@ public final class Log {
         }
         String time = getTime();
         String loc = getLocation();
-        System.out.println("[" + time + "] ERROR - " + loc + " >\t" + msg);
+        System.out.println("[" + time + "]  ERROR  | " + loc + " >\t" + msg);
     }
 }

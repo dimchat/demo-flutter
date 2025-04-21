@@ -136,7 +136,7 @@ abstract class ContentViewUtils {
   }) => GestureDetector(
     onTap: onTap,
     onLongPress: onLongPress,
-    child: NetworkImageFactory().getImageView(PortableNetworkFile.parse(content)!),
+    child: NetworkImageFactory().getImageView(PortableNetworkFile.parse(content.toMap())!),
   );
 
   static Widget getPageContentView(PageContent content, ID sender, {

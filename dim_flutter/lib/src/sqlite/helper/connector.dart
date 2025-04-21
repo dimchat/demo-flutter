@@ -225,7 +225,7 @@ class _Statement implements Statement {
 
   @override
   Future<ResultSet> executeQuery(String sql) async {
-    DBLogger.output('executeQuery: $sql');
+    // DBLogger.output('executeQuery: $sql');
     return _ResultSet(await database.rawQuery(sql));
   }
 

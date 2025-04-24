@@ -1,13 +1,13 @@
 //
 //  DIMAudioChannel.m
-//  Runner
+//  Sechat
 //
 //  Created by Albert Moky on 2023/5/12.
 //
 
 #import <AVFoundation/AVFoundation.h>
 
-#import "DIMConstants.h"
+#import "DIMStorage.h"
 
 #import "EMAudioPlayerHelper.h"
 #import "EMAudioRecordHelper.h"

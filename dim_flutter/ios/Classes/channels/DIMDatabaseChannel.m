@@ -1,11 +1,12 @@
 //
 //  DIMDatabaseChannel.m
-//  Runner
+//  Sechat
 //
 //  Created by Albert Moky on 2023/5/16.
 //
 
-#import "DIMConstants.h"
+#import "DIMStorage.h"
+#import "PrivateKey.h"
 
 #import "DIMChannelManager.h"
 
@@ -31,25 +32,25 @@ static void onMethodCall(FlutterMethodCall* call, FlutterResult result);
 
 static inline void onMethodCall(FlutterMethodCall* call, FlutterResult success) {
     DIMPrivateKeyStore *db = [DIMPrivateKeyStore sharedInstance];
-    id<MKMID> user = MKMIDParse([call.arguments objectForKey:@"user"]);
+    NSString *user = [call.arguments objectForKey:@"user"];
     assert(user);
     
     NSString *method = [call method];
     if ([method isEqualToString:kChannelMethod_SavePrivateKey]) {
         // savePrivateKey
         NSString *type = [call.arguments objectForKey:@"type"];
-        id<MKMPrivateKey> key = MKMPrivateKeyParse([call.arguments objectForKey:@"key"]);
+        NSDictionary *key = [call.arguments objectForKey:@"key"];
         assert(key);
         BOOL ok = [db savePrivateKey:key withType:type forUser:user];
         success(ok ? @1 : @0);
     } else if ([method isEqualToString:kChannelMethod_PrivateKeyForSignature]) {
         // privateKeyForSignature
-        id<MKMPrivateKey> key = [db privateKeyForSignature:user];
-        success([key dictionary]);
+        NSDictionary *key = [db privateKeyForSignature:user];
+        success(key);
     } else if ([method isEqualToString:kChannelMethod_PrivateKeyForVisaSignature]) {
         // privateKeyForVisaSignature
-        id<MKMPrivateKey> key = [db privateKeyForVisaSignature:user];
-        success([key dictionary]);
+        NSDictionary *key = [db privateKeyForVisaSignature:user];
+        success(key);
     } else if ([method isEqualToString:kChannelMethod_PrivateKeysForDecryption]) {
         // privateKeysForDecryption
         id keys = [db privateKeysForDecryption:user];

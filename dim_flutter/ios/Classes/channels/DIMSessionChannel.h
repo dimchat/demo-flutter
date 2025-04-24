@@ -6,7 +6,6 @@
 //
 
 #import <Flutter/Flutter.h>
-#import <DIMCore/DIMCore.h>
 
 NS_ASSUME_NONNULL_BEGIN
 
@@ -16,9 +15,9 @@ NS_ASSUME_NONNULL_BEGIN
                 binaryMessenger:(NSObject<FlutterBinaryMessenger>*)messenger
                           codec:(NSObject<FlutterMethodCodec>*)codec;
 
-- (void)sendCommand:(id<DKDCommand>)content;
-- (void)sendCommand:(id<DKDCommand>)content receiver:(id<MKMID>)to;
-- (void)sendContent:(id<DKDContent>)content receiver:(id<MKMID>)to;
+- (void)sendCommand:(NSDictionary *)content;
+- (void)sendCommand:(NSDictionary *)content receiver:(NSString *)to;
+- (void)sendContent:(NSDictionary *)content receiver:(NSString *)to;
 
 @end
 

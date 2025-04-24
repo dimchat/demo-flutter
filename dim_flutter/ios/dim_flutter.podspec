@@ -22,8 +22,6 @@ Pod::Spec.new do |s|
 
     s.dependency 'Flutter'
     s.dependency 'ObjectKey', '~> 0.1.3'
-    s.dependency 'DIMSDK', '~> 0.7.2'
-    s.dependency 'DIMPlugins', '~> 0.7.2'
 
     # Flutter.framework does not contain a i386 slice.
     s.pod_target_xcconfig   = { 'DEFINES_MODULE' => 'YES', 'EXCLUDED_ARCHS[sdk=iphonesimulator*]' => 'i386' }

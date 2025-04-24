@@ -7,6 +7,9 @@
 
 #import <ObjectKey/ObjectKey.h>
 
+#import "DataCoder.h"
+
+#import "DIMStorage.h"
 #import "DIMChannelManager.h"
 #import "DIMSessionChannel.h"
 
@@ -35,6 +38,8 @@ static inline BOOL is_sandbox(void) {
     return [receiptURL.path hasSuffix:@"sandboxReceipt"];
 #endif
 }
+
+#define DKDContentType_Command 0x88
 
 #define DIMCommand_Report  @"report"
 #define DIMCommand_Online  @"online"
@@ -70,20 +75,23 @@ OKSingletonImplementations(DIMPushNotificationController, sharedInstance)
         NSLog(@"APNs: device token not found");
         return;
     }
-    NSString *hex = MKMHexEncode(token);
-    //DIMReportCommand *content = [[DIMReportCommand alloc] initWithTitle:@"apns"];
-    DIMCommand *content = [[DIMCommand alloc] initWithCommandName:DIMCommand_Report];
-    [content setObject:@"apns" forKey:@"title"];
-    [content setObject:hex forKey:@"device_token"];
-    [content setObject:@"iOS" forKey:@"platform"];
-    [content setObject:device_system() forKey:@"system"];
-    [content setObject:device_model() forKey:@"model"];
-    [content setObject:bundle_id() forKey:@"topic"];
-    if (is_sandbox()) {
-        // development
-        [content setObject:@(YES) forKey:@"sandbox"];
-    }
-    id<MKMID> receiver = MKMIDParse(@"apns@anywhere");
+    NSTimeInterval now = [[[NSDate alloc] init] timeIntervalSince1970];
+    NSUInteger sn = now * 1000;
+    NSDictionary *content = @{
+        @"type"   : @(DKDContentType_Command),
+        @"sn"     : @(sn),
+        @"time"   : @(now),
+        @"command": DIMCommand_Report,
+        
+        @"title"       : @"apns",
+        @"device_token": MKMHexEncode(token),
+        @"platform"    : @"iOS",
+        @"system"      : device_system(),
+        @"model"       : device_model(),
+        @"topic"       : bundle_id(),
+        @"sandbox"     : @(is_sandbox()),
+    };
+    NSString *receiver = @"apns@anywhere";
     NSLog(@"APNs report command: %@ => %@", content, receiver);
     DIMChannelManager *man = [DIMChannelManager sharedInstance];
     DIMSessionChannel *channel = [man sessionChannel];

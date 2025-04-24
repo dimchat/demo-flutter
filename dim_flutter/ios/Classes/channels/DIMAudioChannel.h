@@ -1,6 +1,6 @@
 //
 //  DIMAudioChannel.h
-//  Runner
+//  Sechat
 //
 //  Created by Albert Moky on 2023/5/12.
 //

@@ -321,10 +321,11 @@ final Map<String, String> intlThTh = {
   'Never receive notification from this contact': 'คุณจะไม่ได้รับการแจ้งเตือนจากที่ติดต่อนี้อีก',
   'Receive notification from this contact': 'คุณสามารถรับการแจ้งเตือนจากที่ติดต่อนี้ได้แล้ว',
 
-  'Grant to access external storage': 'คุณควรอนุญาตให้เข้าถึงหน่วยความจำภายนอก',
-  'Grant to access photo album': 'คุณควรอนุญาตให้เข้าถึงอัลบั้มรูป',
-  'Grant to access camera': 'คุณควรอนุญาตให้เข้าถึงกล้อง',
-  'Grant to access microphone': 'คุณควรอนุญาตให้เข้าถึงไมค์',
+  'Grant to access external storage': 'คุณต้องอนุญาตให้เข้าถึงพื้นที่จัดเก็บข้อมูลภายนอก.',
+  'Grant to access photo album': 'คุณต้องอนุญาตให้เข้าถึงอัลบั้มภาพ.',
+  'Grant to access camera': 'คุณต้องอนุญาตให้เข้าถึงกล้อง.',
+  'Grant to access microphone': 'คุณต้องอนุญาตให้เข้าถึงไมโครโฟน.',
+  'Grant to allow notifications': 'คุณต้องอนุญาตให้เปิดการแจ้งเตือน.',
 
   'Failed to get image file': 'ไม่สามารถดึงไฟล์ภาพได้',
   'Cannot save this image': 'ไม่สามารถบันทึกภาพนี้ได้',

@@ -317,8 +317,9 @@ final Map<String, String> intlZhCn = {
 
   'Grant to access external storage': '您需要授权访问外部存储。',
   'Grant to access photo album': '您需要授权访问相册。',
-  'Grant to access camera': '您需要授权访问摄像头。',
+  'Grant to access camera': '您需要授权访问相机。',
   'Grant to access microphone': '您需要授权访问麦克风。',
+  'Grant to allow notifications': '您需要授权允许通知。',
 
   'Failed to get image file': '获取图片文件失败。',
   'Cannot save this image': '无法保存此图片。',

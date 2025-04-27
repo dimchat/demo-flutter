@@ -325,6 +325,7 @@ final Map<String, String> intlMsMy = {
   'Grant to access photo album': 'Anda perlu memberikan kebenaran untuk mengakses album foto.',
   'Grant to access camera': 'Anda perlu memberikan kebenaran untuk mengakses kamera.',
   'Grant to access microphone': 'Anda perlu memberikan kebenaran untuk mengakses mikrofon.',
+  'Grant to allow notifications': 'Anda perlu memberikan kebenaran untuk membenarkan pemberitahuan.',
 
   'Failed to get image file': 'Gagal mendapatkan fail imej.',
   'Cannot save this image': 'Tidak boleh menyimpan imej ini.',

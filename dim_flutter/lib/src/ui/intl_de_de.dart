@@ -316,10 +316,11 @@ final Map<String, String> intlDeDe = {
   'Never receive notification from this contact': 'Sie werden nie wieder Benachrichtigungen von diesem Kontakt erhalten.',
   'Receive notification from this contact': 'Sie können jetzt Benachrichtigungen von diesem Kontakt erhalten.',
 
-  'Grant to access external storage': 'Sie sollten die Berechtigung zum Zugriff auf den externen Speicher gewähren.',
-  'Grant to access photo album': 'Sie sollten die Berechtigung zum Zugriff auf das Fotoalbum gewähren.',
-  'Grant to access camera': 'Sie sollten die Berechtigung zum Zugriff auf die Kamera gewähren.',
-  'Grant to access microphone': 'Sie sollten die Berechtigung zum Zugriff auf das Mikrofon gewähren.',
+  'Grant to access external storage': 'Sie müssen die Berechtigung erteilen, auf den externen Speicher zuzugreifen.',
+  'Grant to access photo album': 'Sie müssen die Berechtigung erteilen, auf das Fotoalbum zuzugreifen.',
+  'Grant to access camera': 'Sie müssen die Berechtigung erteilen, auf die Kamera zuzugreifen.',
+  'Grant to access microphone': 'Sie müssen die Berechtigung erteilen, auf das Mikrofon zuzugreifen.',
+  'Grant to allow notifications': 'Sie müssen die Berechtigung erteilen, Benachrichtigungen zu erlauben.',
 
   'Failed to get image file': 'Bilddatei konnte nicht abgerufen werden.',
   'Cannot save this image': 'Dieses Bild kann nicht gespeichert werden.',

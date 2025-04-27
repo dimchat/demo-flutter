@@ -320,10 +320,11 @@ final Map<String, String> intlKoKr = {
   'Never receive notification from this contact': '이 연락처로부터 알림을 다시 받지 않습니다.',
   'Receive notification from this contact': '이제 이 연락처로부터 알림을 받을 수 있습니다.',
 
-  'Grant to access external storage': '외부 저장소에 대한 권한을 부여해야 합니다.',
-  'Grant to access photo album': '사진 앨범에 대한 권한을 부여해야 합니다.',
-  'Grant to access camera': '카메라에 대한 권한을 부여해야 합니다.',
-  'Grant to access microphone': '마이크에 대한 권한을 부여해야 합니다.',
+  'Grant to access external storage': '외부 저장소 접근 권한을 부여해야 합니다.',
+  'Grant to access photo album': '사진 앨범 접근 권한을 부여해야 합니다.',
+  'Grant to access camera': '카메라 접근 권한을 부여해야 합니다.',
+  'Grant to access microphone': '마이크 접근 권한을 부여해야 합니다.',
+  'Grant to allow notifications': '알림을 허용하기 위해 권한을 부여해야 합니다.',
 
   'Failed to get image file': '이미지 파일을 가져오는 데 실패했습니다.',
   'Cannot save this image': '이 이미지를 저장할 수 없습니다.',

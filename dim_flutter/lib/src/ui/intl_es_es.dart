@@ -322,10 +322,11 @@ final Map<String, String> intlEsEs = {
   'Never receive notification from this contact': 'Nunca recibirás notificaciones de este contacto nuevamente.',
   'Receive notification from this contact': 'Ahora puedes recibir notificaciones de este contacto.',
 
-  'Grant to access external storage': 'Debes otorgar el permiso para acceder al almacenamiento externo.',
-  'Grant to access photo album': 'Debes otorgar el permiso para acceder al álbum de fotos.',
-  'Grant to access camera': 'Debes otorgar el permiso para acceder a la cámara.',
-  'Grant to access microphone': 'Debes otorgar el permiso para acceder al micrófono.',
+  'Grant to access external storage': 'Debe conceder permiso para acceder al almacenamiento externo.',
+  'Grant to access photo album': 'Debe conceder permiso para acceder al álbum de fotos.',
+  'Grant to access camera': 'Debe conceder permiso para acceder a la cámara.',
+  'Grant to access microphone': 'Debe conceder permiso para acceder al micrófono.',
+  'Grant to allow notifications': 'Debe conceder permiso para permitir notificaciones.',
 
   'Failed to get image file': 'No se pudo obtener el archivo de imagen.',
   'Cannot save this image': 'No se puede guardar esta imagen.',

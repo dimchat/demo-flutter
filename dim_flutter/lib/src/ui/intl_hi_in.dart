@@ -317,10 +317,11 @@ final Map<String, String> intlHiIn = {
   'Never receive notification from this contact': 'आप इस संपर्क से कभी भी सूचनाएं प्राप्त नहीं करेंगे।',
   'Receive notification from this contact': 'आप इस संपर्क से सूचनाएं प्राप्त कर सकते हैं।',
 
-  'Grant to access external storage': 'आपको बाह्य संग्रहण तक पहुँचने की अनुमति देनी चाहिए।',
-  'Grant to access photo album': 'आपको फोटो एल्बम तक पहुँचने की अनुमति देनी चाहिए।',
-  'Grant to access camera': 'आपको कैमरा तक पहुँचने की अनुमति देनी चाहिए।',
-  'Grant to access microphone': 'आपको माइक्रोफ़ोन तक पहुँचने की अनुमति देनी चाहिए।',
+  'Grant to access external storage': 'आपको बाहरी स्टोरेज तक पहुँचने की अनुमति देनी होगी।',
+  'Grant to access photo album': 'आपको फोटो एल्बम तक पहुँचने की अनुमति देनी होगी।',
+  'Grant to access camera': 'आपको कैमरा तक पहुँचने की अनुमति देनी होगी।',
+  'Grant to access microphone': 'आपको माइक्रोफ़ोन तक पहुँचने की अनुमति देनी होगी।',
+  'Grant to allow notifications': 'आपको सूचनाओं की अनुमति देने के लिए अनुमति देनी होगी।',
 
   'Failed to get image file': 'छवि फ़ाइल प्राप्त करने में विफल।',
   'Cannot save this image': 'इस छवि को सहेजा नहीं जा सकता।',

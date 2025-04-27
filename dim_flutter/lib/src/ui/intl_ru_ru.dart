@@ -321,10 +321,11 @@ final Map<String, String> intlRuRu = {
   'Never receive notification from this contact': 'Вы больше не будете получать уведомления от этого контакта.',
   'Receive notification from this contact': 'Теперь вы можете получать уведомления от этого контакта.',
 
-  'Grant to access external storage': 'Вы должны предоставить разрешение на доступ к внешнему хранилищу.',
-  'Grant to access photo album': 'Вы должны предоставить разрешение на доступ к фотоальбому.',
-  'Grant to access camera': 'Вы должны предоставить разрешение на доступ к камере.',
-  'Grant to access microphone': 'Вы должны предоставить разрешение на доступ к микрофону.',
+  'Grant to access external storage': 'Необходимо предоставить разрешение для доступа к внешнему хранилищу.',
+  'Grant to access photo album': 'Необходимо предоставить разрешение для доступа к фотоальбому.',
+  'Grant to access camera': 'Необходимо предоставить разрешение для доступа к камере.',
+  'Grant to access microphone': 'Необходимо предоставить разрешение для доступа к микрофону.',
+  'Grant to allow notifications': 'Необходимо предоставить разрешение для разрешения уведомлений.',
 
   'Failed to get image file': 'Не удалось получить файл изображения.',
   'Cannot save this image': 'Не удается сохранить это изображение.',

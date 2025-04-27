@@ -325,6 +325,7 @@ final Map<String, String> intlItIt = {
   'Grant to access photo album': 'Devi concedere il permesso per accedere all\'album fotografico.',
   'Grant to access camera': 'Devi concedere il permesso per accedere alla fotocamera.',
   'Grant to access microphone': 'Devi concedere il permesso per accedere al microfono.',
+  'Grant to allow notifications': 'Devi concedere il permesso per permettere le notifiche.',
 
   'Failed to get image file': 'Impossibile ottenere il file immagine.',
   'Cannot save this image': 'Impossibile salvare questa immagine.',

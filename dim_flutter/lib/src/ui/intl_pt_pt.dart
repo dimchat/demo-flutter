@@ -321,10 +321,11 @@ final Map<String, String> intlPtPt = {
   'Never receive notification from this contact': 'Nunca mais receberá notificações deste contato.',
   'Receive notification from this contact': 'Agora pode receber notificações deste contato.',
 
-  'Grant to access external storage': 'Deve conceder permissão para aceder ao armazenamento externo.',
-  'Grant to access photo album': 'Deve conceder permissão para aceder ao álbum de fotos.',
-  'Grant to access camera': 'Deve conceder permissão para aceder à câmara.',
-  'Grant to access microphone': 'Deve conceder permissão para aceder ao microfone.',
+  'Grant to access external storage': 'Você precisa conceder permissão para acessar o armazenamento externo.',
+  'Grant to access photo album': 'Você precisa conceder permissão para acessar o álbum de fotos.',
+  'Grant to access camera': 'Você precisa conceder permissão para acessar a câmera.',
+  'Grant to access microphone': 'Você precisa conceder permissão para acessar o microfone.',
+  'Grant to allow notifications': 'Você precisa conceder permissão para permitir notificações.',
 
   'Failed to get image file': 'Falha ao obter o arquivo de imagem.',
   'Cannot save this image': 'Não é possível salvar esta imagem.',

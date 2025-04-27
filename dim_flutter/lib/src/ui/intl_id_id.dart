@@ -321,10 +321,11 @@ final Map<String, String> intlIdId = {
   'Never receive notification from this contact': 'Anda tidak akan pernah menerima pemberitahuan dari kontak ini lagi.',
   'Receive notification from this contact': 'Anda sekarang dapat menerima pemberitahuan dari kontak ini.',
 
-  'Grant to access external storage': 'Anda harus memberikan izin untuk mengakses penyimpanan eksternal.',
-  'Grant to access photo album': 'Anda harus memberikan izin untuk mengakses album foto.',
-  'Grant to access camera': 'Anda harus memberikan izin untuk mengakses kamera.',
-  'Grant to access microphone': 'Anda harus memberikan izin untuk mengakses mikrofon.',
+  'Grant to access external storage': 'Anda perlu memberikan izin untuk mengakses penyimpanan eksternal.',
+  'Grant to access photo album': 'Anda perlu memberikan izin untuk mengakses album foto.',
+  'Grant to access camera': 'Anda perlu memberikan izin untuk mengakses kamera.',
+  'Grant to access microphone': 'Anda perlu memberikan izin untuk mengakses mikrofon.',
+  'Grant to allow notifications': 'Anda perlu memberikan izin untuk mengizinkan pemberitahuan.',
 
   'Failed to get image file': 'Gagal mendapatkan file gambar.',
   'Cannot save this image': 'Tidak dapat menyimpan gambar ini.',

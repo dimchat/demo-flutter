@@ -321,10 +321,11 @@ final Map<String, String> intlAfZa = {
   'Never receive notification from this contact': 'Jy sal nooit weer kennisgewings van hierdie kontak ontvang nie.',
   'Receive notification from this contact': 'Jy kan nou kennisgewings van hierdie kontak ontvang.',
 
-  'Grant to access external storage': 'Jy moet die toestemming gee om eksterne stoor toegang te kry.',
-  'Grant to access photo album': 'Jy moet die toestemming gee om die foto-album toegang te kry.',
-  'Grant to access camera': 'Jy moet die toestemming gee om die kamera toegang te kry.',
-  'Grant to access microphone': 'Jy moet die toestemming gee om die mikrofoon toegang te kry.',
+  'Grant to access external storage': 'Jy moet toestemming gee om toegang tot eksterne berging te kry.',
+  'Grant to access photo album': 'Jy moet toestemming gee om toegang tot die foto-album te kry.',
+  'Grant to access camera': 'Jy moet toestemming gee om toegang tot die kamera te kry.',
+  'Grant to access microphone': 'Jy moet toestemming gee om toegang tot die mikrofoon te kry.',
+  'Grant to allow notifications': 'Jy moet toestemming gee om kennisgewings toe te laat.',
 
   'Failed to get image file': 'Dit was nie moontlik om die beeldlêer te kry nie.',
   'Cannot save this image': 'Dit is nie moontlik om hierdie beeld te stoor nie.',

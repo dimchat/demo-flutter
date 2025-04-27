@@ -9,121 +9,176 @@ import '../common/platform.dart';
 import 'alert.dart';
 
 
-Future<bool> checkDatabasePermissions() async =>
-    _PermissionHandler.check(_PermissionHandler.databasePermissions);
+class PermissionChecker {
+  factory PermissionChecker() => _instance;
+  static final PermissionChecker _instance = PermissionChecker._internal();
+  PermissionChecker._internal();
 
-void requestDatabasePermissions(BuildContext context,
-    {required void Function(BuildContext context) onGranted}) =>
-    _PermissionHandler.request(
-      _PermissionHandler.databasePermissions,
-      onDenied: (permission) => Alert.show(context, 'Permission Denied',
-        'Grant to access external storage'.tr,
-        callback: () => openAppSettings(),
-      ),
-    ).then((granted) {
-      if (granted && context.mounted) {
-        onGranted(context);
-      }
-    });
+  bool _checkingNotificationPermissions = false;
 
-void requestPhotoReadingPermissions(BuildContext context,
-    {required void Function(BuildContext context) onGranted}) =>
-    _PermissionHandler.request(
-      _PermissionHandler.photoReadingPermissions,
-      onDenied: (permission) => Alert.show(context, 'Permission Denied',
-        'Grant to access photo album'.tr,
-        callback: () => openAppSettings(),
-      ),
-    ).then((granted) {
-      if (granted && context.mounted) {
-        onGranted(context);
-      }
-    });
+  void setNeedsNotificationPermissions() => _checkingNotificationPermissions = true;
 
-void requestPhotoAccessingPermissions(BuildContext context,
-    {required void Function(BuildContext context) onGranted}) =>
-    _PermissionHandler.request(
-      _PermissionHandler.photoAccessingPermissions,
-      onDenied: (permission) => Alert.show(context, 'Permission Denied',
-        'Grant to access photo album'.tr,
-        callback: () => openAppSettings(),
-      ),
-    ).then((granted) {
-      if (granted && context.mounted) {
-        onGranted(context);
-      }
-    });
+  Future<bool> checkNotificationPermissions(BuildContext context) async {
+    if (!_checkingNotificationPermissions) {
+      Log.info('no need to check notification permissions now');
+      return false;
+    } else {
+      _checkingNotificationPermissions = false;
+    }
+    Log.info('checking notification permissions');
+    requestNotificationPermissions(context,
+      onGranted: (context) => Log.info('notification permissions granted.'),
+    );
+    return true;
+  }
 
-void requestCameraPermissions(BuildContext context,
-    {required void Function(BuildContext context) onGranted}) =>
-    _PermissionHandler.request(
-      _PermissionHandler.cameraPermissions,
-      onDenied: (permission) => Alert.show(context, 'Permission Denied',
-        'Grant to access camera'.tr,
-        callback: () => openAppSettings(),
-      ),
-    ).then((granted) {
-      if (granted && context.mounted) {
-        onGranted(context);
-      }
-    });
+  Future<bool> checkDatabasePermissions() async => _PermissionHandler.check(
+    _PermissionHandler.databasePermissions,
+    onDenied: (permission) => Log.error('database permissions denied: $permission'),
+  );
 
-void requestMicrophonePermissions(BuildContext context,
-    {required void Function(BuildContext context) onGranted}) =>
-    _PermissionHandler.request(
-      _PermissionHandler.microphonePermissions,
-      onDenied: (permission) => Alert.show(context, 'Permission Denied',
-        'Grant to access microphone'.tr,
-        callback: () => openAppSettings(),
-      ),
-    ).then((granted) {
-      if (granted && context.mounted) {
-        onGranted(context);
-      }
-    });
+}
+
+//
+//  Request Permissions
+//
+
+Future<bool> requestDatabasePermissions(BuildContext context, {
+  required void Function(BuildContext context) onGranted
+}) async => await _requestPermissions(
+  _PermissionHandler.databasePermissions,
+  'Grant to access external storage'.tr,
+  context: context,
+  onGranted: onGranted,
+);
+
+Future<bool> requestPhotoReadingPermissions(BuildContext context, {
+  required void Function(BuildContext context) onGranted
+}) async => await _requestPermissions(
+  _PermissionHandler.photoReadingPermissions,
+  'Grant to access photo album'.tr,
+  context: context,
+  onGranted: onGranted,
+);
+
+Future<bool> requestPhotoAccessingPermissions(BuildContext context, {
+  required void Function(BuildContext context) onGranted
+}) async => await _requestPermissions(
+  _PermissionHandler.photoAccessingPermissions,
+  'Grant to access photo album'.tr,
+  context: context,
+  onGranted: onGranted,
+);
+
+Future<bool> requestCameraPermissions(BuildContext context, {
+  required void Function(BuildContext context) onGranted
+}) async => await _requestPermissions(
+  _PermissionHandler.cameraPermissions,
+  'Grant to access camera'.tr,
+  context: context,
+  onGranted: onGranted,
+);
+
+Future<bool> requestMicrophonePermissions(BuildContext context, {
+  required void Function(BuildContext context) onGranted
+}) async => await _requestPermissions(
+  _PermissionHandler.microphonePermissions,
+  'Grant to access microphone'.tr,
+  context: context,
+  onGranted: onGranted,
+);
+
+Future<bool> requestNotificationPermissions(BuildContext context, {
+  required void Function(BuildContext context) onGranted
+}) async => await _requestPermissions(
+  _PermissionHandler.notificationPermissions,
+  'Grant to allow notifications'.tr,
+  context: context,
+  onGranted: onGranted,
+);
+
+
+Future<bool> _requestPermissions(List<Permission> permissions, String message, {
+  required BuildContext context,
+  required void Function(BuildContext context) onGranted
+}) async {
+  bool granted = await _PermissionHandler.request(
+    permissions,
+    onDenied: (permission) => Alert.confirm(context,
+      'Permission Denied',
+      message,
+      okTitle: 'Settings',
+      okAction: () => openAppSettings(),
+    ),
+  );
+  if (granted && context.mounted) {
+    onGranted(context);
+  }
+  return granted;
+}
 
 
 class _PermissionHandler {
 
-  static Future<bool> check(List<Permission> permissions) async {
+  static Future<bool> check(List<Permission> permissions, {
+    required void Function(Permission permission) onDenied
+  }) async {
     PermissionStatus status;
-    for (Permission item in permissions) {
-      status = await item.status;
-      if (status.isGranted) {
-        // OK
-        continue;
-      }
-      Log.warning('permission status: $status, $item');
-      // status != PermissionStatus.granted
-      return false;
-    }
-    return true;
-  }
-
-  static Future<bool> request(List<Permission> permissions,
-      {required void Function(Permission permission) onDenied}) async {
-    PermissionStatus status;
-    Log.info('request permissions: $permissions');
+    bool isGranted;
+    Log.info('check permissions: $permissions');
     for (Permission item in permissions) {
       try {
-        status = await item.request();
+        status = await item.status;
+        isGranted = status.isGranted;
       } catch (e, st) {
-        Log.error('request permission error: $e, $st');
-        assert(false, 'failed to request permission: $item');
-        continue;
+        Log.error('check permission error: $e, $st');
+        assert(false, 'failed to check permission: $item');
+        isGranted = false;
       }
-      if (status.isGranted) {
+      if (isGranted) {
         // OK
         Log.info('permission granted: $item');
         continue;
       }
-      Log.warning('permission status: $status, $item');
+      Log.warning('permission status: $isGranted, $item');
       // status != PermissionStatus.granted
       onDenied(item);
       return false;
     }
     return true;
   }
+
+  static Future<bool> request(List<Permission> permissions, {
+    required void Function(Permission permission) onDenied
+  }) async {
+    PermissionStatus status;
+    bool isGranted;
+    Log.info('request permissions: $permissions');
+    for (Permission item in permissions) {
+      try {
+        status = await item.request();
+        isGranted = status.isGranted;
+      } catch (e, st) {
+        Log.error('request permission error: $e, $st');
+        assert(false, 'failed to request permission: $item');
+        isGranted = false;
+      }
+      if (isGranted) {
+        // OK
+        Log.info('permission granted: $item');
+        continue;
+      }
+      Log.warning('permission status: $isGranted, $item');
+      // status != PermissionStatus.granted
+      onDenied(item);
+      return false;
+    }
+    return true;
+  }
+
+  //
+  //  All Permissions
+  //
 
   static List<Permission> get databasePermissions => [
     /// Android: External Storage
@@ -178,13 +233,20 @@ class _PermissionHandler {
     Permission.microphone,
   ];
 
+  static List<Permission> get notificationPermissions => [
+    /// Android: Firebase Cloud Messaging
+    Permission.notification,
+  ];
+
 }
 
-bool _fixedForAndroid = false;
+bool _isPhotoPermissionsFixed = false;
 
-Future<void> fixPhotoPermissions() async {
-  if (_fixedForAndroid) {
-    return;
+Future<bool> fixPhotoPermissions() async {
+  if (_isPhotoPermissionsFixed) {
+    return false;
+  } else {
+    _isPhotoPermissionsFixed = true;
   }
   if (DevicePlatform.isAndroid) {
     AndroidDeviceInfo info = await DeviceInfoPlugin().androidInfo;
@@ -197,8 +259,9 @@ Future<void> fixPhotoPermissions() async {
       _PermissionHandler._photoAccessingPermissions.add(Permission.storage);
       _PermissionHandler._photoReadingPermissions.add(Permission.storage);
     }
+    return true;
   }
-  _fixedForAndroid = true;
+  return false;
 }
 
 

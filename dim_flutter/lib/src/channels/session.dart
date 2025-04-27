@@ -2,7 +2,9 @@ import 'package:flutter/services.dart';
 
 import 'package:dim_client/ok.dart';
 import 'package:dim_client/sdk.dart';
+import 'package:dim_client/common.dart';
 
+import '../widgets/permissions.dart';
 import '../client/client.dart';
 import '../client/messenger.dart';
 import '../client/shared.dart';
@@ -47,6 +49,13 @@ class SessionChannel extends SafeChannel {
       if (receiver == null) {
         assert(false, 'failed to get current station');
         return;
+      }
+    }
+    if (content is ReportCommand) {
+      String? title = content.title;
+      if (title == 'apns' || title == 'c2dm') {
+        Log.info('checking notification permissions for command: $content');
+        PermissionChecker().setNeedsNotificationPermissions();
       }
     }
     _sendContent(content, sender: sender, receiver: receiver, priority: priority);

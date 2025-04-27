@@ -321,10 +321,11 @@ final Map<String, String> intlFrFr = {
   'Never receive notification from this contact': 'Vous ne recevrez plus de notifications de ce contact.',
   'Receive notification from this contact': 'Vous pouvez désormais recevoir des notifications de ce contact.',
 
-  'Grant to access external storage': 'Vous devez accorder l\'autorisation d\'accéder au stockage externe.',
-  'Grant to access photo album': 'Vous devez accorder l\'autorisation d\'accéder à l\'album photo.',
-  'Grant to access camera': 'Vous devez accorder l\'autorisation d\'accéder à l\'appareil photo.',
-  'Grant to access microphone': 'Vous devez accorder l\'autorisation d\'accéder au microphone.',
+  'Grant to access external storage': 'Vous devez accorder la permission d\'accéder au stockage externe.',
+  'Grant to access photo album': 'Vous devez accorder la permission d\'accéder à l\'album photo.',
+  'Grant to access camera': 'Vous devez accorder la permission d\'accéder à la caméra.',
+  'Grant to access microphone': 'Vous devez accorder la permission d\'accéder au microphone.',
+  'Grant to allow notifications': 'Vous devez accorder la permission de permettre les notifications.',
 
   'Failed to get image file': 'Échec de l\'obtention du fichier image.',
   'Cannot save this image': 'Impossible de sauvegarder cette image.',

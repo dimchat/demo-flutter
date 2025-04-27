@@ -315,10 +315,11 @@ final Map<String, String> intlZhTw = {
   'Never receive notification from this contact': '你將不再收到來自此聯絡人的通知。',
   'Receive notification from this contact': '你現在可以收到來自此聯絡人的通知。',
 
-  'Grant to access external storage': '你應該授權訪問外部儲存空間的權限。',
-  'Grant to access photo album': '你應該授權訪問相冊的權限。',
-  'Grant to access camera': '你應該授權訪問相機的權限。',
-  'Grant to access microphone': '你應該授權訪問麥克風的權限。',
+  'Grant to access external storage': '您需要授權存取外部儲存裝置。',
+  'Grant to access photo album': '您需要授權存取相簿。',
+  'Grant to access camera': '您需要授權存取相機。',
+  'Grant to access microphone': '您需要授權存取麥克風。',
+  'Grant to allow notifications': '您需要授權允許通知。',
 
   'Failed to get image file': '獲取圖片檔案失敗。',
   'Cannot save this image': '無法儲存此圖片。',

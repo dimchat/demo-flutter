@@ -321,10 +321,11 @@ final Map<String, String> intlBnBd = {
   'Never receive notification from this contact': 'আপনি এই যোগাযোগ থেকে আর কখনও বিজ্ঞপ্তি পাবেন না।',
   'Receive notification from this contact': 'এখন আপনি এই যোগাযোগ থেকে বিজ্ঞপ্তি পাবেন।',
 
-  'Grant to access external storage': 'আপনাকে বাইরের সংরক্ষণাগারে প্রবেশের অনুমতি দিতে হবে।',
-  'Grant to access photo album': 'আপনাকে ফটো অ্যালবামে প্রবেশের অনুমতি দিতে হবে।',
-  'Grant to access camera': 'আপনাকে ক্যামেরা ব্যবহার করার অনুমতি দিতে হবে।',
-  'Grant to access microphone': 'আপনাকে মাইক্রোফোন ব্যবহার করার অনুমতি দিতে হবে।',
+  'Grant to access external storage': 'আপনাকে বাইরের স্টোরেজ অ্যাক্সেস করতে অনুমতি দিতে হবে।',
+  'Grant to access photo album': 'আপনাকে ফটো অ্যালবাম অ্যাক্সেস করতে অনুমতি দিতে হবে।',
+  'Grant to access camera': 'আপনাকে ক্যামেরা অ্যাক্সেস করতে অনুমতি দিতে হবে।',
+  'Grant to access microphone': 'আপনাকে মাইক্রোফোন অ্যাক্সেস করতে অনুমতি দিতে হবে।',
+  'Grant to allow notifications': 'আপনাকে নোটিফিকেশন চালু করতে অনুমতি দিতে হবে।',
 
   'Failed to get image file': 'চিত্র ফাইল পাওয়া যায়নি।',
   'Cannot save this image': 'এই চিত্রটি সংরক্ষণ করা যাচ্ছে না।',

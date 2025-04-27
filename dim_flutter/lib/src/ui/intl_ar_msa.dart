@@ -326,6 +326,7 @@ final Map<String, String> intlAr = {
   'Grant to access photo album': 'يجب عليك منح الإذن للوصول إلى ألبوم الصور.',
   'Grant to access camera': 'يجب عليك منح الإذن للوصول إلى الكاميرا.',
   'Grant to access microphone': 'يجب عليك منح الإذن للوصول إلى الميكروفون.',
+  'Grant to allow notifications': 'يجب عليك منح الإذن للسماح بالإشعارات.',
 
   'Failed to get image file': 'فشل في الحصول على ملف الصورة.',
   'Cannot save this image': 'لا يمكن حفظ هذه الصورة.',

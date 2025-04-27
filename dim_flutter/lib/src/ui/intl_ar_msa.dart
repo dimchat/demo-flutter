@@ -322,11 +322,21 @@ final Map<String, String> intlAr = {
   'Never receive notification from this contact': 'لن تستلم أبدًا إشعارًا من هذا الاتصال مرة أخرى.',
   'Receive notification from this contact': 'يمكنك الآن استلام إشعار من هذا الاتصال.',
 
-  'Grant to access external storage': 'يجب عليك منح الإذن للوصول إلى التخزين الخارجي.',
-  'Grant to access photo album': 'يجب عليك منح الإذن للوصول إلى ألبوم الصور.',
-  'Grant to access camera': 'يجب عليك منح الإذن للوصول إلى الكاميرا.',
-  'Grant to access microphone': 'يجب عليك منح الإذن للوصول إلى الميكروفون.',
-  'Grant to allow notifications': 'يجب عليك منح الإذن للسماح بالإشعارات.',
+  'Grant to access external storage': 'يجب عليك منح إذن للوصول إلى التخزين الخارجي.'
+      ' يرجى السماح بإنشاء قواعد بيانات للتخزين المحلي.',
+  'Grant to access photo album': 'يجب عليك منح إذن للوصول إلى ألبوم الصور.'
+      ' يرجى السماح بإرسال الصور من ألبومك أو لتغيير صورة ملفك الشخصي،'
+      ' أو لحفظ الصورة في ألبومك.',
+  'Grant to access camera': 'يجب عليك منح إذن للوصول إلى الكاميرا.'
+      ' يرجى السماح بأخذ الصور وإرسالها إلى أصدقائك، أو لتغيير صورة ملفك الشخصي.',
+  'Grant to access microphone': 'يجب عليك منح إذن للوصول إلى الميكروفون.'
+      ' يرجى السماح بتسجيل رسالة صوتية وإرسالها إلى صديقك.',
+  'Grant to allow notifications': 'يجب عليك منح إذن للسماح بالإشعارات.'
+      ' يرجى السماح بدفع الإشعارات للرسائل غير المتصلة بالإنترنت.',
+
+  'Notification': 'إشعار',
+  'Enabled': 'مفعل',
+  'Disabled': 'معطل',
 
   'Failed to get image file': 'فشل في الحصول على ملف الصورة.',
   'Cannot save this image': 'لا يمكن حفظ هذه الصورة.',

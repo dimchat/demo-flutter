@@ -315,11 +315,15 @@ final Map<String, String> intlZhCn = {
   'Never receive notification from this contact': '您将不再接收来自该联系人消息的通知。',
   'Receive notification from this contact': '现在开始可以接收来自该联系人消息的通知。',
 
-  'Grant to access external storage': '您需要授权访问外部存储。',
-  'Grant to access photo album': '您需要授权访问相册。',
-  'Grant to access camera': '您需要授权访问相机。',
-  'Grant to access microphone': '您需要授权访问麦克风。',
-  'Grant to allow notifications': '您需要授权允许通知。',
+  'Grant to access external storage': '您需要授予访问外部存储的权限。请允许创建本地存储的数据库。',
+  'Grant to access photo album': '您需要授予访问照片相册的权限。请允许发送相册中的照片或更改您的个人资料图片，或将图片保存到您的相册。',
+  'Grant to access camera': '您需要授予访问相机的权限。请允许拍摄照片并发送给朋友，或更改您的个人资料图片。',
+  'Grant to access microphone': '您需要授予访问麦克风的权限。请允许录制语音消息并发送给您的朋友。',
+  'Grant to allow notifications': '您需要授予允许通知的权限。请允许推送通知以接收离线消息。',
+
+  'Notification': '通知',
+  'Enabled': '已启用',
+  'Disabled': '已禁用',
 
   'Failed to get image file': '获取图片文件失败。',
   'Cannot save this image': '无法保存此图片。',

@@ -321,11 +321,21 @@ final Map<String, String> intlItIt = {
   'Never receive notification from this contact': 'Non riceverai mai più notifiche da questo contatto.',
   'Receive notification from this contact': 'Ora puoi ricevere notifiche da questo contatto.',
 
-  'Grant to access external storage': 'Devi concedere il permesso per accedere allo storage esterno.',
-  'Grant to access photo album': 'Devi concedere il permesso per accedere all\'album fotografico.',
-  'Grant to access camera': 'Devi concedere il permesso per accedere alla fotocamera.',
-  'Grant to access microphone': 'Devi concedere il permesso per accedere al microfono.',
-  'Grant to allow notifications': 'Devi concedere il permesso per permettere le notifiche.',
+  'Grant to access external storage': 'Devi concedere l\'autorizzazione per accedere allo storage esterno.'
+      ' Permetti la creazione di database per lo storage locale.',
+  'Grant to access photo album': 'Devi concedere l\'autorizzazione per accedere all\'album fotografico.'
+      ' Permetti l\'invio di foto dal tuo album o la modifica della tua foto del profilo,'
+      ' o per salvare l\'immagine nel tuo album.',
+  'Grant to access camera': 'Devi concedere l\'autorizzazione per accedere alla fotocamera.'
+      ' Permetti di scattare foto e inviarle agli amici, o di cambiare la tua foto del profilo.',
+  'Grant to access microphone': 'Devi concedere l\'autorizzazione per accedere al microfono.'
+      ' Permetti di registrare un messaggio vocale e inviarlo al tuo amico.',
+  'Grant to allow notifications': 'Devi concedere l\'autorizzazione per permettere le notifiche.'
+      ' Permetti la notifica per i messaggi offline.',
+
+  'Notification': 'Notifica',
+  'Enabled': 'Abilitato',
+  'Disabled': 'Disabilitato',
 
   'Failed to get image file': 'Impossibile ottenere il file immagine.',
   'Cannot save this image': 'Impossibile salvare questa immagine.',

@@ -321,11 +321,21 @@ final Map<String, String> intlMsMy = {
   'Never receive notification from this contact': 'Anda tidak akan menerima pemberitahuan dari kenalan ini lagi.',
   'Receive notification from this contact': 'Anda kini boleh menerima pemberitahuan dari kenalan ini.',
 
-  'Grant to access external storage': 'Anda perlu memberikan kebenaran untuk mengakses storan luaran.',
-  'Grant to access photo album': 'Anda perlu memberikan kebenaran untuk mengakses album foto.',
-  'Grant to access camera': 'Anda perlu memberikan kebenaran untuk mengakses kamera.',
-  'Grant to access microphone': 'Anda perlu memberikan kebenaran untuk mengakses mikrofon.',
-  'Grant to allow notifications': 'Anda perlu memberikan kebenaran untuk membenarkan pemberitahuan.',
+  'Grant to access external storage': 'Anda perlu memberikan kebenaran untuk mengakses storan luaran.'
+      ' Sila benarkan untuk mencipta pangkalan data untuk penyimpanan tempatan.',
+  'Grant to access photo album': 'Anda perlu memberikan kebenaran untuk mengakses album foto.'
+      ' Sila benarkan untuk menghantar gambar dari album anda atau menukar gambar profil anda,'
+      ' atau menyimpan gambar ke dalam album anda.',
+  'Grant to access camera': 'Anda perlu memberikan kebenaran untuk mengakses kamera.'
+      ' Sila benarkan untuk mengambil gambar dan menghantarnya kepada rakan, atau menukar gambar profil anda.',
+  'Grant to access microphone': 'Anda perlu memberikan kebenaran untuk mengakses mikrofon.'
+      ' Sila benarkan untuk merakam mesej suara dan menghantarnya kepada rakan anda.',
+  'Grant to allow notifications': 'Anda perlu memberikan kebenaran untuk membenarkan pemberitahuan.'
+      ' Sila benarkan pemberitahuan untuk mesej luar talian.',
+
+  'Notification': 'Pemberitahuan',
+  'Enabled': 'Diaktifkan',
+  'Disabled': 'Dinonaktifkan',
 
   'Failed to get image file': 'Gagal mendapatkan fail imej.',
   'Cannot save this image': 'Tidak boleh menyimpan imej ini.',

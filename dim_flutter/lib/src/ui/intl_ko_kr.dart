@@ -320,11 +320,21 @@ final Map<String, String> intlKoKr = {
   'Never receive notification from this contact': '이 연락처로부터 알림을 다시 받지 않습니다.',
   'Receive notification from this contact': '이제 이 연락처로부터 알림을 받을 수 있습니다.',
 
-  'Grant to access external storage': '외부 저장소 접근 권한을 부여해야 합니다.',
-  'Grant to access photo album': '사진 앨범 접근 권한을 부여해야 합니다.',
-  'Grant to access camera': '카메라 접근 권한을 부여해야 합니다.',
-  'Grant to access microphone': '마이크 접근 권한을 부여해야 합니다.',
-  'Grant to allow notifications': '알림을 허용하기 위해 권한을 부여해야 합니다.',
+  'Grant to access external storage': '외부 저장소에 접근할 수 있도록 권한을 부여해야 합니다.'
+      ' 로컬 저장소에 데이터베이스를 생성할 수 있도록 허용해주세요.',
+  'Grant to access photo album': '사진 앨범에 접근할 수 있도록 권한을 부여해야 합니다.'
+      ' 앨범에서 사진을 보내거나 프로필 사진을 변경하거나,'
+      ' 앨범에 이미지를 저장할 수 있도록 허용해주세요.',
+  'Grant to access camera': '카메라에 접근할 수 있도록 권한을 부여해야 합니다.'
+      ' 사진을 찍고 친구에게 보내거나 프로필 사진을 변경할 수 있도록 허용해주세요.',
+  'Grant to access microphone': '마이크에 접근할 수 있도록 권한을 부여해야 합니다.'
+      ' 음성 메시지를 녹음하고 친구에게 보낼 수 있도록 허용해주세요.',
+  'Grant to allow notifications': '알림을 허용할 수 있도록 권한을 부여해야 합니다.'
+      ' 오프라인 메시지에 대한 푸시 알림을 허용해주세요.',
+
+  'Notification': '알림',
+  'Enabled': '활성화됨',
+  'Disabled': '비활성화됨',
 
   'Failed to get image file': '이미지 파일을 가져오는 데 실패했습니다.',
   'Cannot save this image': '이 이미지를 저장할 수 없습니다.',

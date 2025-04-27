@@ -20,11 +20,11 @@ typedef OnImageRead = void Function(String path, Uint8List data);
 void openImagePicker(BuildContext context, {OnImagePicked? onPicked, required OnImageRead onRead}) =>
     Alert.actionSheet(context, null, null,
       Alert.action(AppIcons.cameraIcon, 'Camera'),
-          () => requestCameraPermissions(context,
+          () => PermissionCenter().requestCameraPermissions(context,
             onGranted: (context) => _openImagePicker(context, true, onPicked, onRead),
           ),
       Alert.action(AppIcons.albumIcon, 'Album'),
-          () => requestPhotoReadingPermissions(context,
+          () => PermissionCenter().requestPhotoReadingPermissions(context,
             onGranted: (context) => _openImagePicker(context, false, onPicked, onRead),
           ),
     );

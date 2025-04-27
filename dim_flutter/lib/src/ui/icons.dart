@@ -119,6 +119,8 @@ abstract class AppIcons {
 
   static const IconData      languageIcon = Icons.language;
 
+  static const IconData  notificationIcon = CupertinoIcons.app_badge;
+
   // Relay Stations
   static const IconData         refreshIcon = Icons.forward_5;
   static const IconData  currentStationIcon = CupertinoIcons.cloud_upload_fill;

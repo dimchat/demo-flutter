@@ -321,11 +321,21 @@ final Map<String, String> intlPtPt = {
   'Never receive notification from this contact': 'Nunca mais receberá notificações deste contato.',
   'Receive notification from this contact': 'Agora pode receber notificações deste contato.',
 
-  'Grant to access external storage': 'Você precisa conceder permissão para acessar o armazenamento externo.',
-  'Grant to access photo album': 'Você precisa conceder permissão para acessar o álbum de fotos.',
-  'Grant to access camera': 'Você precisa conceder permissão para acessar a câmera.',
-  'Grant to access microphone': 'Você precisa conceder permissão para acessar o microfone.',
-  'Grant to allow notifications': 'Você precisa conceder permissão para permitir notificações.',
+  'Grant to access external storage': 'É necessário conceder permissão para aceder ao armazenamento externo.'
+      ' Por favor, permita a criação de bases de dados para armazenamento local.',
+  'Grant to access photo album': 'É necessário conceder permissão para aceder ao álbum de fotos.'
+      ' Por favor, permita enviar fotos do seu álbum ou alterar a sua foto de perfil,'
+      ' ou guardar a imagem no seu álbum.',
+  'Grant to access camera': 'É necessário conceder permissão para aceder à câmara.'
+      ' Por favor, permita tirar fotos e enviá-las para os seus amigos, ou alterar a sua foto de perfil.',
+  'Grant to access microphone': 'É necessário conceder permissão para aceder ao microfone.'
+      ' Por favor, permita gravar uma mensagem de voz e enviá-la ao seu amigo.',
+  'Grant to allow notifications': 'É necessário conceder permissão para permitir notificações.'
+      ' Por favor, permita o envio de notificações para mensagens offline.',
+
+  'Notification': 'Notificação',
+  'Enabled': 'Ativado',
+  'Disabled': 'Desativado',
 
   'Failed to get image file': 'Falha ao obter o arquivo de imagem.',
   'Cannot save this image': 'Não é possível salvar esta imagem.',

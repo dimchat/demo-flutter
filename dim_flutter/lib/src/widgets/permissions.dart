@@ -14,22 +14,40 @@ class PermissionChecker {
   static final PermissionChecker _instance = PermissionChecker._internal();
   PermissionChecker._internal();
 
-  bool _checkingNotificationPermissions = false;
+  bool? _isNotificationAllowed;
 
-  void setNeedsNotificationPermissions() => _checkingNotificationPermissions = true;
+  bool _needsNotification = false;
+  bool _checkingForNotification = false;
+
+  bool? get isNotificationPermissionGranted => _isNotificationAllowed;
+  // bool get needsNotificationPermissions => _needsNotification;
+
+  void setNeedsNotificationPermissions() {
+    _needsNotification = true;
+    _checkingForNotification = true;
+  }
+  void checkAgain() {
+    if (_needsNotification) {
+      // _isNotificationAllowed = null;
+      _checkingForNotification = true;
+    }
+  }
 
   Future<bool> checkNotificationPermissions(BuildContext context) async {
-    if (!_checkingNotificationPermissions) {
-      Log.info('no need to check notification permissions now');
-      return false;
+    if (_checkingForNotification) {
+      // needs checking now
+      _checkingForNotification = false;
     } else {
-      _checkingNotificationPermissions = false;
+      Log.info('no need to check notification permissions now');
+      return _isNotificationAllowed == true;
     }
     Log.info('checking notification permissions');
-    requestNotificationPermissions(context,
+    var center = PermissionCenter();
+    bool granted = await center.requestNotificationPermissions(context,
       onGranted: (context) => Log.info('notification permissions granted.'),
     );
-    return true;
+    _isNotificationAllowed = granted;
+    return granted;
   }
 
   Future<bool> checkDatabasePermissions() async => _PermissionHandler.check(
@@ -39,63 +57,72 @@ class PermissionChecker {
 
 }
 
-//
-//  Request Permissions
-//
 
-Future<bool> requestDatabasePermissions(BuildContext context, {
-  required void Function(BuildContext context) onGranted
-}) async => await _requestPermissions(
-  _PermissionHandler.databasePermissions,
-  'Grant to access external storage'.tr,
-  context: context,
-  onGranted: onGranted,
-);
+class PermissionCenter {
+  factory PermissionCenter() => _instance;
+  static final PermissionCenter _instance = PermissionCenter._internal();
+  PermissionCenter._internal();
 
-Future<bool> requestPhotoReadingPermissions(BuildContext context, {
-  required void Function(BuildContext context) onGranted
-}) async => await _requestPermissions(
-  _PermissionHandler.photoReadingPermissions,
-  'Grant to access photo album'.tr,
-  context: context,
-  onGranted: onGranted,
-);
+  Future<bool> openSettings() async {
+    PermissionChecker().checkAgain();
+    return await openAppSettings();
+  }
 
-Future<bool> requestPhotoAccessingPermissions(BuildContext context, {
-  required void Function(BuildContext context) onGranted
-}) async => await _requestPermissions(
-  _PermissionHandler.photoAccessingPermissions,
-  'Grant to access photo album'.tr,
-  context: context,
-  onGranted: onGranted,
-);
+  Future<bool> requestDatabasePermissions(BuildContext context, {
+    required void Function(BuildContext context) onGranted
+  }) async => await _requestPermissions(
+    _PermissionHandler.databasePermissions,
+    'Grant to access external storage'.tr,
+    context: context,
+    onGranted: onGranted,
+  );
 
-Future<bool> requestCameraPermissions(BuildContext context, {
-  required void Function(BuildContext context) onGranted
-}) async => await _requestPermissions(
-  _PermissionHandler.cameraPermissions,
-  'Grant to access camera'.tr,
-  context: context,
-  onGranted: onGranted,
-);
+  Future<bool> requestPhotoReadingPermissions(BuildContext context, {
+    required void Function(BuildContext context) onGranted
+  }) async => await _requestPermissions(
+    _PermissionHandler.photoReadingPermissions,
+    'Grant to access photo album'.tr,
+    context: context,
+    onGranted: onGranted,
+  );
 
-Future<bool> requestMicrophonePermissions(BuildContext context, {
-  required void Function(BuildContext context) onGranted
-}) async => await _requestPermissions(
-  _PermissionHandler.microphonePermissions,
-  'Grant to access microphone'.tr,
-  context: context,
-  onGranted: onGranted,
-);
+  Future<bool> requestPhotoAccessingPermissions(BuildContext context, {
+    required void Function(BuildContext context) onGranted
+  }) async => await _requestPermissions(
+    _PermissionHandler.photoAccessingPermissions,
+    'Grant to access photo album'.tr,
+    context: context,
+    onGranted: onGranted,
+  );
 
-Future<bool> requestNotificationPermissions(BuildContext context, {
-  required void Function(BuildContext context) onGranted
-}) async => await _requestPermissions(
-  _PermissionHandler.notificationPermissions,
-  'Grant to allow notifications'.tr,
-  context: context,
-  onGranted: onGranted,
-);
+  Future<bool> requestCameraPermissions(BuildContext context, {
+    required void Function(BuildContext context) onGranted
+  }) async => await _requestPermissions(
+    _PermissionHandler.cameraPermissions,
+    'Grant to access camera'.tr,
+    context: context,
+    onGranted: onGranted,
+  );
+
+  Future<bool> requestMicrophonePermissions(BuildContext context, {
+    required void Function(BuildContext context) onGranted
+  }) async => await _requestPermissions(
+    _PermissionHandler.microphonePermissions,
+    'Grant to access microphone'.tr,
+    context: context,
+    onGranted: onGranted,
+  );
+
+  Future<bool> requestNotificationPermissions(BuildContext context, {
+    required void Function(BuildContext context) onGranted
+  }) async => await _requestPermissions(
+    _PermissionHandler.notificationPermissions,
+    'Grant to allow notifications'.tr,
+    context: context,
+    onGranted: onGranted,
+  );
+
+}
 
 
 Future<bool> _requestPermissions(List<Permission> permissions, String message, {
@@ -108,7 +135,7 @@ Future<bool> _requestPermissions(List<Permission> permissions, String message, {
       'Permission Denied',
       message,
       okTitle: 'Settings',
-      okAction: () => openAppSettings(),
+      okAction: () => PermissionCenter().openSettings(),
     ),
   );
   if (granted && context.mounted) {

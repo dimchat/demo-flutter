@@ -316,11 +316,21 @@ final Map<String, String> intlDeDe = {
   'Never receive notification from this contact': 'Sie werden nie wieder Benachrichtigungen von diesem Kontakt erhalten.',
   'Receive notification from this contact': 'Sie können jetzt Benachrichtigungen von diesem Kontakt erhalten.',
 
-  'Grant to access external storage': 'Sie müssen die Berechtigung erteilen, auf den externen Speicher zuzugreifen.',
-  'Grant to access photo album': 'Sie müssen die Berechtigung erteilen, auf das Fotoalbum zuzugreifen.',
-  'Grant to access camera': 'Sie müssen die Berechtigung erteilen, auf die Kamera zuzugreifen.',
-  'Grant to access microphone': 'Sie müssen die Berechtigung erteilen, auf das Mikrofon zuzugreifen.',
-  'Grant to allow notifications': 'Sie müssen die Berechtigung erteilen, Benachrichtigungen zu erlauben.',
+  'Grant to access external storage': 'Sie müssen die Berechtigung erteilen, um auf den externen Speicher zuzugreifen.'
+      ' Bitte erlauben Sie die Erstellung von Datenbanken für den lokalen Speicher.',
+  'Grant to access photo album': 'Sie müssen die Berechtigung erteilen, um auf das Fotoalbum zuzugreifen.'
+      ' Bitte erlauben Sie das Senden von Fotos aus Ihrem Album oder das Ändern Ihres Profilbildes,'
+      ' oder das Speichern des Bildes in Ihrem Album.',
+  'Grant to access camera': 'Sie müssen die Berechtigung erteilen, um auf die Kamera zuzugreifen.'
+      ' Bitte erlauben Sie das Aufnehmen von Fotos und das Senden an Freunde oder das Ändern Ihres Profilbildes.',
+  'Grant to access microphone': 'Sie müssen die Berechtigung erteilen, um auf das Mikrofon zuzugreifen.'
+      ' Bitte erlauben Sie das Aufnehmen einer Sprachnachricht und das Senden an Ihren Freund.',
+  'Grant to allow notifications': 'Sie müssen die Berechtigung erteilen, um Benachrichtigungen zu erlauben.'
+      ' Bitte erlauben Sie Benachrichtigungen für Offline-Nachrichten.',
+
+  'Notification': 'Benachrichtigung',
+  'Enabled': 'Aktiviert',
+  'Disabled': 'Deaktiviert',
 
   'Failed to get image file': 'Bilddatei konnte nicht abgerufen werden.',
   'Cannot save this image': 'Dieses Bild kann nicht gespeichert werden.',

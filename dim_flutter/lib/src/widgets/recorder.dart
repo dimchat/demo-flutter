@@ -111,7 +111,7 @@ class _RecordState extends State<RecordButton> implements lnc.Observer {
       },
       onLongPressStart: (details) {
         Log.debug('check permissions');
-        requestMicrophonePermissions(context, onGranted: (context) {
+        PermissionCenter().requestMicrophonePermissions(context, onGranted: (context) {
           Log.debug('start record');
           ChannelManager man = ChannelManager();
           man.audioChannel.startRecord();

@@ -321,11 +321,21 @@ final Map<String, String> intlFrFr = {
   'Never receive notification from this contact': 'Vous ne recevrez plus de notifications de ce contact.',
   'Receive notification from this contact': 'Vous pouvez désormais recevoir des notifications de ce contact.',
 
-  'Grant to access external storage': 'Vous devez accorder la permission d\'accéder au stockage externe.',
-  'Grant to access photo album': 'Vous devez accorder la permission d\'accéder à l\'album photo.',
-  'Grant to access camera': 'Vous devez accorder la permission d\'accéder à la caméra.',
-  'Grant to access microphone': 'Vous devez accorder la permission d\'accéder au microphone.',
-  'Grant to allow notifications': 'Vous devez accorder la permission de permettre les notifications.',
+  'Grant to access external storage': 'Vous devez accorder l\'autorisation d\'accéder au stockage externe.'
+      ' Veuillez permettre la création de bases de données pour le stockage local.',
+  'Grant to access photo album': 'Vous devez accorder l\'autorisation d\'accéder à l\'album photo.'
+      ' Veuillez permettre l\'envoi de photos depuis votre album ou de changer votre photo de profil,'
+      ' ou d\'enregistrer l\'image dans votre album.',
+  'Grant to access camera': 'Vous devez accorder l\'autorisation d\'accéder à la caméra.'
+      ' Veuillez permettre de prendre des photos et de les envoyer à vos amis, ou de changer votre photo de profil.',
+  'Grant to access microphone': 'Vous devez accorder l\'autorisation d\'accéder au microphone.'
+      ' Veuillez permettre l\'enregistrement d\'un message vocal et de l\'envoyer à votre ami.',
+  'Grant to allow notifications': 'Vous devez accorder l\'autorisation pour les notifications.'
+      ' Veuillez permettre la notification pour les messages hors ligne.',
+
+  'Notification': 'Notification',
+  'Enabled': 'Activé',
+  'Disabled': 'Désactivé',
 
   'Failed to get image file': 'Échec de l\'obtention du fichier image.',
   'Cannot save this image': 'Impossible de sauvegarder cette image.',

@@ -320,11 +320,21 @@ final Map<String, String> intlEnUs = {
   'Never receive notification from this contact': 'You will never receive notification from this contact again.',
   'Receive notification from this contact': 'You can receive notification from this contact now.',
 
-  'Grant to access external storage': 'You need to grant permission to access external storage.',
-  'Grant to access photo album': 'You need to grant permission to access photo album.',
-  'Grant to access camera': 'You need to grant permission to access camera.',
-  'Grant to access microphone': 'You need to grant permission to access microphone.',
-  'Grant to allow notifications': 'You need to grant permission to allow notifications.',
+  'Grant to access external storage': 'You need to grant permission to access external storage.'
+      ' Please allow to create databases for local storage.',
+  'Grant to access photo album': 'You need to grant permission to access photo album.'
+      ' Please allow to send photos from your album or to change your profile picture,'
+      ' or to save the image to your album.',
+  'Grant to access camera': 'You need to grant permission to access camera.'
+      ' Please allow to take photos and send them to friends, or to change your profile picture.',
+  'Grant to access microphone': 'You need to grant permission to access microphone.'
+      ' Please allow to record a voice message and send it to your friend.',
+  'Grant to allow notifications': 'You need to grant permission to allow notifications.'
+      ' Please allow for pushing notification for offline messages.',
+
+  'Notification': 'Notification',
+  'Enabled': 'Enabled',
+  'Disabled': 'Disabled',
 
   'Failed to get image file': 'Failed to get image file.',
   'Cannot save this image': 'Cannot save this image.',

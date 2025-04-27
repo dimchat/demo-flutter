@@ -57,7 +57,7 @@ class Gallery {
   );
 
   static void saveImage(BuildContext context, PortableImageLoader loader) =>
-      requestPhotoAccessingPermissions(context,
+      PermissionCenter().requestPhotoAccessingPermissions(context,
         onGranted: (context) => _confirmToSave(context, loader),
       );
 

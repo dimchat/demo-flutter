@@ -321,11 +321,21 @@ final Map<String, String> intlNlNl = {
   'Never receive notification from this contact': 'U ontvangt nooit meer meldingen van deze contactpersoon.',
   'Receive notification from this contact': 'U kunt nu weer meldingen ontvangen van deze contactpersoon.',
 
-  'Grant to access external storage': 'Je moet toestemming geven om toegang te krijgen tot externe opslag.',
-  'Grant to access photo album': 'Je moet toestemming geven om toegang te krijgen tot het fotoalbum.',
-  'Grant to access camera': 'Je moet toestemming geven om toegang te krijgen tot de camera.',
-  'Grant to access microphone': 'Je moet toestemming geven om toegang te krijgen tot de microfoon.',
-  'Grant to allow notifications': 'Je moet toestemming geven om meldingen toe te staan.',
+  'Grant to access external storage': 'U moet toestemming geven om toegang te krijgen tot externe opslag.'
+      ' Sta toe dat er databases worden aangemaakt voor lokale opslag.',
+  'Grant to access photo album': 'U moet toestemming geven om toegang te krijgen tot het fotoalbum.'
+      ' Sta toe om foto\'s vanuit uw album te verzenden of uw profielfoto te wijzigen,'
+      ' of het opslaan van de afbeelding in uw album.',
+  'Grant to access camera': 'U moet toestemming geven om toegang te krijgen tot de camera.'
+      ' Sta toe om foto\'s te maken en deze naar vrienden te sturen, of uw profielfoto te wijzigen.',
+  'Grant to access microphone': 'U moet toestemming geven om toegang te krijgen tot de microfoon.'
+      ' Sta toe om een spraakbericht op te nemen en naar uw vriend te sturen.',
+  'Grant to allow notifications': 'U moet toestemming geven om meldingen toe te staan.'
+      ' Sta toe voor het pushen van meldingen voor offline berichten.',
+
+  'Notification': 'Melding',
+  'Enabled': 'Ingeschakeld',
+  'Disabled': 'Uitgeschakeld',
 
   'Failed to get image file': 'Kon afbeeldingsbestand niet ophalen.',
   'Cannot save this image': 'Kan deze afbeelding niet opslaan.',

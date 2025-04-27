@@ -321,11 +321,21 @@ final Map<String, String> intlAfZa = {
   'Never receive notification from this contact': 'Jy sal nooit weer kennisgewings van hierdie kontak ontvang nie.',
   'Receive notification from this contact': 'Jy kan nou kennisgewings van hierdie kontak ontvang.',
 
-  'Grant to access external storage': 'Jy moet toestemming gee om toegang tot eksterne berging te kry.',
-  'Grant to access photo album': 'Jy moet toestemming gee om toegang tot die foto-album te kry.',
-  'Grant to access camera': 'Jy moet toestemming gee om toegang tot die kamera te kry.',
-  'Grant to access microphone': 'Jy moet toestemming gee om toegang tot die mikrofoon te kry.',
-  'Grant to allow notifications': 'Jy moet toestemming gee om kennisgewings toe te laat.',
+  'Grant to access external storage': 'Jy moet toestemming gee om toegang tot eksterne stoorruimte te verkry.'
+      ' Please allow to create databases for local storage.',
+  'Grant to access photo album': 'Jy moet toestemming gee om toegang tot jou foto album te kry.'
+      ' Please allow to send photos from your album or to change your profile picture,'
+      ' or to save the image to your album.',
+  'Grant to access camera': 'Jy moet toestemming gee om toegang tot die kamera te kry.'
+      ' Please allow to take photos and send them to friends, or to change your profile picture.',
+  'Grant to access microphone': 'Jy moet toestemming gee om toegang tot die mikrofoon te kry.'
+      ' Please allow to record a voice message and send it to your friend.',
+  'Grant to allow notifications': 'Jy moet toestemming gee om kennisgewings toe te laat.'
+      ' Please allow for pushing notification for offline messages.',
+
+  'Notification': 'Kennisgewing',
+  'Enabled': 'Geaktiveer',
+  'Disabled': 'Deaktiveer',
 
   'Failed to get image file': 'Dit was nie moontlik om die beeldlêer te kry nie.',
   'Cannot save this image': 'Dit is nie moontlik om hierdie beeld te stoor nie.',

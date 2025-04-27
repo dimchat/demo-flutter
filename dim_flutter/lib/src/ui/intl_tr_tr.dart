@@ -320,11 +320,21 @@ final Map<String, String> intlTrTr = {
   'Never receive notification from this contact': 'Bu kişiden artık bildirim almayacaksınız.',
   'Receive notification from this contact': 'Bu kişiden tekrar bildirim alabilirsiniz.',
 
-  'Grant to access external storage': 'Harici depolamaya erişim izni vermeniz gerekiyor.',
-  'Grant to access photo album': 'Fotoğraf albümüne erişim izni vermeniz gerekiyor.',
-  'Grant to access camera': 'Kamera erişim izni vermeniz gerekiyor.',
-  'Grant to access microphone': 'Mikrofon erişim izni vermeniz gerekiyor.',
-  'Grant to allow notifications': 'Bildirimlere izin vermeniz gerekiyor.',
+  'Grant to access external storage': 'Harici depolama alanına erişim izni vermeniz gerekir.'
+      ' Lütfen yerel depolama için veritabanı oluşturulmasına izin verin.',
+  'Grant to access photo album': 'Fotoğraf albümüne erişim izni vermeniz gerekir.'
+      ' Lütfen albümünüzden fotoğraf göndermeye veya profil fotoğrafınızı değiştirmeye,'
+      ' ya da resmi albümünüze kaydetmeye izin verin.',
+  'Grant to access camera': 'Kamera erişim izni vermeniz gerekir.'
+      ' Lütfen fotoğraf çekip arkadaşlarınıza gönderin veya profil fotoğrafınızı değiştirin.',
+  'Grant to access microphone': 'Mikrofon erişim izni vermeniz gerekir.'
+      ' Lütfen bir sesli mesaj kaydedin ve arkadaşınıza gönderin.',
+  'Grant to allow notifications': 'Bildirimlere izin vermeniz gerekir.'
+      ' Lütfen çevrimdışı mesajlar için bildirim göndermeye izin verin.',
+
+  'Notification': 'Bildirim',
+  'Enabled': 'Etkin',
+  'Disabled': 'Devre Dışı',
 
   'Failed to get image file': 'Resim dosyası alınamadı.',
   'Cannot save this image': 'Bu resim kaydedilemez.',

@@ -321,11 +321,21 @@ final Map<String, String> intlViVN = {
   'Never receive notification from this contact': 'Bạn sẽ không bao giờ nhận được thông báo từ liên lạc này nữa.',
   'Receive notification from this contact': 'Bạn có thể nhận thông báo từ liên lạc này ngay bây giờ.',
 
-  'Grant to access external storage': 'Bạn cần cấp quyền truy cập vào bộ nhớ ngoài.',
-  'Grant to access photo album': 'Bạn cần cấp quyền truy cập vào album ảnh.',
-  'Grant to access camera': 'Bạn cần cấp quyền truy cập vào camera.',
-  'Grant to access microphone': 'Bạn cần cấp quyền truy cập vào microphone.',
-  'Grant to allow notifications': 'Bạn cần cấp quyền cho phép thông báo.',
+  'Grant to access external storage': 'Bạn cần cấp quyền để truy cập bộ nhớ ngoài.'
+      ' Vui lòng cho phép tạo cơ sở dữ liệu cho lưu trữ cục bộ.',
+  'Grant to access photo album': 'Bạn cần cấp quyền để truy cập album ảnh.'
+      ' Vui lòng cho phép gửi ảnh từ album của bạn hoặc thay đổi ảnh đại diện,'
+      ' hoặc lưu hình ảnh vào album của bạn.',
+  'Grant to access camera': 'Bạn cần cấp quyền để truy cập camera.'
+      ' Vui lòng cho phép chụp ảnh và gửi chúng cho bạn bè, hoặc thay đổi ảnh đại diện của bạn.',
+  'Grant to access microphone': 'Bạn cần cấp quyền để truy cập microphone.'
+      ' Vui lòng cho phép ghi âm tin nhắn và gửi cho bạn của bạn.',
+  'Grant to allow notifications': 'Bạn cần cấp quyền để cho phép thông báo.'
+      ' Vui lòng cho phép thông báo tin nhắn ngoại tuyến.',
+
+  'Notification': 'Thông báo',
+  'Enabled': 'Đã bật',
+  'Disabled': 'Đã tắt',
 
   'Failed to get image file': 'Không thể lấy tệp hình ảnh.',
   'Cannot save this image': 'Không thể lưu hình ảnh này.',

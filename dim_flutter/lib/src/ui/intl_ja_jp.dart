@@ -319,11 +319,21 @@ final Map<String, String> intlJaJp = {
   'Never receive notification from this contact': 'この連絡先からの通知はもう受信しません。',
   'Receive notification from this contact': 'この連絡先からの通知を受信できます。',
 
-  'Grant to access external storage': '外部ストレージへのアクセスを許可する必要があります。',
-  'Grant to access photo album': '写真アルバムへのアクセスを許可する必要があります。',
-  'Grant to access camera': 'カメラへのアクセスを許可する必要があります。',
-  'Grant to access microphone': 'マイクへのアクセスを許可する必要があります。',
-  'Grant to allow notifications': '通知を許可する必要があります。',
+  'Grant to access external storage': '外部ストレージにアクセスするための許可を付与する必要があります。'
+      ' ローカルストレージ用のデータベース作成を許可してください。',
+  'Grant to access photo album': '写真アルバムにアクセスするための許可を付与する必要があります。'
+      ' アルバムから写真を送信したり、プロフィール写真を変更したり、'
+      ' 画像をアルバムに保存するために許可してください。',
+  'Grant to access camera': 'カメラにアクセスするための許可を付与する必要があります。'
+      ' 写真を撮影して友達に送信したり、プロフィール写真を変更したりするために許可してください。',
+  'Grant to access microphone': 'マイクにアクセスするための許可を付与する必要があります。'
+      ' ボイスメッセージを録音して友達に送信するために許可してください。',
+  'Grant to allow notifications': '通知を許可するための許可を付与する必要があります。'
+      ' オフラインメッセージのプッシュ通知を許可してください。',
+
+  'Notification': '通知',
+  'Enabled': '有効',
+  'Disabled': '無効',
 
   'Failed to get image file': '画像ファイルの取得に失敗しました。',
   'Cannot save this image': 'この画像を保存できません。',

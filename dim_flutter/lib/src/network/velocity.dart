@@ -113,7 +113,7 @@ class VelocityMeter {
     StationSpeeder speeder = StationSpeeder();
     Uint8List? data = await speeder.handshakePackage;
     if (data == null) {
-      assert(false, 'failed to get message package');
+      // assert(false, 'failed to get message package');
       return null;
     }
     Log.info('connecting to $host:$port ...');

@@ -37,6 +37,12 @@ class Alert {
       {VoidCallback? callback}) {
     if (body is String) {
       body = Text(body);
+    } else if (body is Image) {
+      body = SizedBox(
+        height: 256,
+        width: 256,
+        child: body,
+      );
     }
     showCupertinoModalPopup(
       context: context,
@@ -66,6 +72,12 @@ class Alert {
     cancelTitle ??= 'Cancel';
     if (body is String) {
       body = Text(body);
+    } else if (body is Image) {
+      body = SizedBox(
+        height: 256,
+        width: 256,
+        child: body,
+      );
     }
     showCupertinoDialog(
       context: context,

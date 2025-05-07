@@ -53,7 +53,7 @@ class SessionChannel extends SafeChannel {
     }
     if (content is ReportCommand) {
       String? title = content.title;
-      if (title == 'apns' || title == 'c2dm') {
+      if (/*title == 'apns' || */title == 'c2dm') {
         Log.info('checking notification permissions for command: $content');
         PermissionChecker().setNeedsNotificationPermissions();
       }

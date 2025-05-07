@@ -183,7 +183,7 @@ abstract class PortableNetworkState<T extends PortableNetworkView>
       // downloading file data
       int? count = userInfo?['count'];
       int? total = userInfo?['total'];
-      logInfo('[PNF] onReceiveProgress: $count/$total, ${pnf?.url}');
+      logDebug('[PNF] onReceiveProgress: $count/$total, ${pnf?.url}');
     } else if (name == NotificationNames.kPortableNetworkReceived) {
       // download finished, decrypting
       Uint8List? data = userInfo?['data'];

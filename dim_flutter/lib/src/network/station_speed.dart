@@ -106,20 +106,23 @@ class StationSpeeder {
   Future<ReliableMessage?> get _rMsg async {
     GlobalVariable shared = GlobalVariable();
     SharedMessenger? messenger = shared.messenger;
-    assert(messenger != null, 'messenger not ready');
+    if (messenger == null) {
+      // assert(false, 'messenger not ready');
+      return null;
+    }
     InstantMessage? iMsg = await _iMsg;
     if (iMsg == null) {
       assert(false, 'failed to build handshake message');
       return null;
     }
     // encrypt message
-    SecureMessage? sMsg = await messenger?.encryptMessage(iMsg);
+    SecureMessage? sMsg = await messenger.encryptMessage(iMsg);
     if (sMsg == null) {
       assert(false, 'failed to encrypt message: $iMsg');
       return null;
     }
     // sign message
-    ReliableMessage? rMsg = await messenger?.signMessage(sMsg);
+    ReliableMessage? rMsg = await messenger.signMessage(sMsg);
     assert(rMsg != null, 'failed to sign message: $rMsg');
     return rMsg;
   }

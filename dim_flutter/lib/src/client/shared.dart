@@ -60,13 +60,7 @@ class GlobalVariable {
     var loader = CompatLoader();
     loader.run();
     Config config = Config();
-    config.load().then((_) {
-      var bots = config.assistants;
-      if (bots.isNotEmpty) {
-        SharedGroupManager man = SharedGroupManager();
-        man.delegate.setCommonAssistants(bots);
-      }
-    });
+    config.load();
     return config;
   }
 

@@ -3,12 +3,15 @@ import 'package:flutter/services.dart';
 import 'package:dim_client/sdk.dart';
 import 'package:dim_client/ok.dart';
 import 'package:dim_client/ok.dart' as lnc;
+import 'package:dim_client/group.dart';
+
 import 'package:pnf/dos.dart';
 import 'package:pnf/enigma.dart';
 import 'package:pnf/http.dart';
 
 import '../common/constants.dart';
 import '../filesys/local.dart';
+import '../filesys/upload.dart';
 import '../utils/html.dart';
 import 'newest.dart';
 
@@ -151,7 +154,9 @@ class Config with Logging {
           // 3.1 update cache
           _info = dict;
           loader.saveConfig(dict);
-          // 3.2 post notification
+          // 3.2 refresh
+          _initWithConfig(this);
+          // 3.3 post notification
           var nc = lnc.NotificationCenter();
           nc.postNotification(NotificationNames.kConfigUpdated, loader, {
             'config': dict,
@@ -159,9 +164,22 @@ class Config with Logging {
         }
       });
     }
+    _initWithConfig(this);
     return this;
   }
 
+}
+
+void _initWithConfig(Config config) {
+  // update group assistants
+  var bots = config.assistants;
+  if (bots.isNotEmpty) {
+    SharedGroupManager man = SharedGroupManager();
+    man.delegate.setCommonAssistants(bots);
+  }
+  // update file uploader
+  var ftp = SharedFileUploader();
+  ftp.initWithConfig(config);
 }
 
 

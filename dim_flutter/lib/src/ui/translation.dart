@@ -173,7 +173,7 @@ class Translator with Logging implements Observer {
   }
 
   Future<bool> testCandidates() async {
-    Config config = await Config().load();
+    Config config = Config();
     var bots = config.translators;
     if (bots.isEmpty) {
       return false;

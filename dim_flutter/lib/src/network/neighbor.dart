@@ -53,7 +53,7 @@ Future<NeighborInfo?> getNeighborStation() async {
 
 Future<bool> _updateStations(SessionDBI database) async {
   // 1. get stations from config
-  Config config = await Config().load();
+  Config config = Config();
   ID? pid = config.provider;
   List stations = config.stations;
   if (pid == null || stations.isEmpty) {

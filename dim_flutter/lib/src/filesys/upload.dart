@@ -58,7 +58,7 @@ class SharedFileUploader with Logging {
 
   Enigma get enigma => _enigma;
 
-  bool _apiUpdated = false;
+  bool _secretsLoaded = false;
 
   String? _upAvatarAPI;
   String? _upFileAPI;
@@ -71,66 +71,62 @@ class SharedFileUploader with Logging {
 
   /// Append download task with URL
   Future<bool> addDownloadTask(DownloadTask task) async {
-    await _prepare();
+    await _initSecrets();
     return await _ftp.addDownloadTask(task);
   }
 
   Future<bool> addUploadTask(UploadTask task) async {
-    await _prepare();
+    await _initSecrets();
     return await _ftp.addUploadTask(task);
   }
 
-  /// Update secrets
-  bool updateSecrets(dynamic secrets) {
-    if (secrets == null) {
+  Future<bool> _initSecrets() async {
+    if (_secretsLoaded) {
       return false;
-    }
-    logInfo('set enigma secrets: $secrets');
-    List<String> lines = [];
-    for (var element in secrets) {
-      if (element is String && element.isNotEmpty) {
-        lines.add(element);
-      }
-    }
-    _enigma.update(lines);
-    return lines.isNotEmpty;
-  }
-
-  Future<void> _prepare() async {
-    if (_apiUpdated) {
-      return;
+    } else {
+      _secretsLoaded = true;
     }
     //
-    //  0. set user agent
+    //  1. set user agent
     //
     GlobalVariable shared = GlobalVariable();
     String ua = shared.terminal.userAgent;
     logInfo('update user-agent: $ua');
     _ftp.setUserAgent(ua);
     //
-    //  1. load enigma secrets
+    //  2. load enigma secrets
     //
     String json = await rootBundle.loadString('assets/enigma.json');
     Map? info = JSONMap.decode(json);
-    bool ok = updateSecrets(info?['secrets']);
-    assert(ok, 'failed to update enigma secrets: $json');
-    //
-    //  2. config for upload API
-    //
-    Config config = await Config().load();
+    List? secrets = info?['secrets'];
+    if (secrets == null) {
+      assert(false, 'failed to update enigma secrets: $json');
+      return false;
+    }
+    logInfo('set enigma secrets: $secrets');
+    List<String> lines = [];
+    for (var pwd in secrets) {
+      if (pwd is String && pwd.isNotEmpty) {
+        lines.add(pwd);
+      }
+    }
+    _enigma.update(lines);
+    return lines.isNotEmpty;
+  }
+
+  void initWithConfig(Config config) {
     String? api = config.uploadAvatarAPI;
-    logInfo('checking avatar API: $api');
+    logInfo('set avatar API: $_upAvatarAPI -> $api');
     if (api != null) {
       _upAvatarAPI = api;
     }
     api = config.uploadFileAPI;
-    logInfo('checking file API: $api');
+    logInfo('set file API: $_upFileAPI -> $api');
     if (api != null) {
       _upFileAPI = api;
     }
-    // done
-    _apiUpdated = true;
   }
+
   ///  Upload avatar image data for user
   ///
   /// @param data     - image data

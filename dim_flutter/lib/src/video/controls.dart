@@ -618,7 +618,8 @@ class _CustomControlsState extends State<CustomControls>
         _displayBufferingIndicator = false;
       }
     } else {
-      _displayBufferingIndicator = controller.value.isBuffering;
+      _displayBufferingIndicator = _checkBuffering(controller);
+      // _displayBufferingIndicator = controller.value.isBuffering;
     }
 
     setState(() {
@@ -661,3 +662,49 @@ class _CustomControlsState extends State<CustomControls>
   }
 
 }
+
+bool _checkBuffering(VideoPlayerController controller) {
+  //
+  //  check control value
+  //
+  if (!controller.value.isBuffering) {
+    // not buffering
+    return false;
+  }
+  //
+  //  check position in buffered ranges
+  //
+  final position = controller.value.position;
+  final buffered = controller.value.buffered;
+  final current = buffered.firstWhere(
+        (range) => range.start <= position && position <= range.end,
+    orElse: () => _zeroRange,
+  );
+  if (current == _zeroRange) {
+    // buffered empty?
+    // it is buffering
+    return true;
+  }
+  // check current range
+  final end = current.end - _safeDistance;
+  if (position < end) {
+    // current position is far enough from the end,
+    // set the status to 'not buffering'
+    return false;
+  }
+  // search for next range
+  for (var item in buffered) {
+    if (item.start == current.end) {
+      // next buffered range got
+      // set the status to 'not buffering'
+      return false;
+    }
+  }
+  // current position is near the end of currant range,
+  // and next range not found,
+  // it is buffering
+  return true;
+}
+
+final _zeroRange = DurationRange(Duration.zero, Duration.zero);
+const _safeDistance = Duration(seconds: 8);

@@ -92,7 +92,7 @@ class AvatarFactory {
     _AvatarImageLoader loader = _AvatarImageLoader(pnf);
     if (pnf.data == null) {
       var ftp = SharedFileUploader();
-      loader.prepare().then((value) => ftp.addDownloadTask(loader.downloadTask!));
+      loader.prepare().then((value) => ftp.addAvatarTask(loader.downloadTask!));
     }
     return loader;
   }
@@ -364,7 +364,7 @@ class _AvatarImageLoader extends PortableImageLoader {
     } else {
       var ftp = SharedFileUploader();
       var task = _AvatarDownloadTask(pnf);
-      await ftp.addDownloadTask(task);
+      await ftp.addAvatarTask(task);
       downloadTask = task;
     }
   }

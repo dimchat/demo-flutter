@@ -3,10 +3,15 @@ import 'package:dim_client/ok.dart';
 import 'package:dim_client/sdk.dart';
 import 'package:dim_client/common.dart';
 
+import '../common/dbi/app.dart';
 import '../common/dbi/contact.dart';
 import '../common/dbi/message.dart';
 import '../common/dbi/network.dart';
+
 import '../models/chat.dart';
+
+import '../sqlite/app.dart';
+
 import '../sqlite/contact.dart';
 import '../sqlite/conversation.dart';
 import '../sqlite/document.dart';
@@ -27,6 +32,7 @@ import '../sqlite/blocked.dart';
 import '../sqlite/muted.dart';
 
 class SharedDatabase implements AccountDBI, SessionDBI, MessageDBI,
+                                AppCustomizedInfoDBI,
                                 ConversationDBI, InstantMessageDBI, TraceDBI,
                                 RemarkDBI, BlockedDBI, MutedDBI,
                                 SpeedDBI {
@@ -60,6 +66,8 @@ class SharedDatabase implements AccountDBI, SessionDBI, MessageDBI,
 
   final NotificationCenter _center = NotificationCenter();
   NotificationCenter get center => _center;
+
+  final AppCustomizedInfoDBI appInfoTable = CustomizedInfoCache();
 
   //
   //  PrivateKey Table
@@ -443,5 +451,21 @@ class SharedDatabase implements AccountDBI, SessionDBI, MessageDBI,
   @override
   Future<bool> removeAllTraces(ID cid) async =>
       await traceTable.removeAllTraces(cid);
+
+  //
+  //  App Customized Info
+  //
+
+  @override
+  Future<Content?> getAppCustomizedContent(String key, {String? mod}) async =>
+      await appInfoTable.getAppCustomizedContent(key, mod: mod);
+
+  @override
+  Future<bool> saveAppCustomizedContent(Content content, String key, {Duration? expires}) async =>
+      await appInfoTable.saveAppCustomizedContent(content, key, expires: expires);
+
+  @override
+  Future<bool> clearExpiredAppCustomizedContents(String key) async =>
+      await appInfoTable.clearExpiredAppCustomizedContents(key);
 
 }

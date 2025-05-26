@@ -7,10 +7,27 @@ import 'package:dim_client/sdk.dart';
 import '../../common/constants.dart';
 import '../../ui/translation.dart';
 
-class AppCustomizedContentProcessor extends CustomizedContentProcessor with Logging {
-  AppCustomizedContentProcessor(super.facebook, super.messenger);
+import '../shared.dart';
+import 'text.dart';
 
-  final _translateHandler = _TranslateHandler();
+
+class AppCustomizedContentProcessor extends CustomizedContentProcessor with Logging {
+  AppCustomizedContentProcessor(super.facebook, super.messenger) {
+    GlobalVariable shared = GlobalVariable();
+    _serviceContentHandler = ServiceContentHandler(shared.database);
+    _translateContentHandler = _TranslateContentHandler();
+  }
+
+  late final ServiceContentHandler _serviceContentHandler;
+  late final _TranslateContentHandler _translateContentHandler;
+
+  @override
+  Future<List<Content>> processContent(Content content, ReliableMessage rMsg) async {
+    if (_serviceContentHandler.checkContent(content)) {
+      await _serviceContentHandler.saveContent(content);
+    }
+    return await super.processContent(content, rMsg);
+  }
 
   @override
   List<Content>? filter(String app, CustomizedContent content, ReliableMessage rMsg) {
@@ -24,16 +41,16 @@ class AppCustomizedContentProcessor extends CustomizedContentProcessor with Logg
   @override
   CustomizedContentHandler? fetch(String mod, CustomizedContent content, ReliableMessage rMsg) {
     if (mod == Translator.mod) {
-      return _translateHandler;
+      return _translateContentHandler;
     } else if (mod == 'test') {
-      return _translateHandler;
+      return _translateContentHandler;
     }
     return this;
   }
 
 }
 
-class _TranslateHandler with Logging implements CustomizedContentHandler {
+class _TranslateContentHandler with Logging implements CustomizedContentHandler {
 
   @override
   Future<List<Content>> handleAction(String act, ID sender, CustomizedContent content, ReliableMessage rMsg) async {

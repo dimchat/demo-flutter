@@ -43,6 +43,8 @@ abstract class NotificationNames {
   static const String kConversationCleaned = 'ConversationCleaned';
   static const String kConversationUpdated = 'ConversationUpdated';
 
+  static const String kCustomizedInfoUpdated = 'CustomizedInfoUpdated';
+
   static const String kSearchUpdated = 'SearchUpdated';
 
   static const String kTranslateUpdated = 'TranslateUpdated';

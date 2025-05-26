@@ -4,6 +4,7 @@ import 'package:dim_client/sdk.dart';
 import 'package:dim_client/common.dart';
 
 import '../common/constants.dart';
+import '../client/cpu/text.dart';
 import '../client/shared.dart';
 
 import 'chat.dart';
@@ -376,6 +377,24 @@ class Amanuensis with Logging {
     }
 
     GlobalVariable shared = GlobalVariable();
+
+    if (content is CustomizedContent) {
+      // customized content will be parsed,
+      // no need to save it here.
+      String app = content.application;
+      String mod = content.module;
+      String act = content.action;
+      logInfo('ignore customized content: $app, $mod, $act from: ${iMsg.sender}');
+      return true;
+    } else if (ServiceContentHandler(shared.database).checkContent(content)) {
+      // service content will be parsed,
+      // no need to save it here.
+      var app = content['app'];
+      var mod = content['mod'];
+      var act = content['act'];
+      logInfo('ignore customized content: $app, $mod, $act from: ${iMsg.sender}');
+      return true;
+    }
 
     if (content is InviteCommand) {
       // send keys again

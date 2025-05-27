@@ -127,6 +127,18 @@ abstract class MessageBuilder with Logging {
       text = '[URL:${content.title}]';
     } else if (content is NameCard) {
       text = '[NameCard:${content.name}]';
+    } else if (content is CustomizedContent) {
+      var app = content.application;
+      var mod = content.module;
+      var act = content.action;
+      text = '[Customized:app=$app,mod=$mod,act=$act]';
+      // if (content['format'] == null) {
+      //   text = '## Customized Content\n'
+      //       '* app = "$app"\n'
+      //       '* mod = "$mod"\n'
+      //       '* act = "$act"\n';
+      //   content['format'] = 'markdown';
+      // }
     } else {
       text = "Current version doesn't support this message type: ${content.type}.";
     }

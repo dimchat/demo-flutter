@@ -32,6 +32,23 @@ class ServiceContentHandler with Logging {
 
   final AppCustomizedInfoDBI database;
 
+  // private
+  String buildKey(String app, String mod, String title) {
+    String key = '$app:$mod:$title';
+    if (key.length > 64) {
+      logWarning('trimming key: $key');
+      // FIXME: use MD5 instead?
+      key = key.substring(0, 65);
+    }
+    return key;
+  }
+
+  Future<Content?> getContent(String app, String mod, String title) async {
+    String key = buildKey(app, mod, title);
+    Mapper? content = await database.getAppCustomizedInfo(key, mod: mod);
+    return Content.parse(content);
+  }
+
   bool checkContent(Content content) {
     String? app = content['app'];
     String? mod = content['mod'];
@@ -53,7 +70,7 @@ class ServiceContentHandler with Logging {
     }
   }
 
-  Future<bool> saveContent(Content content) async {
+  Future<bool> saveContent(Content content, {Duration? expires}) async {
     String? text = content['text'];
     if (text != null && text.length > 128) {
       String head = text.substring(0, 100);
@@ -61,19 +78,26 @@ class ServiceContentHandler with Logging {
       text = '$head ... $tail';
     }
 
-    var nc = NotificationCenter();
-    bool ok = false;
-
     String? app = content['app'];
     String? mod = content['mod'];
     String? act = content['act'];
     String? title = content['title'];
-    if (app == 'chat.dim.search') {
+    // if (title == null || title.isEmpty) {
+    //   title = content['keywords'];
+    // }
+
+    var nc = NotificationCenter();
+    bool ok = false;
+
+    if (app == null || mod == null || title == null) {
+      logError('service content error: $content');
+    } else if (app == 'chat.dim.search') {
       Log.info('got customized text content: $text');
       if (mod == 'users') {
         // got online users
         assert(act == 'respond', 'customized text content error: $text');
-        ok = await database.saveAppCustomizedContent(content, '$app:$mod:$title');
+        String key = buildKey(app, mod, title);
+        ok = await database.saveAppCustomizedInfo(content, key, expires: expires);
         var users = content['users'];
         Log.info('got ${users?.length} users');
         nc.postNotification(NotificationNames.kActiveUsersUpdated, this, {
@@ -86,29 +110,32 @@ class ServiceContentHandler with Logging {
       if (mod == 'lives') {
         // got live streams
         assert(act == 'respond', 'customized text content error: $text');
-        ok = await database.saveAppCustomizedContent(content, '$app:$mod:$title');
+        String key = buildKey(app, mod, title);
+        ok = await database.saveAppCustomizedInfo(content, key, expires: expires);
         var lives = content['lives'];
         Log.info('got ${lives?.length} lives');
         nc.postNotification(NotificationNames.kLiveSourceUpdated, this, {
           'cmd': content,
           'lives': lives,
         });
-        return true;
       }
     } else if (app == 'chat.dim.sites') {
       Log.info('got customized text content: $text');
       if (mod == 'homepage') {
         // got home page
         assert(act == 'respond', 'customized text content error: $text');
-        ok = await database.saveAppCustomizedContent(content, '$app:$mod:$title');
+        String key = buildKey(app, mod, title);
+        ok = await database.saveAppCustomizedInfo(content, key, expires: expires);
         nc.postNotification(NotificationNames.kWebSitesUpdated, this, {
           'cmd': content,
         });
-        return true;
       }
     }
     // OK
     return ok;
   }
+
+  Future<bool> clearExpiredContents() async =>
+      await database.clearExpiredAppCustomizedInfo();
 
 }

@@ -4,6 +4,8 @@ import 'package:dim_client/client.dart';
 
 import '../models/config.dart';
 import 'compat/loader.dart';
+import 'cpu/text.dart';
+
 import 'client.dart';
 import 'database.dart';
 import 'emitter.dart';
@@ -67,7 +69,10 @@ class GlobalVariable {
   /// Step 2: create database
   static SharedDatabase createDatabase() {
     // create db
-    return SharedDatabase();
+    var db = SharedDatabase();
+    // purge expired contents
+    ServiceContentHandler(db).clearExpiredContents();
+    return db;
   }
 
   /// Step 3: create facebook

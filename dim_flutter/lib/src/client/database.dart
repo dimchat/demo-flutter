@@ -457,15 +457,15 @@ class SharedDatabase implements AccountDBI, SessionDBI, MessageDBI,
   //
 
   @override
-  Future<Content?> getAppCustomizedContent(String key, {String? mod}) async =>
-      await appInfoTable.getAppCustomizedContent(key, mod: mod);
+  Future<Mapper?> getAppCustomizedInfo(String key, {String? mod}) async =>
+      await appInfoTable.getAppCustomizedInfo(key, mod: mod);
 
   @override
-  Future<bool> saveAppCustomizedContent(Content content, String key, {Duration? expires}) async =>
-      await appInfoTable.saveAppCustomizedContent(content, key, expires: expires);
+  Future<bool> saveAppCustomizedInfo(Mapper content, String key, {Duration? expires}) async =>
+      await appInfoTable.saveAppCustomizedInfo(content, key, expires: expires);
 
   @override
-  Future<bool> clearExpiredAppCustomizedContents(String key) async =>
-      await appInfoTable.clearExpiredAppCustomizedContents(key);
+  Future<bool> clearExpiredAppCustomizedInfo() async =>
+      await appInfoTable.clearExpiredAppCustomizedInfo();
 
 }

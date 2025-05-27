@@ -37,19 +37,18 @@ abstract class AppCustomizedInfoDBI {
   ///
   /// @param key - cache key
   /// @return customized content
-  Future<Content?> getAppCustomizedContent(String key, {String? mod});
+  Future<Mapper?> getAppCustomizedInfo(String key, {String? mod});
 
   ///  Store customized content
   ///
   /// @param content - customized content
   /// @param key     - cache key
   /// @return true on success
-  Future<bool> saveAppCustomizedContent(Content content, String key, {Duration? expires});
+  Future<bool> saveAppCustomizedInfo(Mapper content, String key, {Duration? expires});
 
-  ///  Clear expired contents
+  ///  Clear all expired contents
   ///
-  /// @param key - cache key
   /// @return true on success
-  Future<bool> clearExpiredAppCustomizedContents(String key);
+  Future<bool> clearExpiredAppCustomizedInfo();
 
 }

@@ -430,6 +430,15 @@ class Amanuensis with Logging {
     if (env == null) {
       logError('original envelope not found: $content');
       return false;
+    } else if (env.type == ContentType.COMMAND || env.type == ContentType.HISTORY) {
+      logWarning('ignore receipt for command: ${env.sender} -> ${env.receiver}, ${env.type}');
+      return true;
+    } else if (env.type == ContentType.FORWARD || env.type == ContentType.ARRAY) {
+      logWarning('ignore receipt for forward content: ${env.sender} -> ${env.receiver}, ${env.type}');
+      return true;
+    } else if (env.type == ContentType.CUSTOMIZED || env.type == ContentType.APPLICATION) {
+      logWarning('ignore receipt for customized content: ${env.sender} -> ${env.receiver}, ${env.type}');
+      return true;
     }
     Map mta = {'ID': iMsg.sender.toString(), 'time': content['time']};
     // trace info

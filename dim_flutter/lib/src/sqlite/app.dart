@@ -41,19 +41,24 @@ class AppCustomizedDatabase extends DatabaseConnector {
 }
 
 
-Content _extractCustomizedInfo(ResultSet resultSet, int index) {
+Mapper _extractCustomizedInfo(ResultSet resultSet, int index) {
   String json = resultSet.getString('content') ?? '';
-  Content? content;
+  Mapper? content;
   try {
     Map? info = JSONMap.decode(json);
-    content = Content.parse(info);
+    if (info != null) {
+      content = Dictionary(info);
+    }
   } catch(e, st) {
     Log.error('failed to extract message: $json');
     Log.error('failed to extract message: $e, $st');
   }
   if (content == null) {
     // build error message
-    content = TextContent.create(json);
+    content = Dictionary({
+      'text': json,
+      'error': 'failed to extract message',
+    });
     DateTime? time = resultSet.getDateTime('time');
     if (time != null) {
       content.setDateTime('time', time);
@@ -62,12 +67,11 @@ Content _extractCustomizedInfo(ResultSet resultSet, int index) {
     if (mod != null) {
       content['mod'] = mod;
     }
-    content['error'] = 'failed to extract message';
   }
   return content;
 }
 
-class _CustomizedInfoTable extends DataTableHandler<Content> implements AppCustomizedInfoDBI {
+class _CustomizedInfoTable extends DataTableHandler<Mapper> implements AppCustomizedInfoDBI {
   _CustomizedInfoTable() : super(AppCustomizedDatabase(), _extractCustomizedInfo);
 
   static const String _table = AppCustomizedDatabase.tCustomizedInfo;
@@ -76,14 +80,15 @@ class _CustomizedInfoTable extends DataTableHandler<Content> implements AppCusto
 
   static const Duration kExpires = Duration(days: 7);
 
+  static int timestamp(DateTime time) => time.millisecondsSinceEpoch ~/ 1000;
+
   @override
-  Future<bool> clearExpiredAppCustomizedContents(String key) async {
-    DateTime time = DateTime.now().subtract(kExpires);
+  Future<bool> clearExpiredAppCustomizedInfo() async {
+    DateTime now = DateTime.now();
     SQLConditions cond;
-    cond = SQLConditions(left: 'key', comparison: '=', right: key);
-    cond.addCondition(SQLConditions.kAnd, left: 'expired', comparison: '<', right: time);
+    cond = SQLConditions(left: 'expired', comparison: '<', right: timestamp(now));
     if (await delete(_table, conditions: cond) < 0) {
-      Log.error('failed to clear expired contents: $key');
+      Log.error('failed to clear expired contents: $now');
       return false;
     }
     return true;
@@ -101,16 +106,19 @@ class _CustomizedInfoTable extends DataTableHandler<Content> implements AppCusto
   }
 
   // private
-  Future<bool> addContent(Content content, String key, {Duration? expires}) async {
-    DateTime? time = content.time;
-    time ??= DateTime.now();
-    DateTime? expired = time.add(expires ?? kExpires);
+  Future<bool> addContent(Mapper content, String key, {Duration? expires}) async {
+    DateTime? now = DateTime.now();
+    DateTime? time = content.getDateTime('time', null);
+    if (time == null || time.isAfter(now)) {
+      time = now;
+    }
+    DateTime? expired = now.add(expires ?? kExpires);
     String? mod = content.getString('mod', null);
     // add new record
     List values = [key,
       JSON.encode(content.toMap()),
-      time.millisecondsSinceEpoch ~/ 1000,
-      expired.millisecondsSinceEpoch ~/ 1000,
+      timestamp(time),
+      timestamp(expired),
       mod];
     if (await insert(_table, columns: _insertColumns, values: values) <= 0) {
       Log.error('failed to save customized content: $key -> $content');
@@ -120,16 +128,19 @@ class _CustomizedInfoTable extends DataTableHandler<Content> implements AppCusto
   }
 
   // private
-  Future<bool> updateContent(Content content, String key, {Duration? expires}) async {
-    DateTime? time = content.time;
-    time ??= DateTime.now();
-    DateTime? expired = time.add(expires ?? kExpires);
+  Future<bool> updateContent(Mapper content, String key, {Duration? expires}) async {
+    DateTime? now = DateTime.now();
+    DateTime? time = content.getDateTime('time', null);
+    if (time == null || time.isAfter(now)) {
+      time = now;
+    }
+    DateTime? expired = now.add(expires ?? kExpires);
     String? mod = content.getString('mod', null);
     // update old record
     Map<String, dynamic> values = {
       'content': JSON.encode(content.toMap()),
-      'time': time.millisecondsSinceEpoch ~/ 1000,
-      'expired': expired.millisecondsSinceEpoch ~/ 1000,
+      'time': timestamp(time),
+      'expired': timestamp(expired),
       'mod': mod,
     };
     SQLConditions cond;
@@ -142,7 +153,7 @@ class _CustomizedInfoTable extends DataTableHandler<Content> implements AppCusto
   }
 
   // private
-  Future<List<Content>> getContents(String key) async {
+  Future<List<Mapper>> getContents(String key) async {
     SQLConditions cond;
     cond = SQLConditions(left: 'key', comparison: '=', right: key);
     return await select(_table, columns: _selectColumns,
@@ -150,14 +161,14 @@ class _CustomizedInfoTable extends DataTableHandler<Content> implements AppCusto
   }
 
   @override
-  Future<Content?> getAppCustomizedContent(String key, {String? mod}) async {
-    List<Content> messages = await getContents(key);
+  Future<Mapper?> getAppCustomizedInfo(String key, {String? mod}) async {
+    List<Mapper> messages = await getContents(key);
     if (messages.isEmpty) {
       return null;
     } else if (mod == null || mod.isEmpty) {
       return messages.first;
     }
-    for (Content content in messages) {
+    for (Mapper content in messages) {
       if (content['mod'] == mod) {
         return content;
       }
@@ -166,9 +177,9 @@ class _CustomizedInfoTable extends DataTableHandler<Content> implements AppCusto
   }
 
   @override
-  Future<bool> saveAppCustomizedContent(Content content, String key, {Duration? expires}) async {
+  Future<bool> saveAppCustomizedInfo(Mapper content, String key, {Duration? expires}) async {
     // check old record
-    List<Content> messages = await getContents(key);
+    List<Mapper> messages = await getContents(key);
     if (messages.length > 1) {
       logError('duplicated contents: $key -> $messages');
       await clearContents(key);
@@ -176,7 +187,18 @@ class _CustomizedInfoTable extends DataTableHandler<Content> implements AppCusto
       messages = [];
     }
     if (messages.isEmpty) {
+      // new record
       return await addContent(content, key, expires: expires);
+    }
+    // check time
+    DateTime? newTime = content.getDateTime('time', null);
+    if (newTime != null) {
+      Mapper old = messages.first;
+      DateTime? oldTime = old.getDateTime('time', null);
+      if (oldTime != null && oldTime.isAfter(newTime)) {
+        logWarning('ignore expired info: $content');
+        return false;
+      }
     }
     return await updateContent(content, key, expires: expires);
   }
@@ -185,23 +207,13 @@ class _CustomizedInfoTable extends DataTableHandler<Content> implements AppCusto
 
 class CustomizedInfoCache extends _CustomizedInfoTable {
 
-  final CachePool<String, Content> _cache = CacheManager().getPool('app_info');
-
-  // protected
-  String trimCacheKey(String key) {
-    // FIXME: md5?
-    if (key.length <= 64) {
-      return key;
-    }
-    return key.substring(0, 65);
-  }
+  final CachePool<String, Mapper> _cache = CacheManager().getPool('app_info');
 
   @override
-  Future<Content?> getAppCustomizedContent(String key, {String? mod}) async {
-    key = trimCacheKey(key);
-    CachePair<Content>? pair;
-    CacheHolder<Content>? holder;
-    Content? value;
+  Future<Mapper?> getAppCustomizedInfo(String key, {String? mod}) async {
+    CachePair<Mapper>? pair;
+    CacheHolder<Mapper>? holder;
+    Mapper? value;
     double now = Time.currentTimeSeconds;
     await lock();
     try {
@@ -220,7 +232,7 @@ class CustomizedInfoCache extends _CustomizedInfoTable {
           holder.renewal(128, now: now);
         }
         // 2. load from database
-        value = await super.getAppCustomizedContent(key, mod: mod);
+        value = await super.getAppCustomizedInfo(key, mod: mod);
         // update cache
         _cache.updateValue(key, value, 3600, now: now);
       }
@@ -228,7 +240,7 @@ class CustomizedInfoCache extends _CustomizedInfoTable {
       unlock();
     }
     // OK, return cache now
-    if (value != null && mod != null) {
+    if (value != null && mod != null && mod.isNotEmpty) {
       if (value['mod'] != mod) {
         logError('content not match: $key -> $mod, $value');
         return null;
@@ -238,10 +250,9 @@ class CustomizedInfoCache extends _CustomizedInfoTable {
   }
 
   @override
-  Future<bool> saveAppCustomizedContent(Content content, String key, {Duration? expires}) async {
-    key = trimCacheKey(key);
+  Future<bool> saveAppCustomizedInfo(Mapper content, String key, {Duration? expires}) async {
     // 1. do save
-    if (await super.saveAppCustomizedContent(content, key, expires: expires)) {
+    if (await super.saveAppCustomizedInfo(content, key, expires: expires)) {
       // clear to reload
       _cache.erase(key);
     } else {
@@ -252,17 +263,16 @@ class CustomizedInfoCache extends _CustomizedInfoTable {
     var nc = NotificationCenter();
     nc.postNotification(NotificationNames.kCustomizedInfoUpdated, this, {
       'key': key,
-      'content': content,
+      'info': content,
     });
     return true;
   }
 
   @override
-  Future<bool> clearExpiredAppCustomizedContents(String key) async {
-    key = trimCacheKey(key);
-    bool ok = await super.clearExpiredAppCustomizedContents(key);
+  Future<bool> clearExpiredAppCustomizedInfo() async {
+    bool ok = await super.clearExpiredAppCustomizedInfo();
     if (ok) {
-      _cache.erase(key);
+      _cache.purge();
     }
     return ok;
   }

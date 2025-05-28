@@ -24,7 +24,7 @@ class AppCustomizedContentProcessor extends CustomizedContentProcessor with Logg
   @override
   Future<List<Content>> processContent(Content content, ReliableMessage rMsg) async {
     if (_serviceContentHandler.checkContent(content)) {
-      await _serviceContentHandler.saveContent(content);
+      await _serviceContentHandler.saveContent(content, rMsg.sender);
     }
     return await super.processContent(content, rMsg);
   }

@@ -19,7 +19,7 @@ class TextContentProcessor extends BaseContentProcessor {
   Future<List<Content>> processContent(Content content, ReliableMessage rMsg) async {
     assert(content is TextContent, 'text content error: $content');
     if (_serviceContentHandler.checkContent(content)) {
-      await _serviceContentHandler.saveContent(content);
+      await _serviceContentHandler.saveContent(content, rMsg.sender);
     }
     // OK
     return [];
@@ -33,8 +33,12 @@ class ServiceContentHandler with Logging {
   final AppCustomizedInfoDBI database;
 
   // private
-  String buildKey(String app, String mod, String title) {
-    String key = '$app:$mod:$title';
+  String buildKey(ID sender, String mod, String title) {
+    String address = sender.address.toString();
+    if (address.length > 16) {
+      address = address.substring(address.length - 16);
+    }
+    String key = '$address:$mod:$title';
     if (key.length > 64) {
       logWarning('trimming key: $key');
       // FIXME: use MD5 instead?
@@ -43,8 +47,8 @@ class ServiceContentHandler with Logging {
     return key;
   }
 
-  Future<Content?> getContent(String app, String mod, String title) async {
-    String key = buildKey(app, mod, title);
+  Future<Content?> getContent(ID sender, String mod, String title) async {
+    String key = buildKey(sender, mod, title);
     Mapper? content = await database.getAppCustomizedInfo(key, mod: mod);
     return Content.parse(content);
   }
@@ -70,7 +74,7 @@ class ServiceContentHandler with Logging {
     }
   }
 
-  Future<bool> saveContent(Content content, {Duration? expires}) async {
+  Future<bool> saveContent(Content content, ID sender, {Duration? expires}) async {
     String? text = content['text'];
     if (text != null && text.length > 128) {
       String head = text.substring(0, 100);
@@ -96,7 +100,7 @@ class ServiceContentHandler with Logging {
       if (mod == 'users') {
         // got online users
         assert(act == 'respond', 'customized text content error: $text');
-        String key = buildKey(app, mod, title);
+        String key = buildKey(sender, mod, title);
         ok = await database.saveAppCustomizedInfo(content, key, expires: expires);
         var users = content['users'];
         Log.info('got ${users?.length} users');
@@ -110,7 +114,7 @@ class ServiceContentHandler with Logging {
       if (mod == 'lives') {
         // got live streams
         assert(act == 'respond', 'customized text content error: $text');
-        String key = buildKey(app, mod, title);
+        String key = buildKey(sender, mod, title);
         ok = await database.saveAppCustomizedInfo(content, key, expires: expires);
         var lives = content['lives'];
         Log.info('got ${lives?.length} lives');
@@ -124,7 +128,7 @@ class ServiceContentHandler with Logging {
       if (mod == 'homepage') {
         // got home page
         assert(act == 'respond', 'customized text content error: $text');
-        String key = buildKey(app, mod, title);
+        String key = buildKey(sender, mod, title);
         ok = await database.saveAppCustomizedInfo(content, key, expires: expires);
         nc.postNotification(NotificationNames.kWebSitesUpdated, this, {
           'cmd': content,

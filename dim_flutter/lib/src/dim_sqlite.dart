@@ -3,6 +3,7 @@ library dim_flutter;
 export 'sqlite/helper/connector.dart';
 export 'sqlite/helper/handler.dart';
 export 'sqlite/helper/sqlite.dart';
+export 'sqlite/helper/task.dart';
 
 export 'sqlite/app.dart';
 export 'sqlite/contact.dart';

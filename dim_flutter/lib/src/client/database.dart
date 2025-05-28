@@ -156,10 +156,6 @@ class SharedDatabase implements AccountDBI, SessionDBI, MessageDBI,
   //
 
   @override
-  Future<List<ContactRemark>> allRemarks({required ID user}) async =>
-      await remarkTable.allRemarks(user: user);
-
-  @override
   Future<ContactRemark?> getRemark(ID contact, {required ID user}) async =>
       await remarkTable.getRemark(contact, user: user);
 

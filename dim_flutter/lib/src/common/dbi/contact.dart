@@ -52,8 +52,6 @@ class ContactRemark {
 
 abstract class RemarkDBI {
 
-  Future<List<ContactRemark>> allRemarks({required ID user});
-
   Future<ContactRemark?> getRemark(ID contact, {required ID user});
 
   Future<bool> setRemark(ContactRemark remark, {required ID user});

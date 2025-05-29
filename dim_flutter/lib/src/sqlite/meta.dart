@@ -1,4 +1,3 @@
-import 'package:mutex/mutex.dart';
 
 import 'package:dim_client/ok.dart';
 import 'package:dim_client/sdk.dart';
@@ -62,8 +61,8 @@ class _MetaTable extends DataTableHandler<Meta> {
 
 }
 
-class _MetaTask extends DatabaseTask<ID, Meta> {
-  _MetaTask(this._entity, this._table, super.mutexLock, super.cachePool)
+class _MetaTask extends DbTask<ID, Meta> {
+  _MetaTask(super.mutexLock, super.cachePool, this._table, this._entity)
       : super(cacheExpires: 36000, cacheRefresh: 128);
 
   final ID _entity;
@@ -80,13 +79,12 @@ class _MetaTask extends DatabaseTask<ID, Meta> {
 
 }
 
-class MetaCache with Logging implements MetaDBI {
+class MetaCache extends DataCache<ID, Meta> implements MetaDBI {
+  MetaCache() : super('meta');
 
   final _MetaTable _table = _MetaTable();
-  final Mutex _lock = Mutex();
-  final CachePool<ID, Meta> _cache = CacheManager().getPool('meta');
 
-  _MetaTask _newTask(ID entity) => _MetaTask(entity, _table, _lock, _cache);
+  _MetaTask _newTask(ID entity) => _MetaTask(mutexLock, cachePool, _table, entity);
 
   @override
   Future<Meta?> getMeta(ID entity) async {

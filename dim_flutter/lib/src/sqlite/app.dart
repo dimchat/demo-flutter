@@ -1,4 +1,3 @@
-import 'package:mutex/mutex.dart';
 
 import 'package:dim_client/ok.dart';
 import 'package:dim_client/sdk.dart';
@@ -164,8 +163,8 @@ class _CustomizedInfoTable extends DataTableHandler<Mapper> {
 
 }
 
-class _CustomizedTask extends DatabaseTask<String, List<Mapper>> {
-  _CustomizedTask(this._cacheKey, this._table, super.mutexLock, super.cachePool, {
+class _CustomizedTask extends DbTask<String, List<Mapper>> {
+  _CustomizedTask(super.mutexLock, super.cachePool, this._table, this._cacheKey, {
     required bool? update,
     required Duration? expires,
   }) : _update = update, _dataExpires = expires;
@@ -192,23 +191,25 @@ class _CustomizedTask extends DatabaseTask<String, List<Mapper>> {
     assert(contents.length == 1, 'should not happen: $contents');
     bool? update = _update;
     if (update == null) {
+      // duplicated records found, clear all
       await _table.clearContents(_cacheKey);
     } else if (update == true) {
+      // update old record
       return await _table.updateContent(contents.first, _cacheKey, expires: _dataExpires);
     }
+    // insert new record
     return await _table.addContent(contents.first, _cacheKey, expires: _dataExpires);
   }
 
 }
 
-class CustomizedInfoCache with Logging implements AppCustomizedInfoDBI {
+class CustomizedInfoCache extends DataCache<String, List<Mapper>> implements AppCustomizedInfoDBI {
+  CustomizedInfoCache() : super('app_info');
 
   final _CustomizedInfoTable _table = _CustomizedInfoTable();
-  final Mutex _lock = Mutex();
-  final CachePool<String, List<Mapper>> _cache = CacheManager().getPool('app_info');
 
   _CustomizedTask _newTask(String key, {bool? update, Duration? expires}) =>
-      _CustomizedTask(key, _table, _lock, _cache, update: update, expires: expires);
+      _CustomizedTask(mutexLock, cachePool, _table, key, update: update, expires: expires);
 
   @override
   Future<Mapper?> getAppCustomizedInfo(String key, {String? mod}) async {
@@ -281,14 +282,14 @@ class CustomizedInfoCache with Logging implements AppCustomizedInfoDBI {
   @override
   Future<bool> clearExpiredAppCustomizedInfo() async {
     bool ok;
-    await _lock.acquire();
+    await mutexLock.acquire();
     try {
       ok = await _table.clearExpiredContents();
       if (ok) {
-        _cache.purge();
+        cachePool.purge();
       }
     } finally {
-      _lock.release();
+      mutexLock.release();
     }
     return ok;
   }

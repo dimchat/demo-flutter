@@ -5,6 +5,7 @@ import 'package:dim_client/common.dart';
 
 import '../common/constants.dart';
 import 'helper/sqlite.dart';
+import 'helper/task.dart';
 
 import 'entity.dart';
 
@@ -14,7 +15,7 @@ ID _extractUser(ResultSet resultSet, int index) {
   return ID.parse(user)!;
 }
 
-class _UserTable extends DataTableHandler<ID> implements UserDBI {
+class _UserTable extends DataTableHandler<ID> {
   _UserTable() : super(EntityDatabase(), _extractUser);
 
   static const String _table = EntityDatabase.tLocalUser;
@@ -31,10 +32,10 @@ class _UserTable extends DataTableHandler<ID> implements UserDBI {
       assert(oldUsers.isNotEmpty, 'new users empty??');
       SQLConditions cond = SQLConditions.kTrue;
       if (await delete(_table, conditions: cond) < 0) {
-        Log.error('failed to clear local users');
+        logError('failed to clear local users');
         return -1;
       }
-      Log.warning('local users cleared');
+      logWarning('local users cleared');
       return oldUsers.length;
     }
     int count = 0;
@@ -46,7 +47,7 @@ class _UserTable extends DataTableHandler<ID> implements UserDBI {
       }
       cond = SQLConditions(left: 'uid', comparison: '=', right: item.toString());
       if (await delete(_table, conditions: cond) < 0) {
-        Log.error('failed to remove local user: $item');
+        logError('failed to remove local user: $item');
         return -1;
       }
       ++count;
@@ -61,7 +62,7 @@ class _UserTable extends DataTableHandler<ID> implements UserDBI {
       Map<String, dynamic> values = {'chosen': 0};
       SQLConditions cond = SQLConditions.kTrue;
       if (await update(_table, values: values, conditions: cond) < 0) {
-        Log.error('failed to update local users');
+        logError('failed to update local users');
         return -1;
       }
       ++count;
@@ -73,7 +74,7 @@ class _UserTable extends DataTableHandler<ID> implements UserDBI {
       // insert it with 'chosen = 1'
       List values = [current.toString(), 1];
       if (await insert(_table, columns: _insertColumns, values: values) < 0) {
-        Log.error('failed to add current user: $current');
+        logError('failed to add current user: $current');
         return -1;
       }
       ++count;
@@ -85,7 +86,7 @@ class _UserTable extends DataTableHandler<ID> implements UserDBI {
       SQLConditions cond;
       cond = SQLConditions(left: 'uid', comparison: '=', right: current.toString());
       if (await update(_table, values: values, conditions: cond) < 0) {
-        Log.error('failed to update current user: $current');
+        logError('failed to update current user: $current');
         return -1;
       }
       ++count;
@@ -100,127 +101,104 @@ class _UserTable extends DataTableHandler<ID> implements UserDBI {
       // add other user with chosen flag = 0
       List values = [item.toString(), 0];
       if (await insert(_table, columns: _insertColumns, values: values) < 0) {
-        Log.error('failed to add local user: $item');
+        logError('failed to add local user: $item');
         return -1;
       }
       ++count;
     }
 
     if (count == 0) {
-      Log.warning('local users not changed: $newUsers');
+      logWarning('local users not changed: $newUsers');
       return 0;
     }
-    Log.info('local users updated: $newUsers');
+    logInfo('local users updated: $newUsers');
     return count;
   }
 
-  @override
+  // protected
   Future<List<ID>> getLocalUsers() async {
     SQLConditions cond = SQLConditions.kTrue;
     return await select(_table, distinct: true, columns: _selectColumns,
         conditions: cond, orderBy: 'chosen DESC');
   }
 
+}
+
+class _UsrTask extends DbTask<String, List<ID>> {
+  _UsrTask(super.mutexLock, super.cachePool, this._table, {
+    required List<ID>? oldUsers,
+  }) : _oldUsers = oldUsers;
+
+  final List<ID>? _oldUsers;
+
+  final _UserTable _table;
+
   @override
-  Future<bool> saveLocalUsers(List<ID> users) async {
-    List<ID> oldUsers = await getLocalUsers();
-    return await updateUsers(users, oldUsers) >= 0;
+  String get cacheKey => 'local_users';
+
+  @override
+  Future<List<ID>?> readData() async {
+    return await _table.getLocalUsers();
   }
 
-  Future<bool> addUser(ID user) async {
-    List<ID> oldUsers = await getLocalUsers();
-    if (oldUsers.contains(user)) {
-      Log.warning('user exists: $user');
-      return true;
+  @override
+  Future<bool> writeData(List<ID> newUsers) async {
+    List<ID>? oldUsers = _oldUsers;
+    if (oldUsers == null) {
+      assert(false, 'should not happen');
+      return false;
     }
-    List<ID> newUsers = [...oldUsers, user];
-    return await updateUsers(newUsers, oldUsers) >= 0;
-  }
-
-  Future<bool> removeUser(ID user) async {
-    List<ID> oldUsers = await getLocalUsers();
-    if (!oldUsers.contains(user)) {
-      Log.warning('user not exists: $user');
-      return true;
-    }
-    List<ID> newUsers = [...oldUsers];
-    newUsers.removeWhere((element) => element == user);
-    return await updateUsers(newUsers, oldUsers) >= 0;
-  }
-
-  Future<bool> setCurrentUser(ID user) async {
-    List<ID> oldUsers = await getLocalUsers();
-    int pos = oldUsers.indexOf(user);
-    if (pos == 0) {
-      Log.warning('current user not changed: $user');
-      return true;
-    }
-    List<ID> newUsers = [...oldUsers];
-    if (pos > 0) {
-      newUsers.removeAt(pos);
-    }
-    newUsers.insert(0, user);
-    return await updateUsers(newUsers, oldUsers) >= 0;
-  }
-
-  Future<ID?> getCurrentUser() async {
-    List<ID> localUsers = await getLocalUsers();
-    return localUsers.isEmpty ? null : localUsers[0];
+    int count = await _table.updateUsers(newUsers, oldUsers);
+    return count > 0;
   }
 
 }
 
-class UserCache extends _UserTable {
+class UserCache extends DataCache<String, List<ID>> implements UserDBI {
+  UserCache() : super('local_users');
 
-  List<ID>? _caches;
+  final _UserTable _table = _UserTable();
+
+  _UsrTask _newTask({List<ID>? oldUsers}) =>
+      _UsrTask(mutexLock, cachePool, _table, oldUsers: oldUsers);
 
   @override
   Future<List<ID>> getLocalUsers() async {
-    List<ID>? users;
-    await lock();
-    try {
-      users = _caches;
-      if (users == null) {
-        // cache not found, try to load from database
-        users = await super.getLocalUsers();
-        // add to cache
-        _caches = users;
-      }
-    } finally {
-      unlock();
-    }
-    return users;
+    var task = _newTask();
+    var contacts = await task.load();
+    return contacts ?? [];
+  }
+
+  Future<bool> _updateLocalUsers(List<ID> newUsers, List<ID> oldUsers) async {
+    var task = _newTask(oldUsers: oldUsers);
+    return await task.save(newUsers);
   }
 
   @override
-  Future<bool> saveLocalUsers(List<ID> users) async {
-    List<ID> oldUsers = await getLocalUsers();
-    int cnt = await updateUsers(users, oldUsers);
-    if (cnt > 0) {
-      // clear to reload
-      _caches = null;
+  Future<bool> saveLocalUsers(List<ID> newUsers) async {
+    // save new users
+    var oldUsers = await getLocalUsers();
+    var ok = await _updateLocalUsers(newUsers, oldUsers);
+    if (ok) {
       // post notification
       var nc = NotificationCenter();
       nc.postNotification(NotificationNames.kLocalUsersUpdated, this, {
         'action': 'update',
-        'users': users,
+        'users': newUsers,
       });
     }
-    return cnt >= 0;
+    return ok;
   }
 
-  @override
   Future<bool> addUser(ID user) async {
     List<ID> oldUsers = await getLocalUsers();
     if (oldUsers.contains(user)) {
-      Log.warning('user exists: $user');
+      logWarning('user exists: $user');
       return true;
     }
     List<ID> newUsers = [...oldUsers, user];
-    int cnt = await updateUsers(newUsers, oldUsers);
-    if (cnt > 0) {
-      // clear to reload
-      _caches = null;
+    var ok = await _updateLocalUsers(newUsers, oldUsers);
+    if (ok) {
       // post notification
       var nc = NotificationCenter();
       nc.postNotification(NotificationNames.kLocalUsersUpdated, this, {
@@ -229,22 +207,19 @@ class UserCache extends _UserTable {
         'users': newUsers,
       });
     }
-    return cnt >= 0;
+    return ok;
   }
 
-  @override
   Future<bool> removeUser(ID user) async {
     List<ID> oldUsers = await getLocalUsers();
     if (!oldUsers.contains(user)) {
-      Log.warning('user not exists: $user');
+      logWarning('user not exists: $user');
       return true;
     }
     List<ID> newUsers = [...oldUsers];
     newUsers.removeWhere((element) => element == user);
-    int cnt = await updateUsers(newUsers, oldUsers);
-    if (cnt > 0) {
-      // clear to reload
-      _caches = null;
+    var ok = await _updateLocalUsers(newUsers, oldUsers);
+    if (ok) {
       // post notification
       var nc = NotificationCenter();
       nc.postNotification(NotificationNames.kLocalUsersUpdated, this, {
@@ -253,10 +228,9 @@ class UserCache extends _UserTable {
         'users': newUsers,
       });
     }
-    return cnt >= 0;
+    return ok;
   }
 
-  @override
   Future<bool> setCurrentUser(ID user) async {
     List<ID> oldUsers = await getLocalUsers();
     int pos = oldUsers.indexOf(user);
@@ -269,10 +243,8 @@ class UserCache extends _UserTable {
       newUsers.removeAt(pos);
     }
     newUsers.insert(0, user);
-    int cnt = await updateUsers(newUsers, oldUsers);
-    if (cnt > 0) {
-      // clear to reload
-      _caches = null;
+    var ok = await _updateLocalUsers(newUsers, oldUsers);
+    if (ok) {
       // post notification
       var nc = NotificationCenter();
       nc.postNotification(NotificationNames.kLocalUsersUpdated, this, {
@@ -281,7 +253,12 @@ class UserCache extends _UserTable {
         'users': newUsers,
       });
     }
-    return cnt >= 0;
+    return ok;
+  }
+
+  Future<ID?> getCurrentUser() async {
+    List<ID> localUsers = await getLocalUsers();
+    return localUsers.isEmpty ? null : localUsers[0];
   }
 
 }

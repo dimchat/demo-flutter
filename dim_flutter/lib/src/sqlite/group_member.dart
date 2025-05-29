@@ -4,6 +4,7 @@ import 'package:dim_client/sdk.dart';
 
 import '../common/constants.dart';
 import 'helper/sqlite.dart';
+import 'helper/task.dart';
 
 import 'entity.dart';
 
@@ -30,10 +31,10 @@ class _MemberTable extends DataTableHandler<ID> {
       assert(oldMembers.isNotEmpty, 'new members empty??');
       cond = SQLConditions(left: 'gid', comparison: '=', right: group.toString());
       if (await delete(_table, conditions: cond) < 0) {
-        Log.error('failed to clear members for group: $group');
+        logError('failed to clear members for group: $group');
         return -1;
       }
-      Log.warning('members cleared for group: $group');
+      logWarning('members cleared for group: $group');
       return oldMembers.length;
     }
     int count = 0;
@@ -47,7 +48,7 @@ class _MemberTable extends DataTableHandler<ID> {
       cond.addCondition(SQLConditions.kAnd,
           left: 'member', comparison: '=', right: item.toString());
       if (await delete(_table, conditions: cond) < 0) {
-        Log.error('failed to remove member: $item, group: $group');
+        logError('failed to remove member: $item, group: $group');
         return -1;
       }
       ++count;
@@ -60,123 +61,106 @@ class _MemberTable extends DataTableHandler<ID> {
       }
       List values = [group.toString(), item.toString()];
       if (await insert(_table, columns: _insertColumns, values: values) < 0) {
-        Log.error('failed to add member: $item, group: $group');
+        logError('failed to add member: $item, group: $group');
         return -1;
       }
       ++count;
     }
 
     if (count == 0) {
-      Log.warning('members not changed: $group');
+      logWarning('members not changed: $group');
       return 0;
     }
-    Log.info('updated $count member(s) for group: $group');
+    logInfo('updated $count member(s) for group: $group');
     return count;
   }
 
+  // protected
   Future<List<ID>> getMembers(ID group) async {
     SQLConditions cond;
     cond = SQLConditions(left: 'gid', comparison: '=', right: group.toString());
     return await select(_table, distinct: true, columns: _selectColumns, conditions: cond);
   }
 
-  Future<bool> saveMembers(List<ID> members, ID group) async {
-    List<ID> oldMembers = await getMembers(group);
-    return await updateMembers(members, oldMembers, group) >= 0;
+}
+
+class _MemTask extends DbTask<ID, List<ID>> {
+  _MemTask(super.mutexLock, super.cachePool, this._table, this._group, {
+    required List<ID>? oldMembers,
+  }) : _oldMembers = oldMembers;
+
+  final ID _group;
+
+  final List<ID>? _oldMembers;
+
+  final _MemberTable _table;
+
+  @override
+  ID get cacheKey => _group;
+
+  @override
+  Future<List<ID>?> readData() async {
+    return await _table.getMembers(_group);
   }
 
-  Future<bool> addMember(ID member, {required ID group}) async {
-    List<ID> oldMembers = await getMembers(group);
-    if (oldMembers.contains(member)) {
-      Log.warning('member exists: $member, group: $group');
-      return true;
+  @override
+  Future<bool> writeData(List<ID> newMembers) async {
+    List<ID>? oldMembers = _oldMembers;
+    if (oldMembers == null) {
+      assert(false, 'should not happen: $_group');
+      return false;
     }
-    List<ID> newMembers = [...oldMembers, member];
-    return await updateMembers(newMembers, oldMembers, group) >= 0;
-  }
-
-  Future<bool> removeMember(ID member, {required ID group}) async {
-    List<ID> oldMembers = await getMembers(group);
-    if (!oldMembers.contains(member)) {
-      Log.warning('member not exists: $member, group: $group');
-      return true;
-    }
-    List<ID> newMembers = [...oldMembers];
-    newMembers.removeWhere((element) => element == member);
-    return await updateMembers(newMembers, oldMembers, group) >= 0;
+    int count = await _table.updateMembers(newMembers, oldMembers, _group);
+    return count > 0;
   }
 
 }
 
-class MemberCache extends _MemberTable {
+class MemberCache extends DataCache<ID, List<ID>> {
+  MemberCache() : super('group_members');
 
-  final CachePool<ID, List<ID>> _cache = CacheManager().getPool('members');
+  final _MemberTable _table = _MemberTable();
 
-  @override
+  _MemTask _newTask(ID group, {List<ID>? oldMembers}) =>
+      _MemTask(mutexLock, cachePool, _table, group, oldMembers: oldMembers);
+
   Future<List<ID>> getMembers(ID group) async {
-    CachePair<List<ID>>? pair;
-    CacheHolder<List<ID>>? holder;
-    List<ID>? value;
-    double now = Time.currentTimeSeconds;
-    await lock();
-    try {
-      // 1. check memory cache
-      pair = _cache.fetch(group, now: now);
-      holder = pair?.holder;
-      value = pair?.value;
-      if (value == null) {
-        if (holder == null) {
-          // not load yet, wait to load
-        } else if (holder.isAlive(now: now)) {
-          // value not exists
-          return [];
-        } else {
-          // cache expired, wait to reload
-          holder.renewal(128, now: now);
-        }
-        // 2. load from database
-        value = await super.getMembers(group);
-        // update cache
-        _cache.updateValue(group, value, 3600, now: now);
-      }
-    } finally {
-      unlock();
-    }
-    // OK, return cache now
-    return value;
+    var task = _newTask(group);
+    var contacts = await task.load();
+    return contacts ?? [];
   }
 
-  @override
-  Future<bool> saveMembers(List<ID> members, ID group) async {
-    List<ID> oldMembers = await getMembers(group);
-    int cnt = await updateMembers(members, oldMembers, group);
-    if (cnt >= 0) {
-      // clear to reload
-      _cache.erase(group);
+  Future<bool> _updateMembers(List<ID> newMembers, List<ID> oldMembers, {required ID group}) async {
+    var task = _newTask(group, oldMembers: oldMembers);
+    return await task.save(newMembers);
+  }
+
+  Future<bool> saveMembers(List<ID> newMembers, ID group) async {
+    // save new members
+    var oldMembers = await getMembers(group);
+    var ok = await _updateMembers(newMembers, oldMembers, group: group);
+    if (ok) {
       // post notification
       var nc = NotificationCenter();
       nc.postNotification(NotificationNames.kMembersUpdated, this, {
         'action': 'update',
         'ID': group,
         'group': group,
-        'members': members,
+        'members': newMembers,
       });
     }
-    return cnt >= 0;
+    return ok;
   }
 
-  @override
   Future<bool> addMember(ID member, {required ID group}) async {
     List<ID> oldMembers = await getMembers(group);
     if (oldMembers.contains(member)) {
-      Log.warning('member exists: $member, group: $group');
+      logWarning('member exists: $member, group: $group');
       return true;
     }
     List<ID> newMembers = [...oldMembers, member];
-    int cnt = await updateMembers(newMembers, oldMembers, group);
-    if (cnt > 0) {
-      // clear to reload
-      _cache.erase(group);
+    var ok = await _updateMembers(newMembers, oldMembers, group: group);
+    if (ok) {
       // post notification
       var nc = NotificationCenter();
       nc.postNotification(NotificationNames.kContactsUpdated, this, {
@@ -187,22 +171,19 @@ class MemberCache extends _MemberTable {
         'members': newMembers,
       });
     }
-    return cnt >= 0;
+    return ok;
   }
 
-  @override
   Future<bool> removeMember(ID member, {required ID group}) async {
     List<ID> oldMembers = await getMembers(group);
     if (!oldMembers.contains(member)) {
-      Log.warning('member not exists: $member, group: $group');
+      logWarning('member not exists: $member, group: $group');
       return true;
     }
     List<ID> newMembers = [...oldMembers];
     newMembers.removeWhere((element) => element == member);
-    int cnt = await updateMembers(newMembers, oldMembers, group);
-    if (cnt > 0) {
-      // clear to reload
-      _cache.erase(group);
+    var ok = await _updateMembers(newMembers, oldMembers, group: group);
+    if (ok) {
       // post notification
       var nc = NotificationCenter();
       nc.postNotification(NotificationNames.kContactsUpdated, this, {
@@ -213,7 +194,7 @@ class MemberCache extends _MemberTable {
         'members': newMembers,
       });
     }
-    return cnt >= 0;
+    return ok;
   }
 
 }

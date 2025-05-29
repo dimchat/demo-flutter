@@ -38,8 +38,8 @@ import 'package:dim_client/ok.dart';
 ///
 
 
-abstract class DatabaseTask<K, V> with Logging {
-  DatabaseTask(Mutex mutexLock, CachePool<K, V> cachePool, {
+abstract class DbTask<K, V> with Logging {
+  DbTask(Mutex mutexLock, CachePool<K, V> cachePool, {
     double? cacheExpires, double? cacheRefresh
   }) {
     _lock = mutexLock;
@@ -139,5 +139,15 @@ abstract class DatabaseTask<K, V> with Logging {
     ///
     return value;
   }
+
+}
+
+
+class DataCache<K, V> with Logging {
+  DataCache(String poolName)
+      : cachePool = CacheManager().getPool(poolName);
+
+  final CachePool<K, V> cachePool;
+  final Mutex mutexLock = Mutex();
 
 }

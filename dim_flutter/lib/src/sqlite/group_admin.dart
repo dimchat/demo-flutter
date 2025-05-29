@@ -4,6 +4,7 @@ import 'package:dim_client/sdk.dart';
 
 import '../common/constants.dart';
 import 'helper/sqlite.dart';
+import 'helper/task.dart';
 
 import 'entity.dart';
 
@@ -30,10 +31,10 @@ class _AdminTable extends DataTableHandler<ID> {
       // assert(oldAdmins.isNotEmpty, 'new administrators empty??');
       cond = SQLConditions(left: 'gid', comparison: '=', right: group.toString());
       if (await delete(_table, conditions: cond) < 0) {
-        Log.error('failed to clear administrators for group: $group');
+        logError('failed to clear administrators for group: $group');
         return -1;
       }
-      Log.warning('administrators cleared for group: $group');
+      logWarning('administrators cleared for group: $group');
       return oldAdmins.length;
     }
     int count = 0;
@@ -47,7 +48,7 @@ class _AdminTable extends DataTableHandler<ID> {
       cond.addCondition(SQLConditions.kAnd,
           left: 'admin', comparison: '=', right: item.toString());
       if (await delete(_table, conditions: cond) < 0) {
-        Log.error('failed to remove administrator: $item, group: $group');
+        logError('failed to remove administrator: $item, group: $group');
         return -1;
       }
       ++count;
@@ -60,123 +61,106 @@ class _AdminTable extends DataTableHandler<ID> {
       }
       List values = [group.toString(), item.toString()];
       if (await insert(_table, columns: _insertColumns, values: values) < 0) {
-        Log.error('failed to add administrator: $item, group: $group');
+        logError('failed to add administrator: $item, group: $group');
         return -1;
       }
       ++count;
     }
 
     if (count == 0) {
-      Log.warning('administrators not changed: $group');
+      logWarning('administrators not changed: $group');
       return 0;
     }
-    Log.info('updated $count administrator(s) for group: $group');
+    logInfo('updated $count administrator(s) for group: $group');
     return count;
   }
 
+  // protected
   Future<List<ID>> getAdministrators(ID group) async {
     SQLConditions cond;
     cond = SQLConditions(left: 'gid', comparison: '=', right: group.toString());
     return await select(_table, distinct: true, columns: _selectColumns, conditions: cond);
   }
 
-  Future<bool> saveAdministrators(List<ID> admins, ID group) async {
-    List<ID> oldAdmins = await getAdministrators(group);
-    return await updateAdministrators(admins, oldAdmins, group) >= 0;
+}
+
+class _AdminTask extends DbTask<ID, List<ID>> {
+  _AdminTask(super.mutexLock, super.cachePool, this._table, this._group, {
+    required List<ID>? oldAdmins,
+  }) : _oldAdmins = oldAdmins;
+
+  final ID _group;
+
+  final List<ID>? _oldAdmins;
+
+  final _AdminTable _table;
+
+  @override
+  ID get cacheKey => _group;
+
+  @override
+  Future<List<ID>?> readData() async {
+    return await _table.getAdministrators(_group);
   }
 
-  Future<bool> addAdministrator(ID admin, {required ID group}) async {
-    List<ID> oldAdmins = await getAdministrators(group);
-    if (oldAdmins.contains(admin)) {
-      Log.warning('admin exists: $admin, group: $group');
-      return true;
+  @override
+  Future<bool> writeData(List<ID> newAdmins) async {
+    List<ID>? oldAdmins = _oldAdmins;
+    if (oldAdmins == null) {
+      assert(false, 'should not happen: $_group');
+      return false;
     }
-    List<ID> newAdmins = [...oldAdmins, admin];
-    return await updateAdministrators(newAdmins, oldAdmins, group) >= 0;
-  }
-
-  Future<bool> removeAdministrator(ID admin, {required ID group}) async {
-    List<ID> oldAdmins = await getAdministrators(group);
-    if (!oldAdmins.contains(admin)) {
-      Log.warning('admin not exists: $admin, group: $group');
-      return true;
-    }
-    List<ID> newAdmins = [...oldAdmins];
-    newAdmins.removeWhere((element) => element == admin);
-    return await updateAdministrators(newAdmins, oldAdmins, group) >= 0;
+    int count = await _table.updateAdministrators(newAdmins, oldAdmins, _group);
+    return count > 0;
   }
 
 }
 
-class AdminCache extends _AdminTable {
+class AdminCache extends DataCache<ID, List<ID>> {
+  AdminCache() : super('group_admins');
 
-  final CachePool<ID, List<ID>> _cache = CacheManager().getPool('administrators');
+  final _AdminTable _table = _AdminTable();
 
-  @override
+  _AdminTask _newTask(ID group, {List<ID>? oldAdmins}) =>
+      _AdminTask(mutexLock, cachePool, _table, group, oldAdmins: oldAdmins);
+
   Future<List<ID>> getAdministrators(ID group) async {
-    CachePair<List<ID>>? pair;
-    CacheHolder<List<ID>>? holder;
-    List<ID>? value;
-    double now = Time.currentTimeSeconds;
-    await lock();
-    try {
-      // 1. check memory cache
-      pair = _cache.fetch(group, now: now);
-      holder = pair?.holder;
-      value = pair?.value;
-      if (value == null) {
-        if (holder == null) {
-          // not load yet, wait to load
-        } else if (holder.isAlive(now: now)) {
-          // value not exists
-          return [];
-        } else {
-          // cache expired, wait to reload
-          holder.renewal(128, now: now);
-        }
-        // 2. load from database
-        value = await super.getAdministrators(group);
-        // update cache
-        _cache.updateValue(group, value, 3600, now: now);
-      }
-    } finally {
-      unlock();
-    }
-    // OK, return cache now
-    return value;
+    var task = _newTask(group);
+    var contacts = await task.load();
+    return contacts ?? [];
   }
 
-  @override
-  Future<bool> saveAdministrators(List<ID> admins, ID group) async {
-    List<ID> oldAdmins = await getAdministrators(group);
-    int cnt = await updateAdministrators(admins, oldAdmins, group);
-    if (cnt > 0) {
-      // clear to reload
-      _cache.erase(group);
+  Future<bool> _updateAdmins(List<ID> newAdmins, List<ID> oldAdmins, {required ID group}) async {
+    var task = _newTask(group, oldAdmins: oldAdmins);
+    return await task.save(newAdmins);
+  }
+
+  Future<bool> saveAdministrators(List<ID> newAdmins, ID group) async {
+    // save new admins
+    var oldAdmins = await getAdministrators(group);
+    var ok = await _updateAdmins(newAdmins, oldAdmins, group: group);
+    if (ok) {
       // post notification
       var nc = NotificationCenter();
       nc.postNotification(NotificationNames.kAdministratorsUpdated, this, {
         'action': 'update',
         'ID': group,
         'group': group,
-        'administrators': admins,
+        'administrators': newAdmins,
       });
     }
-    return cnt >= 0;
+    return ok;
   }
 
-  @override
   Future<bool> addAdministrator(ID admin, {required ID group}) async {
     List<ID> oldAdmins = await getAdministrators(group);
     if (oldAdmins.contains(admin)) {
-      Log.warning('admin exists: $admin, group: $group');
+      logWarning('admin exists: $admin, group: $group');
       return true;
     }
     List<ID> newAdmins = [...oldAdmins, admin];
-    int cnt = await updateAdministrators(newAdmins, oldAdmins, group);
-    if (cnt > 0) {
-      // clear to reload
-      _cache.erase(group);
+    var ok = await _updateAdmins(newAdmins, oldAdmins, group: group);
+    if (ok) {
       // post notification
       var nc = NotificationCenter();
       nc.postNotification(NotificationNames.kAdministratorsUpdated, this, {
@@ -187,22 +171,19 @@ class AdminCache extends _AdminTable {
         'administrators': newAdmins,
       });
     }
-    return cnt >= 0;
+    return ok;
   }
 
-  @override
   Future<bool> removeAdministrator(ID admin, {required ID group}) async {
     List<ID> oldAdmins = await getAdministrators(group);
     if (!oldAdmins.contains(admin)) {
-      Log.warning('administrator not exists: $admin, group: $group');
+      logWarning('administrator not exists: $admin, group: $group');
       return true;
     }
     List<ID> newAdmins = [...oldAdmins];
     newAdmins.removeWhere((element) => element == admin);
-    int cnt = await updateAdministrators(newAdmins, oldAdmins, group);
-    if (cnt > 0) {
-      // clear to reload
-      _cache.erase(group);
+    var ok = await _updateAdmins(newAdmins, oldAdmins, group: group);
+    if (ok) {
       // post notification
       var nc = NotificationCenter();
       nc.postNotification(NotificationNames.kAdministratorsUpdated, this, {
@@ -213,7 +194,7 @@ class AdminCache extends _AdminTable {
         'administrators': newAdmins,
       });
     }
-    return cnt >= 0;
+    return ok;
   }
 
 }

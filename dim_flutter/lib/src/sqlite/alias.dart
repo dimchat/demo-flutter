@@ -1,4 +1,3 @@
-import 'package:mutex/mutex.dart';
 
 import 'package:dim_client/ok.dart';
 import 'package:dim_client/sdk.dart';
@@ -81,13 +80,17 @@ class _RemarkTable extends DataTableHandler<ContactRemark> {
 
 }
 
-class _RemarkTask extends DatabaseTask<ID, List<ContactRemark>> {
-  _RemarkTask(this._user, this._table, super.mutexLock, super.cachePool, {
+class _RemarkTask extends DbTask<ID, List<ContactRemark>> {
+  _RemarkTask(super.mutexLock, super.cachePool, this._table, this._user, {
     required bool? update,
-  }) : _update = update;
+    required ContactRemark? newRemark,
+  }) : _update = update, _newRemark = newRemark;
 
   final ID _user;
+
   final bool? _update;
+  final ContactRemark? _newRemark;
+
   final _RemarkTable _table;
 
   @override
@@ -99,28 +102,34 @@ class _RemarkTask extends DatabaseTask<ID, List<ContactRemark>> {
   }
 
   @override
-  Future<bool> writeData(List<ContactRemark> remarks) async {
-    assert(remarks.length == 1, 'should not happen: $remarks');
-    ContactRemark remark = remarks.first;
+  Future<bool> writeData(List<ContactRemark> allRemarks) async {
+    assert(allRemarks.isNotEmpty, 'remark list should not empty here: $_user');
+    ContactRemark? remark = _newRemark;
+    if (remark == null) {
+      assert(false, 'should not happen: $_user, $remark');
+      return false;
+    }
     bool? update = _update;
     if (update == null) {
+      // duplicated records found, clear all
       await _table.clearRemarks(remark.identifier, user: _user);
     } else if (update == true) {
+      // update old record
       return await _table.updateRemark(remark, user: _user);
     }
+    // insert new record
     return await _table.addRemark(remark, user: _user);
   }
 
 }
 
-class RemarkCache with Logging implements RemarkDBI {
+class RemarkCache extends DataCache<ID, List<ContactRemark>> implements RemarkDBI {
+  RemarkCache() : super('contact_remarks');
 
   final _RemarkTable _table = _RemarkTable();
-  final Mutex _lock = Mutex();
-  final CachePool<ID, List<ContactRemark>> _cache = CacheManager().getPool('contact_remarks');
 
-  _RemarkTask _newTask(ID user, {bool? update}) =>
-      _RemarkTask(user, _table, _lock, _cache, update: update);
+  _RemarkTask _newTask(ID user, {bool? update, ContactRemark? newRemark}) =>
+      _RemarkTask(mutexLock, cachePool, _table, user, update: update, newRemark: newRemark);
 
   @override
   Future<ContactRemark?> getRemark(ID contact, {required ID user}) async {
@@ -139,13 +148,19 @@ class RemarkCache with Logging implements RemarkDBI {
     return null;
   }
 
-  List<ContactRemark> _fetchRemarks(List<ContactRemark> remarks, ID contact) {
+  List<ContactRemark> _shiftRemarks(List<ContactRemark> allRemarks, ContactRemark newRemark) {
     List<ContactRemark> array = [];
-    for (ContactRemark item in remarks) {
-      if (item.identifier == contact) {
+    ContactRemark item;
+    for (int index = allRemarks.length - 1; index >= 0; --index) {
+      item = allRemarks[index];
+      if (item.identifier == newRemark.identifier) {
+        // remove old records
         array.add(item);
+        allRemarks.removeAt(index);
       }
     }
+    // add new record
+    allRemarks.add(newRemark);
     return array;
   }
 
@@ -156,29 +171,28 @@ class RemarkCache with Logging implements RemarkDBI {
     //
     var task = _newTask(user);
     List<ContactRemark>? array = await task.load();
+    List<ContactRemark> old;
     if (array == null) {
-      array = [];
+      array = [remark];
+      old = [];
     } else {
-      array = _fetchRemarks(array, remark.identifier);
+      old = _shiftRemarks(array, remark);
     }
-    if (array.isEmpty) {
+    if (old.isEmpty) {
       // adding new record
-      task = _newTask(user, update: false);
-    } else if (array.length == 1) {
+      task = _newTask(user, update: false, newRemark: remark);
+    } else if (old.length == 1) {
       // update old record
-      task = _newTask(user, update: true);
+      task = _newTask(user, update: true, newRemark: remark);
     } else {
-      logError('duplicated remarks: $user -> $array');
-      task = _newTask(user, update: null);
+      logError('duplicated remarks: $user -> $old');
+      task = _newTask(user, update: null, newRemark: remark);
     }
     //
     //  2. save new record
     //
-    bool ok = await task.save([remark]);
-    if (ok) {
-      // clear to reload
-      _cache.erase(user);
-    } else {
+    bool ok = await task.save(array);
+    if (!ok) {
       logError('failed to save remark: $user -> $remark');
       return false;
     }

@@ -5,6 +5,7 @@ import 'package:dim_client/common.dart';
 
 import '../common/constants.dart';
 import 'helper/sqlite.dart';
+import 'helper/task.dart';
 
 import 'entity.dart';
 
@@ -14,7 +15,7 @@ ID _extractContact(ResultSet resultSet, int index) {
   return ID.parse(user)!;
 }
 
-class _ContactTable extends DataTableHandler<ID> implements ContactDBI {
+class _ContactTable extends DataTableHandler<ID> {
   _ContactTable() : super(EntityDatabase(), _extractContact);
 
   static const String _table = EntityDatabase.tContact;
@@ -31,10 +32,10 @@ class _ContactTable extends DataTableHandler<ID> implements ContactDBI {
       assert(oldContacts.isNotEmpty, 'new contacts empty??');
       cond = SQLConditions(left: 'uid', comparison: '=', right: user.toString());
       if (await delete(_table, conditions: cond) < 0) {
-        Log.error('failed to clear contacts for user: $user');
+        logError('failed to clear contacts for user: $user');
         return -1;
       }
-      Log.warning('contacts cleared for user: $user');
+      logWarning('contacts cleared for user: $user');
       return oldContacts.length;
     }
     int count = 0;
@@ -48,7 +49,7 @@ class _ContactTable extends DataTableHandler<ID> implements ContactDBI {
       cond.addCondition(SQLConditions.kAnd,
           left: 'contact', comparison: '=', right: item.toString());
       if (await delete(_table, conditions: cond) < 0) {
-        Log.error('failed to remove contact: $item, user: $user');
+        logError('failed to remove contact: $item, user: $user');
         return -1;
       }
       ++count;
@@ -61,108 +62,107 @@ class _ContactTable extends DataTableHandler<ID> implements ContactDBI {
       }
       List values = [user.toString(), item.toString()];
       if (await insert(_table, columns: _insertColumns, values: values) < 0) {
-        Log.error('failed to add contact: $item, user: $user');
+        logError('failed to add contact: $item, user: $user');
         return -1;
       }
       ++count;
     }
 
     if (count == 0) {
-      Log.warning('contacts not changed: $user');
+      logWarning('contacts not changed: $user');
       return 0;
     }
-    Log.info('updated $count contact(s) for user: $user');
+    logInfo('updated $count contact(s) for user: $user');
     return count;
   }
 
-  @override
+  // protected
   Future<List<ID>> getContacts({required ID user}) async {
     SQLConditions cond;
     cond = SQLConditions(left: 'uid', comparison: '=', right: user.toString());
     return await select(_table, columns: _selectColumns, conditions: cond);
   }
 
+}
+
+class _ContactTask extends DbTask<ID, List<ID>> {
+  _ContactTask(super.mutexLock, super.cachePool, this._table, this._user, {
+    required List<ID>? oldContacts,
+  }) : _oldContacts = oldContacts;
+
+  final ID _user;
+
+  final List<ID>? _oldContacts;
+
+  final _ContactTable _table;
+
   @override
-  Future<bool> saveContacts(List<ID> contacts, {required ID user}) async {
-    List<ID> oldContacts = await getContacts(user: user);
-    return await updateContacts(contacts, oldContacts, user) >= 0;
+  ID get cacheKey => _user;
+
+  @override
+  Future<List<ID>?> readData() async {
+    return await _table.getContacts(user: _user);
   }
 
-  Future<bool> addContact(ID contact, {required ID user}) async {
-    List<ID> oldContacts = await getContacts(user: user);
-    if (oldContacts.contains(contact)) {
-      Log.warning('contact exists: $contact, user: $user');
-      return true;
+  @override
+  Future<bool> writeData(List<ID> newContacts) async {
+    List<ID>? oldContacts = _oldContacts;
+    if (oldContacts == null) {
+      assert(false, 'should not happen: $_user');
+      return false;
     }
-    List<ID> newContacts = [...oldContacts, contact];
-    return await updateContacts(newContacts, oldContacts, user) >= 0;
-  }
-
-  Future<bool> removeContact(ID contact, {required ID user}) async {
-    List<ID> oldContacts = await getContacts(user: user);
-    if (!oldContacts.contains(contact)) {
-      Log.warning('contact not exists: $contact, user: $user');
-      return true;
-    }
-    List<ID> newContacts = [...oldContacts];
-    newContacts.removeWhere((element) => element == contact);
-    return await updateContacts(newContacts, oldContacts, user) >= 0;
+    int count = await _table.updateContacts(newContacts, oldContacts, _user);
+    return count > 0;
   }
 
 }
 
-class ContactCache extends _ContactTable {
+class ContactCache extends DataCache<ID, List<ID>> implements ContactDBI  {
+  ContactCache() : super('user_contacts');
 
-  final Map<ID, List<ID>> _caches = {};
+  final _ContactTable _table = _ContactTable();
+
+  _ContactTask _newTask(ID user, {List<ID>? oldContacts}) =>
+      _ContactTask(mutexLock, cachePool, _table, user, oldContacts: oldContacts);
 
   @override
   Future<List<ID>> getContacts({required ID user}) async {
-    List<ID>? array;
-    await lock();
-    try {
-      array = _caches[user];
-      if (array == null) {
-        // cache not found, try to load from database
-        array = await super.getContacts(user: user);
-        // add to cache
-        _caches[user] = array;
-      }
-    } finally {
-      unlock();
-    }
-    return array;
+    var task = _newTask(user);
+    var contacts = await task.load();
+    return contacts ?? [];
+  }
+
+  Future<bool> _updateContacts(List<ID> newContacts, List<ID> oldContacts, {required ID user}) async {
+    var task = _newTask(user, oldContacts: oldContacts);
+    return await task.save(newContacts);
   }
 
   @override
-  Future<bool> saveContacts(List<ID> contacts, {required ID user}) async {
-    List<ID> oldContacts = await getContacts(user: user);
-    int cnt = await updateContacts(contacts, oldContacts, user);
-    if (cnt > 0) {
-      // clear to reload
-      _caches.remove(user);
+  Future<bool> saveContacts(List<ID> newContacts, {required ID user}) async {
+    // save new contacts
+    var oldContacts = await getContacts(user: user);
+    var ok = await _updateContacts(newContacts, oldContacts, user: user);
+    if (ok) {
       // post notification
       var nc = NotificationCenter();
       nc.postNotification(NotificationNames.kContactsUpdated, this, {
         'action': 'update',
         'user': user,
-        'contacts': contacts,
+        'contacts': newContacts,
       });
     }
-    return cnt >= 0;
+    return ok;
   }
 
-  @override
   Future<bool> addContact(ID contact, {required ID user}) async {
     List<ID> oldContacts = await getContacts(user: user);
     if (oldContacts.contains(contact)) {
-      Log.warning('contact exists: $contact, user: $user');
+      logWarning('contact exists: $contact, user: $user');
       return true;
     }
     List<ID> newContacts = [...oldContacts, contact];
-    int cnt = await updateContacts(newContacts, oldContacts, user);
-    if (cnt > 0) {
-      // clear to reload
-      _caches.remove(user);
+    bool ok = await _updateContacts(newContacts, oldContacts, user: user);
+    if (ok) {
       // post notification
       var nc = NotificationCenter();
       nc.postNotification(NotificationNames.kContactsUpdated, this, {
@@ -172,22 +172,19 @@ class ContactCache extends _ContactTable {
         'contacts': newContacts,
       });
     }
-    return cnt >= 0;
+    return ok;
   }
 
-  @override
   Future<bool> removeContact(ID contact, {required ID user}) async {
     List<ID> oldContacts = await getContacts(user: user);
     if (!oldContacts.contains(contact)) {
-      Log.warning('contact not exists: $contact, user: $user');
+      logWarning('contact not exists: $contact, user: $user');
       return true;
     }
     List<ID> newContacts = [...oldContacts];
     newContacts.removeWhere((element) => element == contact);
-    int cnt = await updateContacts(newContacts, oldContacts, user);
-    if (cnt > 0) {
-      // clear to reload
-      _caches.remove(user);
+    bool ok = await _updateContacts(newContacts, oldContacts, user: user);
+    if (ok) {
       // post notification
       var nc = NotificationCenter();
       nc.postNotification(NotificationNames.kContactsUpdated, this, {
@@ -197,7 +194,7 @@ class ContactCache extends _ContactTable {
         'contacts': newContacts,
       });
     }
-    return cnt >= 0;
+    return ok;
   }
 
 }

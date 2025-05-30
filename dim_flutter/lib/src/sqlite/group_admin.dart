@@ -22,61 +22,34 @@ class _AdminTable extends DataTableHandler<ID> {
   static const List<String> _insertColumns = ["gid", "admin"];
 
   // protected
-  Future<int> updateAdministrators(List<ID> newAdmins, List<ID> oldAdmins, ID group) async {
-    assert(!identical(newAdmins, oldAdmins), 'should not be the same object');
+  Future<bool> removeAdmin(ID admin, {required ID group}) async {
     SQLConditions cond;
-
-    // 0. check new admins
-    if (newAdmins.isEmpty) {
-      // assert(oldAdmins.isNotEmpty, 'new administrators empty??');
-      cond = SQLConditions(left: 'gid', comparison: '=', right: group.toString());
-      if (await delete(_table, conditions: cond) < 0) {
-        logError('failed to clear administrators for group: $group');
-        return -1;
-      }
-      logWarning('administrators cleared for group: $group');
-      return oldAdmins.length;
+    cond = SQLConditions(left: 'gid', comparison: '=', right: group.toString());
+    cond.addCondition(SQLConditions.kAnd,
+        left: 'admin', comparison: '=', right: admin.toString());
+    if (await delete(_table, conditions: cond) < 0) {
+      logError('failed to remove administrator: $admin, group: $group');
+      return false;
     }
-    int count = 0;
-
-    // 1. remove
-    for (ID item in oldAdmins) {
-      if (newAdmins.contains(item)) {
-        continue;
-      }
-      cond = SQLConditions(left: 'gid', comparison: '=', right: group.toString());
-      cond.addCondition(SQLConditions.kAnd,
-          left: 'admin', comparison: '=', right: item.toString());
-      if (await delete(_table, conditions: cond) < 0) {
-        logError('failed to remove administrator: $item, group: $group');
-        return -1;
-      }
-      ++count;
-    }
-
-    // 2. add
-    for (ID item in newAdmins) {
-      if (oldAdmins.contains(item)) {
-        continue;
-      }
-      List values = [group.toString(), item.toString()];
-      if (await insert(_table, columns: _insertColumns, values: values) < 0) {
-        logError('failed to add administrator: $item, group: $group');
-        return -1;
-      }
-      ++count;
-    }
-
-    if (count == 0) {
-      logWarning('administrators not changed: $group');
-      return 0;
-    }
-    logInfo('updated $count administrator(s) for group: $group');
-    return count;
+    return true;
   }
 
   // protected
-  Future<List<ID>> getAdministrators(ID group) async {
+  Future<bool> addAdmin(ID admin, {required ID group}) async {
+    // add new record
+    List values = [
+      group.toString(),
+      admin.toString(),
+    ];
+    if (await insert(_table, columns: _insertColumns, values: values) <= 0) {
+      logError('failed to add administrator: $admin, group: $group');
+      return false;
+    }
+    return true;
+  }
+
+  // protected
+  Future<List<ID>> loadAdministrators(ID group) async {
     SQLConditions cond;
     cond = SQLConditions(left: 'gid', comparison: '=', right: group.toString());
     return await select(_table, distinct: true, columns: _selectColumns, conditions: cond);
@@ -86,12 +59,14 @@ class _AdminTable extends DataTableHandler<ID> {
 
 class _AdminTask extends DbTask<ID, List<ID>> {
   _AdminTask(super.mutexLock, super.cachePool, this._table, this._group, {
-    required List<ID>? oldAdmins,
-  }) : _oldAdmins = oldAdmins;
+    required ID? append,
+    required ID? remove,
+  }) : _append = append, _remove = remove;
 
   final ID _group;
 
-  final List<ID>? _oldAdmins;
+  final ID? _append;
+  final ID? _remove;
 
   final _AdminTable _table;
 
@@ -100,18 +75,30 @@ class _AdminTask extends DbTask<ID, List<ID>> {
 
   @override
   Future<List<ID>?> readData() async {
-    return await _table.getAdministrators(_group);
+    return await _table.loadAdministrators(_group);
   }
 
   @override
-  Future<bool> writeData(List<ID> newAdmins) async {
-    List<ID>? oldAdmins = _oldAdmins;
-    if (oldAdmins == null) {
-      assert(false, 'should not happen: $_group');
-      return false;
+  Future<bool> writeData(List<ID> admins) async {
+    // 1. add
+    bool ok1 = false;
+    ID? append = _append;
+    if (append != null) {
+      ok1 = await _table.addAdmin(append, group: _group);
+      if (ok1) {
+        admins.add(append);
+      }
     }
-    int count = await _table.updateAdministrators(newAdmins, oldAdmins, _group);
-    return count > 0;
+    // 2. remove
+    bool ok2 = false;
+    ID? remove = _remove;
+    if (remove != null) {
+      ok2 = await _table.removeAdmin(remove, group: _group);
+      if (ok2) {
+        admins.remove(remove);
+      }
+    }
+    return ok1 || ok2;
   }
 
 }
@@ -121,8 +108,8 @@ class AdminCache extends DataCache<ID, List<ID>> {
 
   final _AdminTable _table = _AdminTable();
 
-  _AdminTask _newTask(ID group, {List<ID>? oldAdmins}) =>
-      _AdminTask(mutexLock, cachePool, _table, group, oldAdmins: oldAdmins);
+  _AdminTask _newTask(ID group, {ID? append, ID? remove}) =>
+      _AdminTask(mutexLock, cachePool, _table, group, append: append, remove: remove);
 
   Future<List<ID>> getAdministrators(ID group) async {
     var task = _newTask(group);
@@ -130,36 +117,68 @@ class AdminCache extends DataCache<ID, List<ID>> {
     return contacts ?? [];
   }
 
-  Future<bool> _updateAdmins(List<ID> newAdmins, List<ID> oldAdmins, {required ID group}) async {
-    var task = _newTask(group, oldAdmins: oldAdmins);
-    return await task.save(newAdmins);
-  }
-
   Future<bool> saveAdministrators(List<ID> newAdmins, ID group) async {
-    // save new admins
-    var oldAdmins = await getAdministrators(group);
-    var ok = await _updateAdmins(newAdmins, oldAdmins, group: group);
-    if (ok) {
-      // post notification
-      var nc = NotificationCenter();
-      nc.postNotification(NotificationNames.kAdministratorsUpdated, this, {
-        'action': 'update',
-        'ID': group,
-        'group': group,
-        'administrators': newAdmins,
-      });
+    var task = _newTask(group);
+    var allAdmins = await task.load();
+    allAdmins ??= [];
+
+    var oldAdmins = [...allAdmins];
+    int count = 0;
+    // 1. remove
+    for (ID item in oldAdmins) {
+      if (newAdmins.contains(item)) {
+        continue;
+      }
+      task = _newTask(group, remove: item);
+      if (await task.save(allAdmins)) {
+        ++count;
+      } else {
+        logError('failed to remove admin: $item, group: $group');
+        return false;
+      }
     }
-    return ok;
+    // 2. add
+    for (ID item in newAdmins) {
+      if (oldAdmins.contains(item)) {
+        continue;
+      }
+      task = _newTask(group, append: item);
+      if (await task.save(allAdmins)) {
+        ++count;
+      } else {
+        logError('failed to add admin: $item, group: $group');
+        return false;
+      }
+    }
+
+    if (count == 0) {
+      logWarning('admins not changed: $group');
+    } else {
+      logInfo('updated $count admin(s) for group: $group');
+    }
+
+    // post notification
+    var nc = NotificationCenter();
+    nc.postNotification(NotificationNames.kAdministratorsUpdated, this, {
+      'action': 'update',
+      'ID': group,
+      'group': group,
+      'administrators': newAdmins,
+    });
+    return true;
   }
 
   Future<bool> addAdministrator(ID admin, {required ID group}) async {
-    List<ID> oldAdmins = await getAdministrators(group);
-    if (oldAdmins.contains(admin)) {
+    var task = _newTask(group);
+    var allAdmins = await task.load();
+    if (allAdmins == null) {
+      allAdmins = [];
+    } else if (allAdmins.contains(admin)) {
       logWarning('admin exists: $admin, group: $group');
       return true;
     }
-    List<ID> newAdmins = [...oldAdmins, admin];
-    var ok = await _updateAdmins(newAdmins, oldAdmins, group: group);
+    task = _newTask(group, append: admin);
+    var ok = await task.save(allAdmins);
     if (ok) {
       // post notification
       var nc = NotificationCenter();
@@ -168,21 +187,26 @@ class AdminCache extends DataCache<ID, List<ID>> {
         'ID': group,
         'group': group,
         'administrator': admin,
-        'administrators': newAdmins,
+        'administrators': allAdmins,
       });
     }
     return ok;
   }
 
   Future<bool> removeAdministrator(ID admin, {required ID group}) async {
-    List<ID> oldAdmins = await getAdministrators(group);
-    if (!oldAdmins.contains(admin)) {
-      logWarning('administrator not exists: $admin, group: $group');
+    var task = _newTask(group);
+    var allAdmins = await task.load();
+    if (allAdmins == null) {
+      logError('failed to get admins');
+      return false;
+    } else if (allAdmins.contains(admin)) {
+      // found
+    } else {
+      logWarning('admin not exists: $admin, group: $group');
       return true;
     }
-    List<ID> newAdmins = [...oldAdmins];
-    newAdmins.removeWhere((element) => element == admin);
-    var ok = await _updateAdmins(newAdmins, oldAdmins, group: group);
+    task = _newTask(group, remove: admin);
+    var ok = await task.save(allAdmins);
     if (ok) {
       // post notification
       var nc = NotificationCenter();
@@ -191,7 +215,7 @@ class AdminCache extends DataCache<ID, List<ID>> {
         'ID': group,
         'group': group,
         'administrator': admin,
-        'administrators': newAdmins,
+        'administrators': allAdmins,
       });
     }
     return ok;

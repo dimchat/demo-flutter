@@ -23,61 +23,34 @@ class _ContactTable extends DataTableHandler<ID> {
   static const List<String> _insertColumns = ["uid", "contact"];
 
   // protected
-  Future<int> updateContacts(List<ID> newContacts, List<ID> oldContacts, ID user) async {
-    assert(!identical(newContacts, oldContacts), 'should not be the same object');
+  Future<bool> removeContact(ID contact, {required ID user}) async {
     SQLConditions cond;
-
-    // 0. check new contacts
-    if (newContacts.isEmpty) {
-      assert(oldContacts.isNotEmpty, 'new contacts empty??');
-      cond = SQLConditions(left: 'uid', comparison: '=', right: user.toString());
-      if (await delete(_table, conditions: cond) < 0) {
-        logError('failed to clear contacts for user: $user');
-        return -1;
-      }
-      logWarning('contacts cleared for user: $user');
-      return oldContacts.length;
+    cond = SQLConditions(left: 'uid', comparison: '=', right: user.toString());
+    cond.addCondition(SQLConditions.kAnd,
+        left: 'contact', comparison: '=', right: contact.toString());
+    if (await delete(_table, conditions: cond) < 0) {
+      logError('failed to remove contact: $contact, user: $user');
+      return false;
     }
-    int count = 0;
-
-    // 1. remove
-    for (ID item in oldContacts) {
-      if (newContacts.contains(item)) {
-        continue;
-      }
-      cond = SQLConditions(left: 'uid', comparison: '=', right: user.toString());
-      cond.addCondition(SQLConditions.kAnd,
-          left: 'contact', comparison: '=', right: item.toString());
-      if (await delete(_table, conditions: cond) < 0) {
-        logError('failed to remove contact: $item, user: $user');
-        return -1;
-      }
-      ++count;
-    }
-
-    // 2. add
-    for (ID item in newContacts) {
-      if (oldContacts.contains(item)) {
-        continue;
-      }
-      List values = [user.toString(), item.toString()];
-      if (await insert(_table, columns: _insertColumns, values: values) < 0) {
-        logError('failed to add contact: $item, user: $user');
-        return -1;
-      }
-      ++count;
-    }
-
-    if (count == 0) {
-      logWarning('contacts not changed: $user');
-      return 0;
-    }
-    logInfo('updated $count contact(s) for user: $user');
-    return count;
+    return true;
   }
 
   // protected
-  Future<List<ID>> getContacts({required ID user}) async {
+  Future<bool> addContact(ID contact, {required ID user}) async {
+    // add new record
+    List values = [
+      user.toString(),
+      contact.toString(),
+    ];
+    if (await insert(_table, columns: _insertColumns, values: values) <= 0) {
+      logError('failed to add contact: $contact, user: $user');
+      return false;
+    }
+    return true;
+  }
+
+  // protected
+  Future<List<ID>> loadContacts({required ID user}) async {
     SQLConditions cond;
     cond = SQLConditions(left: 'uid', comparison: '=', right: user.toString());
     return await select(_table, columns: _selectColumns, conditions: cond);
@@ -87,12 +60,14 @@ class _ContactTable extends DataTableHandler<ID> {
 
 class _ContactTask extends DbTask<ID, List<ID>> {
   _ContactTask(super.mutexLock, super.cachePool, this._table, this._user, {
-    required List<ID>? oldContacts,
-  }) : _oldContacts = oldContacts;
+    required ID? append,
+    required ID? remove,
+  }) : _append = append, _remove = remove;
 
   final ID _user;
 
-  final List<ID>? _oldContacts;
+  final ID? _append;
+  final ID? _remove;
 
   final _ContactTable _table;
 
@@ -101,18 +76,30 @@ class _ContactTask extends DbTask<ID, List<ID>> {
 
   @override
   Future<List<ID>?> readData() async {
-    return await _table.getContacts(user: _user);
+    return await _table.loadContacts(user: _user);
   }
 
   @override
-  Future<bool> writeData(List<ID> newContacts) async {
-    List<ID>? oldContacts = _oldContacts;
-    if (oldContacts == null) {
-      assert(false, 'should not happen: $_user');
-      return false;
+  Future<bool> writeData(List<ID> contacts) async {
+    // 1. add
+    bool ok1 = false;
+    ID? append = _append;
+    if (append != null) {
+      ok1 = await _table.addContact(append, user: _user);
+      if (ok1) {
+        contacts.add(append);
+      }
     }
-    int count = await _table.updateContacts(newContacts, oldContacts, _user);
-    return count > 0;
+    // 2. remove
+    bool ok2 = false;
+    ID? remove = _remove;
+    if (remove != null) {
+      ok2 = await _table.removeContact(remove, user: _user);
+      if (ok2) {
+        contacts.remove(remove);
+      }
+    }
+    return ok1 || ok2;
   }
 
 }
@@ -122,8 +109,8 @@ class ContactCache extends DataCache<ID, List<ID>> implements ContactDBI  {
 
   final _ContactTable _table = _ContactTable();
 
-  _ContactTask _newTask(ID user, {List<ID>? oldContacts}) =>
-      _ContactTask(mutexLock, cachePool, _table, user, oldContacts: oldContacts);
+  _ContactTask _newTask(ID user, {ID? append, ID? remove}) =>
+      _ContactTask(mutexLock, cachePool, _table, user, append: append, remove: remove);
 
   @override
   Future<List<ID>> getContacts({required ID user}) async {
@@ -132,36 +119,68 @@ class ContactCache extends DataCache<ID, List<ID>> implements ContactDBI  {
     return contacts ?? [];
   }
 
-  Future<bool> _updateContacts(List<ID> newContacts, List<ID> oldContacts, {required ID user}) async {
-    var task = _newTask(user, oldContacts: oldContacts);
-    return await task.save(newContacts);
-  }
-
   @override
   Future<bool> saveContacts(List<ID> newContacts, {required ID user}) async {
-    // save new contacts
-    var oldContacts = await getContacts(user: user);
-    var ok = await _updateContacts(newContacts, oldContacts, user: user);
-    if (ok) {
-      // post notification
-      var nc = NotificationCenter();
-      nc.postNotification(NotificationNames.kContactsUpdated, this, {
-        'action': 'update',
-        'user': user,
-        'contacts': newContacts,
-      });
+    var task = _newTask(user);
+    var allContacts = await task.load();
+    allContacts ??= [];
+
+    var oldContacts = [...allContacts];
+    int count = 0;
+    // 1. remove
+    for (ID item in oldContacts) {
+      if (newContacts.contains(item)) {
+        continue;
+      }
+      task = _newTask(user, remove: item);
+      if (await task.save(allContacts)) {
+        ++count;
+      } else {
+        logError('failed to remove contact: $item, user: $user');
+        return false;
+      }
     }
-    return ok;
+    // 2. add
+    for (ID item in newContacts) {
+      if (oldContacts.contains(item)) {
+        continue;
+      }
+      task = _newTask(user, append: item);
+      if (await task.save(allContacts)) {
+        ++count;
+      } else {
+        logError('failed to add contact: $item, user: $user');
+        return false;
+      }
+    }
+
+    if (count == 0) {
+      logWarning('contacts not changed: $user');
+    } else {
+      logInfo('updated $count contact(s) for user: $user');
+    }
+
+    // post notification
+    var nc = NotificationCenter();
+    nc.postNotification(NotificationNames.kContactsUpdated, this, {
+      'action': 'update',
+      'user': user,
+      'contacts': newContacts,
+    });
+    return true;
   }
 
   Future<bool> addContact(ID contact, {required ID user}) async {
-    List<ID> oldContacts = await getContacts(user: user);
-    if (oldContacts.contains(contact)) {
-      logWarning('contact exists: $contact, user: $user');
+    var task = _newTask(user);
+    var allContacts = await task.load();
+    if (allContacts == null) {
+      allContacts = [];
+    } else if (allContacts.contains(user)) {
+      logWarning('contact exists: $user');
       return true;
     }
-    List<ID> newContacts = [...oldContacts, contact];
-    bool ok = await _updateContacts(newContacts, oldContacts, user: user);
+    task = _newTask(user, append: contact);
+    var ok = await task.save(allContacts);
     if (ok) {
       // post notification
       var nc = NotificationCenter();
@@ -169,21 +188,26 @@ class ContactCache extends DataCache<ID, List<ID>> implements ContactDBI  {
         'action': 'add',
         'user': user,
         'contact': contact,
-        'contacts': newContacts,
+        'contacts': allContacts,
       });
     }
     return ok;
   }
 
   Future<bool> removeContact(ID contact, {required ID user}) async {
-    List<ID> oldContacts = await getContacts(user: user);
-    if (!oldContacts.contains(contact)) {
-      logWarning('contact not exists: $contact, user: $user');
+    var task = _newTask(user);
+    var allContacts = await task.load();
+    if (allContacts == null) {
+      logError('failed to get contacts');
+      return false;
+    } else if (allContacts.contains(contact)) {
+      // found
+    } else {
+      logWarning('contact not exists: $user');
       return true;
     }
-    List<ID> newContacts = [...oldContacts];
-    newContacts.removeWhere((element) => element == contact);
-    bool ok = await _updateContacts(newContacts, oldContacts, user: user);
+    task = _newTask(user, remove: contact);
+    var ok = await task.save(allContacts);
     if (ok) {
       // post notification
       var nc = NotificationCenter();
@@ -191,7 +215,7 @@ class ContactCache extends DataCache<ID, List<ID>> implements ContactDBI  {
         'action': 'remove',
         'user': user,
         'contact': contact,
-        'contacts': newContacts,
+        'contacts': allContacts,
       });
     }
     return ok;

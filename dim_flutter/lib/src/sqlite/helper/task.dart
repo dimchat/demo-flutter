@@ -39,20 +39,19 @@ import 'package:dim_client/ok.dart';
 
 
 abstract class DbTask<K, V> with Logging {
-  DbTask(Mutex mutexLock, CachePool<K, V> cachePool, {
+  DbTask(this.mutexLock, this.cachePool, {
     double? cacheExpires, double? cacheRefresh
   }) {
-    _lock = mutexLock;
-    _cachePool = cachePool;
     _cacheExpires = cacheExpires ?? 3600;
     _cacheRefresh = cacheRefresh ?? 128;
     assert(_cacheExpires > 0, 'cache expires duration error: $_cacheExpires');
     assert(_cacheRefresh > 0, 'cache refresh duration error: $_cacheRefresh');
   }
 
-  late final Mutex _lock;
+  // protected
+  final Mutex mutexLock;
   // memory cache
-  late final CachePool<K, V> _cachePool;
+  final CachePool<K, V> cachePool;
   late final double _cacheExpires;  // in seconds
   late final double _cacheRefresh;  // in seconds
 
@@ -69,16 +68,16 @@ abstract class DbTask<K, V> with Logging {
   Future<bool> save(V value) async {
     double now = Time.currentTimeSeconds;
     bool ok;
-    await _lock.acquire();
+    await mutexLock.acquire();
     try {
       // save into local storage
       ok = await writeData(value);
       if (ok) {
         // update memory cache
-        _cachePool.updateValue(cacheKey, value, _cacheExpires, now: now);
+        cachePool.updateValue(cacheKey, value, _cacheExpires, now: now);
       }
     } finally {
-      _lock.release();
+      mutexLock.release();
     }
     return ok;
   }
@@ -92,7 +91,7 @@ abstract class DbTask<K, V> with Logging {
     ///
     ///  1. check memory cache
     ///
-    pair = _cachePool.fetch(cacheKey, now: now);
+    pair = cachePool.fetch(cacheKey, now: now);
     holder = pair?.holder;
     value = pair?.value;
     if (value != null) {
@@ -109,11 +108,11 @@ abstract class DbTask<K, V> with Logging {
     ///
     ///  2. lock for querying
     ///
-    await _lock.acquire();
+    await mutexLock.acquire();
     try {
       // locked, check again to make sure the cache not exists.
       // (maybe the cache was updated by other threads while waiting the lock)
-      pair = _cachePool.fetch(cacheKey, now: now);
+      pair = cachePool.fetch(cacheKey, now: now);
       holder = pair?.holder;
       value = pair?.value;
       if (value != null) {
@@ -130,9 +129,9 @@ abstract class DbTask<K, V> with Logging {
       // load from local storage
       value = await readData();
       // update memory cache
-      _cachePool.updateValue(cacheKey, value, _cacheExpires, now: now);
+      cachePool.updateValue(cacheKey, value, _cacheExpires, now: now);
     } finally {
-      _lock.release();
+      mutexLock.release();
     }
     ///
     ///  3. OK, return cached value

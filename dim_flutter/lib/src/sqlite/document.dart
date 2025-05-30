@@ -5,6 +5,7 @@ import 'package:dim_client/common.dart';
 
 import '../common/constants.dart';
 import 'helper/sqlite.dart';
+import 'helper/task.dart';
 
 import 'entity.dart';
 
@@ -33,42 +34,18 @@ Document _extractDocument(ResultSet resultSet, int index) {
   return doc;
 }
 
-class _DocumentTable extends DataTableHandler<Document> implements DocumentDBI {
+class _DocumentTable extends DataTableHandler<Document> {
   _DocumentTable() : super(EntityDatabase(), _extractDocument);
 
   static const String _table = EntityDatabase.tDocument;
   static const List<String> _selectColumns = ["did", "type", "data", "signature"];
   static const List<String> _insertColumns = ["did", "type", "data", "signature"];
 
-  @override
-  Future<List<Document>> getDocuments(ID entity) async {
+  // protected
+  Future<List<Document>> loadDocuments(ID entity) async {
     SQLConditions cond;
     cond = SQLConditions(left: 'did', comparison: '=', right: entity.toString());
     return await select(_table, columns: _selectColumns, conditions: cond);
-  }
-
-  @override
-  Future<bool> saveDocument(Document doc) async {
-    ID identifier = doc.identifier;
-    String? type = doc.getString('type', '');
-    // check old documents
-    List<Document> documents = await getDocuments(identifier);
-    for (Document item in documents) {
-      if (item.identifier != identifier) {
-        assert(false, 'document error: $identifier, $item');
-        continue;
-      }
-      if (item.getString('type', '') == type) {
-        // old record found, update it
-        if (item == doc) {
-          Log.warning('same document, no need to update: $identifier');
-          return true;
-        }
-        return await updateDocument(doc);
-      }
-    }
-    // add new record
-    return await insertDocument(doc);
   }
 
   // protected
@@ -93,67 +70,133 @@ class _DocumentTable extends DataTableHandler<Document> implements DocumentDBI {
     String? type = doc.getString('type', '');
     String? data = doc.getString('data', null);
     String? signature = doc.getString('signature', null);
-    List values = [identifier.toString(), type, data, signature];
+    List values = [
+      identifier.toString(),
+      type,
+      data,
+      signature,
+    ];
     return await insert(_table, columns: _insertColumns, values: values) > 0;
   }
 
 }
 
-class DocumentCache extends _DocumentTable {
+class _DocTask extends DbTask<ID, List<Document>> {
+  _DocTask(super.mutexLock, super.cachePool, this._table, this._entity, {
+    required Document? newDocument,
+  }) : _newDocument = newDocument;
 
-  final CachePool<ID, List<Document>> _cache = CacheManager().getPool('document');
+  final ID _entity;
+
+  final Document? _newDocument;
+
+  final _DocumentTable _table;
+
+  @override
+  ID get cacheKey => _entity;
+
+  @override
+  Future<List<Document>?> readData() async {
+    return await _table.loadDocuments(_entity);
+  }
+
+  @override
+  Future<bool> writeData(List<Document> documents) async {
+    Document? doc = _newDocument;
+    if (doc == null) {
+      assert(false, 'should not happen: $_entity');
+      return false;
+    }
+    ID identifier = doc.identifier;
+    String? type = doc.getString('type', '');
+    bool update = false;
+    Document item;
+    // check old documents
+    for (int index = documents.length - 1; index >= 0; --index) {
+      item = documents[index];
+      if (item.identifier != identifier) {
+        assert(false, 'document error: $identifier, $item');
+        continue;
+      } else if (item.getString('type', '') != type) {
+        logInfo('skip document: $identifier, $type, $item');
+        continue;
+      } else if (item == doc) {
+        logWarning('same document, no need to update: $identifier');
+        return true;
+      }
+      // old record found, update it
+      documents[index] = doc;
+      update = true;
+    }
+    if (update) {
+      // update old record
+      return await _table.updateDocument(doc);
+    }
+    // add new record
+    documents.add(doc);
+    return await _table.insertDocument(doc);
+  }
+
+}
+
+class DocumentCache extends DataCache<ID, List<Document>> implements DocumentDBI {
+  DocumentCache() : super('documents');
+
+  final _DocumentTable _table = _DocumentTable();
+
+  _DocTask _newTask(ID entity, {Document? newDocument}) =>
+      _DocTask(mutexLock, cachePool, _table, entity, newDocument: newDocument);
 
   @override
   Future<List<Document>> getDocuments(ID entity) async {
-    CachePair<List<Document>>? pair;
-    CacheHolder<List<Document>>? holder;
-    List<Document>? value;
-    double now = Time.currentTimeSeconds;
-    await lock();
-    try {
-      // 1. check memory cache
-      pair = _cache.fetch(entity, now: now);
-      holder = pair?.holder;
-      value = pair?.value;
-      if (value == null) {
-        if (holder == null) {
-          // not load yet, wait to load
-        } else if (holder.isAlive(now: now)) {
-          // value not exists
-          return [];
-        } else {
-          // cache expired, wait to reload
-          holder.renewal(128, now: now);
-        }
-        // 2. load from database
-        value = await super.getDocuments(entity);
-        // update cache
-        _cache.updateValue(entity, value, 3600, now: now);
-      }
-    } finally {
-      unlock();
-    }
-    // OK, return cache now
-    return value;
+    var task = _newTask(entity);
+    var documents = await task.load();
+    return documents ?? [];
   }
 
   @override
   Future<bool> saveDocument(Document doc) async {
-    // 0. check valid
-    if (!doc.isValid) {
-      Log.error('document not valid: ${doc.identifier}');
-      return false;
-    }
+    //
+    //  0. check valid
+    //
     ID identifier = doc.identifier;
-    // 1. do save
-    if (await super.saveDocument(doc)) {
-      // clear to reload
-      _cache.erase(identifier);
-    } else {
-      Log.error('failed to save document: $identifier');
+    if (!doc.isValid) {
+      logError('document not valid: $identifier');
       return false;
     }
-    // 2. post notification
+    //
+    //  1. load old records
+    //
+    var task = _newTask(identifier);
+    var documents = await task.load();
+    if (documents == null) {
+      documents = [];
+    } else {
+      // check time
+      DateTime? newTime = doc.time;
+      if (newTime != null) {
+        DateTime? oldTime;
+        for (Document item in documents) {
+          oldTime = item.time;
+          if (oldTime != null && oldTime.isAfter(newTime)) {
+            logWarning('ignore expired document: $doc');
+            return false;
+          }
+        }
+      }
+    }
+    //
+    //  2. save new record
+    //
+    task = _newTask(identifier, newDocument: doc);
+    bool ok = await task.save(documents);
+    if (!ok) {
+      logError('failed to save document: $identifier');
+      return false;
+    }
+    //
+    //  3. post notification
+    //
     var nc = NotificationCenter();
     nc.postNotification(NotificationNames.kDocumentUpdated, this, {
       'ID': identifier,

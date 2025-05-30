@@ -120,7 +120,8 @@ class _CustomizedInfoTable extends DataTableHandler<Mapper> {
       JSON.encode(content.toMap()),
       timestamp(time),
       timestamp(expired),
-      mod];
+      mod,
+    ];
     if (await insert(_table, columns: _insertColumns, values: values) <= 0) {
       logError('failed to save customized content: $key -> $content');
       return false;
@@ -154,7 +155,7 @@ class _CustomizedInfoTable extends DataTableHandler<Mapper> {
   }
 
   // protected
-  Future<List<Mapper>> getContents(String key) async {
+  Future<List<Mapper>> loadContents(String key) async {
     SQLConditions cond;
     cond = SQLConditions(left: 'key', comparison: '=', right: key);
     return await select(_table, columns: _selectColumns,
@@ -165,13 +166,13 @@ class _CustomizedInfoTable extends DataTableHandler<Mapper> {
 
 class _CustomizedTask extends DbTask<String, List<Mapper>> {
   _CustomizedTask(super.mutexLock, super.cachePool, this._table, this._cacheKey, {
-    required bool? update,
+    required Mapper? newContent,
     required Duration? expires,
-  }) : _update = update, _dataExpires = expires;
+  }) : _newContent = newContent, _dataExpires = expires;
 
   final String _cacheKey;
 
-  final bool? _update;
+  final Mapper? _newContent;
   final Duration? _dataExpires;
 
   final _CustomizedInfoTable _table;
@@ -181,23 +182,33 @@ class _CustomizedTask extends DbTask<String, List<Mapper>> {
 
   @override
   Future<List<Mapper>?> readData() async {
-    List<Mapper> array = await _table.getContents(_cacheKey);
+    List<Mapper> array = await _table.loadContents(_cacheKey);
     assert(array.length <= 1, 'duplicated contents: $_cacheKey -> $array');
     return array;
   }
 
   @override
   Future<bool> writeData(List<Mapper> contents) async {
-    assert(contents.length == 1, 'should not happen: $contents');
-    bool? update = _update;
-    if (update == null) {
-      // duplicated records found, clear all
-      await _table.clearContents(_cacheKey);
-    } else if (update == true) {
+    Mapper? newContent = _newContent;
+    if (newContent == null) {
+      assert(false, 'should not happen: $_cacheKey');
+      return false;
+    }
+    // check old contents
+    if (contents.isEmpty) {
+      // insert new record
+      contents.add(newContent);
+      return await _table.addContent(contents.first, _cacheKey, expires: _dataExpires);
+    } else if (contents.length == 1) {
       // update old record
+      contents[0] = newContent;
       return await _table.updateContent(contents.first, _cacheKey, expires: _dataExpires);
     }
+    // duplicated records found, clear all
+    await _table.clearContents(_cacheKey);
+    contents.clear();
     // insert new record
+    contents.add(newContent);
     return await _table.addContent(contents.first, _cacheKey, expires: _dataExpires);
   }
 
@@ -208,8 +219,8 @@ class CustomizedInfoCache extends DataCache<String, List<Mapper>> implements App
 
   final _CustomizedInfoTable _table = _CustomizedInfoTable();
 
-  _CustomizedTask _newTask(String key, {bool? update, Duration? expires}) =>
-      _CustomizedTask(mutexLock, cachePool, _table, key, update: update, expires: expires);
+  _CustomizedTask _newTask(String key, {Mapper? newContent, Duration? expires}) =>
+      _CustomizedTask(mutexLock, cachePool, _table, key, newContent: newContent, expires: expires);
 
   @override
   Future<Mapper?> getAppCustomizedInfo(String key, {String? mod}) async {
@@ -238,32 +249,27 @@ class CustomizedInfoCache extends DataCache<String, List<Mapper>> implements App
     //
     var task = _newTask(key);
     List<Mapper>? array = await task.load();
-    if (array == null || array.isEmpty) {
-      // adding new record
-      task = _newTask(key, update: false, expires: expires);
+    if (array == null) {
+      array = [];
     } else {
       // check time
       DateTime? newTime = content.getDateTime('time', null);
       if (newTime != null) {
-        Mapper old = array.first;
-        DateTime? oldTime = old.getDateTime('time', null);
-        if (oldTime != null && oldTime.isAfter(newTime)) {
-          logWarning('ignore expired info: $content');
-          return false;
+        DateTime? oldTime;
+        for (Mapper item in array) {
+          oldTime = item.getDateTime('time', null);
+          if (oldTime != null && oldTime.isAfter(newTime)) {
+            logWarning('ignore expired info: $content');
+            return false;
+          }
         }
-      }
-      if (array.length == 1) {
-        // update old record
-        task = _newTask(key, update: true, expires: expires);
-      } else {
-        logError('duplicated contents: $key -> $array');
-        task = _newTask(key, update: null, expires: expires);
       }
     }
     //
     //  2. save new record
     //
-    bool ok = await task.save([content]);
+    task = _newTask(key, newContent: content, expires: expires);
+    bool ok = await task.save(array);
     if (!ok) {
       logError('failed to save content: $key -> $content');
       return false;

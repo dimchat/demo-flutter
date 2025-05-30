@@ -23,61 +23,34 @@ class _BlockedTable extends DataTableHandler<ID> {
   static const List<String> _insertColumns = ["uid", "blocked"];
 
   // protected
-  Future<int> updateBlockList(List<ID> newContacts, List<ID> oldContacts, ID user) async {
-    assert(!identical(newContacts, oldContacts), 'should not be the same object');
+  Future<bool> removeBlocked(ID contact, {required ID user}) async {
     SQLConditions cond;
-
-    // 0. check new block-list
-    if (newContacts.isEmpty) {
-      assert(oldContacts.isNotEmpty, 'new block-list empty??');
-      cond = SQLConditions(left: 'uid', comparison: '=', right: user.toString());
-      if (await delete(_table, conditions: cond) < 0) {
-        logError('failed to clear block-list for user: $user');
-        return -1;
-      }
-      logWarning('block-list cleared for user: $user');
-      return oldContacts.length;
+    cond = SQLConditions(left: 'uid', comparison: '=', right: user.toString());
+    cond.addCondition(SQLConditions.kAnd,
+        left: 'blocked', comparison: '=', right: contact.toString());
+    if (await delete(_table, conditions: cond) < 0) {
+      logError('failed to remove blocked: $contact, user: $user');
+      return false;
     }
-    int count = 0;
-
-    // 1. remove
-    for (ID item in oldContacts) {
-      if (newContacts.contains(item)) {
-        continue;
-      }
-      cond = SQLConditions(left: 'uid', comparison: '=', right: user.toString());
-      cond.addCondition(SQLConditions.kAnd,
-          left: 'blocked', comparison: '=', right: item.toString());
-      if (await delete(_table, conditions: cond) < 0) {
-        logError('failed to remove blocked: $item, user: $user');
-        return -1;
-      }
-      ++count;
-    }
-
-    // 2. add
-    for (ID item in newContacts) {
-      if (oldContacts.contains(item)) {
-        continue;
-      }
-      List values = [user.toString(), item.toString()];
-      if (await insert(_table, columns: _insertColumns, values: values) < 0) {
-        logError('failed to add blocked: $item, user: $user');
-        return -1;
-      }
-      ++count;
-    }
-
-    if (count == 0) {
-      logWarning('block-list not changed: $user');
-      return 0;
-    }
-    logInfo('updated $count blocked contact(s) for user: $user');
-    return count;
+    return true;
   }
 
   // protected
-  Future<List<ID>> getBlockList(ID user) async {
+  Future<bool> addBlocked(ID contact, {required ID user}) async {
+    // add new record
+    List values = [
+      user.toString(),
+      contact.toString(),
+    ];
+    if (await insert(_table, columns: _insertColumns, values: values) <= 0) {
+      logError('failed to add blocked: $contact, user: $user');
+      return false;
+    }
+    return true;
+  }
+
+  // protected
+  Future<List<ID>> loadBlockedList(ID user) async {
     SQLConditions cond;
     cond = SQLConditions(left: 'uid', comparison: '=', right: user.toString());
     return await select(_table, columns: _selectColumns, conditions: cond);
@@ -87,12 +60,14 @@ class _BlockedTable extends DataTableHandler<ID> {
 
 class _BlockedTask extends DbTask<ID, List<ID>> {
   _BlockedTask(super.mutexLock, super.cachePool, this._table, this._user, {
-    required List<ID>? oldContacts,
-  }) : _oldContacts = oldContacts;
+    required ID? blocked,
+    required ID? allowed,
+  }) : _blocked = blocked, _allowed = allowed;
 
   final ID _user;
 
-  final List<ID>? _oldContacts;
+  final ID? _blocked;
+  final ID? _allowed;
 
   final _BlockedTable _table;
 
@@ -101,18 +76,30 @@ class _BlockedTask extends DbTask<ID, List<ID>> {
 
   @override
   Future<List<ID>?> readData() async {
-    return await _table.getBlockList(_user);
+    return await _table.loadBlockedList(_user);
   }
 
   @override
-  Future<bool> writeData(List<ID> newContacts) async {
-    List<ID>? oldContacts = _oldContacts;
-    if (oldContacts == null) {
-      assert(false, 'should not happen: $_user');
-      return false;
+  Future<bool> writeData(List<ID> contacts) async {
+    // 1. add to block
+    bool ok1 = false;
+    ID? blocked = _blocked;
+    if (blocked != null) {
+      ok1 = await _table.addBlocked(blocked, user: _user);
+      if (ok1) {
+        contacts.add(blocked);
+      }
     }
-    int count = await _table.updateBlockList(newContacts, oldContacts, _user);
-    return count > 0;
+    // 2. remove to allow
+    bool ok2 = false;
+    ID? allowed = _allowed;
+    if (allowed != null) {
+      ok2 = await _table.removeBlocked(allowed, user: _user);
+      if (ok2) {
+        contacts.remove(allowed);
+      }
+    }
+    return ok1 || ok2;
   }
 
 }
@@ -122,8 +109,8 @@ class BlockedCache extends DataCache<ID, List<ID>> implements BlockedDBI {
 
   final _BlockedTable _table = _BlockedTable();
 
-  _BlockedTask _newTask(ID user, {List<ID>? oldContacts}) =>
-      _BlockedTask(mutexLock, cachePool, _table, user, oldContacts: oldContacts);
+  _BlockedTask _newTask(ID user, {ID? blocked, ID? allowed}) =>
+      _BlockedTask(mutexLock, cachePool, _table, user, blocked: blocked, allowed: allowed);
 
   @override
   Future<List<ID>> getBlockList({required ID user}) async {
@@ -132,37 +119,69 @@ class BlockedCache extends DataCache<ID, List<ID>> implements BlockedDBI {
     return contacts ?? [];
   }
 
-  Future<bool> _updateBlockedList(List<ID> newContacts, List<ID> oldContacts, {required ID user}) async {
-    var task = _newTask(user, oldContacts: oldContacts);
-    return await task.save(newContacts);
-  }
-
   @override
   Future<bool> saveBlockList(List<ID> newContacts, {required ID user}) async {
-    // save new contacts
-    var oldContacts = await getBlockList(user: user);
-    var ok = await _updateBlockedList(newContacts, oldContacts, user: user);
-    if (ok) {
-      // post notification
-      var nc = NotificationCenter();
-      nc.postNotification(NotificationNames.kBlockListUpdated, this, {
-        'action': 'update',
-        'user': user,
-        'block_list': newContacts,
-      });
+    var task = _newTask(user);
+    var allContacts = await task.load();
+    allContacts ??= [];
+
+    var oldContacts = [...allContacts];
+    int count = 0;
+    // 1. remove to allow
+    for (ID item in oldContacts) {
+      if (newContacts.contains(item)) {
+        continue;
+      }
+      task = _newTask(user, allowed: item);
+      if (await task.save(allContacts)) {
+        ++count;
+      } else {
+        logError('failed to remove blocked: $item, user: $user');
+        return false;
+      }
     }
-    return ok;
+    // 2. add to block
+    for (ID item in newContacts) {
+      if (oldContacts.contains(item)) {
+        continue;
+      }
+      task = _newTask(user, blocked: item);
+      if (await task.save(allContacts)) {
+        ++count;
+      } else {
+        logError('failed to add blocked: $item, user: $user');
+        return false;
+      }
+    }
+
+    if (count == 0) {
+      logWarning('blocked-list not changed: $user');
+    } else {
+      logInfo('updated $count blocked contact(s) for user: $user');
+    }
+
+    // post notification
+    var nc = NotificationCenter();
+    nc.postNotification(NotificationNames.kBlockListUpdated, this, {
+      'action': 'update',
+      'user': user,
+      'blocked_list': newContacts,
+    });
+    return true;
   }
 
   @override
   Future<bool> addBlocked(ID contact, {required ID user}) async {
-    List<ID> oldContacts = await getBlockList(user: user);
-    if (oldContacts.contains(contact)) {
-      logWarning('blocked exists: $contact, user: $user');
+    var task = _newTask(user);
+    var allContacts = await task.load();
+    if (allContacts == null) {
+      allContacts = [];
+    } else if (allContacts.contains(user)) {
+      logWarning('blocked contact exists: $user');
       return true;
     }
-    List<ID> newContacts = [...oldContacts, contact];
-    var ok = await _updateBlockedList(newContacts, oldContacts, user: user);
+    task = _newTask(user, blocked: contact);
+    var ok = await task.save(allContacts);
     if (ok) {
       // post notification
       var nc = NotificationCenter();
@@ -170,7 +189,7 @@ class BlockedCache extends DataCache<ID, List<ID>> implements BlockedDBI {
         'action': 'add',
         'user': user,
         'blocked': contact,
-        'block_list': newContacts,
+        'blocked_list': allContacts,
       });
     }
     return ok;
@@ -178,14 +197,19 @@ class BlockedCache extends DataCache<ID, List<ID>> implements BlockedDBI {
 
   @override
   Future<bool> removeBlocked(ID contact, {required ID user}) async {
-    List<ID> oldContacts = await getBlockList(user: user);
-    if (!oldContacts.contains(contact)) {
-      logWarning('blocked not exists: $contact, user: $user');
+    var task = _newTask(user);
+    var allContacts = await task.load();
+    if (allContacts == null) {
+      logError('failed to get blocked-list');
+      return false;
+    } else if (allContacts.contains(contact)) {
+      // found
+    } else {
+      logWarning('blocked contact not exists: $user');
       return true;
     }
-    List<ID> newContacts = [...oldContacts];
-    newContacts.removeWhere((element) => element == contact);
-    var ok = await _updateBlockedList(newContacts, oldContacts, user: user);
+    task = _newTask(user, allowed: contact);
+    var ok = await task.save(allContacts);
     if (ok) {
       // post notification
       var nc = NotificationCenter();
@@ -193,7 +217,7 @@ class BlockedCache extends DataCache<ID, List<ID>> implements BlockedDBI {
         'action': 'remove',
         'user': user,
         'unblocked': contact,
-        'block_list': newContacts,
+        'blocked_list': allContacts,
       });
     }
     return ok;

@@ -45,7 +45,8 @@ class _RemarkTable extends DataTableHandler<ContactRemark> {
       user.toString(),
       remark.identifier.toString(),
       remark.alias,
-      remark.description];
+      remark.description,
+    ];
     if (await insert(_table, columns: _insertColumns, values: values) <= 0) {
       logError('failed to save remark: $user -> $remark');
       return false;
@@ -71,7 +72,7 @@ class _RemarkTable extends DataTableHandler<ContactRemark> {
   }
 
   // protected
-  Future<List<ContactRemark>> getRemarks({required ID user}) async {
+  Future<List<ContactRemark>> loadRemarks({required ID user}) async {
     SQLConditions cond;
     cond = SQLConditions(left: 'uid', comparison: '=', right: user.toString());
     return await select(_table, columns: _selectColumns,
@@ -80,15 +81,13 @@ class _RemarkTable extends DataTableHandler<ContactRemark> {
 
 }
 
-class _RemarkTask extends DbTask<ID, List<ContactRemark>> {
+class _RemarkTask extends DbTask<ID, Map<ID, ContactRemark>> {
   _RemarkTask(super.mutexLock, super.cachePool, this._table, this._user, {
-    required bool? update,
     required ContactRemark? newRemark,
-  }) : _update = update, _newRemark = newRemark;
+  }) : _newRemark = newRemark;
 
   final ID _user;
 
-  final bool? _update;
   final ContactRemark? _newRemark;
 
   final _RemarkTable _table;
@@ -97,101 +96,70 @@ class _RemarkTask extends DbTask<ID, List<ContactRemark>> {
   ID get cacheKey => _user;
 
   @override
-  Future<List<ContactRemark>?> readData() async {
-    return await _table.getRemarks(user: _user);
+  Future<Map<ID, ContactRemark>?> readData() async {
+    Map<ID, ContactRemark> allRemarks = {};
+    List<ContactRemark> array = await _table.loadRemarks(user: _user);
+    ContactRemark item;
+    // convert to map: ID => ContactRemark
+    for (int index = array.length - 1; index >= 0; --index) {
+      item = array[index];
+      allRemarks[item.identifier] = item;
+    }
+    return allRemarks;
   }
 
   @override
-  Future<bool> writeData(List<ContactRemark> allRemarks) async {
-    assert(allRemarks.isNotEmpty, 'remark list should not empty here: $_user');
+  Future<bool> writeData(Map<ID, ContactRemark> allRemarks) async {
     ContactRemark? remark = _newRemark;
     if (remark == null) {
-      assert(false, 'should not happen: $_user, $remark');
+      assert(false, 'should not happen: $_user');
       return false;
     }
-    bool? update = _update;
-    if (update == null) {
-      // duplicated records found, clear all
+    bool ok;
+    if (allRemarks[remark.identifier] == null) {
+      // record not exists
       await _table.clearRemarks(remark.identifier, user: _user);
-    } else if (update == true) {
+      ok = await _table.addRemark(remark, user: _user);
+    } else {
       // update old record
-      return await _table.updateRemark(remark, user: _user);
+      ok = await _table.updateRemark(remark, user: _user);
     }
-    // insert new record
-    return await _table.addRemark(remark, user: _user);
+    if (ok) {
+      allRemarks[remark.identifier] = remark;
+    }
+    return true;
   }
 
 }
 
-class RemarkCache extends DataCache<ID, List<ContactRemark>> implements RemarkDBI {
+class RemarkCache extends DataCache<ID, Map<ID, ContactRemark>> implements RemarkDBI {
   RemarkCache() : super('contact_remarks');
 
   final _RemarkTable _table = _RemarkTable();
 
-  _RemarkTask _newTask(ID user, {bool? update, ContactRemark? newRemark}) =>
-      _RemarkTask(mutexLock, cachePool, _table, user, update: update, newRemark: newRemark);
+  _RemarkTask _newTask(ID user, {ContactRemark? newRemark}) =>
+      _RemarkTask(mutexLock, cachePool, _table, user, newRemark: newRemark);
 
   @override
   Future<ContactRemark?> getRemark(ID contact, {required ID user}) async {
     var task = _newTask(user);
-    List<ContactRemark>? remarks = await task.load();
-    if (remarks == null || remarks.isEmpty) {
-      // data not found
-      return null;
-    }
-    for (ContactRemark item in remarks) {
-      if (item.identifier == contact) {
-        return item;
-      }
-    }
-    // data not matched
-    return null;
-  }
-
-  List<ContactRemark> _shiftRemarks(List<ContactRemark> allRemarks, ContactRemark newRemark) {
-    List<ContactRemark> array = [];
-    ContactRemark item;
-    for (int index = allRemarks.length - 1; index >= 0; --index) {
-      item = allRemarks[index];
-      if (item.identifier == newRemark.identifier) {
-        // remove old records
-        array.add(item);
-        allRemarks.removeAt(index);
-      }
-    }
-    // add new record
-    allRemarks.add(newRemark);
-    return array;
+    var allRemarks = await task.load();
+    return allRemarks?[contact];
   }
 
   @override
   Future<bool> setRemark(ContactRemark remark, {required ID user}) async {
     //
-    //  1. check old records
+    //  1. load old records
     //
     var task = _newTask(user);
-    List<ContactRemark>? array = await task.load();
-    List<ContactRemark> old;
-    if (array == null) {
-      array = [remark];
-      old = [];
-    } else {
-      old = _shiftRemarks(array, remark);
-    }
-    if (old.isEmpty) {
-      // adding new record
-      task = _newTask(user, update: false, newRemark: remark);
-    } else if (old.length == 1) {
-      // update old record
-      task = _newTask(user, update: true, newRemark: remark);
-    } else {
-      logError('duplicated remarks: $user -> $old');
-      task = _newTask(user, update: null, newRemark: remark);
-    }
+    var allRemarks = await task.load();
+    allRemarks ??= {};
     //
     //  2. save new record
     //
-    bool ok = await task.save(array);
+    task = _newTask(user, newRemark: remark);
+    bool ok = await task.save(allRemarks);
     if (!ok) {
       logError('failed to save remark: $user -> $remark');
       return false;

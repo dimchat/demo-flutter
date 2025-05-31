@@ -7,23 +7,23 @@ import 'group_admin.dart';
 import 'group_member.dart';
 
 
-class GroupCache implements GroupDBI {
-  GroupCache() : _memberTable = MemberCache(), _adminCache = AdminCache();
+class GroupCache with Logging implements GroupDBI {
+  GroupCache() : _memberTable = MemberCache(), _adminTable = AdminCache();
 
   final MemberCache _memberTable;
-  final AdminCache _adminCache;
+  final AdminCache _adminTable;
 
   @override
   Future<ID?> getFounder({required ID group}) async {
     // TODO: implement getFounder
-    Log.warning('implement getFounder: $group');
+    logWarning('implement getFounder: $group');
     return null;
   }
 
   @override
   Future<ID?> getOwner({required ID group}) async {
     // TODO: implement getOwner
-    Log.warning('implement getOwner: $group');
+    logWarning('implement getOwner: $group');
     return null;
   }
 
@@ -44,34 +44,34 @@ class GroupCache implements GroupDBI {
   @override
   Future<List<ID>> getAssistants({required ID group}) async {
     // TODO: implement getAssistants
-    Log.warning('implement getAssistants: $group');
+    logWarning('implement getAssistants: $group');
     return [];
   }
 
   @override
   Future<bool> saveAssistants(List<ID> bots, {required ID group}) async {
     // TODO: implement saveAssistants
-    Log.warning('implement saveAssistants: $group, $bots');
+    logWarning('implement saveAssistants: $group, $bots');
     return false;
   }
 
   @override
   Future<List<ID>> getAdministrators({required ID group}) async =>
-      await _adminCache.getAdministrators(group);
+      await _adminTable.getAdministrators(group);
 
   @override
   Future<bool> saveAdministrators(List<ID> admins, {required ID group}) async =>
-      await _adminCache.saveAdministrators(admins, group);
+      await _adminTable.saveAdministrators(admins, group);
 
   Future<bool> addAdministrator(ID admin, {required ID group}) async =>
-      await _adminCache.addAdministrator(admin, group: group);
+      await _adminTable.addAdministrator(admin, group: group);
 
   Future<bool> removeAdministrator(ID admin, {required ID group}) async =>
-      await _adminCache.removeAdministrator(admin, group: group);
+      await _adminTable.removeAdministrator(admin, group: group);
 
   Future<bool> removeGroup({required ID group}) async {
     // TODO: implement removeGroup
-    Log.warning('implement removeGroup: $group');
+    logWarning('implement removeGroup: $group');
     return false;
   }
 

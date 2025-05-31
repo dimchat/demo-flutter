@@ -79,6 +79,9 @@ class TranslateContent extends AppCustomizedContent {
   /// check translate result valid
   bool get success => result?.valid == true;
 
+  bool get folded => getBool('folded', false)!;
+  set folded(bool hidden) => this['folded'] = hidden;
+
   TranslateContent.query(String text, int tag, {required String? format})
       : super.from(app: Translator.app, mod: Translator.mod, act: 'request') {
     // source text

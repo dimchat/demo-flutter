@@ -139,6 +139,14 @@ abstract class Styles {
 
   static const EdgeInsets commandPadding = EdgeInsets.fromLTRB(8, 4, 8, 4);
 
+  static ButtonStyle translateButtonStyle = TextButton.styleFrom(
+    foregroundColor: Colors.blue,
+    textStyle: const TextStyle(fontSize: 10, color: Colors.blue),
+    minimumSize: Size.zero,
+    padding: EdgeInsets.zero,
+    tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+  );
+
   //
   //  Live Stream
   //

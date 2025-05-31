@@ -124,7 +124,7 @@ class _SrvTask extends DbTask<ID, List<StationInfo>> {
   }
 
   @override
-  Future<bool> writeData(List<StationInfo> providers) async {
+  Future<bool> writeData(List<StationInfo> stations) async {
     // 1. append
     bool ok1 = false;
     StationInfo? append = _append;
@@ -136,8 +136,7 @@ class _SrvTask extends DbTask<ID, List<StationInfo>> {
         provider: _provider,
       );
       if (ok1) {
-        // clear to reload
-        cachePool.erase(cacheKey);
+        stations.add(append);
       }
     }
     // 2. update
@@ -150,10 +149,10 @@ class _SrvTask extends DbTask<ID, List<StationInfo>> {
         port: update.port,
         provider: _provider,
       );
-      if (ok2) {
-        // clear to reload
-        cachePool.erase(cacheKey);
-      }
+      // if (ok2) {
+      //   // clear to reload
+      //   cachePool.erase(cacheKey);
+      // }
     }
     // 3. remove
     bool ok3 = false;
@@ -165,10 +164,10 @@ class _SrvTask extends DbTask<ID, List<StationInfo>> {
         provider: _provider,
       );
       if (ok3) {
-        providers.removeWhere((srv) => srv.identifier == remove.identifier);
+        stations.removeWhere((srv) => srv.port == remove.port && srv.host == remove.host);
       }
     }
-    return ok1 || ok2;
+    return ok1 || ok2 || ok3;
   }
 
 }
@@ -246,12 +245,14 @@ class StationCache extends DataCache<ID, List<StationInfo>> implements StationDB
     stations ??= [];
 
     // 1. check old records
-    if (_find(host, port, stations) == null) {
+    var info = _find(host, port, stations);
+    if (info == null) {
       logWarning('station not found: $host, $port, provider: $provider, chosen: $chosen');
       return false;
     }
     // 2. update record
-    var info = StationInfo(sid, chosen, host: host, port: port, provider: provider);
+    info.chosen = chosen;
+    // var info = StationInfo(sid, chosen, host: host, port: port, provider: provider);
     task = _newTask(provider, update: info);
     bool ok = await task.save(stations);
     if (!ok) {

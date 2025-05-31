@@ -122,11 +122,19 @@ class _LoginTask extends DbTask<ID, List<Pair<LoginCommand, ReliableMessage>>> {
     }
     ID identifier = cmd.identifier;
     if (records.isNotEmpty) {
-      await _table.deleteLoginCommandMessage(identifier);
-      records.clear();
+      var ok = await _table.deleteLoginCommandMessage(identifier);
+      if (ok) {
+        records.clear();
+      } else {
+        assert(false, 'failed to clear login commands: $identifier');
+        return false;
+      }
     }
-    records.add(Pair(cmd, msg));
-    return await _table.saveLoginCommandMessage(identifier, cmd, msg);
+    var ok = await _table.saveLoginCommandMessage(identifier, cmd, msg);
+    if (ok) {
+      records.add(Pair(cmd, msg));
+    }
+    return ok;
   }
 
 }

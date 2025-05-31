@@ -133,8 +133,11 @@ class _DocTask extends DbTask<ID, List<Document>> {
       return await _table.updateDocument(doc);
     }
     // add new record
-    documents.add(doc);
-    return await _table.insertDocument(doc);
+    var ok = await _table.insertDocument(doc);
+    if (ok) {
+      documents.add(doc);
+    }
+    return ok;
   }
 
 }

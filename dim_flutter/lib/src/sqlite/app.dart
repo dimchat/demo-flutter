@@ -194,22 +194,36 @@ class _CustomizedTask extends DbTask<String, List<Mapper>> {
       assert(false, 'should not happen: $_cacheKey');
       return false;
     }
-    // check old contents
-    if (contents.isEmpty) {
-      // insert new record
-      contents.add(newContent);
-      return await _table.addContent(contents.first, _cacheKey, expires: _dataExpires);
-    } else if (contents.length == 1) {
-      // update old record
-      contents[0] = newContent;
-      return await _table.updateContent(contents.first, _cacheKey, expires: _dataExpires);
+    bool ok;
+    if (contents.length == 1) {
+      //
+      //  update old record
+      //
+      ok = await _table.updateContent(newContent, _cacheKey, expires: _dataExpires);
+      if (ok) {
+        contents[0] = newContent;
+      }
+      return ok;
+    } else if (contents.isNotEmpty) {
+      //
+      //  clean duplicated records
+      //
+      ok = await _table.clearContents(_cacheKey);
+      if (ok) {
+        contents.clear();
+      } else {
+        assert(false, 'failed to clear contents: $_cacheKey');
+        return false;
+      }
     }
-    // duplicated records found, clear all
-    await _table.clearContents(_cacheKey);
-    contents.clear();
-    // insert new record
-    contents.add(newContent);
-    return await _table.addContent(contents.first, _cacheKey, expires: _dataExpires);
+    //
+    //  insert new record
+    //
+    ok = await _table.addContent(newContent, _cacheKey, expires: _dataExpires);
+    if (ok) {
+      contents.add(newContent);
+    }
+    return ok;
   }
 
 }

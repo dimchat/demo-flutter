@@ -120,3 +120,30 @@ abstract class HtmlUri {
   }
 
 }
+
+abstract class DomainNameServer {
+
+  static final _domain = RegExp(r'^([a-z0-9]+(-[a-z0-9]+)*\.)+[a-z]{2,}$');
+
+  static final _address = RegExp(r'^(\d{1,3}\.){3}\d{1,3}$');
+
+  static bool isDomainName(String text) => _domain.hasMatch(text);
+
+  static bool isIPAddress(String text) {
+    if (!_address.hasMatch(text)) {
+      return false;
+    }
+    var array = text.split('.');
+    if (array.length != 4) {
+      return false;
+    }
+    for (var item in array) {
+      var num = int.tryParse(item);
+      if (num == null || num < 0 || num > 255) {
+        return false;
+      }
+    }
+    return true;
+  }
+
+}

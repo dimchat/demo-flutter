@@ -133,16 +133,14 @@ class _ProviderTable extends DataTableHandler<ProviderInfo> {
 
 class _SpTask extends DbTask<String, List<ProviderInfo>> {
   _SpTask(super.mutexLock, super.cachePool, this._table, {
-    required ID? append,
-    required ID? update,
-    required ID? remove,
-    required int? chosen,
-  }) : _append = append, _update = update, _remove = remove, _chosen = chosen;
+    required ProviderInfo? append,
+    required ProviderInfo? update,
+    required ProviderInfo? remove,
+  }) : _append = append, _update = update, _remove = remove;
 
-  final ID? _append;
-  final ID? _update;
-  final ID? _remove;
-  final int? _chosen;
+  final ProviderInfo? _append;
+  final ProviderInfo? _update;
+  final ProviderInfo? _remove;
 
   final _ProviderTable _table;
 
@@ -156,37 +154,35 @@ class _SpTask extends DbTask<String, List<ProviderInfo>> {
 
   @override
   Future<bool> writeData(List<ProviderInfo> providers) async {
-    int chosen = _chosen ?? 0;
     // 1. append
     bool ok1 = false;
-    ID? append = _append;
+    ProviderInfo? append = _append;
     if (append != null) {
-      ok1 = await _table.addProvider(append, chosen);
+      ok1 = await _table.addProvider(append.identifier, append.chosen);
       if (ok1) {
-        // clear to reload
-        cachePool.erase(cacheKey);
+        providers.add(append);
       }
     }
     // 2. update
     bool ok2 = false;
-    ID? update = _update;
+    ProviderInfo? update = _update;
     if (update != null) {
-      ok2 = await _table.updateProvider(update, chosen);
-      if (ok2) {
-        // clear to reload
-        cachePool.erase(cacheKey);
-      }
+      ok2 = await _table.updateProvider(update.identifier, update.chosen);
+      // if (ok2) {
+      //   // clear to reload
+      //   cachePool.erase(cacheKey);
+      // }
     }
     // 3. remove
     bool ok3 = false;
-    ID? remove = _remove;
+    ProviderInfo? remove = _remove;
     if (remove != null) {
-      ok3 = await _table.removeProvider(remove);
+      ok3 = await _table.removeProvider(remove.identifier);
       if (ok3) {
-        providers.removeWhere((sp) => sp.identifier == remove);
+        providers.removeWhere((sp) => sp.identifier == remove.identifier);
       }
     }
-    return ok1 || ok2;
+    return ok1 || ok2 || ok3;
   }
 
 }
@@ -196,17 +192,17 @@ class ProviderCache extends DataCache<String, List<ProviderInfo>> implements Pro
 
   final _ProviderTable _table = _ProviderTable();
 
-  _SpTask _newTask({ID? append, ID? update, ID? remove, int? chosen}) =>
+  _SpTask _newTask({ProviderInfo? append, ProviderInfo? update, ProviderInfo? remove}) =>
       _SpTask(mutexLock, cachePool, _table,
           append: append,
           update: update,
           remove: remove,
-          chosen: chosen);
+      );
 
-  static int? _find(ID identifier, List<ProviderInfo> providers) {
+  static ProviderInfo? _find(ID identifier, List<ProviderInfo> providers) {
     for (ProviderInfo item in providers) {
       if (item.identifier == identifier) {
-        return item.chosen;
+        return item;
       }
     }
     return null;
@@ -231,7 +227,8 @@ class ProviderCache extends DataCache<String, List<ProviderInfo>> implements Pro
       return await updateProvider(identifier, chosen: chosen);
     }
     // 2. add as new record
-    task = _newTask(append: identifier, chosen: chosen);
+    var info = ProviderInfo(identifier, chosen);
+    task = _newTask(append: info);
     bool ok = await task.save(providers);
     if (!ok) {
       logError('failed to add provider: $identifier, chosen: $chosen');
@@ -254,12 +251,15 @@ class ProviderCache extends DataCache<String, List<ProviderInfo>> implements Pro
     providers ??= [];
 
     // 1. check old records
-    if (_find(identifier, providers) == null) {
+    var info = _find(identifier, providers);
+    if (info == null) {
       assert(false, 'provider not found: $identifier, chosen: $chosen');
       return false;
     }
     // 2. update record
-    task = _newTask(update: identifier, chosen: chosen);
+    info.chosen = chosen;
+    // var info = ProviderInfo(identifier, chosen);
+    task = _newTask(update: info);
     bool ok = await task.save(providers);
     if (!ok) {
       logError('failed to update provider: $identifier, chosen: $chosen');
@@ -287,7 +287,8 @@ class ProviderCache extends DataCache<String, List<ProviderInfo>> implements Pro
       return true;
     }
     // 2. remove record
-    task = _newTask(remove: identifier);
+    var info = ProviderInfo(identifier, 0);
+    task = _newTask(remove: info);
     bool ok = await task.save(providers);
     if (!ok) {
       logError('failed to remove provider: $identifier');

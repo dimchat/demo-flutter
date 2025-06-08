@@ -175,8 +175,8 @@ class ContactCache extends DataCache<ID, List<ID>> implements ContactDBI  {
     var allContacts = await task.load();
     if (allContacts == null) {
       allContacts = [];
-    } else if (allContacts.contains(user)) {
-      logWarning('contact exists: $user');
+    } else if (allContacts.contains(contact)) {
+      logWarning('contact exists: $contact');
       return true;
     }
     task = _newTask(user, append: contact);

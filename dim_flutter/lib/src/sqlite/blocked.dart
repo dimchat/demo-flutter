@@ -176,8 +176,8 @@ class BlockedCache extends DataCache<ID, List<ID>> implements BlockedDBI {
     var allContacts = await task.load();
     if (allContacts == null) {
       allContacts = [];
-    } else if (allContacts.contains(user)) {
-      logWarning('blocked contact exists: $user');
+    } else if (allContacts.contains(contact)) {
+      logWarning('blocked contact exists: $contact');
       return true;
     }
     task = _newTask(user, blocked: contact);

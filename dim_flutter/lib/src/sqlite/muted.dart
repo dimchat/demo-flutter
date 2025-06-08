@@ -177,8 +177,8 @@ class MutedCache extends DataCache<ID, List<ID>> implements MutedDBI {
     if (allContacts == null) {
       logError('failed to get muted-list');
       return false;
-    } else if (allContacts.contains(user)) {
-      logWarning('muted contact exists: $user');
+    } else if (allContacts.contains(contact)) {
+      logWarning('muted contact exists: $contact');
       return true;
     }
     task = _newTask(user, muted: contact);

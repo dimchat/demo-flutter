@@ -97,6 +97,13 @@ abstract class NotificationNames {
   static const String kActiveUsersUpdated = 'ActiveUsersUpdated';
 
   //
+  //  Playlist
+  //
+
+  static const String kPlaylistUpdated = 'PlaylistUpdated';
+  static const String kVideoItemUpdated = 'VideoItemUpdated';
+
+  //
   //  Live Player
   //
 

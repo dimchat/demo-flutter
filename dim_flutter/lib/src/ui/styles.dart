@@ -10,6 +10,7 @@ abstract class Styles {
   static TextStyle get buttonTextStyle => TextStyle(
     color: colors.buttonTextColor,
     fontWeight: FontWeight.bold,
+    decoration: TextDecoration.none,
   );
 
   //
@@ -18,6 +19,7 @@ abstract class Styles {
 
   static TextStyle get titleTextStyle => TextStyle(
     color: colors.titleTextColor,
+    decoration: TextDecoration.none,
   );
 
   static TextStyle get sectionHeaderTextStyle => TextStyle(
@@ -36,50 +38,59 @@ abstract class Styles {
     fontSize: 16,
     color: colors.sectionItemTitleTextColor,
     overflow: TextOverflow.ellipsis,
+    decoration: TextDecoration.none,
   );
 
   static TextStyle get sectionItemSubtitleTextStyle => TextStyle(
     fontSize: 10,
     color: colors.sectionItemSubtitleTextColor,
     overflow: TextOverflow.fade,
+    decoration: TextDecoration.none,
   );
 
   static TextStyle get sectionItemAdditionalTextStyle => TextStyle(
     fontSize: 12,
     color: colors.sectionItemAdditionalTextColor,
+    decoration: TextDecoration.none,
   );
 
   static TextStyle get identifierTextStyle => TextStyle(
     fontSize: 12,
     color: colors.identifierTextColor,
+    decoration: TextDecoration.none,
   );
 
   static TextStyle get messageSenderNameTextStyle => TextStyle(
     fontSize: 12,
     color: colors.messageSenderNameTextColor,
     overflow: TextOverflow.ellipsis,
+    decoration: TextDecoration.none,
   );
 
   static TextStyle get messageTimeTextStyle => TextStyle(
     fontSize: 10,
     color: colors.messageTimeTextColor,
+    decoration: TextDecoration.none,
   );
 
   static TextStyle get commandTextStyle => TextStyle(
     fontSize: 10,
     color: colors.commandTextColor,
+    decoration: TextDecoration.none,
   );
 
   static TextStyle get pageTitleTextStyle => TextStyle(
     fontSize: 14,
     color: colors.pageTitleTextColor,
     overflow: TextOverflow.ellipsis,
+    decoration: TextDecoration.none,
   );
 
   static TextStyle get pageDescTextStyle => TextStyle(
     fontSize: 10,
     color: colors.pageDescTextColor,
     overflow: TextOverflow.ellipsis,
+    decoration: TextDecoration.none,
   );
 
   static TextStyle get translatorTextStyle => TextStyle(
@@ -94,6 +105,7 @@ abstract class Styles {
   static TextStyle get textFieldStyle => TextStyle(
     height: 1.6,
     color: colors.textFieldColor,
+    decoration: TextDecoration.none,
   );
 
   static BoxDecoration get textFieldDecoration => BoxDecoration(
@@ -141,7 +153,11 @@ abstract class Styles {
 
   static ButtonStyle translateButtonStyle = TextButton.styleFrom(
     foregroundColor: Colors.blue,
-    textStyle: const TextStyle(fontSize: 10, color: Colors.blue),
+    textStyle: const TextStyle(
+      color: Colors.blue,
+      fontSize: 10,
+      decoration: TextDecoration.none,
+    ),
     minimumSize: Size.zero,
     padding: EdgeInsets.zero,
     tapTargetSize: MaterialTapTargetSize.shrinkWrap,

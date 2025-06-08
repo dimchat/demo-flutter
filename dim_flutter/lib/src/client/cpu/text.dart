@@ -38,6 +38,11 @@ class ServiceContentHandler with Logging {
     if (address.length > 16) {
       address = address.substring(address.length - 16);
     }
+    if (title.length > 32) {
+      var data = UTF8.encode(title);
+      data = MD5.digest(data);
+      title = Hex.encode(data);
+    }
     String key = '$address:$mod:$title';
     if (key.length > 64) {
       logWarning('trimming key: $key');
@@ -62,6 +67,9 @@ class ServiceContentHandler with Logging {
     } else if (app == 'chat.dim.search') {
       // service: online users
       return mod == 'users';
+    } else if (app == 'chat.dim.video') {
+      // service: video playlist
+      return mod == 'playlist' || mod == 'season';
     } else if (app == 'chat.dim.tvbox') {
       // service: live streams
       return mod == 'lives';
@@ -85,47 +93,80 @@ class ServiceContentHandler with Logging {
     String? app = content['app'];
     String? mod = content['mod'];
     String? act = content['act'];
-    String? title = content['title'];
-    // if (title == null || title.isEmpty) {
-    //   title = content['keywords'];
-    // }
 
     var nc = NotificationCenter();
     bool ok = false;
 
-    if (app == null || mod == null || title == null) {
+    if (app == null || mod == null) {
       logError('service content error: $content');
-    } else if (app == 'chat.dim.search') {
-      Log.info('got customized text content: $text');
-      if (mod == 'users') {
+    }
+    else if (app == 'chat.dim.search')
+    {
+      String title = content['title'] ?? '';
+      logInfo('got customized text content: $title, $text');
+      if (mod == 'users' && title.isNotEmpty) {
         // got online users
         assert(act == 'respond', 'customized text content error: $text');
         String key = buildKey(sender, mod, title);
         ok = await database.saveAppCustomizedInfo(content, key, expires: expires);
         var users = content['users'];
-        Log.info('got ${users?.length} users');
+        logInfo('got ${users?.length} users');
         nc.postNotification(NotificationNames.kActiveUsersUpdated, this, {
           'cmd': content,
           'users': users,
         });
       }
-    } else if (app == 'chat.dim.tvbox') {
-      Log.info('got customized text content: $text');
-      if (mod == 'lives') {
+    }
+    else if (app == 'chat.dim.video')
+    {
+      Map? season = content['season'];
+      String page = season?['page'] ?? '';
+      String title = content['title'] ?? '';
+      // logInfo('got customized text content: $text');
+      if (mod == 'playlist' && title.isNotEmpty) {
+        // got video playlist
+        assert(act == 'respond', 'customized content error: $text');
+        String key = buildKey(sender, mod, title);
+        ok = await database.saveAppCustomizedInfo(content, key, expires: expires);
+        var playlist = content['playlist'];
+        logInfo('got ${playlist?.length} videos in playlist');
+        nc.postNotification(NotificationNames.kPlaylistUpdated, this, {
+          'cmd': content,
+          'playlist': playlist,
+        });
+      } else if (mod == 'season' && page.isNotEmpty) {
+        // got video season
+        assert(act == 'respond', 'customized content error: $text');
+        String key = buildKey(sender, mod, page);
+        ok = await database.saveAppCustomizedInfo(content, key, expires: expires);
+        nc.postNotification(NotificationNames.kVideoItemUpdated, this, {
+          'cmd': content,
+          'season': season,
+        });
+      }
+    }
+    else if (app == 'chat.dim.tvbox')
+    {
+      String title = content['title'] ?? '';
+      logInfo('got customized text content: $title, $text');
+      if (mod == 'lives' && title.isNotEmpty) {
         // got live streams
         assert(act == 'respond', 'customized text content error: $text');
         String key = buildKey(sender, mod, title);
         ok = await database.saveAppCustomizedInfo(content, key, expires: expires);
         var lives = content['lives'];
-        Log.info('got ${lives?.length} lives');
+        logInfo('got ${lives?.length} lives');
         nc.postNotification(NotificationNames.kLiveSourceUpdated, this, {
           'cmd': content,
           'lives': lives,
         });
       }
-    } else if (app == 'chat.dim.sites') {
-      Log.info('got customized text content: $text');
-      if (mod == 'homepage') {
+    }
+    else if (app == 'chat.dim.sites')
+    {
+      String title = content['title'] ?? '';
+      logInfo('got customized text content: $title, $text');
+      if (mod == 'homepage' && title.isNotEmpty) {
         // got home page
         assert(act == 'respond', 'customized text content error: $text');
         String key = buildKey(sender, mod, title);

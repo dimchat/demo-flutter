@@ -33,12 +33,8 @@ import 'package:get/get.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 import 'package:dim_client/ok.dart';
-import 'package:dim_client/sdk.dart';
 
-import '../pnf/image.dart';
-import '../ui/icons.dart';
 import '../ui/nav.dart';
-import '../ui/styles.dart';
 import '../utils/html.dart';
 
 import 'alert.dart';
@@ -130,85 +126,5 @@ class Browser extends StatefulWidget {
 
   @override
   State<Browser> createState() => BrowserState();
-
-}
-
-
-/// WebPageView
-class PageContentView extends StatelessWidget {
-  const PageContentView({super.key, required this.content, this.onTap, this.onLongPress});
-
-  final PageContent content;
-  final GestureTapCallback? onTap;
-  final GestureLongPressCallback? onLongPress;
-
-  Widget? get icon {
-    var small = content['icon'];
-    if (small is String) {
-      return ImageUtils.getImage(small);
-    }
-    assert(small == null, 'page icon error: %small');
-    return null;
-  }
-
-  @override
-  Widget build(BuildContext context) => GestureDetector(
-    onTap: onTap ?? () => HtmlUri.showWebPage(context, content: content),
-    onLongPress: onLongPress,
-    child: _widget(context),
-  );
-
-  Widget _widget(BuildContext context) {
-    var colors = Styles.colors;
-    String url = content.url.toString();
-    String title = content.title;
-    String desc = content.desc ?? '';
-    Widget image = icon ?? Icon(AppIcons.webpageIcon, color: colors.pageMessageColor,);
-    if (title.isEmpty) {
-      title = url;
-      url = '';
-    } else if (desc.isEmpty) {
-      desc = url;
-      url = '';
-    }
-    return Container(
-      color: colors.pageMessageBackgroundColor,
-      padding: Styles.pageMessagePadding,
-      // width: 256,
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Text(title,
-            maxLines: 2,
-            style: Styles.pageTitleTextStyle,
-          ),
-          Row(
-            children: [
-              Expanded(
-                child: Text(desc,
-                  maxLines: 3,
-                  style: Styles.pageDescTextStyle,
-                ),
-              ),
-              ClipRRect(
-                borderRadius: const BorderRadius.all(
-                    Radius.elliptical(8, 8)
-                ),
-                child: SizedBox(
-                  width: 48, height: 48,
-                  // color: CupertinoColors.systemIndigo,
-                  child: image,
-                ),
-              ),
-            ],
-          ),
-          if (url.isNotEmpty)
-            Text(url,
-              style: Styles.pageDescTextStyle,
-            ),
-        ],
-      ),
-    );
-  }
 
 }

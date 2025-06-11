@@ -2,6 +2,9 @@ import 'dart:ui';
 
 import 'package:flutter/cupertino.dart';
 
+import '../ui/styles.dart';
+
+
 class GaussianPage extends StatelessWidget {
   const GaussianPage({super.key, required this.child, this.locked = false});
 
@@ -19,33 +22,39 @@ class GaussianPage extends StatelessWidget {
   );
 
   @override
-  Widget build(BuildContext context) => BackdropFilter(
-    filter: ImageFilter.blur(sigmaY: 8.0, sigmaX: 8.0),
-    child: Stack(
+  Widget build(BuildContext context) {
+    Widget view = Column(
+      mainAxisAlignment: MainAxisAlignment.center,
       children: [
-        if (!locked)
-          GestureDetector(onTap: () => Navigator.pop(context)),
-        Column(
+        Row(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                _body(),
-              ],
-            ),
+            _body(),
           ],
         ),
       ],
-    ),
-  );
+    );
+    if (!locked) {
+      view = Stack(
+        children: [
+          GestureDetector(onTap: () => Navigator.pop(context)),
+          view,
+        ],
+      );
+    }
+    return BackdropFilter(
+      filter: ImageFilter.blur(sigmaY: 8.0, sigmaX: 8.0),
+      child: view,
+    );
+  }
 
   Widget _body() => ClipRect(
     child: Container(
       padding: const EdgeInsets.all(12),
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(8),
-        color: CupertinoColors.systemFill,
+        // color: CupertinoColors.systemFill,
+        color: Styles.colors.pageMessageBackgroundColor,
       ),
       child: child,
     ),

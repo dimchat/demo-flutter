@@ -49,7 +49,7 @@ dependencies:
   url_launcher: ^6.3.0
 
   flutter_markdown: ^0.6.19
-  markdown: ^7.2.1
+#  markdown: ^7.2.1
   syntax_highlight: ^0.4.0
 
   flutter_section_list: ^1.1.1

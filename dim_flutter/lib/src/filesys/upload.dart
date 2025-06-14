@@ -30,7 +30,6 @@
  */
 import 'dart:async';
 
-import 'package:dio/dio.dart';
 import 'package:flutter/services.dart';
 
 import 'package:dim_client/ok.dart';
@@ -46,45 +45,16 @@ import '../pnf/loader.dart';
 import 'local.dart';
 
 
-class _HttpClient extends HTTPClient with Logging {
-
-  // BaseOptions? baseOptions;
-  BaseOptions? baseOptions = BaseOptions(
-    connectTimeout: const Duration(seconds: 15),
-  );
-
-  @override
-  Future<Response<D>?> download<D>(Uri url, {
-    Options? options,
-    ProgressCallback? onReceiveProgress,
-  }) async {
-    try {
-      return await Dio(baseOptions).getUri<D>(url,
-        options: options,
-        onReceiveProgress: onReceiveProgress,
-      ).onError((error, stackTrace) {
-        logError('[DIO] failed to download "$url" error: $error, $stackTrace');
-        throw Exception(error);
-      });
-    } catch (e, st) {
-      logError('[HTTP] failed to download "$url" error: $e, $st');
-      return null;
-    }
-  }
-
-}
-
-
 class SharedFileUploader with Logging {
   factory SharedFileUploader() => _instance;
   static final SharedFileUploader _instance = SharedFileUploader._internal();
   SharedFileUploader._internal() {
-    _aid = FileTransfer(_HttpClient());
-    _ftp = FileTransfer(HTTPClient());
+    _ftp = FileTransfer(HTTPClient(BaseOptions(
+      connectTimeout: const Duration(seconds: 15),
+    )));
     _enigma = Enigma();
   }
 
-  late final FileTransfer _aid;  // avatar image downloader
   late final FileTransfer _ftp;
   late final Enigma _enigma;
 
@@ -99,14 +69,13 @@ class SharedFileUploader with Logging {
   //  + ' AppleWebKit/537.36 (KHTML, like Gecko)'
   //  + ' Chrome/118.0.0.0 Safari/537.36'
   void setUserAgent(String userAgent) {
-    _aid.setUserAgent(userAgent);
     _ftp.setUserAgent(userAgent);
   }
 
   /// Append download task with URL
   Future<bool> addAvatarTask(DownloadTask task) async {
     await _initSecrets();
-    return await _aid.addDownloadTask(task);
+    return await _ftp.addDownloadTask(task);
   }
 
   /// Append download task with URL
@@ -132,7 +101,6 @@ class SharedFileUploader with Logging {
     GlobalVariable shared = GlobalVariable();
     String ua = shared.terminal.userAgent;
     logInfo('update user-agent: $ua');
-    _aid.setUserAgent(ua);
     _ftp.setUserAgent(ua);
     //
     //  2. load enigma secrets

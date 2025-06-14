@@ -33,6 +33,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:dim_client/sdk.dart';
 import 'package:dim_client/ok.dart';
 import 'package:dim_client/ok.dart' as lnc;
+import 'package:pnf/http.dart';
 
 import '../client/shared.dart';
 import '../common/constants.dart';
@@ -376,6 +377,9 @@ class _AvatarImageLoader extends PortableImageLoader {
 
 class _AvatarDownloadTask extends PortableFileDownloadTask {
   _AvatarDownloadTask(super.pnf);
+
+  @override
+  int get priority => DownloadPriority.SLOWER;
 
   @override
   Future<String?> get cacheFilePath async => await _getAvatarPath(filename, pnf);

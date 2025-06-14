@@ -198,9 +198,10 @@ class _PortableAudioState extends PortableNetworkState<_PortableAudioView> {
     var loader = widget.loader;
     // check status
     PortableNetworkStatus pns = loader.status;
-    if (pns == PortableNetworkStatus.init ||
-        pns == PortableNetworkStatus.success) {
+    if (pns == PortableNetworkStatus.success) {
       return null;
+    } else if (pns == PortableNetworkStatus.init) {
+      text = 'Waiting'.tr;
     } else if (pns == PortableNetworkStatus.waiting) {
       text = 'Waiting'.tr;
     } else if (pns == PortableNetworkStatus.encrypting) {

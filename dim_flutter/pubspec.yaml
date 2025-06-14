@@ -75,7 +75,7 @@ dependencies:
 #  dim_plugins: 1.2.2
   dim_client: 0.7.7
 
-  pnf: 1.1.1
+  pnf: 1.2.1
   tvbox: 1.0.0
 
 dev_dependencies:

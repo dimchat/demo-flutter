@@ -10,6 +10,7 @@ abstract class NotificationNames {
   static const String kServerStateChanged = 'ServerStateChanged';
 
   static const String kStartChat = 'StartChat';
+  static const String kChatBoxClosed = 'ChatBoxClosed';
 
   static const String kAccountDeleted = 'AccountDeleted';
 

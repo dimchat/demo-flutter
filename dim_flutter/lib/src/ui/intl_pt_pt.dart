@@ -134,6 +134,9 @@ final Map<String, String> intlPtPt = {
   'Muted List': 'Lista de Silenciados',
 
   'Search User': 'Pesquisar Utilizador',
+  'Input ID or nickname to search': 'Digite o ID do usuário ou apelido para pesquisar',
+
+  'Data Empty': 'Dados vazios',
 
   // Settings
   'Settings': 'Definições',
@@ -169,6 +172,7 @@ final Map<String, String> intlPtPt = {
   'Image Not Found': 'Imagem Não Encontrada',
   'Failed to load image @filename': 'Falha ao carregar a imagem "@filename".',
 
+  'Forward Rich Text': 'Encaminhar mensagem em texto rico',
   'Forward Text': 'Encaminhar mensagem de texto',
   'Forward Image': 'Encaminhar Imagem',
   'Forward Video': 'Encaminhar Vídeo',
@@ -253,6 +257,8 @@ final Map<String, String> intlPtPt = {
   'Please update app (@version, build @build).': 'Por favor, atualize o aplicativo para a versão mais recente (@version, build @build).',
   'Upgrade': 'Atualizar',
   'Download': 'Baixar',
+
+  'Current version not support this service': 'A versão atual não suporta este serviço, por favor, atualize para a versão mais recente.',
 
   //
   //  Profile
@@ -346,6 +352,15 @@ final Map<String, String> intlPtPt = {
   'Station (@remote) is removed': 'A estação (@remote) foi removida.',
   'Failed to remove station (@remote)': 'Falha ao remover a estação (@remote).',
   'Cannot remove this station': 'Não é possível remover esta estação.',
+
+  'Add': 'Adicionar',
+  'New Station': 'Nova estação de retransmissão',
+
+  'Failed to add station': 'Falha ao adicionar a nova estação de retransmissão.',
+  'Please input station host': 'Por favor, insira o IP da nova estação de retransmissão.',
+  'Please input station port': 'Por favor, insira o número da porta da nova estação de retransmissão.',
+  'Station host error': 'Erro no IP da estação de retransmissão.',
+  'Port number error': 'Erro no número da porta da estação de retransmissão.',
 
   'Invite command error': 'Erro no comando de convite.',
   'Expel command error': 'Erro no comando de expulsão.',
@@ -452,5 +467,10 @@ final Map<String, String> intlPtPt = {
       '  1. A estação com a resposta mais rápida será selecionada como a estação de retransmissão atual;\n'
       '  2. Se algumas estações foram escolhidas, será selecionada a mais rápida dentre as escolhidas;\n'
       '  3. Se nenhuma estação for escolhida, selecione automaticamente de todas as estações.',
+
+  'UpdateVisa::Description': 'Aviso:\n'
+      '  1. A imagem do avatar será carregada em um servidor público de arquivos, para que todos possam baixá-la;\n'
+      '  2. Ao atualizar seu perfil, você precisa enviá-lo ativamente para todos em sua lista de contatos,'
+      ' pois não há um servidor central para fazer isso por você.',
 
 };

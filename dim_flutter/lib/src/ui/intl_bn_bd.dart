@@ -134,6 +134,9 @@ final Map<String, String> intlBnBd = {
   'Muted List': 'শান্ত তালিকা',
 
   'Search User': 'ব্যবহারকারী অনুসন্ধান করুন',
+  'Input ID or nickname to search': 'অনুসন্ধান করতে ব্যবহারকারী ID অথবা উপনাম প্রবেশ করুন',
+
+  'Data Empty': 'তথ্য খালি',
 
   // Settings
   'Settings': 'সেটিংস',
@@ -169,6 +172,7 @@ final Map<String, String> intlBnBd = {
   'Image Not Found': 'চিত্র পাওয়া যায়নি',
   'Failed to load image @filename': 'চিত্র "@filename" লোড করতে ব্যর্থ।',
 
+  'Forward Rich Text': 'রিচ টেক্সট মেসেজ ফরওয়ার্ড করুন',
   'Forward Text': 'টেক্সট মেসেজ ফরওয়ার্ড করুন',
   'Forward Image': 'ছবি পুনরায় প্রেরণ করুন',
   'Forward Video': 'ভিডিও প্রেরিত করুন',
@@ -253,6 +257,8 @@ final Map<String, String> intlBnBd = {
   'Please update app (@version, build @build).': 'অনুগ্রহ করে অ্যাপটি সর্বশেষ সংস্করণে আপডেট করুন (@version, build @build)।',
   'Upgrade': 'আপগ্রেড',
   'Download': 'ডাউনলোড করুন',
+
+  'Current version not support this service': 'বর্তমান সংস্করণ এই সেবাটি সমর্থন করে না, অনুগ্রহ করে সর্বশেষ সংস্করণে আপডেট করুন',
 
   //
   //  Profile
@@ -346,6 +352,15 @@ final Map<String, String> intlBnBd = {
   'Station (@remote) is removed': 'স্টেশন (@remote) মুছে ফেলা হয়েছে।',
   'Failed to remove station (@remote)': 'স্টেশন (@remote) মুছে ফেলতে ব্যর্থ হয়েছে।',
   'Cannot remove this station': 'এই স্টেশনটি মুছে ফেলা যাচ্ছে না।',
+
+  'Add': 'যোগ করুন',
+  'New Station': 'নতুন রিলে স্টেশন',
+
+  'Failed to add station': 'নতুন রিলে স্টেশন যোগ করতে ব্যর্থ',
+  'Please input station host': 'অনুগ্রহ করে নতুন রিলে স্টেশনের IP প্রবেশ করুন',
+  'Please input station port': 'অনুগ্রহ করে নতুন রিলে স্টেশনের পোর্ট নম্বর প্রবেশ করুন',
+  'Station host error': 'রিলে স্টেশন IP ত্রুটি',
+  'Port number error': 'রিলে স্টেশন পোর্ট নম্বর ত্রুটি',
 
   'Invite command error': 'আমন্ত্রণ কমান্ডের ত্রুটি।',
   'Expel command error': 'পেরিয় কমান্ডের ত্রুটি।',
@@ -456,5 +471,10 @@ final Map<String, String> intlBnBd = {
       '  1. সবচেয়ে দ্রুত সার্ভার থাকলে তা নির্বাচিত করা হবে বর্তমান রিলে স্টেশন হিসেবে;\n'
       '  2. যদি কিছু স্টেশন নির্বাচিত হয়, তবে নির্বাচিত করা হবে সেই নির্বাচিত সবচেয়ে দ্রুত;\n'
       '  3. যদি কোনও স্টেশন নির্বাচিত না হয়, তাহলে সব স্টেশন থেকে স্বয়ংক্রিয়ভাবে নির্বাচন করুন।',
+
+  'UpdateVisa::Description': 'বিজ্ঞপ্তি:\n'
+      '  1. অবতার চিত্র একটি পাবলিক ফাইল সার্ভারে আপলোড করা হবে, যাতে সবাই এটি ডাউনলোড করতে পারে;\n'
+      '  2. আপনার প্রোফাইল আপডেট করার সময়, আপনাকে এটি সক্রিয়ভাবে আপনার যোগাযোগ তালিকার সকলকে পাঠাতে হবে,'
+      ' কারণ এটি করার জন্য কোনও কেন্দ্রীয় সার্ভার নেই।',
 
 };

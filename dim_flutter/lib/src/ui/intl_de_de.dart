@@ -134,6 +134,9 @@ final Map<String, String> intlDeDe = {
   'Muted List': 'Stummgeschaltete Liste',
 
   'Search User': 'Benutzer suchen',
+  'Input ID or nickname to search': 'Geben Sie die Benutzer-ID oder den Nicknamen zur Suche ein',
+
+  'Data Empty': 'Daten leer',
 
   // Settings
   'Settings': 'Einstellungen',
@@ -169,6 +172,7 @@ final Map<String, String> intlDeDe = {
   'Image Not Found': 'Bild nicht gefunden',
   'Failed to load image @filename': 'Fehler beim Laden des Bildes "@filename".',
 
+  'Forward Rich Text': 'Reichen Sie eine Rich-Text-Nachricht weiter',
   'Forward Text': 'Textnachricht weiterleiten',
   'Forward Image': 'Bild weiterleiten',
   'Forward Video': 'Video weiterleiten',
@@ -253,6 +257,8 @@ final Map<String, String> intlDeDe = {
   'Please update app (@version, build @build).': 'Bitte aktualisieren Sie die App auf die neueste Version (@version, Build @build).',
   'Upgrade': 'Upgrade',
   'Download': 'Herunterladen',
+
+  'Current version not support this service': 'Die aktuelle Version unterstützt diesen Dienst nicht. Bitte aktualisieren Sie auf die neueste Version.',
 
   //
   //  Profile
@@ -341,6 +347,15 @@ final Map<String, String> intlDeDe = {
   'Station (@remote) is removed': 'Station (@remote) wurde entfernt.',
   'Failed to remove station (@remote)': 'Station (@remote) konnte nicht entfernt werden.',
   'Cannot remove this station': 'Diese Station kann nicht entfernt werden.',
+
+  'Add': 'Hinzufügen',
+  'New Station': 'Neue Relaisstation',
+
+  'Failed to add station': 'Fehler beim Hinzufügen der neuen Relaisstation.',
+  'Please input station host': 'Bitte geben Sie die IP der neuen Relaisstation ein.',
+  'Please input station port': 'Bitte geben Sie die Portnummer der neuen Relaisstation ein.',
+  'Station host error': 'Fehler bei der IP der Relaisstation.',
+  'Port number error': 'Fehler bei der Portnummer der Relaisstation.',
 
   'Invite command error': 'Fehler im Einladungsbefehl.',
   'Expel command error': 'Fehler im Ausweisungsbefehl.',
@@ -450,5 +465,10 @@ final Map<String, String> intlDeDe = {
       '  1. Die Station mit der schnellsten Antwort wird als aktuelle Relaisstation ausgewählt;\n'
       '  2. Wenn einige Stationen ausgewählt wurden, wird die schnellste aus den ausgewählten Stationen ausgewählt;\n'
       '  3. Wenn keine Stationen ausgewählt wurden, automatische Auswahl aus allen Stationen.',
+
+  'UpdateVisa::Description': 'Hinweis:\n'
+      '  1. Das Avatar-Bild wird auf einen öffentlichen Dateiserver hochgeladen, damit jeder es herunterladen kann;\n'
+      '  2. Wenn Sie Ihr Profil aktualisieren, müssen Sie es aktiv an alle Personen in Ihrer Kontaktliste senden,'
+      ' da es keinen zentralen Server gibt, der dies für Sie erledigt.',
 
 };

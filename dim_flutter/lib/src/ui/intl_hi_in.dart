@@ -134,6 +134,9 @@ final Map<String, String> intlHiIn = {
   'Muted List': 'म्यूट की सूची',
 
   'Search User': 'उपयोगकर्ता खोजें',
+  'Input ID or nickname to search': 'खोजने के लिए उपयोगकर्ता ID या उपनाम दर्ज करें',
+
+  'Data Empty': 'डेटा खाली है',
 
   // Settings
   'Settings': 'सेटिंग्स',
@@ -169,6 +172,7 @@ final Map<String, String> intlHiIn = {
   'Image Not Found': 'तस्वीर नहीं मिली',
   'Failed to load image @filename': 'तस्वीर लोड करने में विफल "@filename"।',
 
+  'Forward Rich Text': 'रिच टेक्स्ट संदेश को अग्रेषित करें',
   'Forward Text': 'टेक्स्ट संदेश अग्रेषित करें',
   'Forward Image': 'छवि आगे भेजें',
   'Forward Video': 'वीडियो अग्रेषित करें',
@@ -253,6 +257,8 @@ final Map<String, String> intlHiIn = {
   'Please update app (@version, build @build).': 'कृपया इस ऐप को नवीनतम संस्करण (@version, build @build) में अपडेट करें।',
   'Upgrade': 'अपग्रेड करें',
   'Download': 'डाउनलोड करें',
+
+  'Current version not support this service': 'वर्तमान संस्करण इस सेवा का समर्थन नहीं करता है, कृपया नवीनतम संस्करण में अपडेट करें',
 
   //
   //  Profile
@@ -342,6 +348,15 @@ final Map<String, String> intlHiIn = {
   'Station (@remote) is removed': 'स्टेशन (@remote) हटा दिया गया है।',
   'Failed to remove station (@remote)': 'स्टेशन (@remote) को हटाने में विफल।',
   'Cannot remove this station': 'इस स्टेशन को हटाया नहीं जा सकता।',
+
+  'Add': 'जोड़ें',
+  'New Station': 'नई रिले स्टेशन',
+
+  'Failed to add station': 'नई रिले स्टेशन जोड़ने में विफल',
+  'Please input station host': 'कृपया नई रिले स्टेशन का IP दर्ज करें',
+  'Please input station port': 'कृपया नई रिले स्टेशन का पोर्ट नंबर दर्ज करें',
+  'Station host error': 'रिले स्टेशन IP त्रुटि',
+  'Port number error': 'रिले स्टेशन पोर्ट नंबर त्रुटि',
 
   'Invite command error': 'आमंत्रण कमांड में त्रुटि।',
   'Expel command error': 'निकालने कमांड में त्रुटि।',
@@ -452,5 +467,10 @@ final Map<String, String> intlHiIn = {
       '  1. सबसे तेज़ प्रतिक्रिया वाली स्टेशन को वर्तमान रिले स्टेशन के रूप में चुना जाएगा;\n'
       '  2. अगर कुछ स्टेशन चुने गए हों, तो चुने गए स्टेशनों में से सबसे तेज़ को चुनेगा;\n'
       '  3. अगर कोई स्टेशन नहीं चुना गया हो, तो सभी स्टेशनों से स्वचालित रूप से चुनेगा।',
+
+  'UpdateVisa::Description': 'सूचना:\n'
+      '  1. अवतार चित्र को एक सार्वजनिक फ़ाइल सर्वर पर अपलोड किया जाएगा, ताकि सभी इसे डाउनलोड कर सकें;\n'
+      '  2. जब आप अपना प्रोफ़ाइल अपडेट करते हैं, तो आपको इसे अपनी संपर्क सूची में सभी को सक्रिय रूप से प्रसारित करना होगा,'
+      ' क्योंकि ऐसा करने के लिए कोई केंद्रीय सर्वर नहीं है।',
 
 };

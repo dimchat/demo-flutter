@@ -134,6 +134,9 @@ final Map<String, String> intlViVN = {
   'Muted List': 'Danh sách tắt tiếng',
 
   'Search User': 'Tìm người dùng',
+  'Input ID or nickname to search': 'Nhập ID người dùng hoặc biệt danh để tìm kiếm',
+
+  'Data Empty': 'Dữ liệu trống',
 
   // Settings
   'Settings': 'Cài đặt',
@@ -169,6 +172,7 @@ final Map<String, String> intlViVN = {
   'Image Not Found': 'Không tìm thấy ảnh',
   'Failed to load image @filename': 'Không thể tải ảnh "@filename".',
 
+  'Forward Rich Text': 'Chuyển tiếp tin nhắn Rich Text',
   'Forward Text': 'Chuyển tiếp tin nhắn',
   'Forward Image': 'Chuyển tiếp Hình ảnh',
   'Forward Video': 'Chuyển tiếp Video',
@@ -253,6 +257,8 @@ final Map<String, String> intlViVN = {
   'Please update app (@version, build @build).': 'Vui lòng cập nhật ứng dụng lên phiên bản mới nhất (@version, bản dựng @build).',
   'Upgrade': 'Nâng cấp',
   'Download': 'Tải xuống',
+
+  'Current version not support this service': 'Phiên bản hiện tại không hỗ trợ dịch vụ này, vui lòng cập nhật lên phiên bản mới nhất.',
 
   //
   //  Profile
@@ -346,6 +352,15 @@ final Map<String, String> intlViVN = {
   'Station (@remote) is removed': 'Trạm (@remote) đã bị xóa.',
   'Failed to remove station (@remote)': 'Không thể xóa trạm (@remote).',
   'Cannot remove this station': 'Không thể xóa trạm này.',
+
+  'Add': 'Thêm',
+  'New Station': 'Trạm trung gian mới',
+
+  'Failed to add station': 'Thêm trạm trung gian mới thất bại.',
+  'Please input station host': 'Vui lòng nhập IP của trạm trung gian mới.',
+  'Please input station port': 'Vui lòng nhập số cổng của trạm trung gian mới.',
+  'Station host error': 'Lỗi IP của trạm trung gian.',
+  'Port number error': 'Lỗi số cổng của trạm trung gian.',
 
   'Invite command error': 'Lỗi lệnh mời.',
   'Expel command error': 'Lỗi lệnh đuổi.',
@@ -453,5 +468,10 @@ final Map<String, String> intlViVN = {
       '  1. Trạm có thời gian phản hồi nhanh nhất sẽ được chọn làm trạm trung chuyển hiện tại;\n'
       '  2. Nếu đã chọn một số trạm, nó sẽ chọn trạm nhanh nhất từ những trạm đã chọn;\n'
       '  3. Nếu không chọn trạm nào, sẽ tự động chọn từ tất cả các trạm.',
+
+  'UpdateVisa::Description': 'Thông báo:\n'
+      '  1. Hình ảnh avatar sẽ được tải lên một máy chủ tệp công cộng, để mọi người có thể tải xuống;\n'
+      '  2. Khi cập nhật hồ sơ của bạn, bạn cần chủ động gửi thông báo tới tất cả mọi người trong danh bạ của mình,'
+      ' vì không có máy chủ trung tâm nào làm điều này cho bạn.',
 
 };

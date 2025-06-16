@@ -134,6 +134,9 @@ final Map<String, String> intlThTh = {
   'Muted List': 'รายการที่ถูกปิดเสียง',
 
   'Search User': 'ค้นหาผู้ใช้',
+  'Input ID or nickname to search': 'กรุณาป้อน ID ผู้ใช้หรือชื่อเล่นเพื่อค้นหา',
+
+  'Data Empty': 'ข้อมูลว่างเปล่า',
 
   // Settings
   'Settings': 'ตั้งค่า',
@@ -169,6 +172,7 @@ final Map<String, String> intlThTh = {
   'Image Not Found': 'ไม่พบรูปภา��',
   'Failed to load image @filename': 'ไม่สามารถโหลดรูป "@filename" ได้',
 
+  'Forward Rich Text': 'ส่งข้อความ Rich Text ต่อ',
   'Forward Text': 'ส่งข้อความต่อ',
   'Forward Image': 'ส่งต่อรูปภาพ',
   'Forward Video': 'ส่งวิดีโอต่อ',
@@ -253,6 +257,8 @@ final Map<String, String> intlThTh = {
   'Please update app (@version, build @build).': 'กรุณาอัปเดตแอปเป็นเวอร์ชันล่าสุด (@version, บิลด์ @build)',
   'Upgrade': 'อัปเกรด',
   'Download': 'ดาวน์โหลด',
+
+  'Current version not support this service': 'เวอร์ชันปัจจุบันไม่รองรับบริการนี้ กรุณาอัปเดตเป็นเวอร์ชันล่าสุด',
 
   //
   //  Profile
@@ -346,6 +352,15 @@ final Map<String, String> intlThTh = {
   'Station (@remote) is removed': 'สถานี (@remote) ถูกลบแล้ว',
   'Failed to remove station (@remote)': 'ไม่สามารถลบสถานี (@remote) ได้',
   'Cannot remove this station': 'ไม่สามารถลบสถานีนี้ได้',
+
+  'Add': 'เพิ่ม',
+  'New Station': 'สถานีรีเลย์ใหม่',
+
+  'Failed to add station': 'ไม่สามารถเพิ่มสถานีรีเลย์ใหม่ได้',
+  'Please input station host': 'กรุณาป้อน IP ของสถานีรีเลย์ใหม่',
+  'Please input station port': 'กรุณาป้อนหมายเลขพอร์ตของสถานีรีเลย์ใหม่',
+  'Station host error': 'เกิดข้อผิดพลาดในการใช้ IP ของสถานีรีเลย์',
+  'Port number error': 'เกิดข้อผิดพลาดในการใช้หมายเลขพอร์ตของสถานีรีเลย์',
 
   'Invite command error': 'ข้อผิดพลาดคำสั่งเชิญ',
   'Expel command error': 'ข้อผิดพลาดคำสั่งขับไล่',
@@ -451,5 +466,10 @@ final Map<String, String> intlThTh = {
       '  1. สถานีที่ตอบสนองได้เร็วที่สุดจะถูกเลือกเป็นสถานีรีเลย์ปัจจุบัน;\n'
       '  2. หากมีการเลือกสถานีบางแห่ง จะเลือกสถานีที่เร็วที่สุดจากสถานีที่เลือกไว้;\n'
       '  3. หากไม่ได้เลือกสถานีไหน จะเลือกจากสถานีทั้งหมดโดยอัตโนมัติ',
+
+  'UpdateVisa::Description': 'ประกาศ:\n'
+      '  1. รูปโปรไฟล์จะถูกอัปโหลดไปยังเซิร์ฟเวอร์ไฟล์สาธารณะ เพื่อให้ทุกคนสามารถดาวน์โหลดได้;\n'
+      '  2. เมื่ออัปเดตโปรไฟล์ของคุณ คุณต้องกระจายข้อมูลไปยังทุกคนในรายชื่อผู้ติดต่อของคุณเอง'
+      ' เนื่องจากไม่มีเซิร์ฟเวอร์กลางที่ทำการกระจายข้อมูลให้คุณ',
 
 };

@@ -134,6 +134,9 @@ final Map<String, String> intlIdId = {
   'Muted List': 'Daftar Dimatikan',
 
   'Search User': 'Cari Pengguna',
+  'Input ID or nickname to search': 'Masukkan ID pengguna atau nama panggilan untuk mencari',
+
+  'Data Empty': 'Data Kosong',
 
   // Settings
   'Settings': 'Pengaturan',
@@ -169,6 +172,7 @@ final Map<String, String> intlIdId = {
   'Image Not Found': 'Gambar Tidak Ditemukan',
   'Failed to load image @filename': 'Gagal memuat gambar "@filename".',
 
+  'Forward Rich Text': 'Teruskan Pesan Teks Kaya',
   'Forward Text': 'Teruskan Pesan Teks',
   'Forward Image': 'Teruskan Gambar',
   'Forward Video': 'Teruskan Video',
@@ -253,6 +257,8 @@ final Map<String, String> intlIdId = {
   'Please update app (@version, build @build).': 'Harap perbarui aplikasi ke versi terbaru (@version, build @build).',
   'Upgrade': 'Tingkatkan',
   'Download': 'Unduh',
+
+  'Current version not support this service': 'Versi saat ini tidak mendukung layanan ini, harap perbarui ke versi terbaru.',
 
   //
   //  Profile
@@ -346,6 +352,15 @@ final Map<String, String> intlIdId = {
   'Station (@remote) is removed': 'Stasiun (@remote) telah dihapus.',
   'Failed to remove station (@remote)': 'Gagal menghapus stasiun (@remote).',
   'Cannot remove this station': 'Tidak dapat menghapus stasiun ini.',
+
+  'Add': 'Tambah',
+  'New Station': 'Stasiun Relay Baru',
+
+  'Failed to add station': 'Gagal menambahkan stasiun relay baru.',
+  'Please input station host': 'Harap masukkan IP stasiun relay baru.',
+  'Please input station port': 'Harap masukkan nomor port stasiun relay baru.',
+  'Station host error': 'Kesalahan IP stasiun relay.',
+  'Port number error': 'Kesalahan nomor port stasiun relay.',
 
   'Invite command error': 'Kesalahan perintah undangan.',
   'Expel command error': 'Kesalahan perintah usir.',
@@ -456,5 +471,10 @@ final Map<String, String> intlIdId = {
       '  1. Stasiun dengan respons tercepat akan dipilih sebagai stasiun relay saat ini;\n'
       '  2. Jika beberapa stasiun telah dipilih, akan memilih yang paling cepat dari yang dipilih;\n'
       '  3. Jika tidak ada stasiun yang dipilih, akan dipilih secara otomatis dari semua stasiun.',
+
+  'UpdateVisa::Description': 'Pemberitahuan:\n'
+      '  1. Gambar avatar akan diunggah ke server file publik, sehingga semua orang dapat mengunduhnya;\n'
+      '  2. Saat memperbarui profil Anda, Anda perlu secara proaktif mengirimkan pembaruan kepada semua orang di daftar kontak Anda,'
+      ' karena tidak ada server pusat untuk melakukannya untuk Anda.',
 
 };

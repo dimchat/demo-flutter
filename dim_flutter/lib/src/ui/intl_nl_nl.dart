@@ -134,6 +134,9 @@ final Map<String, String> intlNlNl = {
   'Muted List': 'Gedempte Lijst',
 
   'Search User': 'Gebruiker Zoeken',
+  'Input ID or nickname to search': 'Voer gebruikers-ID of bijnaam in om te zoeken',
+
+  'Data Empty': 'Gegevens zijn leeg',
 
   // Settings
   'Settings': 'Instellingen',
@@ -169,6 +172,7 @@ final Map<String, String> intlNlNl = {
   'Image Not Found': 'Afbeelding Niet Gevonden',
   'Failed to load image @filename': 'Laden van afbeelding "@filename" mislukt.',
 
+  'Forward Rich Text': 'Stuur rijke tekstberichten door',
   'Forward Text': 'Doorstuur tekstbericht',
   'Forward Image': 'Afbeelding doorsturen',
   'Forward Video': 'Video doorsturen',
@@ -253,6 +257,8 @@ final Map<String, String> intlNlNl = {
   'Please update app (@version, build @build).': 'Werk de app bij naar de nieuwste versie (@version, build @build).',
   'Upgrade': 'Upgrade',
   'Download': 'Downloaden',
+
+  'Current version not support this service': 'De huidige versie ondersteunt deze service niet, werk bij naar de laatste versie.',
 
   //
   //  Profile
@@ -346,6 +352,15 @@ final Map<String, String> intlNlNl = {
   'Station (@remote) is removed': 'Station (@remote) is verwijderd.',
   'Failed to remove station (@remote)': 'Kon station (@remote) niet verwijderen.',
   'Cannot remove this station': 'Kan dit station niet verwijderen.',
+
+  'Add': 'Toevoegen',
+  'New Station': 'Nieuw relaisstation',
+
+  'Failed to add station': 'Kon het nieuwe relaisstation niet toevoegen.',
+  'Please input station host': 'Voer het IP van het nieuwe relaisstation in.',
+  'Please input station port': 'Voer het poortnummer van het nieuwe relaisstation in.',
+  'Station host error': 'Fout in het IP van het relaisstation.',
+  'Port number error': 'Fout in het poortnummer van het relaisstation.',
 
   'Invite command error': 'Fout in uitnodigingscommando.',
   'Expel command error': 'Fout in expulseringscommando.',
@@ -456,5 +471,10 @@ final Map<String, String> intlNlNl = {
       '  1. De station met de snelste reactie zal geselecteerd worden als het huidige relaisstation;\n'
       '  2. Als er enkele stations zijn gekozen, zal het de snelste selecteren uit de gekozen stations;\n'
       '  3. Als er geen stations zijn gekozen, wordt er automatisch gekozen uit alle stations.',
+
+  'UpdateVisa::Description': 'Opmerking:\n'
+      '  1. De avatarafbeelding wordt geüpload naar een openbaar bestandserver, zodat iedereen het kan downloaden;\n'
+      '  2. Bij het bijwerken van je profiel, moet je het actief naar iedereen in je contactenlijst verzenden,'
+      ' omdat er geen centrale server is die dit voor je doet.',
 
 };

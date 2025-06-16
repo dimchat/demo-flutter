@@ -134,6 +134,9 @@ final Map<String, String> intlMsMy = {
   'Muted List': 'Senarai Dimatikan',
 
   'Search User': 'Cari Pengguna',
+  'Input ID or nickname to search': 'Masukkan ID pengguna atau nama samaran untuk mencari',
+
+  'Data Empty': 'Data Kosong',
 
   // Settings
   'Settings': 'Tetapan',
@@ -169,6 +172,7 @@ final Map<String, String> intlMsMy = {
   'Image Not Found': 'Imej Tidak Ditemui',
   'Failed to load image @filename': 'Gagal memuatkan imej "@filename".',
 
+  'Forward Rich Text': 'Teruskan Mesej Teks Kaya',
   'Forward Text': 'Hantar Mesej Teks',
   'Forward Image': 'Hantar Imej',
   'Forward Video': 'Hantar Video',
@@ -253,6 +257,8 @@ final Map<String, String> intlMsMy = {
   'Please update app (@version, build @build).': 'Sila kemas kini aplikasi kepada versi terkini (@version, binaan @build).',
   'Upgrade': 'Kemas kini',
   'Download': 'Muat turun',
+
+  'Current version not support this service': 'Versi semasa tidak menyokong perkhidmatan ini, sila kemas kini kepada versi terbaru.',
 
   //
   //  Profile
@@ -346,6 +352,15 @@ final Map<String, String> intlMsMy = {
   'Station (@remote) is removed': 'Stesen (@remote) telah dipadamkan.',
   'Failed to remove station (@remote)': 'Gagal menghapuskan stesen (@remote).',
   'Cannot remove this station': 'Tidak boleh menghapuskan stesen ini.',
+
+  'Add': 'Tambah',
+  'New Station': 'Stesen Relay Baru',
+
+  'Failed to add station': 'Gagal menambah stesen relay baru.',
+  'Please input station host': 'Sila masukkan IP stesen relay baru.',
+  'Please input station port': 'Sila masukkan nombor port stesen relay baru.',
+  'Station host error': 'Ralat IP stesen relay.',
+  'Port number error': 'Ralat nombor port stesen relay.',
 
   'Invite command error': 'Ralat arahan jemputan.',
   'Expel command error': 'Ralat arahan halau.',
@@ -456,5 +471,10 @@ final Map<String, String> intlMsMy = {
       '  1. Stesen dengan respons paling cepat akan dipilih sebagai stesen raya semasa;\n'
       '  2. Jika beberapa stesen telah dipilih, ia akan memilih yang paling cepat dari yang dipilih;\n'
       '  3. Jika tiada stesen dipilih, pilih dari semua stesen secara automatik.',
+
+  'UpdateVisa::Description': 'Pemberitahuan:\n'
+      '  1. Gambar avatar akan dimuat naik ke pelayan fail awam, supaya semua orang boleh memuat turunnya;\n'
+      '  2. Apabila mengemas kini profil anda, anda perlu menyebarkan kemas kini secara proaktif kepada semua orang dalam senarai kenalan anda,'
+      ' kerana tiada pelayan pusat untuk melakukannya bagi pihak anda.',
 
 };

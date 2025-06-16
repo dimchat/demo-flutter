@@ -133,6 +133,9 @@ final Map<String, String> intlEnUs = {
   'Muted List': 'Muted List',
 
   'Search User': 'Search User',
+  'Input ID or nickname to search': 'Input user ID or nickname to search',
+
+  'Data Empty': 'Data Empty',
 
   // Settings
   'Settings': 'Settings',
@@ -168,6 +171,7 @@ final Map<String, String> intlEnUs = {
   'Image Not Found': 'Image Not Found',
   'Failed to load image @filename': 'Failed to load image "@filename".',
 
+  'Forward Rich Text': 'Forward Rich Text Message',
   'Forward Text': 'Forward Text Message',
   'Forward Image': 'Forward Image',
   'Forward Video': 'Forward Video',
@@ -252,6 +256,8 @@ final Map<String, String> intlEnUs = {
   'Please update app (@version, build @build).': 'Please update this app to the latest version (@version, build @build).',
   'Upgrade': 'Upgrade',
   'Download': 'Download',
+
+  'Current version not support this service': 'The current version does not support this service, please update to the latest version.',
 
   //
   //  Profile
@@ -345,6 +351,15 @@ final Map<String, String> intlEnUs = {
   'Station (@remote) is removed': 'Station (@remote) is removed.',
   'Failed to remove station (@remote)': 'Failed to remove station (@remote).',
   'Cannot remove this station': 'Cannot remove this station.',
+
+  'Add': 'Add',
+  'New Station': 'New Relay Station',
+
+  'Failed to add station': 'Failed to add the new relay station.',
+  'Please input station host': 'Please input new relay station IP.',
+  'Please input station port': 'Please input new relay station port number.',
+  'Station host error': 'Relay station IP error.',
+  'Port number error': 'Relay station port number error.',
 
   'Invite command error': 'Invite command error.',
   'Expel command error': 'Expel command error.',
@@ -455,5 +470,10 @@ final Map<String, String> intlEnUs = {
       '  1. The station with the fastest response will be selected as the current relay station;\n'
       '  2. If some stations were chosen, it will select the fastest one from the chosen ones;\n'
       '  3. If no stations are chosen, select from all stations automatically.',
+
+  'UpdateVisa::Description': 'Notice:\n'
+      '  1. The avatar image will be uploaded to a public file server, so that everyone can download it;\n'
+      '  2. When updating your profile, you need to proactively broadcast it to everyone in your contact list,'
+      ' as there is no central server to do this for you.',
 
 };

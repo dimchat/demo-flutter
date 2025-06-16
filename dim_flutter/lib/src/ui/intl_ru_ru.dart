@@ -134,6 +134,9 @@ final Map<String, String> intlRuRu = {
   'Muted List': 'Список без звука',
 
   'Search User': 'Поиск пользователя',
+  'Input ID or nickname to search': 'Введите ID пользователя или никнейм для поиска',
+
+  'Data Empty': 'Данные пусты',
 
   // Settings
   'Settings': 'Настройки',
@@ -169,6 +172,7 @@ final Map<String, String> intlRuRu = {
   'Image Not Found': 'Изображение не найдено',
   'Failed to load image @filename': 'Не удалось загрузить изображение "@filename".',
 
+  'Forward Rich Text': 'Переслать сообщение в формате Rich Text',
   'Forward Text': 'Переслать текстовое сообщение',
   'Forward Image': 'Переслать изображение',
   'Forward Video': 'Переслать видео',
@@ -253,6 +257,8 @@ final Map<String, String> intlRuRu = {
   'Please update app (@version, build @build).': 'Пожалуйста, обновите приложение до последней версии (@version, сборка @build).',
   'Upgrade': 'Обновить',
   'Download': 'Скачать',
+
+  'Current version not support this service': 'Текущая версия не поддерживает эту услугу, пожалуйста, обновите до последней версии.',
 
   //
   //  Profile
@@ -346,6 +352,15 @@ final Map<String, String> intlRuRu = {
   'Station (@remote) is removed': 'Станция (@remote) удалена.',
   'Failed to remove station (@remote)': 'Не удалось удалить станцию (@remote).',
   'Cannot remove this station': 'Не удается удалить эту станцию.',
+
+  'Add': 'Добавить',
+  'New Station': 'Новая ретрансляционная станция',
+
+  'Failed to add station': 'Не удалось добавить новую ретрансляционную станцию.',
+  'Please input station host': 'Введите IP новой ретрансляционной станции.',
+  'Please input station port': 'Введите номер порта новой ретрансляционной станции.',
+  'Station host error': 'Ошибка IP ретрансляционной станции.',
+  'Port number error': 'Ошибка номера порта ретрансляционной станции.',
 
   'Invite command error': 'Ошибка команды приглашения.',
   'Expel command error': 'Ошибка команды изгнания.',
@@ -456,5 +471,10 @@ final Map<String, String> intlRuRu = {
       '  1. В качестве текущей реле-станции будет выбрана станция с самым быстрым ответом;\n'
       '  2. Если выбрано несколько станций, будет выбрана самая быстрая из выбранных;\n'
       '  3. Если станции не выбраны, будет выбрана автоматически из всех станций.',
+
+  'UpdateVisa::Description': 'Уведомление:\n'
+      '  1. Изображение аватара будет загружено на общедоступный файловый сервер, чтобы каждый мог его скачать;\n'
+      '  2. При обновлении профиля вам нужно активно передавать его всем в вашем списке контактов,'
+      ' так как нет центрального сервера для выполнения этой задачи.',
 
 };

@@ -134,6 +134,9 @@ final Map<String, String> intlAfZa = {
   'Muted List': 'Onderdrukte Lys',
 
   'Search User': 'Soek Gebruiker',
+  'Input ID or nickname to search': 'Voer gebruiker ID of bynaam in om te soek',
+
+  'Data Empty': 'Data is leeg',
 
   // Settings
   'Settings': 'Instellings',
@@ -169,6 +172,7 @@ final Map<String, String> intlAfZa = {
   'Image Not Found': 'Beeld Nie Gevind Nie',
   'Failed to load image @filename': 'Kon nie beeld "@filename" laai nie.',
 
+  'Forward Rich Text': 'Stuur \'n ryk teksboodskap',
   'Forward Text': 'Stuur Teksboodskap Deur',
   'Forward Image': 'Stuur Beeld Voort',
   'Forward Video': 'Stuur video',
@@ -253,6 +257,8 @@ final Map<String, String> intlAfZa = {
   'Please update app (@version, build @build).': 'Dateer asseblief die toepassing op na die nuutste weergawe (@version, bou @build).',
   'Upgrade': 'Opgradering',
   'Download': 'Aflaai',
+
+  'Current version not support this service': 'Die huidige weergawe ondersteun nie hierdie diens nie, werk asseblief op na die nuutste weergawe.',
 
   //
   //  Profile
@@ -346,6 +352,15 @@ final Map<String, String> intlAfZa = {
   'Station (@remote) is removed': 'Stasie (@remote) is verwyder.',
   'Failed to remove station (@remote)': 'Dit was nie moontlik om stasie (@remote) te verwyder nie.',
   'Cannot remove this station': 'Dit is nie moontlik om hierdie stasie te verwyder nie.',
+
+  'Add': 'Voeg by',
+  'New Station': 'Nuwe Relay Stasie',
+
+  'Failed to add station': 'Dit het gefaal om die nuwe relay stasie by te voeg.',
+  'Please input station host': 'Voer die IP van die nuwe relay stasie in.',
+  'Please input station port': 'Voer die poortnommer van die nuwe relay stasie in.',
+  'Station host error': 'Relay stasie IP fout.',
+  'Port number error': 'Relay stasie poortnommer fout.',
 
   'Invite command error': 'Fout in die uitnodiging opdrag.',
   'Expel command error': 'Fout in die uitwerp opdrag.',
@@ -455,5 +470,10 @@ final Map<String, String> intlAfZa = {
       '  1. Die stasie met die vinnigste reaksie sal gekies word as die huidige relaaisender;\n'
       '  2. As sommige stasies gekies is, sal die vinnigste een van die gekose stasies gekies word;\n'
       '  3. As daar geen stasies gekies is nie, kies outomaties van alle stasies.',
+
+  'UpdateVisa::Description': 'Kennisgewing:\n'
+      '  1. Die avatar prent sal op \'n openbare lêerbediener opgelaai word sodat almal dit kan aflaai;\n'
+      '  2. Wanneer jy jou profiel opdateer, moet jy dit proaktief aan almal in jou kontaklys uitzend,'
+      ' aangesien daar geen sentrale bediener is wat dit vir jou sal doen nie.',
 
 };

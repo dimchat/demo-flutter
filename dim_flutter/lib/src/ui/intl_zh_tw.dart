@@ -133,6 +133,9 @@ final Map<String, String> intlZhTw = {
   'Muted List': '靜音清單',
 
   'Search User': '搜尋使用者',
+  'Input ID or nickname to search': '輸入用戶ID或暱稱搜尋',
+
+  'Data Empty': '資料為空',
 
   // Settings
   'Settings': '設定',
@@ -168,6 +171,7 @@ final Map<String, String> intlZhTw = {
   'Image Not Found': '找不到圖片',
   'Failed to load image @filename': '無法載入圖片 "@filename"。',
 
+  'Forward Rich Text': '轉發富文本訊息',
   'Forward Text': '轉發文字訊息',
   'Forward Image': '轉發圖片',
   'Forward Video': '轉發視頻',
@@ -251,6 +255,8 @@ final Map<String, String> intlZhTw = {
   'Please update app (@version, build @build).': '請更新應用程式至最新版本 (@version，版本號 @build)。',
   'Upgrade': '升級',
   'Download': '下載',
+
+  'Current version not support this service': '目前版本不支援此服務，請更新至最新版本。',
 
   //
   //  Profile
@@ -340,6 +346,15 @@ final Map<String, String> intlZhTw = {
   'Station (@remote) is removed': '站點 (@remote) 已被移除。',
   'Failed to remove station (@remote)': '移除站點 (@remote) 失敗。',
   'Cannot remove this station': '無法移除此站點。',
+
+  'Add': '新增',
+  'New Station': '新中繼站',
+
+  'Failed to add station': '新增中繼站失敗。',
+  'Please input station host': '請輸入新中繼站的IP。',
+  'Please input station port': '請輸入新中繼站的端口號。',
+  'Station host error': '中繼站IP錯誤。',
+  'Port number error': '中繼站端口號錯誤。',
 
   'Invite command error': '邀請指令錯誤。',
   'Expel command error': '驅逐指令錯誤。',
@@ -445,5 +460,10 @@ final Map<String, String> intlZhTw = {
       '  1. 選擇回應速度最快的站台作為目前的中繼站;\n'
       '  2. 如果有選擇一些站台，將會從已選擇的站台中選擇速度最快的一個;\n'
       '  3. 如果沒有選擇站台，將會自動從所有站台中進行選擇。',
+
+  'UpdateVisa::Description': '注意事項：\n'
+      '  1. 头像圖片將上傳至公開檔案伺服器，讓每個人都能下載；\n'
+      '  2. 更新個人資料時，您需要主動向聯絡人列表中的每個人廣播，'
+      ' 因為沒有中央伺服器為您處理這件事。',
 
 };

@@ -134,6 +134,9 @@ final Map<String, String> intlKoKr = {
   'Muted List': '음소거 목록',
 
   'Search User': '사용자 검색',
+  'Input ID or nickname to search': '사용자 ID 또는 닉네임을 입력하여 검색',
+
+  'Data Empty': '데이터가 비어 있습니다',
 
   // Settings
   'Settings': '설정',
@@ -169,6 +172,7 @@ final Map<String, String> intlKoKr = {
   'Image Not Found': '이미지를 찾을 수 없음',
   'Failed to load image @filename': '"@filename" 이미지 로드 실패',
 
+  'Forward Rich Text': '리치 텍스트 메시지 전달',
   'Forward Text': '텍스트 메시지 전송',
   'Forward Image': '이미지 전송',
   'Forward Video': '비디오 전송',
@@ -252,6 +256,8 @@ final Map<String, String> intlKoKr = {
   'Please update app (@version, build @build).': '앱을 최신 버전(@version, 빌드 @build)으로 업데이트해 주세요.',
   'Upgrade': '업그레이드',
   'Download': '다운로드',
+
+  'Current version not support this service': '현재 버전은 이 서비스를 지원하지 않습니다. 최신 버전으로 업데이트해주세요.',
 
   //
   //  Profile
@@ -345,6 +351,15 @@ final Map<String, String> intlKoKr = {
   'Station (@remote) is removed': '스테이션(@remote)이 삭제되었습니다.',
   'Failed to remove station (@remote)': '스테이션(@remote)을 삭제하는 데 실패했습니다.',
   'Cannot remove this station': '이 스테이션을 삭제할 수 없습니다.',
+
+  'Add': '추가',
+  'New Station': '새로운 중계국',
+
+  'Failed to add station': '새 중계국 추가에 실패했습니다.',
+  'Please input station host': '새 중계국의 IP를 입력해주세요.',
+  'Please input station port': '새 중계국의 포트 번호를 입력해주세요.',
+  'Station host error': '중계국 IP 오류.',
+  'Port number error': '중계국 포트 번호 오류.',
 
   'Invite command error': '초대 명령 오류.',
   'Expel command error': '추방 명령 오류.',
@@ -451,5 +466,10 @@ final Map<String, String> intlKoKr = {
       '  1. 가장 빠른 응답 속도를 가진 역이 현재 릴레이 스테이션으로 선택됩니다;\n'
       '  2. 일부 역이 선택된 경우 선택한 역 중 가장 빠른 것을 선택합니다;\n'
       '  3. 역이 선택되지 않은 경우 모든 역 중에서 자동으로 선택됩니다.',
+
+  'UpdateVisa::Description': '공지사항:\n'
+      '  1. 아바타 이미지는 공개 파일 서버에 업로드되어 모든 사람이 다운로드할 수 있게 됩니다;\n'
+      '  2. 프로필을 업데이트할 때, 중앙 서버가 이 작업을 대신 처리하지 않기 때문에,'
+      ' 연락처 목록의 모든 사람에게 적극적으로 전파해야 합니다.',
 
 };

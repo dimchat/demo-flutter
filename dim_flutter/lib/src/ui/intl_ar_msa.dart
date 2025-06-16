@@ -134,6 +134,9 @@ final Map<String, String> intlAr = {
   'Muted List': 'قائمة المكتومين',
 
   'Search User': 'البحث عن مستخدم',
+  'Input ID or nickname to search': 'أدخل معرف المستخدم أو الاسم المستعار للبحث',
+
+  'Data Empty': 'البيانات فارغة',
 
   // Settings
   'Settings': 'الإعدادات',
@@ -169,6 +172,7 @@ final Map<String, String> intlAr = {
   'Image Not Found': 'الصورة غير موجودة',
   'Failed to load image @filename': 'فشل في تحميل الصورة "@filename".',
 
+  'Forward Rich Text': 'إرسال رسالة نصية غنية',
   'Forward Text': 'إعادة توجيه رسالة نصية',
   'Forward Image': 'إعادة توجيه الصورة',
   'Forward Video': 'توجيه الفيديو',
@@ -253,6 +257,8 @@ final Map<String, String> intlAr = {
   'Please update app (@version, build @build).': 'يرجى تحديث هذا التطبيق إلى الإصدار الأحدث (@version, البنية @build).',
   'Upgrade': 'ترقية',
   'Download': 'تنزيل',
+
+  'Current version not support this service': 'الإصدار الحالي لا يدعم هذه الخدمة، يرجى التحديث إلى آخر إصدار.',
 
   //
   //  Profile
@@ -347,6 +353,15 @@ final Map<String, String> intlAr = {
   'Station (@remote) is removed': 'تم إزالة المحطة (@remote).',
   'Failed to remove station (@remote)': 'فشل في إزالة المحطة (@remote).',
   'Cannot remove this station': 'لا يمكن إزالة هذه المحطة.',
+
+  'Add': 'إضافة',
+  'New Station': 'محطة جديدة',
+
+  'Failed to add station': 'فشل في إضافة المحطة الجديدة.',
+  'Please input station host': 'يرجى إدخال عنوان IP للمحطة الجديدة.',
+  'Please input station port': 'يرجى إدخال رقم منفذ المحطة الجديدة.',
+  'Station host error': 'خطأ في عنوان IP للمحطة.',
+  'Port number error': 'خطأ في رقم منفذ المحطة.',
 
   'Invite command error': 'خطأ في أمر الدعوة.',
   'Expel command error': 'خطأ في أمر الطرد.',
@@ -457,5 +472,10 @@ final Map<String, String> intlAr = {
       '  1. سيتم اختيار المحطة التي تستجيب بسرعة أكبر كمحطة ريلي الحالية؛\n'
       '  2. إذا تم اختيار بعض المحطات، سيتم اختيار أسرع واحدة من المحطات المختارة؛\n'
       '  3. إذا لم يتم اختيار أي محطات، سيتم الاختيار تلقائياً من بين جميع المحطات.',
+
+  'UpdateVisa::Description': 'تنبيه:\n'
+      '  1. سيتم رفع صورة الصورة الرمزية إلى خادم ملفات عام، حتى يتمكن الجميع من تنزيلها;\n'
+      '  2. عند تحديث ملفك الشخصي، يجب عليك بث التحديث لجميع الأشخاص في قائمة جهات الاتصال الخاصة بك بشكل استباقي،'
+      ' لأنه لا يوجد خادم مركزي للقيام بذلك نيابة عنك.',
 
 };

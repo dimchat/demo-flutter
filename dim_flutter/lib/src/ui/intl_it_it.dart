@@ -134,6 +134,9 @@ final Map<String, String> intlItIt = {
   'Muted List': 'Lista Silenziati',
 
   'Search User': 'Cerca Utente',
+  'Input ID or nickname to search': 'Inserisci ID utente o soprannome per cercare',
+
+  'Data Empty': 'Dati vuoti',
 
   // Settings
   'Settings': 'Impostazioni',
@@ -169,6 +172,7 @@ final Map<String, String> intlItIt = {
   'Image Not Found': 'Immagine Non Trovata',
   'Failed to load image @filename': 'Impossibile caricare l\'immagine "@filename".',
 
+  'Forward Rich Text': 'Inoltra messaggio in formato ricco',
   'Forward Text': 'Inoltra messaggio di testo',
   'Forward Image': 'Inoltra Immagine',
   'Forward Video': 'Inoltra Video',
@@ -253,6 +257,8 @@ final Map<String, String> intlItIt = {
   'Please update app (@version, build @build).': 'Aggiorna l\'app all\'ultima versione (@version, build @build).',
   'Upgrade': 'Aggiorna',
   'Download': 'Scarica',
+
+  'Current version not support this service': 'La versione attuale non supporta questo servizio, aggiorna alla versione più recente.',
 
   //
   //  Profile
@@ -346,6 +352,15 @@ final Map<String, String> intlItIt = {
   'Station (@remote) is removed': 'La stazione (@remote) è stata rimossa.',
   'Failed to remove station (@remote)': 'Impossibile rimuovere la stazione (@remote).',
   'Cannot remove this station': 'Impossibile rimuovere questa stazione.',
+
+  'Add': 'Aggiungi',
+  'New Station': 'Nuova stazione di relais',
+
+  'Failed to add station': 'Impossibile aggiungere la nuova stazione di relais.',
+  'Please input station host': 'Inserisci l\'IP della nuova stazione di relais.',
+  'Please input station port': 'Inserisci il numero di porta della nuova stazione di relais.',
+  'Station host error': 'Errore nell\'IP della stazione di relais.',
+  'Port number error': 'Errore nel numero di porta della stazione di relais.',
 
   'Invite command error': 'Errore nel comando di invito.',
   'Expel command error': 'Errore nel comando di espulsione.',
@@ -456,5 +471,10 @@ final Map<String, String> intlItIt = {
       '  1. La stazione con la risposta più veloce sarà selezionata come stazione di rilancio attuale;\n'
       '  2. Se sono state scelte alcune stazioni, verrà selezionata la più veloce tra quelle scelte;\n'
       '  3. Se non sono state scelte stazioni, verrà selezionata automaticamente tra tutte le stazioni.',
+
+  'UpdateVisa::Description': 'Avviso:\n'
+      '  1. L\'immagine dell\'avatar sarà caricata su un server di file pubblico, in modo che tutti possano scaricarla;\n'
+      '  2. Quando aggiorni il tuo profilo, devi trasmetterlo attivamente a tutte le persone nella tua lista di contatti,'
+      ' poiché non esiste un server centrale che lo faccia per te.',
 
 };

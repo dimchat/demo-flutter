@@ -134,6 +134,9 @@ final Map<String, String> intlJaJp = {
   'Muted List': 'ミュートリスト',
 
   'Search User': 'ユーザーを検索',
+  'Input ID or nickname to search': 'ユーザーIDまたはニックネームを入力して検索',
+
+  'Data Empty': 'データが空です',
 
   // Settings
   'Settings': '設定',
@@ -169,6 +172,7 @@ final Map<String, String> intlJaJp = {
   'Image Not Found': '画像が見つかりません',
   'Failed to load image @filename': '画像 "@filename" の読み込みに失敗しました。',
 
+  'Forward Rich Text': 'リッチテキストメッセージを転送',
   'Forward Text': 'テキストメッセージを転送',
   'Forward Image': '画像を転送',
   'Forward Video': 'ビデオを転送',
@@ -253,6 +257,8 @@ final Map<String, String> intlJaJp = {
   'Please update app (@version, build @build).': 'アプリを最新バージョン (@version, ビルド @build) にアップデートしてください。',
   'Upgrade': 'アップグレード',
   'Download': 'ダウンロード',
+
+  'Current version not support this service': '現在のバージョンではこのサービスはサポートされていません。最新バージョンに更新してください。',
 
   //
   //  Profile
@@ -344,6 +350,15 @@ final Map<String, String> intlJaJp = {
   'Station (@remote) is removed': 'ステーション(@remote)が削除されました。',
   'Failed to remove station (@remote)': 'ステーション(@remote)の削除に失敗しました。',
   'Cannot remove this station': 'このステーションを削除できません。',
+
+  'Add': '追加',
+  'New Station': '新しい中継ステーション',
+
+  'Failed to add station': '新しい中継ステーションの追加に失敗しました。',
+  'Please input station host': '新しい中継ステーションのIPを入力してください。',
+  'Please input station port': '新しい中継ステーションのポート番号を入力してください。',
+  'Station host error': '中継ステーションのIPエラー。',
+  'Port number error': '中継ステーションのポート番号エラー。',
 
   'Invite command error': '招待コマンドエラー。',
   'Expel command error': '追放コマンドエラー。',
@@ -448,5 +463,10 @@ final Map<String, String> intlJaJp = {
       '  1. 最も迅速に応答する駅が現在のリレーステーションとして選択されます;\n'
       '  2. いくつかの駅が選択されている場合、選択された駅から最も速いものが選択されます;\n'
       '  3. 駅が選択されていない場合は、全ての駅から自動的に選択されます。',
+
+  'UpdateVisa::Description': 'お知らせ：\n'
+      '  1. アバター画像はパブリックファイルサーバーにアップロードされ、誰でもダウンロードできるようになります；\n'
+      '  2. プロフィールを更新する際、中央サーバーがこの作業を代行することはないため、'
+      ' あなたの連絡先リストにいる全員に自分から積極的に通知を送る必要があります。',
 
 };

@@ -133,6 +133,9 @@ final Map<String, String> intlTrTr = {
   'Muted List': 'Sessize Alınanlar Listesi',
 
   'Search User': 'Kullanıcı Ara',
+  'Input ID or nickname to search': 'Arama yapmak için kullanıcı ID\'sini veya takma adını girin',
+
+  'Data Empty': 'Veri Boş',
 
   // Settings
   'Settings': 'Ayarlar',
@@ -168,6 +171,7 @@ final Map<String, String> intlTrTr = {
   'Image Not Found': 'Resim Bulunamadı',
   'Failed to load image @filename': 'Resim yüklenemedi: "@filename".',
 
+  'Forward Rich Text': 'Zengin metin mesajını ilet',
   'Forward Text': 'Metin Mesajını İlet',
   'Forward Image': 'Resmi İleri Gönder',
   'Forward Video': 'Videoyu İleriye Taşı',
@@ -252,6 +256,8 @@ final Map<String, String> intlTrTr = {
   'Please update app (@version, build @build).': 'Lütfen uygulamayı en son sürüme güncelleyin (@version, yapı @build).',
   'Upgrade': 'Yükselt',
   'Download': 'İndir',
+
+  'Current version not support this service': 'Mevcut sürüm bu hizmeti desteklemiyor, lütfen en son sürüme güncelleyin.',
 
   //
   //  Profile
@@ -345,6 +351,15 @@ final Map<String, String> intlTrTr = {
   'Station (@remote) is removed': 'İstasyon (@remote) silindi.',
   'Failed to remove station (@remote)': 'İstasyon (@remote) silinemedi.',
   'Cannot remove this station': 'Bu istasyon silinemedi.',
+
+  'Add': 'Ekle',
+  'New Station': 'Yeni Röle İstasyonu',
+
+  'Failed to add station': 'Yeni röle istasyonu eklenemedi.',
+  'Please input station host': 'Yeni röle istasyonunun IP\'sini girin.',
+  'Please input station port': 'Yeni röle istasyonunun port numarasını girin.',
+  'Station host error': 'Röle istasyonu IP hatası.',
+  'Port number error': 'Röle istasyonu port numarası hatası.',
 
   'Invite command error': 'Davet komutu hatası.',
   'Expel command error': 'Atma komutu hatası.',
@@ -451,5 +466,10 @@ final Map<String, String> intlTrTr = {
       '  1. En hızlı yanıtı veren istasyon, mevcut röle istasyonu olarak seçilecektir;\n'
       '  2. Eğer bazı istasyonlar seçildiyse, seçilenlerden en hızlı olan seçilecektir;\n'
       '  3. Hiçbir istasyon seçilmediyse, otomatik olarak tüm istasyonlardan seçilecektir.',
+
+  'UpdateVisa::Description': 'Bildirim:\n'
+      '  1. Avatar resmi, herkesin indirebilmesi için bir halka açık dosya sunucusuna yüklenecektir;\n'
+      '  2. Profilinizi güncellerken, merkezi bir sunucu olmadığı için,'
+      ' tüm kişilerinize aktif olarak bildirimde bulunmanız gerekir.',
 
 };

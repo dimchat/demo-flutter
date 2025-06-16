@@ -135,6 +135,9 @@ final Map<String, String> intlEsEs = {
   'Muted List': 'Lista de Silenciados',
 
   'Search User': 'Buscar Usuario',
+  'Input ID or nickname to search': 'Introduce el ID de usuario o apodo para buscar',
+
+  'Data Empty': 'Datos vacíos',
 
   // Settings
   'Settings': 'Configuración',
@@ -170,6 +173,7 @@ final Map<String, String> intlEsEs = {
   'Image Not Found': 'Imagen no Encontrada',
   'Failed to load image @filename': 'Error al cargar la imagen "@filename".',
 
+  'Forward Rich Text': 'Reenviar mensaje en formato enriquecido',
   'Forward Text': 'Reenviar mensaje de texto',
   'Forward Image': 'Reenviar Imagen',
   'Forward Video': 'Reenviar Video',
@@ -254,6 +258,8 @@ final Map<String, String> intlEsEs = {
   'Please update app (@version, build @build).': 'Por favor, actualiza la aplicación a la última versión (@version, build @build).',
   'Upgrade': 'Actualizar',
   'Download': 'Descargar',
+
+  'Current version not support this service': 'La versión actual no soporta este servicio, por favor actualiza a la última versión.',
 
   //
   //  Profile
@@ -347,6 +353,15 @@ final Map<String, String> intlEsEs = {
   'Station (@remote) is removed': 'La estación (@remote) ha sido eliminada.',
   'Failed to remove station (@remote)': 'No se pudo eliminar la estación (@remote).',
   'Cannot remove this station': 'No se puede eliminar esta estación.',
+
+  'Add': 'Agregar',
+  'New Station': 'Nueva estación de retransmisión',
+
+  'Failed to add station': 'Error al agregar la nueva estación de retransmisión.',
+  'Please input station host': 'Por favor ingresa la IP de la nueva estación de retransmisión.',
+  'Please input station port': 'Por favor ingresa el número de puerto de la nueva estación de retransmisión.',
+  'Station host error': 'Error en la IP de la estación de retransmisión.',
+  'Port number error': 'Error en el número de puerto de la estación de retransmisión.',
 
   'Invite command error': 'Error en el comando de invitación.',
   'Expel command error': 'Error en el comando de expulsión.',
@@ -461,5 +476,10 @@ final Map<String, String> intlEsEs = {
       '  1. La estación con la respuesta más rápida será seleccionada como la estación de relevo actual;\n'
       '  2. Si se han elegido algunas estaciones, seleccionará la más rápida de entre las elegidas;\n'
       '  3. Si no se elige ninguna estación, se seleccionará automáticamente entre todas las estaciones.',
+
+  'UpdateVisa::Description': 'Aviso:\n'
+      '  1. La imagen del avatar será subida a un servidor de archivos público, para que todos puedan descargarla;\n'
+      '  2. Al actualizar tu perfil, deberás transmitirlo proactivamente a todas las personas en tu lista de contactos,'
+      ' ya que no hay un servidor central que lo haga por ti.',
 
 };

@@ -133,6 +133,9 @@ final Map<String, String> intlZhCn = {
   'Muted List': '静音列表',
 
   'Search User': '搜索用户',
+  'Input ID or nickname to search': '输入用户ID或昵称进行搜索',
+
+  'Data Empty': '数据为空',
 
   // Settings
   'Settings': '设置',
@@ -168,6 +171,7 @@ final Map<String, String> intlZhCn = {
   'Image Not Found': '图片不存在',
   'Failed to load image @filename': '无法读取图片"@filename"。',
 
+  'Forward Rich Text': '转发富文本消息',
   'Forward Text': '转发文本消息',
   'Forward Image': '转发图片',
   'Forward Video': '转发视频',
@@ -252,6 +256,8 @@ final Map<String, String> intlZhCn = {
   'Upgrade': '升级',
   'Download': '下载',
 
+  'Current version not support this service': '当前版本不支持此服务，请更新到最新版本。',
+
   //
   //  Profile
   //
@@ -334,6 +340,15 @@ final Map<String, String> intlZhCn = {
   'Station (@remote) is removed': '站点 (@remote) 已被移除。',
   'Failed to remove station (@remote)': '移除站点 (@remote) 失败。',
   'Cannot remove this station': '无法移除此站点。',
+
+  'Add': '添加',
+  'New Station': '新中继站',
+
+  'Failed to add station': '添加新中继站失败。',
+  'Please input station host': '请输入新中继站IP。',
+  'Please input station port': '请输入新中继站端口号。',
+  'Station host error': '中继站IP错误。',
+  'Port number error': '中继站端口号错误。',
 
   'Invite command error': '邀请命令错误。',
   'Expel command error': '驱逐命令错误。',
@@ -439,5 +454,10 @@ final Map<String, String> intlZhCn = {
       '  1. 选择响应速度最快的站点作为当前中继站;\n'
       '  2. 如果选择了一些站点，则从已选择的站点中选择速度最快的一个;\n'
       '  3. 如果没有选择站点，则自动从所有站点中进行选择。',
+
+  'UpdateVisa::Description': '注意：\n'
+      '  1. 头像图片将上传至公共文件服务器，供大家下载；\n'
+      '  2. 更新个人资料时，需要主动广播给您的联系人列表中的每个人，'
+      ' 因为没有中央服务器为您处理此事。',
 
 };

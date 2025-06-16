@@ -134,6 +134,9 @@ final Map<String, String> intlFrFr = {
   'Muted List': 'Liste des sourds',
 
   'Search User': 'Rechercher un utilisateur',
+  'Input ID or nickname to search': 'Entrez l\'ID utilisateur ou le surnom pour rechercher',
+
+  'Data Empty': 'Données vides',
 
   // Settings
   'Settings': 'Paramètres',
@@ -169,6 +172,7 @@ final Map<String, String> intlFrFr = {
   'Image Not Found': 'Image non trouvée',
   'Failed to load image @filename': 'Échec du chargement de l\'image "@filename".',
 
+  'Forward Rich Text': 'Transférer un message au format riche',
   'Forward Text': 'Transférer le message texte',
   'Forward Image': 'Transmettre l\'image',
   'Forward Video': 'Vidéo en avant',
@@ -253,6 +257,8 @@ final Map<String, String> intlFrFr = {
   'Please update app (@version, build @build).': 'Veuillez mettre à jour l\'application vers la dernière version (@version, build @build).',
   'Upgrade': 'Mise à niveau',
   'Download': 'Télécharger',
+
+  'Current version not support this service': 'La version actuelle ne prend pas en charge ce service, veuillez mettre à jour vers la dernière version.',
 
   //
   //  Profile
@@ -346,6 +352,15 @@ final Map<String, String> intlFrFr = {
   'Station (@remote) is removed': 'La station (@remote) a été supprimée.',
   'Failed to remove station (@remote)': 'Échec de la suppression de la station (@remote).',
   'Cannot remove this station': 'Impossible de supprimer cette station.',
+
+  'Add': 'Ajouter',
+  'New Station': 'Nouvelle station de relais',
+
+  'Failed to add station': 'Échec de l\'ajout de la nouvelle station de relais.',
+  'Please input station host': 'Veuillez entrer l\'IP de la nouvelle station de relais.',
+  'Please input station port': 'Veuillez entrer le numéro du port de la nouvelle station de relais.',
+  'Station host error': 'Erreur de l\'IP de la station de relais.',
+  'Port number error': 'Erreur du numéro de port de la station de relais.',
 
   'Invite command error': 'Erreur de commande d\'invitation.',
   'Expel command error': 'Erreur de commande d\'expulsion.',
@@ -455,5 +470,10 @@ final Map<String, String> intlFrFr = {
       '  1. La station avec la réponse la plus rapide sera sélectionnée comme station relais actuelle ;\n'
       '  2. Si des stations ont été choisies, elle sélectionnera la plus rapide parmi celles choisies ;\n'
       '  3. Si aucune station n\'est sélectionnée, elle sera automatiquement choisie parmi toutes les stations.',
+
+  'UpdateVisa::Description': 'Avis :\n'
+      '  1. L\'image de l\'avatar sera téléchargée sur un serveur de fichiers public, afin que tout le monde puisse la télécharger ;\n'
+      '  2. Lorsque vous mettez à jour votre profil, vous devez le diffuser activement à toutes les personnes de votre liste de contacts,'
+      ' car il n\'y a pas de serveur central pour le faire pour vous.',
 
 };

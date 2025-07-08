@@ -31,6 +31,8 @@
 import 'package:mutex/mutex.dart';
 
 import 'package:dim_client/ok.dart';
+import 'package:lnc/cache.dart';
+import 'package:lnc/time.dart';
 
 
 ///
@@ -66,7 +68,6 @@ abstract class DbTask<K, V> with Logging {
 
   /// Task Save
   Future<bool> save(V value) async {
-    double now = Time.currentTimeSeconds;
     bool ok;
     await mutexLock.acquire();
     try {
@@ -74,7 +75,7 @@ abstract class DbTask<K, V> with Logging {
       ok = await writeData(value);
       if (ok) {
         // update memory cache
-        cachePool.updateValue(cacheKey, value, _cacheExpires, now: now);
+        cachePool.updateValue(cacheKey, value, _cacheExpires);
       }
     } finally {
       mutexLock.release();
@@ -123,7 +124,7 @@ abstract class DbTask<K, V> with Logging {
         // value not exists
         return null;
       } else {
-        // cache expired, wait to reload
+        // holder exists, renew the expired time for other threads
         holder.renewal(_cacheRefresh, now: now);
       }
       // load from local storage

@@ -42,7 +42,7 @@ class Account {
 
   final AccountDBI database;
 
-  static int type = MetaType.ETH;
+  static String type = MetaType.ETH;
 
   ///  Create user account
   ///
@@ -57,7 +57,7 @@ class Account {
     assert(ok, 'failed to save mnemonic: $mnemonic');
     // 2. generate private key from mnemonic
     PrivateKey? idKey;
-    int network = type;
+    String network = type;
     if (network == MetaType.ETH || network == MetaType.ExETH) {
       idKey = await keychain.ethKey;
     } else {
@@ -78,7 +78,7 @@ class Account {
     //
     //  Step 1: generate meta with private key & meta type
     //
-    Meta meta = Meta.generate(MetaType.parseString(type), idKey);
+    Meta meta = Meta.generate(MetaVersion.parseString(type), idKey);
     //
     //  Step 2: generate user ID with meta & address type
     //
@@ -86,7 +86,7 @@ class Account {
     //
     //  Step 3: generate private key (RSA) for communication
     //
-    PrivateKey msgKey = PrivateKey.generate(AsymmetricKey.RSA)!;
+    PrivateKey msgKey = PrivateKey.generate(AsymmetricAlgorithms.RSA)!;
     //
     //  Step 4: generate visa with ID and sign with private key
     //

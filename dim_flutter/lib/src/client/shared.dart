@@ -49,7 +49,7 @@ class GlobalVariable {
     SharedGroupManager man = SharedGroupManager();
     man.messenger = transceiver;
     // set for entity checker
-    var checker = facebook.checker;
+    var checker = facebook.entityChecker;
     if (checker is ClientChecker) {
       checker.messenger = transceiver;
     } else {
@@ -59,7 +59,7 @@ class GlobalVariable {
 
   /// Step 1: prepare
   static Config createConfig() {
-    var loader = CompatLoader();
+    var loader = CompatLibraryLoader();
     loader.run();
     Config config = Config();
     config.load();
@@ -78,8 +78,8 @@ class GlobalVariable {
   /// Step 3: create facebook
   static SharedFacebook createFacebook(SharedDatabase db) {
     var facebook = SharedFacebook(db);
-    facebook.archivist = SharedArchivist(facebook, db);
-    facebook.checker = ClientChecker(facebook, db);
+    facebook.barrack = SharedArchivist(facebook, db);
+    facebook.entityChecker = ClientChecker(facebook, db);
     // set for group manager
     SharedGroupManager man = SharedGroupManager();
     man.facebook = facebook;

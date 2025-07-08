@@ -323,7 +323,9 @@ class GroupInfo extends Conversation with Logging {
       return 'Failed to sign group document';
     }
     // 3. save into local storage and broadcast it
-    if (await shared.facebook.saveDocument(bulletin)) {
+    var archivist = shared.facebook.archivist;
+    var ok = await archivist?.saveDocument(bulletin);
+    if (ok == true) {
       Log.warning('group document saved: $group');
     } else {
       assert(false, 'failed to save group document: $bulletin');

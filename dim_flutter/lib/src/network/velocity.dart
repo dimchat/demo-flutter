@@ -33,6 +33,7 @@ import 'dart:typed_data';
 import 'package:dim_client/ok.dart';
 import 'package:dim_client/ws.dart';
 import 'package:dim_client/sdk.dart';
+import 'package:lnc/time.dart';
 
 import '../common/constants.dart';
 import '../models/station.dart';

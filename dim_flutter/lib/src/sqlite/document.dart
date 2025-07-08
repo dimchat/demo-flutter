@@ -25,9 +25,9 @@ Document _extractDocument(ResultSet resultSet, int index) {
   Document doc = Document.create(type, identifier!, data: data, signature: ted);
   if (type == '*') {
     if (identifier.isUser) {
-      type = Document.VISA;
+      type = DocumentType.VISA;
     } else {
-      type = Document.BULLETIN;
+      type = DocumentType.BULLETIN;
     }
   }
   doc['type'] = type;
@@ -118,7 +118,7 @@ class _DocTask extends DbTask<ID, List<Document>> {
         assert(false, 'document error: $identifier, $item');
         continue;
       } else if (item.getString('type', '') != type) {
-        logInfo('skip document: $identifier, $type, $item');
+        logInfo('skip document: $identifier, type=$type, $item');
         continue;
       } else if (item == doc) {
         logWarning('same document, no need to update: $identifier');

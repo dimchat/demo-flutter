@@ -75,9 +75,9 @@ void main() {
 
     expect(await dimFlutterPlugin.getPlatformVersion(), '42');
 
-    Log.level = Log.kDebug;
+    Log.level = Log.DEBUG;
 
-    var loader = CompatLoader();
+    var loader = CompatLibraryLoader();
     loader.run();
 
     batch(10000);

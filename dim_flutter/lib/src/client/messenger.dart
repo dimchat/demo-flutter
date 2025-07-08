@@ -118,10 +118,11 @@ class SharedMessenger extends ClientMessenger {
     Uint8List? sig = visa.sign(sKey);
     assert(sig != null, 'failed to sign visa: $visa, $user');
     // 5. save it
-    bool ok = await facebook.saveDocument(visa);
-    assert(ok, 'failed to save document: $visa');
+    var archivist = facebook.archivist;
+    bool? ok = await archivist?.saveDocument(visa);
+    assert(ok == true, 'failed to save document: $visa');
     logWarning('visa updated: $ok, $visa');
-    return ok;
+    return ok == true;
   }
   Map _getAppInfo(Visa visa) {
     var info = visa.getProperty('app');

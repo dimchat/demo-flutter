@@ -1,6 +1,6 @@
 name: dim_flutter
 description: DIM Flutter Client
-version: 0.1.0
+version: 1.0.0
 homepage: https://github.com/dimchat/demo-flutter
 repository: https://github.com/dimchat/demo-flutter
 issue_tracker: https://github.com/dimchat/demo-flutter/issues
@@ -63,19 +63,19 @@ dependencies:
 
   mutex: ^3.1.0
 
-#  object_key: 1.0.0
-#  lnc: 1.0.0
-#  startrek: 1.0.0
+#  object_key: 1.1.0
+  lnc: 1.1.0
+#  startrek: 1.1.0
 #  stargate: 1.0.0
 
-#  mkm: 1.2.2
-#  dkd: 1.2.2
-#  dimp: 1.2.2
-#  dimsdk: 1.2.2
-#  dim_plugins: 1.2.2
-  dim_client: 0.7.7
+#  mkm: 2.0.2
+#  dkd: 2.0.2
+#  dimp: 2.0.2
+#  dimsdk: 2.0.2
+#  dim_plugins: 2.0.1
+  dim_client: 1.0.0
 
-  pnf: 1.2.1
+  pnf: 1.2.2
   tvbox: 1.0.0
 
 dev_dependencies:

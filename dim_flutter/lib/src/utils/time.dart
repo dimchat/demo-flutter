@@ -1,6 +1,6 @@
 import 'package:get/get.dart';
 
-import 'package:dim_client/ok.dart';
+import 'package:lnc/time.dart';
 
 abstract class TimeUtils extends Time {
 

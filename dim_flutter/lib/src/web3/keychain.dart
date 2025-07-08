@@ -85,7 +85,7 @@ class Keychain {
       return false;
     }
     PrivateKey puppet = PrivateKey.parse({
-      'algorithm': AsymmetricKey.ECC,
+      'algorithm': AsymmetricAlgorithms.ECC,
       'data': entropy,
     })!;
     Log.debug('save mnemonic: $words => $entropy');
@@ -126,7 +126,7 @@ class Keychain {
       return null;
     }
     return PrivateKey.parse({
-      'algorithm': AsymmetricKey.ECC,
+      'algorithm': AsymmetricAlgorithms.ECC,
       'data': Hex.encode(privateKey),
     });
   }

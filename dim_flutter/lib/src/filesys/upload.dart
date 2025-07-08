@@ -149,7 +149,8 @@ class SharedFileUploader with Logging {
       return null;
     }
     // create upload task
-    var pnf = PortableNetworkFile.createFromData(data, filename);
+    var ted = TransportableData.create(data);
+    var pnf = PortableNetworkFile.createFromData(ted, filename);
     pnf.password = PlainKey.getInstance();
     var task = await PortableFileUploadTask.create(api, pnf,
       sender: sender, enigma: _enigma,

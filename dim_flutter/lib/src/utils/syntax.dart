@@ -64,7 +64,7 @@ class _DefaultSyntaxHighlighter with Logging implements SyntaxHighlighter {
     TextSpan? res;
     try {
       res = _inner?.highlight(source);
-      logInfo('syntax highlighter: $_inner');
+      logInfo('syntax highlighter: $_inner, source size: ${source.length}');
     } catch (e, st) {
       logError('syntax error: $source\n error: $e, $st');
     }

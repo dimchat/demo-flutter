@@ -20,7 +20,7 @@ Meta _extractMeta(ResultSet resultSet, int index) {
     'type': type,
     'key': key,
   };
-  if (MetaType.hasSeed(type!)) {
+  if (MetaVersion.hasSeed(type!)) {
     info['seed'] = resultSet.getString('seed');
     info['fingerprint'] = resultSet.getString('fingerprint');
   }
@@ -44,11 +44,11 @@ class _MetaTable extends DataTableHandler<Meta> {
   }
 
   Future<bool> saveMeta(Meta meta, ID entity) async {
-    int type = MetaType.parseInt(meta.type, 0);
+    int type = MetaVersion.parseInt(meta.type, 0);
     String json = JSON.encode(meta.publicKey.toMap());
     String seed;
     String fingerprint;
-    if (MetaType.hasSeed(type)) {
+    if (MetaVersion.hasSeed(type)) {
       seed = meta.seed!;
       fingerprint = meta.getString('fingerprint', '')!;
     } else {

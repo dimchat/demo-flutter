@@ -13,20 +13,24 @@ class SharedContentProcessorCreator extends ClientContentProcessorCreator {
   SharedContentProcessorCreator(super.facebook, super.messenger);
 
   @override
-  ContentProcessor? createContentProcessor(int msgType) {
+  ContentProcessor? createContentProcessor(String msgType) {
     switch (msgType) {
 
       // customizable text
       case ContentType.TEXT:
+      case 'text':
         return TextContentProcessor(facebook!, messenger!);
 
       // application customized
       case ContentType.APPLICATION:
       case ContentType.CUSTOMIZED:
+      case 'application':
+      case 'customized':
         return AppCustomizedContentProcessor(facebook!, messenger!);
 
       // default
       case ContentType.ANY:
+      case '*':
         return AnyContentProcessor(facebook!, messenger!);
 
     }
@@ -35,7 +39,7 @@ class SharedContentProcessorCreator extends ClientContentProcessorCreator {
   }
 
   @override
-  ContentProcessor? createCommandProcessor(int msgType, String cmd) {
+  ContentProcessor? createCommandProcessor(String msgType, String cmd) {
     // search (users)
     if (cmd == SearchCommand.ONLINE_USERS ||
         cmd == SearchCommand.SEARCH) {

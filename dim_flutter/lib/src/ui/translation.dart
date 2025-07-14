@@ -35,19 +35,19 @@ class TranslateResult extends Dictionary {
   TranslateResult(super.dict);
 
   /// source language name
-  String? get from => getString('from', null);
+  String? get from => getString('from');
 
   /// target language name
-  String? get to => getString('to', null);
+  String? get to => getString('to');
 
   /// target language code
-  String? get code => getString('code', null);
+  String? get code => getString('code');
 
   /// source text
-  String? get text => getString('text', null);
+  String? get text => getString('text');
 
   /// target text
-  String? get translation => getString('translation', null);
+  String? get translation => getString('translation');
 
   // bool get valid => from != null && to != null && code != null && translation != null;
   bool get valid {
@@ -64,12 +64,12 @@ class TranslateContent extends AppCustomizedContent {
   TranslateContent(super.dict);
 
   /// serial number of source message content
-  int? get tag => getInt('tag', null);
+  int? get tag => getInt('tag');
 
-  String? get text => getString('text', null);
+  String? get text => getString('text');
 
   /// target language code
-  String? get code => result?.code ?? getString('code', null);
+  String? get code => result?.code ?? getString('code');
 
   TranslateResult? get result {
     Map? info = this['result'];
@@ -79,7 +79,7 @@ class TranslateContent extends AppCustomizedContent {
   /// check translate result valid
   bool get success => result?.valid == true;
 
-  bool get folded => getBool('folded', false)!;
+  bool get folded => getBool('folded') ?? false;
   set folded(bool hidden) => this['folded'] = hidden;
 
   TranslateContent.query(String text, int tag, {required String? format})

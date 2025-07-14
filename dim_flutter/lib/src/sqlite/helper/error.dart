@@ -73,5 +73,5 @@ double? _getJsonNumberValue(String json, {required String key}) {
     Log.warning('json key value error: $key, $value');
     return null;
   }
-  return Converter.getDouble(value, null);
+  return Converter.getDouble(value);
 }

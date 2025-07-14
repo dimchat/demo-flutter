@@ -67,14 +67,14 @@ abstract class HtmlUri {
 
   static String getUriString(PageContent content) {
     // check HTML
-    String? html = content.getString('HTML', null);
+    String? html = content.getString('HTML');
     if (html != null) {
       // assert(html.isNotEmpty, 'page content error: $content');
       String base64 = Base64.encode(UTF8.encode(html));
       return 'data:text/html;charset=UTF-8;base64,$base64';
     }
     // check URL
-    String? url = content.getString('URL', null);
+    String? url = content.getString('URL');
     if (url == null || url.isEmpty || url == 'about:blank') {
       url = 'data:text/html,';
       // content['URL'] = url;

@@ -101,8 +101,8 @@ class _PortableVideoState extends PortableNetworkState<_PortableVideoView> {
       return loader.getImage(widget);
     }
     var pnf = widget.pnf ?? loader.pnf;
-    String? title = pnf.getString('title', null);
-    String? cover = pnf.getString('snapshot', null);
+    String? title = pnf.getString('title');
+    String? cover = pnf.getString('snapshot');
     return Stack(
       alignment: AlignmentDirectional.center,
       // fit: StackFit.passthrough,

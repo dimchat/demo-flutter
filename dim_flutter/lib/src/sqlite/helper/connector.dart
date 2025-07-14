@@ -282,19 +282,19 @@ class _ResultSet implements ResultSet {
   dynamic getValue(String columnLabel) => _results[_cursor - 1][columnLabel];
 
   @override
-  String? getString(String column) => Converter.getString(getValue(column), null);
+  String? getString(String column) => Converter.getString(getValue(column));
 
   @override
-  bool? getBool(String column) => Converter.getBool(getValue(column), null);
+  bool? getBool(String column) => Converter.getBool(getValue(column));
 
   @override
-  int? getInt(String column) => Converter.getInt(getValue(column), null);
+  int? getInt(String column) => Converter.getInt(getValue(column));
 
   @override
-  double? getDouble(String column) => Converter.getDouble(getValue(column), null);
+  double? getDouble(String column) => Converter.getDouble(getValue(column));
 
   @override
-  DateTime? getDateTime(String column) => Converter.getDateTime(getValue(column), null);
+  DateTime? getDateTime(String column) => Converter.getDateTime(getValue(column));
 
   @override
   void close() {

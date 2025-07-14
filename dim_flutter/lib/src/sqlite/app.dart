@@ -109,12 +109,12 @@ class _CustomizedInfoTable extends DataTableHandler<Mapper> {
   // protected
   Future<bool> addContent(Mapper content, String key, {Duration? expires}) async {
     DateTime? now = DateTime.now();
-    DateTime? time = content.getDateTime('time', null);
+    DateTime? time = content.getDateTime('time');
     if (time == null || time.isAfter(now)) {
       time = now;
     }
     DateTime? expired = now.add(expires ?? kExpires);
-    String? mod = content.getString('mod', null);
+    String? mod = content.getString('mod');
     // add new record
     List values = [key,
       JSON.encode(content.toMap()),
@@ -132,12 +132,12 @@ class _CustomizedInfoTable extends DataTableHandler<Mapper> {
   // protected
   Future<bool> updateContent(Mapper content, String key, {Duration? expires}) async {
     DateTime? now = DateTime.now();
-    DateTime? time = content.getDateTime('time', null);
+    DateTime? time = content.getDateTime('time');
     if (time == null || time.isAfter(now)) {
       time = now;
     }
     DateTime? expired = now.add(expires ?? kExpires);
-    String? mod = content.getString('mod', null);
+    String? mod = content.getString('mod');
     // update old record
     Map<String, dynamic> values = {
       'content': JSON.encode(content.toMap()),
@@ -267,11 +267,11 @@ class CustomizedInfoCache extends DataCache<String, List<Mapper>> implements App
       array = [];
     } else {
       // check time
-      DateTime? newTime = content.getDateTime('time', null);
+      DateTime? newTime = content.getDateTime('time');
       if (newTime != null) {
         DateTime? oldTime;
         for (Mapper item in array) {
-          oldTime = item.getDateTime('time', null);
+          oldTime = item.getDateTime('time');
           if (oldTime != null && oldTime.isAfter(newTime)) {
             logWarning('ignore expired info: $content');
             return false;

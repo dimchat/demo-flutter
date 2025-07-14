@@ -87,7 +87,7 @@ class PortableFileDownloadTask extends PortableNetworkLoader {
   PortableFileDownloadTask(super.pnf);
 
   @override
-  int get priority => pnf.getInt('priority', null) ?? super.priority;
+  int get priority => pnf.getInt('priority') ?? super.priority;
 
   @override
   FileCache get fileCache => LocalStorage();

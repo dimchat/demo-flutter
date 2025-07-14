@@ -64,16 +64,16 @@ dependencies:
   mutex: ^3.1.0
 
 #  object_key: 1.1.0
-  lnc: 1.1.0
+#  lnc: 1.1.0
 #  startrek: 1.1.0
 #  stargate: 1.0.0
 
-#  mkm: 2.0.2
-#  dkd: 2.0.2
-#  dimp: 2.0.2
-#  dimsdk: 2.0.2
-#  dim_plugins: 2.0.1
-  dim_client: 1.0.0
+#  mkm: 2.1.0
+#  dkd: 2.1.0
+#  dimp: 2.1.0
+#  dimsdk: 2.1.0
+#  dim_plugins: 2.1.0
+  dim_client: 1.0.1
 
   pnf: 1.2.2
   tvbox: 1.0.0

@@ -50,7 +50,7 @@ class _MetaTable extends DataTableHandler<Meta> {
     String fingerprint;
     if (MetaVersion.hasSeed(type)) {
       seed = meta.seed!;
-      fingerprint = meta.getString('fingerprint', '')!;
+      fingerprint = meta.getString('fingerprint') ?? '';
     } else {
       seed = '';
       fingerprint = '';

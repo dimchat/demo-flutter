@@ -210,7 +210,7 @@ class Amanuensis with Logging {
       return;
     }
     Content content = iMsg.content;
-    if (content.getBool('hidden', false) == true) {
+    if (content.getBool('hidden') == true) {
       logDebug('ignore hidden message: $sender -> $cid: $content');
       return;
     }
@@ -249,7 +249,7 @@ class Amanuensis with Logging {
     } else if (content is Command) {
       logDebug('ignore command');
       increase = 0;
-    } else if (iMsg.getBool('muted', false) == true || content.getBool('muted', false) == true) {
+    } else if (iMsg.getBool('muted') == true || content.getBool('muted') == true) {
       logInfo('muted message');
       increase = 0;
     } else {

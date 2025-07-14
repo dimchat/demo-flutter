@@ -2,7 +2,6 @@
 import 'package:dim_client/ok.dart';
 import 'package:dim_client/sdk.dart';
 import 'package:dim_client/sqlite.dart';
-import 'package:lnc/time.dart';
 
 import '../common/dbi/network.dart';
 

@@ -38,24 +38,24 @@ class MediaItem extends Dictionary {
 
   /// M3U8
   Uri? get url {
-    var m3u8 = getString('url', null);
-    m3u8 ??= getString('URL', null);
+    var m3u8 = getString('url');
+    m3u8 ??= getString('URL');
     return m3u8 == null ? null : LiveStream.parseUri(m3u8);
   }
 
   /// name
-  String get title => getString('title', null)
-      ?? getString('name', null)
-      ?? getString('url', null)
-      ?? getString('URL', null)
+  String get title => getString('title')
+      ?? getString('name')
+      ?? getString('url')
+      ?? getString('URL')
       ?? '';
 
-  String? get filename => getString('filename', null);
+  String? get filename => getString('filename');
 
   /// snapshot
   Uri? get cover {
-    var jpeg = getString('cover', null);
-    jpeg ??= getString('snapshot', null);
+    var jpeg = getString('cover');
+    jpeg ??= getString('snapshot');
     return jpeg == null ? null : LiveStream.parseUri(jpeg);
   }
 

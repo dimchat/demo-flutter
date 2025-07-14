@@ -10,6 +10,24 @@ import 'helper/task.dart';
 import 'entity.dart';
 
 
+String getDocumentType(Document document) {
+  // return DocumentUtils.getDocumentType(document) ?? '';
+  var type = document.getString('type');
+  if (type != null && type.isNotEmpty) {
+    return Converter.getString(type) ?? '';
+  }
+  // get type for did
+  var did = document.identifier;
+  if (did.isUser) {
+    return DocumentType.VISA;
+  } else if (did.isGroup) {
+    return DocumentType.BULLETIN;
+  } else {
+    return DocumentType.PROFILE;
+  }
+}
+
+
 Document _extractDocument(ResultSet resultSet, int index) {
   String? did = resultSet.getString('did');
   String? type = resultSet.getString('type');
@@ -51,9 +69,10 @@ class _DocumentTable extends DataTableHandler<Document> {
   // protected
   Future<bool> updateDocument(Document doc) async {
     ID identifier = doc.identifier;
-    String? type = doc.getString('type', '');
-    String? data = doc.getString('data', null);
-    String? signature = doc.getString('signature', null);
+    // String type = doc.getString('type') ?? '';
+    String type = getDocumentType(doc);
+    String? data = doc.getString('data');
+    String? signature = doc.getString('signature');
     SQLConditions cond;
     cond = SQLConditions(left: 'did', comparison: '=', right: identifier.toString());
     cond.addCondition(SQLConditions.kAnd, left: 'type', comparison: '=', right: type);
@@ -67,9 +86,10 @@ class _DocumentTable extends DataTableHandler<Document> {
   // protected
   Future<bool> insertDocument(Document doc) async {
     ID identifier = doc.identifier;
-    String? type = doc.getString('type', '');
-    String? data = doc.getString('data', null);
-    String? signature = doc.getString('signature', null);
+    // String type = doc.getString('type') ?? '';
+    String type = getDocumentType(doc);
+    String? data = doc.getString('data');
+    String? signature = doc.getString('signature');
     List values = [
       identifier.toString(),
       type,
@@ -108,7 +128,8 @@ class _DocTask extends DbTask<ID, List<Document>> {
       return false;
     }
     ID identifier = doc.identifier;
-    String? type = doc.getString('type', '');
+    // String type = doc.getString('type') ?? '';
+    String type = getDocumentType(doc);
     bool update = false;
     Document item;
     // check old documents
@@ -117,7 +138,7 @@ class _DocTask extends DbTask<ID, List<Document>> {
       if (item.identifier != identifier) {
         assert(false, 'document error: $identifier, $item');
         continue;
-      } else if (item.getString('type', '') != type) {
+      } else if (getDocumentType(item) != type) {
         logInfo('skip document: $identifier, type=$type, $item');
         continue;
       } else if (item == doc) {

@@ -169,13 +169,13 @@ class LoginCommandCache extends DataCache<ID, List<Pair<LoginCommand, ReliableMe
       array = [];
     } else {
       // check time
-      DateTime? newTime = content.getDateTime('time', null);
+      DateTime? newTime = content.getDateTime('time');
       if (newTime != null) {
         DateTime? oldTime;
         LoginCommand cmd;
         for (Pair<LoginCommand, ReliableMessage> item in array) {
           cmd = item.first;
-          oldTime = cmd.getDateTime('time', null);
+          oldTime = cmd.getDateTime('time');
           if (oldTime != null && oldTime.isAfter(newTime)) {
             logWarning('ignore expired login: $content');
             return false;

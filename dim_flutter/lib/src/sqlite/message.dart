@@ -141,7 +141,7 @@ class InstantMessageTable extends DataTableHandler<InstantMessage> implements In
     // serializing without 'data'
     String msg = JSON.encode(info);
 
-    String? sig = iMsg.getString('signature', null);
+    String? sig = iMsg.getString('signature');
     if (sig != null) {
       sig = sig.substring(sig.length - 8);
     }

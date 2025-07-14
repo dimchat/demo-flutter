@@ -76,7 +76,7 @@ class SharedMessenger extends ClientMessenger {
     }
     if (rMsg != null) {
       // keep signature for checking traces
-      iMsg['signature'] = rMsg.getString('signature', null);
+      iMsg['signature'] = rMsg.getString('signature');
     }
     return rMsg;
   }

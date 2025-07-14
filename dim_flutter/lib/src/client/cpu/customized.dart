@@ -45,7 +45,7 @@ class AppCustomizedContentProcessor extends CustomizedContentProcessor with Logg
     } else if (mod == 'test') {
       return _translateContentHandler;
     }
-    return this;
+    return super.fetch(mod, content, rMsg);
   }
 
 }

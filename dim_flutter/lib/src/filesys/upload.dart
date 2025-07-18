@@ -34,6 +34,7 @@ import 'package:flutter/services.dart';
 
 import 'package:dim_client/ok.dart';
 import 'package:dim_client/sdk.dart';
+import 'package:dim_client/common.dart';
 import 'package:pnf/dos.dart';
 import 'package:pnf/enigma.dart';
 import 'package:pnf/http.dart';
@@ -151,7 +152,7 @@ class SharedFileUploader with Logging {
     // create upload task
     var ted = TransportableData.create(data);
     var pnf = PortableNetworkFile.createFromData(ted, filename);
-    pnf.password = PlainKey.getInstance();
+    pnf.password = Password.kPlainKey;
     var task = await PortableFileUploadTask.create(api, pnf,
       sender: sender, enigma: _enigma,
     );

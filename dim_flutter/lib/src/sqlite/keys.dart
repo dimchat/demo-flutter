@@ -267,7 +267,7 @@ class MsgKeyCache implements CipherKeyDBI {
                                       bool generate = false}) async {
     if (receiver.isBroadcast) {
       // broadcast message has no key
-      return Password.plainKey;
+      return Password.kPlainKey;
     }
     SymmetricKey? key;
     // check cache first

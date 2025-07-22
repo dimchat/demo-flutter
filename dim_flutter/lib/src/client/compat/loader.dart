@@ -2,6 +2,8 @@
 import 'package:dim_client/compat.dart';
 import 'package:dim_client/common.dart';
 
+import '../../common/protocol/search.dart';
+
 
 class CompatLibraryLoader extends LibraryLoader {
   CompatLibraryLoader() : super(extensionLoader: _CompatExtensionLoader());
@@ -17,6 +19,10 @@ class _CompatExtensionLoader extends CommonExtensionLoader {
     setCommandFactory("broadcast", creator: (dict) => BaseReportCommand(dict));
     // setCommandFactory(ReportCommand.ONLINE, creator: (dict) => BaseReportCommand(dict));
     // setCommandFactory(ReportCommand.OFFLINE, creator: (dict) => BaseReportCommand(dict));
+
+    // Search: users
+    setCommandFactory(SearchCommand.SEARCH,       creator: (dict) => BaseSearchCommand(dict));
+    setCommandFactory(SearchCommand.ONLINE_USERS, creator: (dict) => BaseSearchCommand(dict));
 
     // // Storage (contacts, private_key)
     // Command.setFactory(StorageCommand.STORAGE, StorageCommand::new);

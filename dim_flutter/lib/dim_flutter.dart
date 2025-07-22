@@ -11,6 +11,7 @@ export 'package:dim_client/common.dart';
 export 'package:dim_client/network.dart';
 export 'package:dim_client/group.dart';
 export 'package:dim_client/client.dart';
+export 'package:dim_client/cpu.dart';
 
 export 'src/dim_channels.dart';
 export 'src/dim_client.dart';

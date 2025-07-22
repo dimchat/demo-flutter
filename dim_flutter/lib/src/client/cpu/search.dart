@@ -1,9 +1,9 @@
 
 import 'package:dim_client/ok.dart';
 import 'package:dim_client/sdk.dart';
-import 'package:dim_client/common.dart';
 
 import '../../common/constants.dart';
+import '../../common/protocol/search.dart';
 import '../facebook.dart';
 import '../shared.dart';
 

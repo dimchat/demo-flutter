@@ -1,8 +1,7 @@
 
-import 'package:dim_client/client.dart';
-import 'package:dim_client/common.dart';
 import 'package:dim_client/ok.dart';
 import 'package:dim_client/sdk.dart';
+import 'package:dim_client/cpu.dart';
 
 import '../../common/constants.dart';
 import '../../ui/translation.dart';
@@ -11,7 +10,7 @@ import '../shared.dart';
 import 'text.dart';
 
 
-class AppCustomizedContentProcessor extends CustomizedContentProcessor with Logging {
+class AppCustomizedContentProcessor extends AppCustomizedProcessor with Logging {
   AppCustomizedContentProcessor(super.facebook, super.messenger) {
     GlobalVariable shared = GlobalVariable();
     _serviceContentHandler = ServiceContentHandler(shared.database);
@@ -25,27 +24,27 @@ class AppCustomizedContentProcessor extends CustomizedContentProcessor with Logg
   Future<List<Content>> processContent(Content content, ReliableMessage rMsg) async {
     if (_serviceContentHandler.checkContent(content)) {
       await _serviceContentHandler.saveContent(content, rMsg.sender);
+      var app = content.getString('app');
+      var mod = content.getString('mod');
+      var act = content.getString('act');
+      logInfo('customized content saved: app="$app", mod="$mod", act="$act", sender: ${rMsg.sender}');
+      return [];
     }
     return await super.processContent(content, rMsg);
   }
 
   @override
-  List<Content>? filter(String app, CustomizedContent content, ReliableMessage rMsg) {
+  CustomizedContentHandler filter(String app, String mod, CustomizedContent content, ReliableMessage rMsg) {
     if (app == Translator.app) {
-      // OK
-      return null;
+      if (mod == Translator.mod) {
+        return _translateContentHandler;
+      } else if (mod == 'test') {
+        return _translateContentHandler;
+      }
+      var act = content.getString('act');
+      logInfo('customized content: app="$app", mod="$mod", act="$act", sender: ${rMsg.sender}');
     }
-    return super.filter(app, content, rMsg);
-  }
-
-  @override
-  CustomizedContentHandler? fetch(String mod, CustomizedContent content, ReliableMessage rMsg) {
-    if (mod == Translator.mod) {
-      return _translateContentHandler;
-    } else if (mod == 'test') {
-      return _translateContentHandler;
-    }
-    return super.fetch(mod, content, rMsg);
+    return super.filter(app, mod, content, rMsg);
   }
 
 }

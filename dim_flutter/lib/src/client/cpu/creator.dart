@@ -1,7 +1,9 @@
 
 import 'package:dim_client/sdk.dart';
 import 'package:dim_client/common.dart';
-import 'package:dim_client/client.dart';
+import 'package:dim_client/cpu.dart';
+
+import '../../common/protocol/search.dart';
 
 import 'any.dart';
 import 'customized.dart';

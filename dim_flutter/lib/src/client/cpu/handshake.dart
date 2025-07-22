@@ -2,6 +2,7 @@
 import 'package:dim_client/sdk.dart';
 import 'package:dim_client/common.dart';
 import 'package:dim_client/client.dart';
+import 'package:dim_client/cpu.dart';
 
 import '../shared.dart';
 

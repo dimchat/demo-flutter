@@ -5,7 +5,7 @@ export 'client/compat/device.dart';
 
 export 'client/cpu/handshake.dart';
 export 'client/cpu/search.dart';
-export 'client/cpu/customized.dart';
+export 'client/cpu/translate.dart';
 export 'client/cpu/text.dart';
 export 'client/cpu/any.dart';
 export 'client/cpu/creator.dart';

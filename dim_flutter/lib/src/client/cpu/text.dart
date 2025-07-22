@@ -18,8 +18,8 @@ class TextContentProcessor extends BaseContentProcessor {
   @override
   Future<List<Content>> processContent(Content content, ReliableMessage rMsg) async {
     assert(content is TextContent, 'text content error: $content');
-    if (_serviceContentHandler.checkContent(content)) {
-      await _serviceContentHandler.saveContent(content, rMsg.sender);
+    if (_serviceContentHandler.checkAppContent(content)) {
+      await _serviceContentHandler.saveAppContent(content, rMsg.sender);
     }
     // OK
     return [];
@@ -27,7 +27,7 @@ class TextContentProcessor extends BaseContentProcessor {
 
 }
 
-class ServiceContentHandler with Logging {
+class ServiceContentHandler with Logging implements CustomizedContentHandler {
   ServiceContentHandler(this.database);
 
   final AppCustomizedInfoDBI database;
@@ -58,7 +58,18 @@ class ServiceContentHandler with Logging {
     return Content.parse(content);
   }
 
-  bool checkContent(Content content) {
+  static final Map<String, List<String>> appModules = {
+    // service: online users
+    'chat.dim.search': ['users'],
+    // service: video playlist
+    'chat.dim.video': ['playlist', 'season'],
+    // service: live streams
+    'chat.dim.tvbox': ['lives'],
+    // service: home page
+    'chat.dim.sites': ['homepage'],
+  };
+
+  bool checkAppContent(Content content) {
     String? app = content['app'];
     String? mod = content['mod'];
     String? act = content['act'];
@@ -82,7 +93,13 @@ class ServiceContentHandler with Logging {
     }
   }
 
-  Future<bool> saveContent(Content content, ID sender, {Duration? expires}) async {
+  @override
+  Future<List<Content>> handleAction(String act, ID sender, CustomizedContent content, ReliableMessage rMsg) async {
+    await saveAppContent(content, sender);
+    return [];
+  }
+
+  Future<bool> saveAppContent(Content content, ID sender, {Duration? expires}) async {
     String? text = content['text'];
     if (text != null && text.length > 128) {
       String head = text.substring(0, 100);

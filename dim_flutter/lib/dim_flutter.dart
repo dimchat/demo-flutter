@@ -7,7 +7,7 @@ export 'package:dim_client/sqlite.dart';
 export 'package:dim_client/plugins.dart';
 
 export 'package:dim_client/compat.dart';
-export 'package:dim_client/common.dart';
+export 'package:dim_client/common.dart' hide TimeUtils;
 export 'package:dim_client/network.dart';
 export 'package:dim_client/group.dart';
 export 'package:dim_client/client.dart';

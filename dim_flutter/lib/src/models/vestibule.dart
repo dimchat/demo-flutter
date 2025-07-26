@@ -1,9 +1,9 @@
 
+import 'package:dim_client/client.dart';
 import 'package:dim_client/ok.dart';
 import 'package:dim_client/sdk.dart';
 
 import '../common/constants.dart';
-import '../client/facebook.dart';
 import '../client/messenger.dart';
 import '../client/shared.dart';
 
@@ -34,7 +34,7 @@ class Vestibule implements Observer {
         || name == NotificationNames.kMetaSaved, 'name error: $notification');
     assert(info != null, 'user info error: $notification');
     GlobalVariable shared = GlobalVariable();
-    SharedFacebook facebook = shared.facebook;
+    ClientFacebook facebook = shared.facebook;
 
     // check conversation ID
     ID? entity = ID.parse(info?['ID']);

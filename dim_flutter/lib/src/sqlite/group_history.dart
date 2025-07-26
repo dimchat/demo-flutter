@@ -115,7 +115,7 @@ class GroupHistoryCache extends _GroupHistoryTable {
     CachePair<List<Pair<GroupCommand, ReliableMessage>>>? pair;
     CacheHolder<List<Pair<GroupCommand, ReliableMessage>>>? holder;
     List<Pair<GroupCommand, ReliableMessage>>? value;
-    double now = Time.currentTimeSeconds;
+    double now = TimeUtils.currentTimeSeconds;
     await lock();
     try {
       // 1. check memory cache
@@ -149,7 +149,7 @@ class GroupHistoryCache extends _GroupHistoryTable {
     CachePair<Pair<ResetCommand?, ReliableMessage?>>? pair;
     CacheHolder<Pair<ResetCommand?, ReliableMessage?>>? holder;
     Pair<ResetCommand?, ReliableMessage?>? value;
-    double now = Time.currentTimeSeconds;
+    double now = TimeUtils.currentTimeSeconds;
     await lock();
     try {
       // 1. check memory cache

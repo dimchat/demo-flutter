@@ -28,12 +28,12 @@
  * SOFTWARE.
  * =============================================================================
  */
-import 'package:pnf/dos.dart';
 import 'package:sqflite/sqflite.dart';
 
 import 'package:dim_client/ok.dart';
 import 'package:dim_client/sqlite.dart';
 import 'package:dim_client/sdk.dart';
+import 'package:pnf/dos.dart';
 
 import '../../common/platform.dart';
 import '../../filesys/local.dart';
@@ -191,8 +191,8 @@ abstract class DBLogger {
 
   static final DefaultLogger logger = DefaultLogger();
 
-  static int output(String msg) =>
-      logger.output(msg, caller: logger.caller, tag: kSqlTag, color: kSqlColor);
+  static void output(String msg) =>
+      logger.output(msg, tag: kSqlTag, color: kSqlColor);
 
 }
 

@@ -1,4 +1,5 @@
 
+import 'package:dim_client/common.dart';
 import 'package:dim_client/ok.dart';
 import 'package:dim_client/sdk.dart';
 import 'package:dim_client/sqlite.dart';
@@ -48,7 +49,7 @@ class SpeedTable extends DataTableHandler<SpeedRecord> implements SpeedDBI {
   Future<bool> removeExpiredSpeed(DateTime? expired) async {
     double time;
     if (expired == null) {
-      time = Time.currentTimeSeconds - 72 * 3600;
+      time = TimeUtils.currentTimeSeconds - 72 * 3600;
     } else {
       time = expired.millisecondsSinceEpoch / 1000;
     }

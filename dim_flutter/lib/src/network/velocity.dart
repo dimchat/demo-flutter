@@ -30,6 +30,7 @@
  */
 import 'dart:typed_data';
 
+import 'package:dim_client/common.dart';
 import 'package:dim_client/ok.dart';
 import 'package:dim_client/ws.dart';
 import 'package:dim_client/sdk.dart';
@@ -79,7 +80,7 @@ class VelocityMeter {
         'state': 'connected',
         'meter': meter,
       });
-      double now = Time.currentTimeSeconds;
+      double now = TimeUtils.currentTimeSeconds;
       double expired = now + 30;
       while (now < expired) {
         if (await meter._run()) {
@@ -87,7 +88,7 @@ class VelocityMeter {
           break;
         }
         await Future.delayed(const Duration(milliseconds: 128));
-        now = Time.currentTimeSeconds;
+        now = TimeUtils.currentTimeSeconds;
       }
       nc.postNotification(NotificationNames.kStationSpeedUpdated, meter, {
         'state': 'finished',
@@ -133,14 +134,14 @@ class VelocityMeter {
     // prepare data handler
     socket.listen((msg) {
       if (_startTime > 0 && msg.length > 64) {
-        _endTime = Time.currentTimeSeconds;
+        _endTime = TimeUtils.currentTimeSeconds;
       }
       Log.info('received ${msg.length} bytes from $host:$port');
       _caches.add(msg);
     });
     // send
     Log.info('connected, sending ${data.length} bytes to $host:$port ...');
-    _startTime = Time.currentTimeSeconds;
+    _startTime = TimeUtils.currentTimeSeconds;
     int cnt = await socket.write(data);
     Log.info('$cnt byte(s) sent, waiting response from $host:$port ...');
     return socket;

@@ -1,4 +1,5 @@
 
+import 'package:dim_client/common.dart';
 import 'package:dim_client/group.dart';
 import 'package:dim_client/client.dart';
 
@@ -9,7 +10,6 @@ import 'cpu/text.dart';
 import 'client.dart';
 import 'database.dart';
 import 'emitter.dart';
-import 'facebook.dart';
 import 'messenger.dart';
 
 
@@ -33,7 +33,7 @@ class GlobalVariable {
   late final Config config;
   late final SharedDatabase database;
 
-  late final SharedFacebook facebook;
+  late final ClientFacebook facebook;
   SharedMessenger? _messenger;
 
   late final SharedEmitter emitter;
@@ -76,9 +76,9 @@ class GlobalVariable {
   }
 
   /// Step 3: create facebook
-  static SharedFacebook createFacebook(SharedDatabase db) {
-    var facebook = SharedFacebook(db);
-    facebook.barrack = SharedArchivist(facebook, db);
+  static ClientFacebook createFacebook(SharedDatabase db) {
+    var facebook = ClientFacebook(db);
+    facebook.barrack = CommonArchivist(facebook, db);
     facebook.entityChecker = ClientChecker(facebook, db);
     // set for group manager
     SharedGroupManager man = SharedGroupManager();
@@ -87,7 +87,7 @@ class GlobalVariable {
   }
 
   /// Step 4: create client
-  static Client createClient(SharedFacebook facebook, SharedDatabase db) {
+  static Client createClient(ClientFacebook facebook, SharedDatabase db) {
     var client = Client(facebook, db);
     client.start();
     return client;

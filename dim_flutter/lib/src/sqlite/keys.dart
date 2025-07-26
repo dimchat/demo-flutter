@@ -135,7 +135,7 @@ class PrivateKeyCache extends _PrivateKeyTable {
     CachePair<List<DecryptKey>>? pair;
     CacheHolder<List<DecryptKey>>? holder;
     List<DecryptKey>? value;
-    double now = Time.currentTimeSeconds;
+    double now = TimeUtils.currentTimeSeconds;
     await lock();
     try {
       // 1. check memory cache
@@ -169,7 +169,7 @@ class PrivateKeyCache extends _PrivateKeyTable {
     CachePair<PrivateKey>? pair;
     CacheHolder<PrivateKey>? holder;
     PrivateKey? value;
-    double now = Time.currentTimeSeconds;
+    double now = TimeUtils.currentTimeSeconds;
     await lock();
     try {
       // 1. check memory cache
@@ -201,7 +201,7 @@ class PrivateKeyCache extends _PrivateKeyTable {
   @override
   Future<bool> savePrivateKey(PrivateKey key, String type, ID user,
       {int sign = 1, required int decrypt}) async {
-    double now = Time.currentTimeSeconds;
+    double now = TimeUtils.currentTimeSeconds;
 
     // 1. update memory cache
     if (type == PrivateKeyDBI.kMeta) {

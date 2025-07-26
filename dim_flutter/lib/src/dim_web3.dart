@@ -1,4 +1,3 @@
 library dim_flutter;
 
-export 'web3/account.dart';
-export 'web3/keychain.dart';
+export 'package:dim_client/web3.dart';

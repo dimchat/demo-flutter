@@ -30,11 +30,11 @@
  */
 import 'dart:typed_data';
 
+import 'package:dim_client/client.dart';
 import 'package:dim_client/sdk.dart';
 import 'package:dim_client/common.dart';
 
 import '../client/cpu/handshake.dart';
-import '../client/facebook.dart';
 import '../client/messenger.dart';
 import '../client/shared.dart';
 import '../models/station.dart';
@@ -129,7 +129,7 @@ class StationSpeeder {
 
   Future<InstantMessage?> get _iMsg async {
     GlobalVariable shared = GlobalVariable();
-    SharedFacebook facebook = shared.facebook;
+    ClientFacebook facebook = shared.facebook;
     // get current user
     User? user = await facebook.currentUser;
     if (user == null) {

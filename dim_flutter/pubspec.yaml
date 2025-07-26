@@ -58,9 +58,6 @@ dependencies:
 
   #  wakelock_plus: 1.1.6
 
-  bip32: ^2.0.0
-  bip39: ^1.0.6
-
   mutex: ^3.1.0
 
 #  object_key: 1.1.0
@@ -73,7 +70,7 @@ dependencies:
 #  dimp: 2.1.1
 #  dimsdk: 2.1.1
 #  dim_plugins: 2.1.1
-  dim_client: 1.0.5
+  dim_client: 1.0.6
 
   pnf: 1.2.2
   tvbox: 1.0.0
@@ -82,6 +79,9 @@ dev_dependencies:
   flutter_test:
     sdk: flutter
   flutter_lints: ^2.0.0
+
+  bip32: ^2.0.0
+  bip39: ^1.0.6
 
 # For information on the generic Dart part of this file, see the
 # following page: https://dart.dev/tools/pub/pubspec

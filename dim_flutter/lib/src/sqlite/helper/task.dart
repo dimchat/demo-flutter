@@ -30,6 +30,7 @@
  */
 import 'package:mutex/mutex.dart';
 
+import 'package:dim_client/common.dart';
 import 'package:dim_client/ok.dart';
 
 
@@ -83,7 +84,7 @@ abstract class DbTask<K, V> with Logging {
 
   /// Task Load
   Future<V?> load() async {
-    double now = Time.currentTimeSeconds;
+    double now = TimeUtils.currentTimeSeconds;
     CachePair<V>? pair;
     CacheHolder<V>? holder;
     V? value;

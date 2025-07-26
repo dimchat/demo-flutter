@@ -1,29 +1,36 @@
 import 'package:get/get.dart';
 
-import 'package:dim_client/ok.dart';
+import 'package:dim_client/common.dart' as lib;
 
-abstract class TimeUtils extends Time {
+abstract class TimeUtils {
 
   ///  Now()
   ///
   /// @return current time
-  static DateTime get currentTime => Time.currentTime;
+  static DateTime get currentTime => lib.TimeUtils.currentTime;
+
+  /// 1 second = 1000 milliseconds
+  static int get currentTimeMilliseconds => currentTime.millisecondsSinceEpoch;
+  /// 1 second = 1000000 microseconds
+  static int get currentTimeMicroseconds => currentTime.microsecondsSinceEpoch;
+  // static int get currentTimeMillis => currentTimeMilliseconds;
+  static double get currentTimeSeconds => currentTimeMicroseconds / 1000000.0;
 
   ///  Now() as timestamp
   ///
   /// @return current timestamp in seconds from Jan 1, 1970 UTC
-  static double get currentTimestamp => Time.currentTimestamp;
+  static double get currentTimestamp => currentTimeSeconds;
 
   ///  Convert timestamp to date
   ///
   /// @param timestamp - seconds from Jan 1, 1970 UTC
-  static DateTime? getTime(Object? timestamp) => Time.getTime(timestamp);
+  static DateTime? getTime(Object? timestamp) => lib.TimeUtils.getTime(timestamp);
 
   ///  Convert date to timestamp
   ///
   /// @param time - DateTime object or seconds as double
   /// @return seconds from Jan 1, 1970 UTC
-  static double? getTimestamp(Object? time) => Time.getTimestamp(time);
+  static double? getTimestamp(Object? time) => lib.TimeUtils.getTimestamp(time);
 
   /// readable time string
   static String getTimeString(DateTime time) {

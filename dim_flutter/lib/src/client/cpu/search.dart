@@ -1,10 +1,10 @@
 
+import 'package:dim_client/client.dart';
 import 'package:dim_client/ok.dart';
 import 'package:dim_client/sdk.dart';
 
 import '../../common/constants.dart';
 import '../../common/protocol/search.dart';
-import '../facebook.dart';
 import '../shared.dart';
 
 class SearchCommandProcessor extends BaseCommandProcessor {
@@ -36,7 +36,7 @@ class SearchCommandProcessor extends BaseCommandProcessor {
     }
 
     GlobalVariable shared = GlobalVariable();
-    SharedFacebook facebook = shared.facebook;
+    ClientFacebook facebook = shared.facebook;
 
     List<ID> array = ID.convert(users);
     for (ID item in array) {

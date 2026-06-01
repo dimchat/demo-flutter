@@ -48,12 +48,12 @@ class Amanuensis with Logging {
     return array;
   }
 
-  List<Conversation> get groupChats {
+  List<GroupInfo> get groupChats {
     List<Conversation>? all = _conversations;
     if (all == null) {
       return [];
     }
-    List<Conversation> array = [];
+    List<GroupInfo> array = [];
     for (Conversation chat in all) {
       if (chat is GroupInfo) {
         array.add(chat);
@@ -62,12 +62,12 @@ class Amanuensis with Logging {
     return array;
   }
 
-  List<Conversation> get strangers {
+  List<ContactInfo> get strangers {
     List<Conversation>? all = _conversations;
     if (all == null) {
       return [];
     }
-    List<Conversation> array = [];
+    List<ContactInfo> array = [];
     for (Conversation chat in all) {
       if (chat is ContactInfo) {
         if (chat.isNewFriend) {
@@ -417,6 +417,15 @@ class Amanuensis with Logging {
       if (key != null) {
         //key.put("reused", null);
         key.remove("reused");
+      }
+      // load new members info before updating conversation
+      // with "invite" command
+      List<ID>? members = content.members;
+      if (members != null) {
+        for (var uid in members) {
+          var contact = ContactInfo.fromID(uid);
+          await contact?.reloadData();
+        }
       }
     } else if (content is QueryCommand) {
       // FIXME: same query command sent to different members?

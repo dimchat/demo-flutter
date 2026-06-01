@@ -230,24 +230,23 @@ abstract class Conversation with Logging implements lnc.Observer {
   }
 
   Future<void> reloadData() async {
-    if (_loaded) {
-    } else {
+    if (!_loaded) {
       await loadData();
       _loaded = true;
     }
   }
 
+  // protected
   Future<void> loadData() async {
-    GlobalVariable shared = GlobalVariable();
-    User? user = await shared.facebook.currentUser;
-    if (user == null) {
-      logError('current user not found');
-    }
     // get name
+    GlobalVariable shared = GlobalVariable();
     _name = await shared.facebook.getName(identifier);
     // get remark
+    User? user = await shared.facebook.currentUser;
     if (user != null) {
       _remark = await shared.database.getRemark(identifier, user: user.identifier);
+    } else {
+      logError('current user not found');
     }
     // get blocked & muted status
     Shield shield = Shield();

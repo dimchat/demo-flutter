@@ -33,7 +33,7 @@ import 'package:sqflite/sqflite.dart';
 import 'package:dim_client/ok.dart';
 import 'package:dim_client/sqlite.dart';
 import 'package:dim_client/sdk.dart';
-import 'package:dim_client/pnf.dart';
+import 'package:pnf/dos.dart';
 
 import '../../common/platform.dart';
 import '../../filesys/local.dart';

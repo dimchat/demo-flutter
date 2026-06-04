@@ -2,7 +2,7 @@ import 'package:flutter/services.dart';
 
 import 'package:dim_client/sdk.dart';
 import 'package:dim_client/ok.dart';
-import 'package:dim_client/pnf.dart';
+import 'package:pnf/dos.dart';
 
 import '../filesys/local.dart';
 import 'config_branch.dart';

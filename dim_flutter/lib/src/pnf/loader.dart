@@ -32,10 +32,14 @@ import 'dart:typed_data';
 
 import 'package:dim_client/ok.dart';
 import 'package:dim_client/sdk.dart';
-import 'package:dim_client/pnf.dart';
+// import 'package:pnf/pnf.dart';
+import 'package:pnf/client.dart';
+import 'package:pnf/dos.dart';
+import 'package:pnf/enigma.dart';
 
 import '../filesys/local.dart';
 import '../filesys/upload.dart';
+import '../models/config_api.dart';
 
 
 class PortableFileLoader {
@@ -141,13 +145,13 @@ class PortableFileUploadTask extends PortableNetworkUpper {
   }
 
   /// create upload task
-  static Future<PortableFileUploadTask?> create(String api, TransportableFile pnf, {
+  static Future<PortableFileUploadTask?> create(UploadServer api, TransportableFile pnf, {
     required ID sender, required Enigma enigma,
   }) async {
-    Uri? url = pnf.url;
+    String url = Template.replace(api.url, 'ID', sender.address.toString());
     Uint8List? data = pnf.data?.bytes;
     String? filename = pnf.filename;
-    assert(url == null, 'remote URL already exists: $pnf');
+    assert(pnf.url == null, 'remote URL already exists: $pnf');
     //
     //  1. check filename
     //
@@ -170,8 +174,8 @@ class PortableFileUploadTask extends PortableNetworkUpper {
     //  2. create with PNF
     //
     pnf['enigma'] = {
-      'API': api,
-      'sender': sender.toString(),
+      'API': url,
+      'keys': api.keys,
     };
     return PortableFileUploadTask(pnf, enigma);
   }

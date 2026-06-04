@@ -1,6 +1,6 @@
 library dim_flutter;
 
-export 'package:dim_client/pnf.dart';
+export 'package:pnf/dos.dart';
 
 export 'filesys/local.dart';
 export 'filesys/upload.dart';

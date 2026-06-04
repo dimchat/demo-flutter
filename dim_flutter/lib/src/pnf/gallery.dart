@@ -34,7 +34,7 @@ import 'package:image_gallery_saver/image_gallery_saver.dart';
 import 'package:photo_view/photo_view_gallery.dart';
 
 import 'package:dim_client/ok.dart';
-import 'package:dim_client/pnf.dart';
+import 'package:pnf/client.dart';
 
 import '../ui/icons.dart';
 import '../ui/nav.dart';

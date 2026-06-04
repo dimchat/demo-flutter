@@ -33,7 +33,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:dim_client/sdk.dart';
 import 'package:dim_client/ok.dart';
 import 'package:dim_client/ok.dart' as lnc;
-import 'package:dim_client/pnf.dart' hide NotificationNames;
+import 'package:pnf/http.dart';
 
 import '../client/shared.dart';
 import '../common/constants.dart';

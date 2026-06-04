@@ -35,10 +35,11 @@ import 'package:flutter/services.dart';
 import 'package:dim_client/ok.dart';
 import 'package:dim_client/sdk.dart';
 import 'package:dim_client/common.dart';
-import 'package:dim_client/pnf.dart';
+import 'package:pnf/pnf.dart';
 
 import '../client/shared.dart';
 import '../models/config.dart';
+import '../models/config_api.dart';
 import '../pnf/loader.dart';
 
 import 'local.dart';
@@ -61,8 +62,8 @@ class SharedFileUploader with Logging {
 
   bool _secretsLoaded = false;
 
-  String? _upAvatarAPI;
-  String? _upFileAPI;
+  UploadServer? _upAvatarAPI;
+  UploadServer? _upFileAPI;
 
   //  'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7)'
   //  + ' AppleWebKit/537.36 (KHTML, like Gecko)'
@@ -111,19 +112,15 @@ class SharedFileUploader with Logging {
       assert(false, 'failed to update enigma secrets: $json');
       return false;
     }
-    logInfo('set enigma secrets: $secrets');
-    List<String> lines = [];
-    for (var pwd in secrets) {
-      if (pwd is String && pwd.isNotEmpty) {
-        lines.add(pwd);
-      }
-    }
-    _enigma.update(lines);
-    return lines.isNotEmpty;
+    var items = UploadServer.parseEnigmaItems(secrets);
+    logInfo('set enigma secrets: $secrets => $items');
+    _enigma.update(items);
+    return items.isNotEmpty;
   }
 
   void initWithConfig(Config config) {
-    String? api = config.uploadAvatarAPI;
+    UploadServer? api;
+    api = config.uploadAvatarAPI;
     logInfo('set avatar API: $_upAvatarAPI -> $api');
     if (api != null) {
       _upAvatarAPI = api;
@@ -142,7 +139,7 @@ class SharedFileUploader with Logging {
   /// @param sender   - user ID
   /// @return null on failed
   Future<Uri?> uploadAvatar(Uint8List data, String filename, ID sender) async {
-    String? api = _upAvatarAPI;
+    UploadServer? api = _upAvatarAPI;
     if (api == null) {
       assert(false, 'avatar API not ready');
       return null;
@@ -177,7 +174,7 @@ class SharedFileUploader with Logging {
   /// @param sender  - user ID
   /// @return true on waiting upload
   Future<bool> uploadEncryptData(FileContent content, ID sender) async {
-    String? api = _upFileAPI;
+    UploadServer? api = _upFileAPI;
     if (api == null) {
       assert(false, 'file API not ready');
       return false;

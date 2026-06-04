@@ -5,7 +5,7 @@ import 'package:dim_client/ws.dart';
 import 'package:dim_client/sdk.dart';
 import 'package:dim_client/common.dart';
 import 'package:dim_client/client.dart';
-import 'package:dim_client/pnf.dart' show URLHelper;
+import 'package:pnf/client.dart' show URLHelper;
 
 import '../common/constants.dart';
 import '../models/amanuensis.dart';

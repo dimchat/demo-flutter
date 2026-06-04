@@ -2,8 +2,8 @@
 import 'package:dim_client/common.dart';
 import 'package:dim_client/cpu.dart';
 import 'package:dim_client/ok.dart';
-import 'package:dim_client/pnf.dart' show MD5;
 import 'package:dim_client/sdk.dart';
+import 'package:pnf/digest.dart';
 
 import '../../common/constants.dart';
 import '../../common/dbi/app.dart';

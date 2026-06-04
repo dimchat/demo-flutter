@@ -35,7 +35,7 @@ import 'package:get/get.dart';
 import 'package:dim_client/ok.dart';
 import 'package:dim_client/ok.dart' as lnc;
 import 'package:dim_client/ws.dart' show Runner;
-import 'package:dim_client/pnf.dart' hide NotificationNames;
+import 'package:pnf/dos.dart';
 
 import '../common/constants.dart';
 import '../screens/cast.dart';

@@ -1,6 +1,7 @@
 import 'package:dim_client/ok.dart';
 import 'package:dim_client/sdk.dart';
-import 'package:dim_client/pnf.dart';
+import 'package:pnf/dos.dart';
+import 'package:pnf/http.dart';
 
 import '../filesys/local.dart';
 import '../utils/html.dart';

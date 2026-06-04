@@ -1,11 +1,11 @@
 import 'package:dim_client/sdk.dart';
 import 'package:dim_client/ok.dart';
 import 'package:dim_client/ok.dart' as lnc;
-import 'package:dim_client/pnf.dart' hide NotificationNames;
 
 import '../common/constants.dart';
 import '../filesys/upload.dart';
 
+import 'config_api.dart';
 import 'config_loader.dart';
 import 'newest.dart';
 
@@ -71,10 +71,8 @@ class Config with Logging {
   }
   // List get stations => _info?['stations'] ?? [];
 
-  // 'http://tfs.dim.chat:8081/upload/{ID}/avatar?md5={MD5}&salt={SALT}&enigma=123456'
-  // 'http://106.52.25.169:8081/upload/{ID}/file?md5={MD5}&salt={SALT}&enigma=123456'
-  String? get uploadAvatarAPI => _UploadAPI(_info ?? {}).uploadAvatarAPI;
-  String? get uploadFileAPI => _UploadAPI(_info ?? {}).uploadFileAPI;
+  UploadServer? get uploadAvatarAPI => _UploadAPI(_info ?? {}).uploadAvatarAPI;
+  UploadServer? get uploadFileAPI => _UploadAPI(_info ?? {}).uploadFileAPI;
 
   /// Open Source
   String get sourceURL => _info?['sources']
@@ -152,8 +150,8 @@ class _UploadAPI with Logging {
     return info is List ? info : [];
   }
 
-  String? _fastestAPI(List apiList) {
-    List<String> array = _APIUtils.fetch(apiList);
+  UploadServer? _fastestAPI(List apiList) {
+    List<UploadServer> array = UploadServer.convert(apiList);
     // TODO: choose the fastest URL
     return array.isEmpty ? null : array.first;
   }
@@ -161,41 +159,11 @@ class _UploadAPI with Logging {
   //
   //  APIs
   //
-  String? get uploadAvatarAPI => _fastestAPI(avatars);
-  String? get uploadFileAPI   => _fastestAPI(files);
+  UploadServer? get uploadAvatarAPI => _fastestAPI(avatars);
+  UploadServer? get uploadFileAPI   => _fastestAPI(files);
 
 }
 
-
-abstract interface class _APIUtils {
-
-  static List<String> fetch(List apiList) {
-    List<String> array = [];
-    String? item;
-    for (var api in apiList) {
-      if (api is String && api.contains('://')) {
-        array.add(api);
-      } else if (api is Map) {
-        item = join(api);
-        if (item != null) {
-          array.add(item);
-        }
-      }
-    }
-    return array;
-  }
-
-  static String? join(Map api) {
-    String? url = api['url'] ?? api['URL'];
-    if (url == null) {
-      assert(false, 'api error: $api');
-      return null;
-    }
-    String? enigma = api['enigma'];
-    return enigma == null ? url : Template.replaceQueryParam(url, 'enigma', enigma);
-  }
-
-}
 
 
 abstract interface class _IDUtils {

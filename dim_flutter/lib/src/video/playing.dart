@@ -29,7 +29,7 @@
  * =============================================================================
  */
 import 'package:dim_client/sdk.dart';
-import 'package:dim_client/pnf.dart';
+import 'package:pnf/dos.dart';
 import 'package:tvbox/lives.dart';
 
 

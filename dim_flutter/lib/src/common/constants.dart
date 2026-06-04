@@ -1,5 +1,5 @@
 
-import 'package:dim_client/pnf.dart' as pnf show NotificationNames;
+import 'package:pnf/pnf.dart' as pnf;
 
 abstract class NotificationNames {
 

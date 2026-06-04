@@ -1,7 +1,8 @@
 library dim_flutter;
 
+export 'package:pnf/digest.dart';
+
 export 'package:dim_client/ok.dart';
-export 'package:dim_client/pnf.dart' hide NotificationNames;
 // export 'package:dim_client/ws.dart';
 export 'package:dim_client/sdk.dart';
 export 'package:dim_client/sqlite.dart';
@@ -17,7 +18,7 @@ export 'package:dim_client/cpu.dart';
 export 'src/dim_channels.dart';
 export 'src/dim_client.dart';
 export 'src/dim_common.dart';
-export 'src/dim_filesys.dart' hide NotificationNames;
+export 'src/dim_filesys.dart';
 export 'src/dim_models.dart';
 export 'src/dim_network.dart';
 export 'src/dim_pnf.dart' hide NotificationNames;

@@ -37,32 +37,44 @@ abstract class InstantMessageDBI {
   ///  Get stored messages
   ///
   /// @param chat  - conversation ID
+  /// @param user  - current user ID
   /// @param start - start position for loading message
   /// @param limit - max count for loading message
   /// @return partial messages and remaining count, 0 means there are all messages cached
-  Future<Pair<List<InstantMessage>, int>> getInstantMessages(ID chat,
-      {int start = 0, int? limit});
+  Future<Pair<List<InstantMessage>, int>> getInstantMessages(ID chat, {
+    required ID user,
+    int start = 0, int? limit
+  });
 
   ///  Save the message
   ///
   /// @param chat - conversation ID
+  /// @param user - current user ID
   /// @param iMsg - instant message
   /// @return true on success
-  Future<bool> saveInstantMessage(ID chat, InstantMessage iMsg);
+  Future<bool> saveInstantMessage(ID chat, InstantMessage iMsg, {
+    required ID user,
+  });
 
   ///  Delete the message
   ///
   /// @param chat     - conversation ID
+  /// @param user     - current user ID
   /// @param envelope - message head
   /// @param content  - message body
   /// @return true on row(s) affected
-  Future<bool> removeInstantMessage(ID chat, Envelope envelope, Content content);
+  Future<bool> removeInstantMessage(ID chat, Envelope envelope, Content content, {
+    required ID user,
+  });
 
   ///  Delete all messages in this conversation
   ///
   /// @param chat - conversation ID
+  /// @param user - current user ID
   /// @return true on row(s) affected
-  Future<bool> removeInstantMessages(ID chat);
+  Future<bool> removeInstantMessages(ID chat, {
+    required ID user,
+  });
 
 }
 

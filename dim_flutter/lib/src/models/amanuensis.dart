@@ -80,27 +80,39 @@ class Amanuensis with Logging {
 
   Future<List<Conversation>> loadConversations() async {
     List<Conversation>? array = _conversations;
-    if (array == null) {
-      GlobalVariable shared = GlobalVariable();
-      // get ID list from database
-      array = await shared.database.getConversations();
-      logDebug('${array.length} conversation(s) loaded');
-      // build conversations
-      List<Conversation> temp = [...array];
-      for (Conversation item in temp) {
-        logDebug('new conversation created: $item');
-        _conversationMap[item.identifier] = item;
-      }
-      logDebug('${array.length} conversation(s) loaded: $array');
-      _conversations = array;
+    if (array != null) {
+      return array;
     }
+    GlobalVariable shared = GlobalVariable();
+    User? currentUser = await shared.facebook.currentUser;
+    if (currentUser == null) {
+      logError('failed to get current user');
+      return [];
+    }
+    // get ID list from database
+    array = await shared.database.getConversations(user: currentUser.identifier);
+    logDebug('${array.length} conversation(s) loaded');
+    // build conversations
+    List<Conversation> temp = [...array];
+    for (Conversation item in temp) {
+      logDebug('new conversation created: $item');
+      _conversationMap[item.identifier] = item;
+    }
+    logDebug('${array.length} conversation(s) loaded: $array');
+    _conversations = array;
     return array;
   }
 
   Future<bool> clearConversation(ID identifier) async {
     GlobalVariable shared = GlobalVariable();
+    User? currentUser = await shared.facebook.currentUser;
+    if (currentUser == null) {
+      logError('failed to get current user');
+      return false;
+    }
+    ID uid = currentUser.identifier;
     // 1. clear messages
-    if (await shared.database.removeInstantMessages(identifier)) {} else {
+    if (await shared.database.removeInstantMessages(identifier, user: uid)) {} else {
       logError('failed to clear messages in conversation: $identifier');
       return false;
     }
@@ -112,7 +124,7 @@ class Amanuensis with Logging {
       chat.lastMessageTime = null;
       chat.mentionedSerialNumber = 0;
       // 3. update database
-      if (await shared.database.updateConversation(chat)) {} else {
+      if (await shared.database.updateConversation(chat, user: uid)) {} else {
         logError('failed to update conversation: $chat');
         return false;
       }
@@ -124,13 +136,19 @@ class Amanuensis with Logging {
 
   Future<bool> removeConversation(ID identifier) async {
     GlobalVariable shared = GlobalVariable();
+    User? currentUser = await shared.facebook.currentUser;
+    if (currentUser == null) {
+      logError('failed to get current user');
+      return false;
+    }
+    ID uid = currentUser.identifier;
     // 1. clear messages
-    if (await shared.database.removeInstantMessages(identifier)) {} else {
+    if (await shared.database.removeInstantMessages(identifier, user: uid)) {} else {
       logError('failed to clear messages in conversation: $identifier');
       return false;
     }
     // 2. remove from database
-    if (await shared.database.removeConversation(identifier)) {} else {
+    if (await shared.database.removeConversation(identifier, user: uid)) {} else {
       logError('failed to remove conversation: $identifier');
       return false;
     }
@@ -188,7 +206,12 @@ class Amanuensis with Logging {
     chatBox.unread = 0;
     chatBox.mentionedSerialNumber = 0;
     GlobalVariable shared = GlobalVariable();
-    if (await shared.database.updateConversation(chatBox)) {
+    User? currentUser = await shared.facebook.currentUser;
+    if (currentUser == null) {
+      logError('failed to get current user');
+      return false;
+    }
+    if (await shared.database.updateConversation(chatBox, user: currentUser.identifier)) {
       logInfo('[Badge] unread count cleared: $chatBox, unread: $unread, at: $mentioned');
     } else {
       logError('[Badge] failed to update conversation: $chatBox, unread: $unread, at: $mentioned');
@@ -222,8 +245,11 @@ class Amanuensis with Logging {
     }
     GlobalVariable shared = GlobalVariable();
     CommonFacebook facebook = shared.facebook;
-    User? current = await facebook.currentUser;
-    assert(current != null, 'failed to get current user');
+    User? currentUser = await facebook.currentUser;
+    if (currentUser == null) {
+      logError('failed to get current user');
+      return;
+    }
     // get last message
     String last = mb.getText(content, sender);
     if (last.isEmpty) {
@@ -235,7 +261,7 @@ class Amanuensis with Logging {
         last = '${last.substring(0, 197)}...';
       }
       // show 'sender' in group chat
-      if (cid.isGroup && sender != current?.identifier) {
+      if (cid.isGroup && sender != currentUser.identifier) {
         String name = await facebook.getName(sender);
         last = '$name: $last';
       }
@@ -244,7 +270,7 @@ class Amanuensis with Logging {
     logWarning('update last message: $last for conversation: $cid');
     // increase unread counter
     int increase;
-    if (current?.identifier == sender) {
+    if (currentUser.identifier == sender) {
       logDebug('message from myself');
       increase = 0;
     } else if (content is Command) {
@@ -259,8 +285,8 @@ class Amanuensis with Logging {
     // check content text for mentioned me
     int mentioned = 0;
     if (content is TextContent) {
-      List<Document>? docs = await current?.documents;
-      Visa? visa = docs == null ? null : DocumentUtils.lastVisa(docs);
+      List<Document> docs = await currentUser.documents;
+      Visa? visa = DocumentUtils.lastVisa(docs);
       String? nickname = visa?.name;
       assert(nickname != null, 'failed to get my nickname');
       var text = content.text;
@@ -287,7 +313,7 @@ class Amanuensis with Logging {
       if (mentioned > 0) {
         chatBox.mentionedSerialNumber = mentioned;
       }
-      if (await shared.database.addConversation(chatBox)) {
+      if (await shared.database.addConversation(chatBox, user: currentUser.identifier)) {
         await chatBox.reloadData();
         // add to cache
         _conversationMap[cid] = chatBox;
@@ -318,7 +344,7 @@ class Amanuensis with Logging {
       }
       chatBox.lastMessage = last;
       chatBox.lastMessageTime = time;
-      if (await shared.database.updateConversation(chatBox)) {} else {
+      if (await shared.database.updateConversation(chatBox, user: currentUser.identifier)) {} else {
         logError('failed to update conversation: $chatBox');
         return;
       }
@@ -432,8 +458,14 @@ class Amanuensis with Logging {
       return true;
     }
 
+    User? currentUser = await shared.facebook.currentUser;
+    if (currentUser == null) {
+      logError('failed to get current user');
+      return false;
+    }
+
     ID cid = await _cid(iMsg.envelope, iMsg.content);
-    bool ok = await shared.database.saveInstantMessage(cid, iMsg);
+    bool ok = await shared.database.saveInstantMessage(cid, iMsg, user: currentUser.identifier);
     if (ok) {
       // TODO: save traces
       await _updateConversation(cid, iMsg);

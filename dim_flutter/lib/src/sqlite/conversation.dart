@@ -15,26 +15,38 @@ abstract class ConversationDBI {
 
   ///  Get all conversations
   ///
+  /// @param user - current user ID
   /// @return chat box ID list
-  Future<List<Conversation>> getConversations();
+  Future<List<Conversation>> getConversations({
+    required ID user,
+  });
 
   ///  Add conversation
   ///
   /// @param chat - conversation info
+  /// @param user - current user ID
   /// @return true on success
-  Future<bool> addConversation(Conversation chat);
+  Future<bool> addConversation(Conversation chat, {
+    required ID user,
+  });
 
   ///  Update conversation
   ///
   /// @param chat - conversation info
+  /// @param user - current user ID
   /// @return true on success
-  Future<bool> updateConversation(Conversation chat);
+  Future<bool> updateConversation(Conversation chat, {
+    required ID user,
+  });
 
   ///  Remove conversation
   ///
   /// @param chat - conversation ID
+  /// @param user - current user ID
   /// @return true on success
-  Future<bool> removeConversation(ID chat);
+  Future<bool> removeConversation(ID chat, {
+    required ID user,
+  });
 
 }
 
@@ -63,27 +75,33 @@ class _ConversationTable extends DataTableHandler<Conversation> implements Conve
   static const List<String> _insertColumns = ["uid", "cid", "unread", "last", "time", "mentioned"];
 
   @override
-  Future<List<Conversation>> getConversations() async {
-    SQLConditions cond = SQLConditions.kTrue;
-    // cond = SQLConditions(left: 'uid', comparison: '=', right: '');
+  Future<List<Conversation>> getConversations({
+    required ID user,
+  }) async {
+    SQLConditions cond;
+    cond = SQLConditions(left: 'uid', comparison: '=', right: user.toString());
+    cond.addCondition(SQLConditions.kOr, left: 'uid', comparison: '=', right: '');
     return await select(_table, columns: _selectColumns,
         conditions: cond, orderBy: 'time DESC');
   }
 
   @override
-  Future<bool> addConversation(Conversation chat) async {
+  Future<bool> addConversation(Conversation chat, {
+    required ID user,
+  }) async {
     double? seconds;
     if (chat.lastMessageTime != null) {
       seconds = chat.lastMessageTime!.millisecondsSinceEpoch / 1000.0;
     }
-    String uid = '';  // TODO: add with current user id
-    List values = [uid, chat.identifier.toString(), chat.unread,
+    List values = [user.toString(), chat.identifier.toString(), chat.unread,
       chat.lastMessage, seconds, chat.mentionedSerialNumber];
     return await insert(_table, columns: _insertColumns, values: values) > 0;
   }
 
   @override
-  Future<bool> updateConversation(Conversation chat) async {
+  Future<bool> updateConversation(Conversation chat, {
+    required ID user,
+  }) async {
     int? time = chat.lastMessageTime?.millisecondsSinceEpoch;
     if (time == null) {
       time = 0;
@@ -97,16 +115,20 @@ class _ConversationTable extends DataTableHandler<Conversation> implements Conve
       'mentioned': chat.mentionedSerialNumber,
     };
     SQLConditions cond;
-    cond = SQLConditions(left: 'cid', comparison: '=', right: chat.identifier.toString());
-    // cond.addCondition(SQLConditions.kAnd, left: 'uid', comparison: '=', right: '');
+    cond = SQLConditions(left: 'uid', comparison: '=', right: user.toString());
+    cond.addCondition(SQLConditions.kOr, left: 'uid', comparison: '=', right: '');
+    cond.addCondition(SQLConditions.kAnd, left: 'cid', comparison: '=', right: chat.identifier.toString());
     return await update(_table, values: values, conditions: cond) > 0;
   }
 
   @override
-  Future<bool> removeConversation(ID chat) async {
+  Future<bool> removeConversation(ID chat, {
+    required ID user,
+  }) async {
     SQLConditions cond;
-    cond = SQLConditions(left: 'cid', comparison: '=', right: chat.toString());
-    // cond.addCondition(SQLConditions.kAnd, left: 'uid', comparison: '=', right: '');
+    cond = SQLConditions(left: 'uid', comparison: '=', right: user.toString());
+    cond.addCondition(SQLConditions.kOr, left: 'uid', comparison: '=', right: '');
+    cond.addCondition(SQLConditions.kAnd, left: 'cid', comparison: '=', right: chat.toString());
     return await delete(_table, conditions: cond) >= 0;
   }
 
@@ -148,14 +170,16 @@ class ConversationCache extends _ConversationTable {
   }
 
   @override
-  Future<List<Conversation>> getConversations() async {
+  Future<List<Conversation>> getConversations({
+    required ID user,
+  }) async {
     List<Conversation>? conversations;
     await lock();
     try {
       conversations = _caches;
       if (conversations == null) {
         // cache not found, try to load from database
-        conversations = await super.getConversations();
+        conversations = await super.getConversations(user: user);
         // add to cache
         _caches = conversations;
       }
@@ -166,20 +190,22 @@ class ConversationCache extends _ConversationTable {
   }
 
   @override
-  Future<bool> addConversation(Conversation chat) async {
+  Future<bool> addConversation(Conversation chat, {
+    required ID user,
+  }) async {
     // 1. check cache
-    List<Conversation>? array = await getConversations();
+    List<Conversation>? array = await getConversations(user: user);
     if (_find(chat.identifier, array) != null) {
-      assert(false, 'duplicated conversation: $chat');
-      return updateConversation(chat);
+      assert(false, 'duplicated conversation: $chat, current: $user');
+      return updateConversation(chat, user: user);
     }
     // 2. insert as new record
-    if (await super.addConversation(chat)) {
+    if (await super.addConversation(chat, user: user)) {
       // add to cache
       array.insert(0, chat);
       _sort(array);
     } else {
-      Log.error('failed to add conversation: $chat');
+      logError('failed to add conversation: $chat, current: $user');
       return false;
     }
     // 3. post notification
@@ -192,16 +218,18 @@ class ConversationCache extends _ConversationTable {
   }
 
   @override
-  Future<bool> updateConversation(Conversation chat) async {
+  Future<bool> updateConversation(Conversation chat, {
+    required ID user,
+  }) async {
     // 1. check cache
-    List<Conversation>? array = await getConversations();
+    List<Conversation>? array = await getConversations(user: user);
     Conversation? old = _find(chat.identifier, array);
     if (old == null) {
-      assert(false, 'conversation not found: $chat');
+      assert(false, 'conversation not found: $chat, current: $user');
       return false;
     }
     // 2. update record
-    if (await super.updateConversation(chat)) {
+    if (await super.updateConversation(chat, user: user)) {
       // update cache
       if (!identical(old, chat)) {
         old.unread = chat.unread;
@@ -211,7 +239,7 @@ class ConversationCache extends _ConversationTable {
       }
       _sort(array);
     } else {
-      Log.error('failed to update conversation: $chat');
+      logError('failed to update conversation: $chat, current: $user');
       return false;
     }
     // 3. post notification
@@ -224,20 +252,22 @@ class ConversationCache extends _ConversationTable {
   }
 
   @override
-  Future<bool> removeConversation(ID chat) async {
+  Future<bool> removeConversation(ID chat, {
+    required ID user,
+  }) async {
     // 1. check cache
-    List<Conversation>? array = await getConversations();
+    List<Conversation>? array = await getConversations(user: user);
     Conversation? old = _find(chat, array);
     if (old == null) {
-      Log.warning('conversation not found: $chat');
+      logWarning('conversation not found: $chat, current: $user');
       return false;
     }
     // 2. remove record
-    if (await super.removeConversation(chat)) {
+    if (await super.removeConversation(chat, user: user)) {
       // remove from cache
       array.remove(old);
     } else {
-      Log.error('failed to delete conversation: $chat');
+      logError('failed to delete conversation: $chat, current: $user');
       return false;
     }
     // 3. post notification
@@ -253,7 +283,7 @@ class ConversationCache extends _ConversationTable {
   Future<int> burnConversations(DateTime expired) async {
     int results = await super.burnConversations(expired);
     if (results < 0) {
-      Log.error('failed to clean expired conversations: $expired');
+      logError('failed to clean expired conversations: $expired');
       return results;
     }
     // post notification

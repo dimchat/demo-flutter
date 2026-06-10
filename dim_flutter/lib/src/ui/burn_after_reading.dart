@@ -1,5 +1,6 @@
 import 'package:get/get.dart';
 
+import 'package:dim_client/sdk.dart';
 import 'package:dim_client/ok.dart';
 import 'package:dim_client/ok.dart' as lnc;
 
@@ -17,7 +18,7 @@ class BurnAfterReadingItem {
   final String description;
 }
 
-class BurnAfterReadingDataSource {
+class BurnAfterReadingDataSource with Logging {
   factory BurnAfterReadingDataSource() => _instance;
   static final BurnAfterReadingDataSource _instance = BurnAfterReadingDataSource._internal();
   BurnAfterReadingDataSource._internal();
@@ -76,7 +77,7 @@ class BurnAfterReadingDataSource {
   Future<bool> burnAll() async {
     int duration = getBurnAfterReading();
     if (duration <= 0) {
-      Log.warning('manual mode');
+      logWarning('manual mode');
       return false;
     } else if (duration < 60) {
       assert(false, 'burn time error: $duration');
@@ -89,7 +90,7 @@ class BurnAfterReadingDataSource {
       int elapsed = now.millisecondsSinceEpoch - last.millisecondsSinceEpoch;
       if (elapsed < 15000) {
         // too frequently
-        Log.warning('burn next time: $elapsed');
+        logWarning('burn next time: $elapsed');
         return false;
       }
     }
@@ -98,16 +99,21 @@ class BurnAfterReadingDataSource {
     int millis = now.millisecondsSinceEpoch - duration * 1000;
     DateTime expired = DateTime.fromMillisecondsSinceEpoch(millis);
     // 1. cleanup messages
-    Log.warning('burning message before: $expired');
+    logWarning('burning message before: $expired');
     GlobalVariable shared = GlobalVariable();
-    int msgCount = await shared.database.burnMessages(expired);
-    Log.warning('burn expired messages: $msgCount, $expired');
+    User? currentUser = await shared.facebook.currentUser;
+    if (currentUser == null) {
+      logError('failed to get current user');
+      return false;
+    }
+    int msgCount = await shared.database.burnMessages(expired, user: currentUser.identifier);
+    logWarning('burn expired messages: $msgCount, $expired');
     int chatCount = await shared.database.burnConversations(expired);
-    Log.warning('burn expired conversations: $chatCount, $expired');
+    logWarning('burn expired conversations: $chatCount, $expired');
     // 2. TODO: cleanup files
     LocalStorage storage = LocalStorage();
     int fileCount = await storage.burnAll(expired);
-    Log.warning('burn expired files: $fileCount, $expired');
+    logWarning('burn expired files: $fileCount, $expired');
     return msgCount > 0 || chatCount > 0 || fileCount > 0;
   }
 

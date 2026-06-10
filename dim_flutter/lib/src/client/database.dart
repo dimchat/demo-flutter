@@ -376,44 +376,72 @@ class SharedDatabase implements AccountDBI, SessionDBI, MessageDBI,
   //
 
   @override
-  Future<Pair<List<InstantMessage>, int>> getInstantMessages(ID chat,
-      {int start = 0, int? limit}) async =>
-      await instantMessageTable.getInstantMessages(chat, start: start, limit: limit);
+  Future<Pair<List<InstantMessage>, int>> getInstantMessages(ID chat, {
+    required ID user,
+    int start = 0, int? limit,
+  }) async => await instantMessageTable.getInstantMessages(chat,
+    user: user,
+    start: start, limit: limit,
+  );
 
   @override
-  Future<bool> saveInstantMessage(ID chat, InstantMessage iMsg) async =>
-      await instantMessageTable.saveInstantMessage(chat, iMsg);
+  Future<bool> saveInstantMessage(ID chat, InstantMessage iMsg, {
+    required ID user,
+  }) async => await instantMessageTable.saveInstantMessage(chat, iMsg,
+    user: user,
+  );
 
   @override
-  Future<bool> removeInstantMessage(ID chat, Envelope envelope, Content content) async =>
-      await instantMessageTable.removeInstantMessage(chat, envelope, content);
+  Future<bool> removeInstantMessage(ID chat, Envelope envelope, Content content, {
+    required ID user,
+  }) async => await instantMessageTable.removeInstantMessage(chat, envelope, content,
+    user: user,
+  );
 
   @override
-  Future<bool> removeInstantMessages(ID chat) async =>
-      await instantMessageTable.removeInstantMessages(chat);
+  Future<bool> removeInstantMessages(ID chat, {
+    required ID user,
+  }) async => await instantMessageTable.removeInstantMessages(chat,
+    user: user,
+  );
 
-  Future<int> burnMessages(DateTime expired) async =>
-      await instantMessageTable.burnMessages(expired);
+  Future<int> burnMessages(DateTime expired, {
+    required ID user,
+  }) async => await instantMessageTable.burnMessages(expired,
+    user: user,
+  );
 
   //
   //  Conversation Table
   //
 
   @override
-  Future<List<Conversation>> getConversations() async =>
-      await conversationTable.getConversations();
+  Future<List<Conversation>> getConversations({
+    required ID user,
+  }) async => await conversationTable.getConversations(
+    user: user,
+  );
 
   @override
-  Future<bool> addConversation(Conversation chat) async =>
-      await conversationTable.addConversation(chat);
+  Future<bool> addConversation(Conversation chat, {
+    required ID user,
+  }) async => await conversationTable.addConversation(chat,
+    user: user,
+  );
 
   @override
-  Future<bool> updateConversation(Conversation chat) async =>
-      await conversationTable.updateConversation(chat);
+  Future<bool> updateConversation(Conversation chat, {
+    required ID user,
+  }) async => await conversationTable.updateConversation(chat,
+    user: user,
+  );
 
   @override
-  Future<bool> removeConversation(ID chat) async =>
-      await conversationTable.removeConversation(chat);
+  Future<bool> removeConversation(ID chat, {
+    required ID user,
+  }) async => await conversationTable.removeConversation(chat,
+    user: user,
+  );
 
   Future<int> burnConversations(DateTime expired) async =>
       await conversationTable.burnConversations(expired);

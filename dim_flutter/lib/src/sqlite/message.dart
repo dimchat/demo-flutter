@@ -159,12 +159,15 @@ class InstantMessageTable extends DataTableHandler<InstantMessage> implements In
     "time", "type", "sn", "signature",/* "content",*/ "msg"];
 
   @override
-  Future<Pair<List<InstantMessage>, int>> getInstantMessages(ID chat,
-      {int start = 0, int? limit}) async {
+  Future<Pair<List<InstantMessage>, int>> getInstantMessages(ID chat, {
+    required ID user,
+    int start = 0, int? limit
+  }) async {
     limit ??= 1024;
     SQLConditions cond;
-    cond = SQLConditions(left: 'cid', comparison: '=', right: chat.toString());
-    // cond.addCondition(SQLConditions.kAnd, left: 'uid', comparison: '=', right: '');
+    cond = SQLConditions(left: 'uid', comparison: '=', right: user.toString());
+    cond.addCondition(SQLConditions.kOr, left: 'uid', comparison: '=', right: '');
+    cond.addCondition(SQLConditions.kAnd, left: 'cid', comparison: '=', right: chat.toString());
     List<InstantMessage> messages = await select(_table, columns: _selectColumns,
         conditions: cond, orderBy: 'time DESC', offset: start, limit: limit);
     int remaining = 0;
@@ -175,7 +178,9 @@ class InstantMessageTable extends DataTableHandler<InstantMessage> implements In
   }
 
   @override
-  Future<bool> saveInstantMessage(ID chat, InstantMessage iMsg) async {
+  Future<bool> saveInstantMessage(ID chat, InstantMessage iMsg, {
+    required ID user,
+  }) async {
     String cid = chat.toString();
     String sender = iMsg.sender.toString();
     // String receiver = iMsg.receiver.string;
@@ -208,10 +213,11 @@ class InstantMessageTable extends DataTableHandler<InstantMessage> implements In
 
     // check old record
     SQLConditions cond;
-    cond = SQLConditions(left: 'sn', comparison: '=', right: content.sn);
+    cond = SQLConditions(left: 'uid', comparison: '=', right: user.toString());
+    cond.addCondition(SQLConditions.kOr, left: 'uid', comparison: '=', right: '');
     cond.addCondition(SQLConditions.kAnd, left: 'cid', comparison: '=', right: cid);
-    // cond.addCondition(SQLConditions.kAnd, left: 'uid', comparison: '=', right: '');
     cond.addCondition(SQLConditions.kAnd, left: 'sender', comparison: '=', right: sender);
+    cond.addCondition(SQLConditions.kAnd, left: 'sn', comparison: '=', right: content.sn);
     List<InstantMessage> messages = await select(_table, columns: _selectColumns,
         conditions: cond, limit: 1);
 
@@ -221,7 +227,7 @@ class InstantMessageTable extends DataTableHandler<InstantMessage> implements In
       List values = [uid, cid, sender,/* receiver,*/ time, iMsg.type,
         content.sn, sig, /*JSON.encode(content.dictionary),*/ msg];
       if (await insert(_table, columns: _insertColumns, values: values) <= 0) {
-        Log.error('failed to save message: $sender -> $chat');
+        logError('failed to save message: $sender -> $chat');
         return false;
       }
       // post notification
@@ -240,7 +246,7 @@ class InstantMessageTable extends DataTableHandler<InstantMessage> implements In
     DateTime? oldTime = messages.last.time;
     DateTime? newTime = iMsg.time;
     if (oldTime != null && newTime != null && newTime.isBefore(oldTime)) {
-      Log.warning('ignore expired message: $iMsg');
+      logWarning('ignore expired message: $iMsg');
       return false;
     }
 
@@ -257,7 +263,7 @@ class InstantMessageTable extends DataTableHandler<InstantMessage> implements In
       'msg': msg,
     };
     if (await update(_table, values: values, conditions: cond) < 1) {
-      Log.error('failed to update message: $sender -> $chat');
+      logError('failed to update message: $sender -> $chat');
       return false;
     }
     // post notification
@@ -273,16 +279,19 @@ class InstantMessageTable extends DataTableHandler<InstantMessage> implements In
   }
 
   @override
-  Future<bool> removeInstantMessage(ID chat, Envelope envelope, Content content) async {
+  Future<bool> removeInstantMessage(ID chat, Envelope envelope, Content content, {
+    required ID user,
+  }) async {
     String cid = chat.toString();
     String sender = envelope.sender.toString();
     SQLConditions cond;
-    cond = SQLConditions(left: 'sn', comparison: '=', right: content.sn);
+    cond = SQLConditions(left: 'uid', comparison: '=', right: user.toString());
+    cond.addCondition(SQLConditions.kOr, left: 'uid', comparison: '=', right: '');
     cond.addCondition(SQLConditions.kAnd, left: 'cid', comparison: '=', right: cid);
-    // cond.addCondition(SQLConditions.kAnd, left: 'uid', comparison: '=', right: '');
     cond.addCondition(SQLConditions.kAnd, left: 'sender', comparison: '=', right: sender);
+    cond.addCondition(SQLConditions.kAnd, left: 'sn', comparison: '=', right: content.sn);
     if (await delete(_table, conditions: cond) < 0) {
-      Log.error('failed to remove message: $sender -> $chat');
+      logError('failed to remove message: $sender -> $chat');
       return false;
     }
     // post notification
@@ -297,12 +306,15 @@ class InstantMessageTable extends DataTableHandler<InstantMessage> implements In
   }
 
   @override
-  Future<bool> removeInstantMessages(ID chat) async {
+  Future<bool> removeInstantMessages(ID chat, {
+    required ID user,
+  }) async {
     SQLConditions cond;
-    cond = SQLConditions(left: 'cid', comparison: '=', right: chat.toString());
-    // cond.addCondition(SQLConditions.kAnd, left: 'uid', comparison: '=', right: '');
+    cond = SQLConditions(left: 'uid', comparison: '=', right: user.toString());
+    cond.addCondition(SQLConditions.kOr, left: 'uid', comparison: '=', right: '');
+    cond.addCondition(SQLConditions.kAnd, left: 'cid', comparison: '=', right: chat.toString());
     if (await delete(_table, conditions: cond) < 0) {
-      Log.error('failed to remove messages: $chat');
+      logError('failed to remove messages: $chat');
       return false;
     }
     // post notification
@@ -314,14 +326,17 @@ class InstantMessageTable extends DataTableHandler<InstantMessage> implements In
     return true;
   }
 
-  Future<int> burnMessages(DateTime expired) async {
+  Future<int> burnMessages(DateTime expired, {
+    required ID user,
+  }) async {
     int time = expired.millisecondsSinceEpoch ~/ 1000;
     SQLConditions cond;
-    cond = SQLConditions(left: 'time', comparison: '<', right: time);
-    // cond.addCondition(SQLConditions.kAnd, left: 'uid', comparison: '=', right: '');
+    cond = SQLConditions(left: 'uid', comparison: '=', right: user.toString());
+    cond.addCondition(SQLConditions.kOr, left: 'uid', comparison: '=', right: '');
+    cond.addCondition(SQLConditions.kAnd, left: 'time', comparison: '<', right: time);
     int results = await delete(_table, conditions: cond);
     if (results < 0) {
-      Log.error('failed to remove expired messages: $expired');
+      logError('failed to remove expired messages: $expired');
       return results;
     }
     // post notification

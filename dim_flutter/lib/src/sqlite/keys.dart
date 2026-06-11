@@ -71,9 +71,8 @@ class _PrivateKeyTable extends DataTableHandler<PrivateKey> implements PrivateKe
       ChannelManager man = ChannelManager();
       return await man.dbChannel.getPrivateKeysForDecryption(user);
     }
-    SQLConditions cond;
-    cond = SQLConditions(left: 'uid', comparison: '=', right: user.toString());
-    cond.addCondition(SQLConditions.kAnd, left: 'decrypt', comparison: '<>', right: 0);
+    var cond = SQLConditions.compare('uid', '=', user.toString());
+    cond = cond.andCompare('decrypt', '<>', 0);
     // WHERE uid='$user' AND decrypt=1 ORDER BY type DESC LIMIT 3
     List<PrivateKey> array = await select(_table, columns: _selectColumns,
         conditions: cond, orderBy: 'type DESC, id DESC', limit: 3);
@@ -96,10 +95,9 @@ class _PrivateKeyTable extends DataTableHandler<PrivateKey> implements PrivateKe
       ChannelManager man = ChannelManager();
       return await man.dbChannel.getPrivateKeyForVisaSignature(user);
     }
-    SQLConditions cond;
-    cond = SQLConditions(left: 'uid', comparison: '=', right: user.toString());
-    cond.addCondition(SQLConditions.kAnd, left: 'type', comparison: '=', right: PrivateKeyDBI.kMeta);
-    cond.addCondition(SQLConditions.kAnd, left: 'sign', comparison: '<>', right: 0);
+    var cond = SQLConditions.compare('uid', '=', user.toString());
+    cond = cond.andCompare('type', '=', PrivateKeyDBI.kMeta);
+    cond = cond.andCompare('sign', '<>', 0);
     // WHERE uid='$user' AND type='M' AND decrypt=1 ORDER BY id DESC  LIMIT 1
     List<PrivateKey> array = await select(_table, columns: _selectColumns,
         conditions: cond, orderBy: 'id DESC', limit: 1);

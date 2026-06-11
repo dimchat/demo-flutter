@@ -28,8 +28,7 @@ class _StationTable extends DataTableHandler<StationInfo> {
 
   // protected
   Future<List<StationInfo>> loadStations({required ID provider}) async {
-    SQLConditions cond;
-    cond = SQLConditions(left: 'pid', comparison: '=', right: provider.toString());
+    var cond = SQLConditions.compare('pid', '=', provider.toString());
     return await select(_table, distinct: true, columns: _selectColumns,
         conditions: cond, orderBy: 'chosen DESC');
   }
@@ -58,10 +57,9 @@ class _StationTable extends DataTableHandler<StationInfo> {
     int chosen = 0,
     required String host, required int port, required ID provider
   }) async {
-    SQLConditions cond;
-    cond = SQLConditions(left: 'pid', comparison: '=', right: provider.toString());
-    cond.addCondition(SQLConditions.kAnd, left: 'host', comparison: '=', right: host);
-    cond.addCondition(SQLConditions.kAnd, left: 'port', comparison: '=', right: port);
+    var cond = SQLConditions.compare('pid', '=', provider.toString());
+    cond = cond.andCompare('host', '=', host);
+    cond = cond.andCompare('port', '=', port);
     Map<String, dynamic> values = {
       'chosen': chosen,
     };
@@ -77,10 +75,9 @@ class _StationTable extends DataTableHandler<StationInfo> {
 
   // protected
   Future<bool> removeStation({required String host, required int port, required ID provider}) async {
-    SQLConditions cond;
-    cond = SQLConditions(left: 'pid', comparison: '=', right: provider.toString());
-    cond.addCondition(SQLConditions.kAnd, left: 'host', comparison: '=', right: host);
-    cond.addCondition(SQLConditions.kAnd, left: 'port', comparison: '=', right: port);
+    var cond = SQLConditions.compare('pid', '=', provider.toString());
+    cond = cond.andCompare('host', '=', host);
+    cond = cond.andCompare('port', '=', port);
     if (await delete(_table, conditions: cond) < 0) {
       logError('failed to remove station: $host:$port, provider: $provider');
       return false;
@@ -90,8 +87,7 @@ class _StationTable extends DataTableHandler<StationInfo> {
 
   // protected
   Future<bool> removeStations({required ID provider}) async {
-    SQLConditions cond;
-    cond = SQLConditions(left: 'pid', comparison: '=', right: provider.toString());
+    var cond = SQLConditions.compare('pid', '=', provider.toString());
     if (await delete(_table, conditions: cond) < 0) {
       logError('failed to remove stations of provider: $provider');
       return false;

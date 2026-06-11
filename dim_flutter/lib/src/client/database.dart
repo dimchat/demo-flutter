@@ -443,8 +443,10 @@ class SharedDatabase implements AccountDBI, SessionDBI, MessageDBI,
     user: user,
   );
 
-  Future<int> burnConversations(DateTime expired) async =>
-      await conversationTable.burnConversations(expired);
+  Future<int> burnConversations(DateTime expired, {
+    required ID user,
+  }) async =>
+      await conversationTable.burnConversations(expired, user: user);
 
   //
   //  Trace Table

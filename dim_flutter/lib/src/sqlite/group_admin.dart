@@ -23,10 +23,8 @@ class _AdminTable extends DataTableHandler<ID> {
 
   // protected
   Future<bool> removeAdmin(ID admin, {required ID group}) async {
-    SQLConditions cond;
-    cond = SQLConditions(left: 'gid', comparison: '=', right: group.toString());
-    cond.addCondition(SQLConditions.kAnd,
-        left: 'admin', comparison: '=', right: admin.toString());
+    var cond = SQLConditions.compare('gid', '=', group.toString());
+    cond = cond.andCompare('admin', '=', admin.toString());
     if (await delete(_table, conditions: cond) < 0) {
       logError('failed to remove administrator: $admin, group: $group');
       return false;
@@ -50,8 +48,7 @@ class _AdminTable extends DataTableHandler<ID> {
 
   // protected
   Future<List<ID>> loadAdministrators(ID group) async {
-    SQLConditions cond;
-    cond = SQLConditions(left: 'gid', comparison: '=', right: group.toString());
+    var cond = SQLConditions.compare('gid', '=', group.toString());
     return await select(_table, distinct: true, columns: _selectColumns, conditions: cond);
   }
 

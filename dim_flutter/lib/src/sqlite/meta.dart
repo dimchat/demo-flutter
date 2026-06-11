@@ -35,8 +35,7 @@ class _MetaTable extends DataTableHandler<Meta> {
   static const List<String> _insertColumns = ["did", "type", "pub_key", "seed", "fingerprint"];
 
   Future<Meta?> loadMeta(ID entity) async {
-    SQLConditions cond;
-    cond = SQLConditions(left: 'did', comparison: '=', right: entity.toString());
+    var cond = SQLConditions.compare('did', '=', entity.toString());
     List<Meta> array = await select(_table, columns: _selectColumns,
         conditions: cond, orderBy: 'id DESC', limit: 1);
     // first record only

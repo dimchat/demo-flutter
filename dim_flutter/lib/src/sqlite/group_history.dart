@@ -36,16 +36,16 @@ class _GroupHistoryTable extends DataTableHandler<Pair<GroupCommand, ReliableMes
 
   @override
   Future<List<Pair<GroupCommand, ReliableMessage>>> getGroupHistories({required ID group}) async {
-    SQLConditions cond;
-    cond = SQLConditions(left: 'gid', comparison: '=', right: group.toString());
+    var cond = SQLConditions.compare('gid', '=', group.toString());
+    // TODO: order by time?
     return await select(_table, distinct: true, columns: _selectColumns, conditions: cond);
   }
 
   @override
   Future<Pair<ResetCommand?, ReliableMessage?>> getResetCommandMessage({required ID group}) async {
-    SQLConditions cond;
-    cond = SQLConditions(left: 'gid', comparison: '=', right: group.toString());
-    cond.addCondition(SQLConditions.kAnd, left: 'cmd', comparison: '=', right: 'reset');
+    var cond = SQLConditions.compare('gid', '=', group.toString());
+    cond = cond.andCompare('cmd', '=', 'reset');
+    // TODO: order by time?
     List<Pair<GroupCommand, ReliableMessage>> array = await select(_table, columns: _selectColumns,
         conditions: cond, orderBy: 'id DESC', limit: 1);
     // first record only
@@ -64,17 +64,15 @@ class _GroupHistoryTable extends DataTableHandler<Pair<GroupCommand, ReliableMes
 
   @override
   Future<bool> clearGroupAdminHistories({required ID group}) async {
-    SQLConditions cond;
-    cond = SQLConditions(left: 'gid', comparison: '=', right: group.toString());
-    cond.addCondition(SQLConditions.kAnd, left: 'cmd', comparison: '=', right: 'resign');
+    var cond = SQLConditions.compare('gid', '=', group.toString());
+    cond = cond.andCompare('cmd', '=', 'resign');
     return await delete(_table, conditions: cond) >= 0;
   }
 
   @override
   Future<bool> clearGroupMemberHistories({required ID group}) async {
-    SQLConditions cond;
-    cond = SQLConditions(left: 'gid', comparison: '=', right: group.toString());
-    cond.addCondition(SQLConditions.kAnd, left: 'cmd', comparison: '<>', right: 'resign');
+    var cond = SQLConditions.compare('gid', '=', group.toString());
+    cond = cond.andCompare('cmd', '<>', 'resign');
     return await delete(_table, conditions: cond) >= 0;
   }
 

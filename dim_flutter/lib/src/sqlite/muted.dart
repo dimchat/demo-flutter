@@ -24,10 +24,8 @@ class _MutedTable extends DataTableHandler<ID> {
 
   // protected
   Future<bool> removeMuted(ID contact, {required ID user}) async {
-    SQLConditions cond;
-    cond = SQLConditions(left: 'uid', comparison: '=', right: user.toString());
-    cond.addCondition(SQLConditions.kAnd,
-        left: 'muted', comparison: '=', right: contact.toString());
+    var cond = SQLConditions.compare('uid', '=', user.toString());
+    cond = cond.andCompare('muted', '=', contact.toString());
     if (await delete(_table, conditions: cond) < 0) {
       logError('failed to remove muted: $contact, user: $user');
       return false;
@@ -51,8 +49,7 @@ class _MutedTable extends DataTableHandler<ID> {
 
   // protected
   Future<List<ID>> loadMutedList(ID user) async {
-    SQLConditions cond;
-    cond = SQLConditions(left: 'uid', comparison: '=', right: user.toString());
+    var cond = SQLConditions.compare('uid', '=', user.toString());
     return await select(_table, distinct: true, columns: _selectColumns, conditions: cond);
   }
 

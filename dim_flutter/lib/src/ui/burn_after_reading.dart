@@ -106,9 +106,10 @@ class BurnAfterReadingDataSource with Logging {
       logError('failed to get current user');
       return false;
     }
-    int msgCount = await shared.database.burnMessages(expired, user: currentUser.identifier);
+    ID uid = currentUser.identifier;
+    int msgCount = await shared.database.burnMessages(expired, user: uid);
     logWarning('burn expired messages: $msgCount, $expired');
-    int chatCount = await shared.database.burnConversations(expired);
+    int chatCount = await shared.database.burnConversations(expired, user: uid);
     logWarning('burn expired conversations: $chatCount, $expired');
     // 2. TODO: cleanup files
     LocalStorage storage = LocalStorage();

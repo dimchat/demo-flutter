@@ -24,8 +24,7 @@ class _UserTable extends DataTableHandler<ID> {
 
   // protected
   Future<bool> removeUser(ID user) async {
-    SQLConditions cond;
-    cond = SQLConditions(left: 'uid', comparison: '=', right: user.toString());
+    var cond = SQLConditions.compare('uid', '=', user.toString());
     if (await delete(_table, conditions: cond) < 0) {
       logError('failed to remove local user: $user');
       return false;
@@ -52,8 +51,7 @@ class _UserTable extends DataTableHandler<ID> {
     Map<String, dynamic> values = {
       'chosen': chosen ? 1 : 0
     };
-    SQLConditions cond;
-    cond = SQLConditions(left: 'uid', comparison: '=', right: user.toString());
+    var cond = SQLConditions.compare('uid', '=', user.toString());
     if (await update(_table, values: values, conditions: cond) < 0) {
       logError('failed to update local user: $user');
       return false;
@@ -66,7 +64,7 @@ class _UserTable extends DataTableHandler<ID> {
     Map<String, dynamic> values = {
       'chosen': chosen ? 1 : 0
     };
-    SQLConditions cond = SQLConditions.kTrue;
+    var cond = SQLConditions.TRUE;
     if (await update(_table, values: values, conditions: cond) < 0) {
       logError('failed to update local users');
       return false;
@@ -76,7 +74,7 @@ class _UserTable extends DataTableHandler<ID> {
 
   // protected
   Future<List<ID>> loadUsers() async {
-    SQLConditions cond = SQLConditions.kTrue;
+    var cond = SQLConditions.TRUE;
     return await select(_table, distinct: true, columns: _selectColumns,
         conditions: cond, orderBy: 'chosen DESC');
   }

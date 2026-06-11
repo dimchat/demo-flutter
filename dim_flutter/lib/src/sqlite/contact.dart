@@ -24,10 +24,8 @@ class _ContactTable extends DataTableHandler<ID> {
 
   // protected
   Future<bool> removeContact(ID contact, {required ID user}) async {
-    SQLConditions cond;
-    cond = SQLConditions(left: 'uid', comparison: '=', right: user.toString());
-    cond.addCondition(SQLConditions.kAnd,
-        left: 'contact', comparison: '=', right: contact.toString());
+    var cond = SQLConditions.compare('uid', '=', user.toString());
+    cond = cond.andCompare('contact', '=', contact.toString());
     if (await delete(_table, conditions: cond) < 0) {
       logError('failed to remove contact: $contact, user: $user');
       return false;
@@ -51,8 +49,7 @@ class _ContactTable extends DataTableHandler<ID> {
 
   // protected
   Future<List<ID>> loadContacts({required ID user}) async {
-    SQLConditions cond;
-    cond = SQLConditions(left: 'uid', comparison: '=', right: user.toString());
+    var cond = SQLConditions.compare('uid', '=', user.toString());
     return await select(_table, distinct: true, columns: _selectColumns, conditions: cond);
   }
 

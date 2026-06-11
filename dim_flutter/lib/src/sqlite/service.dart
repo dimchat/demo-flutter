@@ -87,7 +87,7 @@ class _ProviderTable extends DataTableHandler<ProviderInfo> {
 
   // protected
   Future<List<ProviderInfo>> loadProviders() async {
-    SQLConditions cond = SQLConditions.kTrue;
+    var cond = SQLConditions.TRUE;
     return await select(_table, distinct: true, columns: _selectColumns,
         conditions: cond, orderBy: 'chosen DESC');
   }
@@ -111,8 +111,7 @@ class _ProviderTable extends DataTableHandler<ProviderInfo> {
     Map<String, dynamic> values = {
       'chosen': chosen,
     };
-    SQLConditions cond;
-    cond = SQLConditions(left: 'pid', comparison: '=', right: identifier.toString());
+    var cond = SQLConditions.compare('pid', '=', identifier.toString());
     if (await update(_table, values: values, conditions: cond) < 1) {
       logError('failed to update service provider: $identifier -> $chosen');
       return false;
@@ -122,8 +121,7 @@ class _ProviderTable extends DataTableHandler<ProviderInfo> {
 
   // protected
   Future<bool> removeProvider(ID identifier) async {
-    SQLConditions cond;
-    cond = SQLConditions(left: 'pid', comparison: '=', right: identifier.toString());
+    var cond = SQLConditions.compare('pid', '=', identifier.toString());
     if (await delete(_table, conditions: cond) < 0) {
       logError('failed to remove service provider: $identifier');
       return false;

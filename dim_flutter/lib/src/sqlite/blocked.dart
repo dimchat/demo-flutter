@@ -24,10 +24,8 @@ class _BlockedTable extends DataTableHandler<ID> {
 
   // protected
   Future<bool> removeBlocked(ID contact, {required ID user}) async {
-    SQLConditions cond;
-    cond = SQLConditions(left: 'uid', comparison: '=', right: user.toString());
-    cond.addCondition(SQLConditions.kAnd,
-        left: 'blocked', comparison: '=', right: contact.toString());
+    var cond = SQLConditions.compare('uid', '=', user.toString());
+    cond = cond.andCompare('blocked', '=', contact.toString());
     if (await delete(_table, conditions: cond) < 0) {
       logError('failed to remove blocked: $contact, user: $user');
       return false;
@@ -51,8 +49,7 @@ class _BlockedTable extends DataTableHandler<ID> {
 
   // protected
   Future<List<ID>> loadBlockedList(ID user) async {
-    SQLConditions cond;
-    cond = SQLConditions(left: 'uid', comparison: '=', right: user.toString());
+    var cond = SQLConditions.compare('uid', '=', user.toString());
     return await select(_table, distinct: true, columns: _selectColumns, conditions: cond);
   }
 

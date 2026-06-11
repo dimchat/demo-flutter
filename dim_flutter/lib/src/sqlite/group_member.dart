@@ -23,10 +23,8 @@ class _MemberTable extends DataTableHandler<ID> {
 
   // protected
   Future<bool> removeMember(ID member, {required ID group}) async {
-    SQLConditions cond;
-    cond = SQLConditions(left: 'gid', comparison: '=', right: group.toString());
-    cond.addCondition(SQLConditions.kAnd,
-        left: 'member', comparison: '=', right: member.toString());
+    var cond = SQLConditions.compare('gid', '=', group.toString());
+    cond = cond.andCompare('member', '=', member.toString());
     if (await delete(_table, conditions: cond) < 0) {
       logError('failed to remove member: $member, group: $group');
       return false;
@@ -50,8 +48,7 @@ class _MemberTable extends DataTableHandler<ID> {
 
   // protected
   Future<List<ID>> loadMembers(ID group) async {
-    SQLConditions cond;
-    cond = SQLConditions(left: 'gid', comparison: '=', right: group.toString());
+    var cond = SQLConditions.compare('gid', '=', group.toString());
     return await select(_table, distinct: true, columns: _selectColumns, conditions: cond);
   }
 

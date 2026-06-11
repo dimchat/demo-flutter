@@ -37,41 +37,37 @@ class TraceTable extends DataTableHandler<String> implements TraceDBI {
       if (signature.length > 8) {
         signature = signature.substring(signature.length - 8);
       }
-      cond = SQLConditions(left: 'signature', comparison: '=', right: signature);
+      cond = SQLConditions.compare('signature', '=', signature);
       if (sn > 0) {
-        cond.addCondition(SQLConditions.kOr, left: 'sn', comparison: '=', right: sn);
+        cond = cond.orCompare('sn', '=', sn);
       }
     } else if (sn > 0) {
-      cond = SQLConditions(left: 'sn', comparison: '=', right: sn);
+      cond = SQLConditions.compare('sn', '=', sn);
     } else {
       Log.error('failed to get trace without sn or signature: $sender');
       return [];
     }
-    cond.addCondition(SQLConditions.kAnd,
-        left: 'sender', comparison: '=', right: sender.toString());
+    cond = cond.andCompare('sender', '=', sender.toString());
     // SELECT * FROM t_trace WHERE (signature='...' OR sn='123') AND sender='abc'
     return await select(_table, columns: _selectColumns, conditions: cond);
   }
 
   @override
   Future<bool> removeTraces(ID sender, int sn, String? signature) async {
-    SQLConditions cond;
-    cond = SQLConditions(left: 'sender', comparison: '=', right: sender.toString());
-    cond.addCondition(SQLConditions.kAnd, left: 'sn', comparison: '=', right: sn);
+    var cond = SQLConditions.compare('sender', '=', sender.toString());
+    cond = cond.andCompare('sn', '=', sn);
     if (signature != null) {
       if (signature.length > 8) {
         signature = signature.substring(signature.length - 8);
       }
-      cond.addCondition(SQLConditions.kAnd,
-          left: 'signature', comparison: '=', right: signature);
+      cond = cond.andCompare('signature', '=', signature);
     }
     return await delete(_table, conditions: cond) >= 0;
   }
 
   @override
   Future<bool> removeAllTraces(ID cid) async {
-    SQLConditions cond;
-    cond = SQLConditions(left: 'cid', comparison: '=', right: cid.toString());
+    var cond = SQLConditions.compare('cid', '=', cid.toString());
     return await delete(_table, conditions: cond) >= 0;
   }
 

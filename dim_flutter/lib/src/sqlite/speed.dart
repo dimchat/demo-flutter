@@ -28,10 +28,8 @@ class SpeedTable extends DataTableHandler<SpeedRecord> implements SpeedDBI {
 
   @override
   Future<List<SpeedRecord>> getSpeeds(String host, int port) async {
-    SQLConditions cond;
-    cond = SQLConditions(left: 'host', comparison: '=', right: host);
-    cond.addCondition(SQLConditions.kAnd,
-        left: 'port', comparison: '=', right: port);
+    var cond = SQLConditions.compare('host', '=', host);
+    cond = cond.andCompare('port', '=', port);
     return await select(_table, columns: _selectColumns,
         conditions: cond, orderBy: 'id DESC');
   }
@@ -53,8 +51,7 @@ class SpeedTable extends DataTableHandler<SpeedRecord> implements SpeedDBI {
     } else {
       time = expired.millisecondsSinceEpoch / 1000;
     }
-    SQLConditions cond;
-    cond = SQLConditions(left: 'time', comparison: '<', right: time);
+    var cond = SQLConditions.compare('time', '<', time);
     return await delete(_table, conditions: cond) >= 0;
   }
 

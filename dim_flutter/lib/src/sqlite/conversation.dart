@@ -78,9 +78,8 @@ class _ConversationTable extends DataTableHandler<Conversation> implements Conve
   Future<List<Conversation>> getConversations({
     required ID user,
   }) async {
-    SQLConditions cond;
-    cond = SQLConditions(left: 'uid', comparison: '=', right: user.toString());
-    cond.addCondition(SQLConditions.kOr, left: 'uid', comparison: '=', right: '');
+    var cond = SQLConditions.compare('uid', '=', user.toString());
+    cond = cond.orCompare('uid', '=', '');
     return await select(_table, columns: _selectColumns,
         conditions: cond, orderBy: 'time DESC');
   }
@@ -114,10 +113,9 @@ class _ConversationTable extends DataTableHandler<Conversation> implements Conve
       'time': time,
       'mentioned': chat.mentionedSerialNumber,
     };
-    SQLConditions cond;
-    cond = SQLConditions(left: 'uid', comparison: '=', right: user.toString());
-    cond.addCondition(SQLConditions.kOr, left: 'uid', comparison: '=', right: '');
-    cond.addCondition(SQLConditions.kAnd, left: 'cid', comparison: '=', right: chat.identifier.toString());
+    var cond = SQLConditions.compare('uid', '=', user.toString());
+    cond = cond.orCompare('uid', '=', '');
+    cond = cond.andCompare('cid', '=', chat.identifier.toString());
     return await update(_table, values: values, conditions: cond) > 0;
   }
 
@@ -125,23 +123,24 @@ class _ConversationTable extends DataTableHandler<Conversation> implements Conve
   Future<bool> removeConversation(ID chat, {
     required ID user,
   }) async {
-    SQLConditions cond;
-    cond = SQLConditions(left: 'uid', comparison: '=', right: user.toString());
-    cond.addCondition(SQLConditions.kOr, left: 'uid', comparison: '=', right: '');
-    cond.addCondition(SQLConditions.kAnd, left: 'cid', comparison: '=', right: chat.toString());
+    var cond = SQLConditions.compare('uid', '=', user.toString());
+    cond = cond.orCompare('uid', '=', '');
+    cond = cond.andCompare('cid', '=', chat.toString());
     return await delete(_table, conditions: cond) >= 0;
   }
 
-  Future<int> burnConversations(DateTime expired) async {
+  Future<int> burnConversations(DateTime expired, {
+    required ID user,
+  }) async {
     int time = expired.millisecondsSinceEpoch ~/ 1000;
     Map<String, dynamic> values = {
       'unread': 0,
       'last': '',
       'mentioned': 0,
     };
-    SQLConditions cond;
-    cond = SQLConditions(left: 'time', comparison: '<', right: time);
-    // cond.addCondition(SQLConditions.kAnd, left: 'uid', comparison: '=', right: '');
+    var cond = SQLConditions.compare('uid', '=', user.toString());
+    cond = cond.orCompare('uid', '=', '');
+    cond = cond.andCompare('time', '<', time);
     return await update(_table, values: values, conditions: cond);
   }
 
@@ -280,8 +279,10 @@ class ConversationCache extends _ConversationTable {
   }
 
   @override
-  Future<int> burnConversations(DateTime expired) async {
-    int results = await super.burnConversations(expired);
+  Future<int> burnConversations(DateTime expired, {
+    required ID user,
+  }) async {
+    int results = await super.burnConversations(expired, user: user);
     if (results < 0) {
       logError('failed to clean expired conversations: $expired');
       return results;

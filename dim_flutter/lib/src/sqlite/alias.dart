@@ -27,10 +27,8 @@ class _RemarkTable extends DataTableHandler<ContactRemark> {
 
   // protected
   Future<bool> clearRemarks(ID contact, {required ID user}) async {
-    SQLConditions cond;
-    cond = SQLConditions(left: 'uid', comparison: '=', right: user.toString());
-    cond.addCondition(SQLConditions.kAnd,
-        left: 'contact', comparison: '=', right: contact.toString());
+    var cond = SQLConditions.compare('uid', '=', user.toString());
+    cond = cond.andCompare('contact', '=', contact.toString());
     if (await delete(_table, conditions: cond) < 0) {
       logError('failed to remove remarks: $user -> $contact');
       return false;
@@ -60,10 +58,8 @@ class _RemarkTable extends DataTableHandler<ContactRemark> {
       'alias': remark.alias,
       'description': remark.description,
     };
-    SQLConditions cond;
-    cond = SQLConditions(left: 'uid', comparison: '=', right: user.toString());
-    cond.addCondition(SQLConditions.kAnd,
-        left: 'contact', comparison: '=', right: remark.identifier.toString());
+    var cond = SQLConditions.compare('uid', '=', user.toString());
+    cond = cond.andCompare('contact', '=', remark.identifier.toString());
     if (await update(_table, values: values, conditions: cond) < 1) {
       logError('failed to update remark: $user -> $remark');
       return false;
@@ -73,8 +69,7 @@ class _RemarkTable extends DataTableHandler<ContactRemark> {
 
   // protected
   Future<List<ContactRemark>> loadRemarks({required ID user}) async {
-    SQLConditions cond;
-    cond = SQLConditions(left: 'uid', comparison: '=', right: user.toString());
+    var cond = SQLConditions.compare('uid', '=', user.toString());
     return await select(_table, columns: _selectColumns,
         conditions: cond, orderBy: 'id DESC');
   }

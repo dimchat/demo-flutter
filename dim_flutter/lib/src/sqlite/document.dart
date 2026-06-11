@@ -65,8 +65,7 @@ class _DocumentTable extends DataTableHandler<Document> {
 
   // protected
   Future<List<Document>> loadDocuments(ID entity) async {
-    SQLConditions cond;
-    cond = SQLConditions(left: 'did', comparison: '=', right: entity.toString());
+    var cond = SQLConditions.compare('did', '=', entity.toString());
     return await select(_table, columns: _selectColumns, conditions: cond);
   }
 
@@ -76,9 +75,8 @@ class _DocumentTable extends DataTableHandler<Document> {
     String type = getDocumentType(doc);
     String? data = doc.getString('data');
     String? signature = doc.getString('signature');
-    SQLConditions cond;
-    cond = SQLConditions(left: 'did', comparison: '=', right: identifier.toString());
-    cond.addCondition(SQLConditions.kAnd, left: 'type', comparison: '=', right: type);
+    var cond = SQLConditions.compare('did', '=', identifier.toString());
+    cond = cond.andCompare('type', '=', type);
     Map<String, dynamic> values = {
       'data': data,
       'signature': signature,

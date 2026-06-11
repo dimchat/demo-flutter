@@ -87,8 +87,7 @@ class _CustomizedInfoTable extends DataTableHandler<Mapper> {
   // protected
   Future<bool> clearExpiredContents() async {
     DateTime now = DateTime.now();
-    SQLConditions cond;
-    cond = SQLConditions(left: 'expired', comparison: '<', right: timestamp(now));
+    var cond = SQLConditions.compare('expired', '<', timestamp(now));
     if (await delete(_table, conditions: cond) < 0) {
       logError('failed to clear expired contents: $now');
       return false;
@@ -98,8 +97,7 @@ class _CustomizedInfoTable extends DataTableHandler<Mapper> {
 
   // protected
   Future<bool> clearContents(String key) async {
-    SQLConditions cond;
-    cond = SQLConditions(left: 'key', comparison: '=', right: key);
+    var cond = SQLConditions.compare('key', '=', key);
     if (await delete(_table, conditions: cond) < 0) {
       logError('failed to remove contents: $key');
       return false;
@@ -146,8 +144,7 @@ class _CustomizedInfoTable extends DataTableHandler<Mapper> {
       'expired': timestamp(expired),
       'mod': mod,
     };
-    SQLConditions cond;
-    cond = SQLConditions(left: 'key', comparison: '=', right: key);
+    var cond = SQLConditions.compare('key', '=', key);
     if (await update(_table, values: values, conditions: cond) < 1) {
       logError('failed to update message: $key -> $content');
       return false;
@@ -157,8 +154,7 @@ class _CustomizedInfoTable extends DataTableHandler<Mapper> {
 
   // protected
   Future<List<Mapper>> loadContents(String key) async {
-    SQLConditions cond;
-    cond = SQLConditions(left: 'key', comparison: '=', right: key);
+    var cond = SQLConditions.compare('key', '=', key);
     return await select(_table, columns: _selectColumns,
         conditions: cond, orderBy: 'time DESC');
   }

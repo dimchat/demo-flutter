@@ -56,16 +56,14 @@ class _LoginCommandTable extends DataTableHandler<Pair<LoginCommand, ReliableMes
 
   // protected
   Future<List<Pair<LoginCommand, ReliableMessage>>> loadLoginCommandMessages(ID identifier) async {
-    SQLConditions cond;
-    cond = SQLConditions(left: 'uid', comparison: '=', right: identifier.toString());
+    var cond = SQLConditions.compare('uid', '=', identifier.toString());
     return await select(_table, columns: _selectColumns,
         conditions: cond, orderBy: 'id DESC');
   }
 
   // protected
   Future<bool> deleteLoginCommandMessage(ID identifier) async {
-    SQLConditions cond;
-    cond = SQLConditions(left: 'uid', comparison: '=', right: identifier.toString());
+    var cond = SQLConditions.compare('uid', '=', identifier.toString());
     if (await delete(_table, conditions: cond) < 0) {
       logError('failed to remove login command: $identifier');
       return false;

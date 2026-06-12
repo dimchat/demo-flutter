@@ -98,7 +98,7 @@ class _PrivateKeyTable extends DataTableHandler<PrivateKey> implements PrivateKe
     var cond = SQLConditions.compare('uid', '=', user.toString());
     cond = cond.andCompare('type', '=', PrivateKeyDBI.kMeta);
     cond = cond.andCompare('sign', '<>', 0);
-    // WHERE uid='$user' AND type='M' AND decrypt=1 ORDER BY id DESC  LIMIT 1
+    // WHERE uid='$user' AND type='M' AND sign=1 ORDER BY id DESC  LIMIT 1
     List<PrivateKey> array = await select(_table, columns: _selectColumns,
         conditions: cond, orderBy: 'id DESC', limit: 1);
     // first record only
@@ -225,7 +225,7 @@ class PrivateKeyCache extends _PrivateKeyTable {
     if (await super.savePrivateKey(key, type, user, sign: sign, decrypt: decrypt)) {
       //
     } else {
-      Log.error('failed to save private key: $user');
+      logError('failed to save private key: $user');
       return false;
     }
 
@@ -241,7 +241,7 @@ class PrivateKeyCache extends _PrivateKeyTable {
 }
 
 
-class MsgKeyCache implements CipherKeyDBI {
+class MsgKeyCache with Logging implements CipherKeyDBI {
   MsgKeyCache();
 
   /// receiver => {sender => key}
@@ -284,7 +284,7 @@ class MsgKeyCache implements CipherKeyDBI {
       // create new key
       key = SymmetricKey.generate(SymmetricAlgorithms.AES);
       keyMap[sender] = key!;
-      Log.warning('cipher key generated: $sender -> $receiver');
+      logWarning('cipher key generated: $sender -> $receiver');
     }
     return key;
   }

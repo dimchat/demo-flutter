@@ -125,8 +125,9 @@ class DatabaseConnector {
     required List<String> columns,
     required String fromTable,
     required List<String> fromColumns,
+    SQLConditions? conditions,
   }) async {
-    String select = SQLBuilder.buildSelect(fromTable, columns: fromColumns);
+    String select = SQLBuilder.buildSelect(fromTable, columns: fromColumns, conditions: conditions);
     String sql = SQLBuilder.buildInsert(table, columns: columns, selectClause: select);
     DBLogger.output('renameTable: $sql');
     await db.execute(sql);

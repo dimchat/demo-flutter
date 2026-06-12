@@ -87,9 +87,11 @@ class _ProviderTable extends DataTableHandler<ProviderInfo> {
 
   // protected
   Future<List<ProviderInfo>> loadProviders() async {
-    var cond = SQLConditions.TRUE;
-    return await select(_table, distinct: true, columns: _selectColumns,
-        conditions: cond, orderBy: 'chosen DESC');
+    // var cond = SQLConditions.TRUE;
+    return await select(_table, distinct: true,
+      columns: _selectColumns,
+      orderBy: 'chosen DESC',
+    );
   }
 
   // protected

@@ -30,9 +30,18 @@ String getDocumentType(Document document) {
   }
 }
 
+String getDocumentTerminal(Document document) {
+  String? terminal = document.getString('terminal');
+  if (terminal == null || terminal == '*') {
+    return '';
+  }
+  return terminal;
+}
+
 
 Document _extractDocument(ResultSet resultSet, int index) {
   String? did = resultSet.getString('did');
+  String? terminal = resultSet.getString('terminal');
   String? type = resultSet.getString('type');
   String? data = resultSet.getString('data');
   String? signature = resultSet.getString('signature');
@@ -44,9 +53,15 @@ Document _extractDocument(ResultSet resultSet, int index) {
   }
   TransportableData? ted = TransportableData.parse(signature);
   Document doc = Document.create(type, data: data, signature: ted);
-  doc.setString('did', identifier!);
+  doc.setString('did', identifier);
+  if (terminal != null) {
+    doc['terminal'] = terminal;
+  }
   if (type == '*') {
-    if (identifier.isUser) {
+    if (identifier == null) {
+      assert(false, 'document error: $did, $terminal, data: $data signature: $signature');
+      type = DocumentType.PROFILE;
+    } else if (identifier.isUser) {
       type = DocumentType.VISA;
     } else {
       type = DocumentType.BULLETIN;
@@ -63,9 +78,19 @@ class _DocumentTable extends DataTableHandler<Document> {
   static const List<String> _selectColumns = ["did", "type", "data", "signature"];
   static const List<String> _insertColumns = ["did", "type", "data", "signature"];
 
+  static const String _visaTable = EntityDatabase.tVisa;
+  static const List<String> _selectVisaColumns = ["did", "terminal", "type", "data", "signature"];
+  static const List<String> _insertVisaColumns = ["did", "terminal", "type", "data", "signature"];
+
   // protected
   Future<List<Document>> loadDocuments(ID entity) async {
     var cond = SQLConditions.compare('did', '=', entity.toString());
+    if (entity.isUser) {
+      // user documents were moved to "t_visa"
+      return await select(_visaTable, columns: _selectVisaColumns, conditions: cond);
+    }
+    // load group documents
+    assert(entity.isGroup, 'group ID error: $entity');
     return await select(_table, columns: _selectColumns, conditions: cond);
   }
 
@@ -81,6 +106,14 @@ class _DocumentTable extends DataTableHandler<Document> {
       'data': data,
       'signature': signature,
     };
+    if (identifier.isUser) {
+      // update user document into "t_visa"
+      String terminal = getDocumentTerminal(doc);
+      cond = cond.andCompare('terminal', '=', terminal);
+      return await update(_visaTable, values: values, conditions: cond) > 0;
+    }
+    // update group document
+    assert(identifier.isGroup, 'group ID error: $identifier');
     return await update(_table, values: values, conditions: cond) > 0;
   }
 
@@ -96,6 +129,14 @@ class _DocumentTable extends DataTableHandler<Document> {
       data,
       signature,
     ];
+    if (identifier.isUser) {
+      // add user document into "t_visa"
+      String terminal = getDocumentTerminal(doc);
+      values.insert(1, terminal);
+      return await insert(_visaTable, columns: _insertVisaColumns, values: values) > 0;
+    }
+    // add group document
+    assert(identifier.isGroup, 'group ID error: $identifier');
     return await insert(_table, columns: _insertColumns, values: values) > 0;
   }
 
@@ -117,6 +158,7 @@ class _DocTask extends DbTask<ID, List<Document>> {
 
   @override
   Future<List<Document>?> readData() async {
+    // TODO: remove expired document(s)
     return await _table.loadDocuments(_entity);
   }
 
@@ -134,6 +176,7 @@ class _DocTask extends DbTask<ID, List<Document>> {
     }
     // String type = doc.getString('type') ?? '';
     String type = getDocumentType(doc);
+    String terminal = getDocumentTerminal(doc);
     bool update = false;
     Document item;
     // check old documents
@@ -144,6 +187,9 @@ class _DocTask extends DbTask<ID, List<Document>> {
         continue;
       } else if (getDocumentType(item) != type) {
         logInfo('skip document: $identifier, type=$type, $item');
+        continue;
+      } else if (identifier.isUser && getDocumentTerminal(item) != terminal) {
+        logInfo('skip visa: $identifier, terminal=$terminal, $item');
         continue;
       } else if (item == doc) {
         logWarning('same document, no need to update: $identifier');

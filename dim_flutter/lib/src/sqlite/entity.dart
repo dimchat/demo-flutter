@@ -1,3 +1,5 @@
+import 'package:dim_client/sdk.dart';
+
 import 'helper/sqlite.dart';
 
 
@@ -12,37 +14,20 @@ class EntityDatabase extends DatabaseConnector {
   EntityDatabase() : super(name: dbName, version: dbVersion,
       onCreate: (db, version) async {
         // meta
-        await DatabaseConnector.createTable(db, tMeta, fields: [
-          "id INTEGER PRIMARY KEY AUTOINCREMENT",
-          "did VARCHAR(64) NOT NULL UNIQUE",
-          "type INTEGER NOT NULL",
-          "pub_key TEXT NOT NULL",
-          "seed VARCHAR(32)",
-          "fingerprint VARCHAR(172)",
-        ]);
-        await DatabaseConnector.createIndex(db, tMeta,
-            name: 'meta_id_index', columns: ['did']);
+        await _createMetaTable(db);
         // document
-        await DatabaseConnector.createTable(db, tDocument, fields: [
-          "id INTEGER PRIMARY KEY AUTOINCREMENT",
-          "did VARCHAR(64) NOT NULL",
-          "type VARCHAR(16)",
-          "data TEXT NOT NULL",
-          "signature VARCHAR(172) NOT NULL",
-        ]);
-        await DatabaseConnector.createIndex(db, tDocument,
-            name: 'doc_id_index', columns: ['did']);
+        await _createDocumentTable(db);
+        // visa
+        await _createVisaTable(db);
+
         // local user
-        await DatabaseConnector.createTable(db, tLocalUser, fields: [
-          "id INTEGER PRIMARY KEY AUTOINCREMENT",
-          "uid VARCHAR(64) NOT NULL UNIQUE",
-          "chosen BIT",
-        ]);
+        await _createLocalUserTable(db);
+
         // contact
         await _createContactTable(db);
-
         // alias
         await _createRemarkTable(db);
+
         // block-list
         await _createBlockedTable(db);
         // mute-list
@@ -55,7 +40,77 @@ class EntityDatabase extends DatabaseConnector {
           await _createBlockedTable(db);
           await _createMutedTable(db);
         }
+        if (oldVersion < 6) {
+          await _createVisaTable(db);
+          await _moveVisaDocuments(db);
+        }
       });
+
+  // meta
+  static Future<void> _createMetaTable(Database db) async {
+    await DatabaseConnector.createTable(db, tMeta, fields: [
+      "id INTEGER PRIMARY KEY AUTOINCREMENT",
+      "did VARCHAR(64) NOT NULL UNIQUE",
+      "type INTEGER NOT NULL",
+      "pub_key TEXT NOT NULL",
+      "seed VARCHAR(32)",
+      "fingerprint VARCHAR(172)",
+    ]);
+    await DatabaseConnector.createIndex(db, tMeta,
+      name: 'meta_id_index', columns: ['did'],
+    );
+  }
+  // document
+  static Future<void> _createDocumentTable(Database db) async {
+    await DatabaseConnector.createTable(db, tDocument, fields: [
+      "id INTEGER PRIMARY KEY AUTOINCREMENT",
+      "did VARCHAR(64) NOT NULL",
+      "type VARCHAR(16)",
+      "data TEXT NOT NULL",
+      "signature VARCHAR(172) NOT NULL",
+    ]);
+    await DatabaseConnector.createIndex(db, tDocument,
+      name: 'doc_id_index', columns: ['did'],
+    );
+  }
+
+  // visa document
+  static Future<void> _createVisaTable(Database db) async {
+    await DatabaseConnector.createTable(db, tVisa, fields: [
+      "id INTEGER PRIMARY KEY AUTOINCREMENT",
+      "did VARCHAR(64) NOT NULL",
+      "terminal VARCHAR(32)",
+      "type VARCHAR(16)",
+      "data TEXT NOT NULL",
+      "signature VARCHAR(172) NOT NULL",
+    ]);
+    await DatabaseConnector.createIndex(db, tVisa,
+      name: 'visa_id_index', columns: ['did'],
+    );
+  }
+  static Future<void> _moveVisaDocuments(Database db) async {
+    var cond = SQLConditions.compare('type', '<>', DocumentType.BULLETIN);
+    // copy records to t_visa
+    await DatabaseConnector.copyTable(db, tVisa,
+      columns: ["did", "terminal", "type", "data", "signature"],
+      fromColumns: ["did", "''", "type", "data", "signature"],
+      fromTable: tDocument,
+      conditions: cond,
+    );
+    // // remove records from t_document
+    // String sql = SQLBuilder.buildDelete(tDocument, conditions: cond);
+    // DBLogger.output('rename visa record from t_document: $sql');
+    // await db.execute(sql);
+  }
+
+  // local user
+  static Future<void> _createLocalUserTable(Database db) async {
+    await DatabaseConnector.createTable(db, tLocalUser, fields: [
+      "id INTEGER PRIMARY KEY AUTOINCREMENT",
+      "uid VARCHAR(64) NOT NULL UNIQUE",
+      "chosen BIT",
+    ]);
+  }
 
   // contact
   static Future<void> _createContactTable(Database db) async {
@@ -106,9 +161,10 @@ class EntityDatabase extends DatabaseConnector {
   }
 
   static const String dbName = 'mkm.db';
-  static const int dbVersion = 5;
+  static const int dbVersion = 6;
 
   static const String tMeta     = 't_meta';
+  static const String tVisa     = 't_visa';
   static const String tDocument = 't_document';
 
   static const String tLocalUser = 't_local_user';

@@ -153,32 +153,40 @@ abstract class DataTableHandler<T> extends DatabaseHandler<T> {
   final OnDataRowExtractFn<T> onExtract;
 
   /// INSERT INTO table (columns) VALUES (values);
-  Future<int> insert(String table,
-      {required List<String> columns, required List values}) async {
+  Future<int> insert(String table, {
+    required List<String> columns, required List values,
+  }) async {
     String sql = SQLBuilder.buildInsert(table,
-        columns: columns, values: values);
+      columns: columns, values: values,
+    );
     return await executeInsert(sql);
   }
 
   /// SELECT DISTINCT columns FROM tables WHERE conditions ...
-  Future<List<T>> select(String table,
-      {bool distinct = false,
-        required List<String> columns, required SQLConditions conditions,
-        String? groupBy, String? having, String? orderBy,
-        int offset = 0, int? limit}) async {
+  Future<List<T>> select(String table, {bool distinct = false,
+    required List<String> columns,
+    SQLConditions? conditions,
+    String? groupBy, String? having, String? orderBy,
+    int offset = 0, int? limit,
+  }) async {
     String sql = SQLBuilder.buildSelect(table, distinct: distinct,
-        columns: columns, conditions: conditions,
-        groupBy: groupBy, having: having, orderBy: orderBy,
-        offset: offset, limit: limit);
+      columns: columns,
+      conditions: conditions,
+      groupBy: groupBy, having: having, orderBy: orderBy,
+      offset: offset, limit: limit,
+    );
     return await executeQuery(sql, onExtract);
   }
 
   /// UPDATE table SET name=value WHERE conditions
-  Future<int> update(String table,
-      {required Map<String, dynamic> values,
-        required SQLConditions conditions}) async {
+  Future<int> update(String table, {
+    required Map<String, dynamic> values,
+    required SQLConditions conditions,
+  }) async {
     String sql = SQLBuilder.buildUpdate(table,
-        values: values, conditions: conditions);
+      values: values,
+      conditions: conditions,
+    );
     return await executeUpdate(sql);
   }
 

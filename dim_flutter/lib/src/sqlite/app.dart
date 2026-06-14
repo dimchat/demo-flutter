@@ -1,8 +1,8 @@
 
 import 'package:dim_client/ok.dart';
 import 'package:dim_client/sdk.dart';
-import 'package:dim_flutter/src/common/dbi/app.dart';
 
+import '../common/dbi/app.dart';
 import '../common/constants.dart';
 import 'helper/sqlite.dart';
 import 'helper/task.dart';

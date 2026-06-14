@@ -65,6 +65,11 @@ abstract class ThemeColors {
   Color get pageMessageBackgroundColor;
 
   //
+  //  Playlist
+  //
+  Color get playlistBackgroundColor;
+
+  //
   //  Common
   //
   Color get commandBackgroundColor;
@@ -208,6 +213,12 @@ class _LightThemeColors extends ThemeColors {
   Color get pageMessageColor => CupertinoColors.black;
 
   //
+  //  Playlist
+  //
+  @override
+  Color get playlistBackgroundColor => CupertinoColors.lightBackgroundGray;
+
+  //
   //  Text Style
   //
   @override
@@ -318,6 +329,12 @@ class _DarkThemeColors extends ThemeColors {
 
   @override
   Color get pageMessageColor => CupertinoColors.white;
+
+  //
+  //  Playlist
+  //
+  @override
+  Color get playlistBackgroundColor => CupertinoColors.darkBackgroundGray;
 
   //
   //  Common

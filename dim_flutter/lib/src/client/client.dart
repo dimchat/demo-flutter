@@ -256,6 +256,14 @@ class Client extends Terminal {
   final DeviceInfo _deviceInfo = DeviceInfo();
   final AppPackageInfo _packageInfo = AppPackageInfo();
 
+  Future<bool> loadDeviceAndPackageInfo() async {
+    bool ok1 = await _deviceInfo.loadDeviceInfo();
+    bool ok2 = await _packageInfo.loadPackageInfo();
+    logInfo('load device info: $ok1');
+    logInfo('load app package info: $ok2');
+    return ok1 && ok2;
+  }
+
   String get packageName => _packageInfo.packageName;
 
   @override

@@ -2,38 +2,62 @@
 import 'package:device_info_plus/device_info_plus.dart';
 import 'package:package_info_plus/package_info_plus.dart';
 
+import 'package:dim_client/ok.dart';
+
 import '../../common/platform.dart';
 import '../../widgets/permissions.dart';
 
-class DeviceInfo {
+class DeviceInfo with Logging {
   factory DeviceInfo() => _instance;
   static final DeviceInfo _instance = DeviceInfo._internal();
   DeviceInfo._internal() {
+    /*await */loadDeviceInfo();
+  }
+
+  bool _loaded = false;
+
+  Future<bool> loadDeviceInfo() async {
+    if (_loaded) {
+      return false;
+    }
+    try {
+      await _loadInfo();
+      logInfo('load device info, done!');
+    } catch (e) {
+      logError('failed to load device info: $e');
+    } finally {
+      _loaded = true;
+    }
+    return true;
+  }
+
+  Future<void> _loadInfo() async {
     DeviceInfoPlugin info = DeviceInfoPlugin();
     if (DevicePlatform.isWeb) {
-      info.webBrowserInfo.then(_loadWeb);
+      _loadWeb(await info.webBrowserInfo);
     } else if (DevicePlatform.isAndroid) {
-      info.androidInfo.then(_loadAndroid);
+      _loadAndroid(await info.androidInfo);
     } else if (DevicePlatform.isIOS) {
-      info.iosInfo.then(_loadIOS);
+      _loadIOS(await info.iosInfo);
     } else if (DevicePlatform.isMacOS) {
-      info.macOsInfo.then(_loadMacOS);
+      _loadMacOS(await info.macOsInfo);
     } else if (DevicePlatform.isLinux) {
-      info.linuxInfo.then(_loadLinux);
+      _loadLinux(await info.linuxInfo);
     } else if (DevicePlatform.isWindows) {
-      info.windowsInfo.then(_loadWindows);
+      _loadWindows(await info.windowsInfo);
     } else {
       assert(false, 'unknown platform');
     }
     language = DevicePlatform.localeName;
     // fix for android
-    fixPhotoPermissions();
+    await fixPhotoPermissions();
   }
 
   void _loadWeb(WebBrowserInfo info) {
     // FIXME: all
     systemVersion = info.appVersion ?? '';
-    systemModel = info.appCodeName ?? '';
+    // systemModel = info.appCodeName ?? '';
+    systemModel = info.browserName.name;
     systemDevice = info.platform ?? '';
     deviceBrand = info.product ?? '';
     deviceBoard = info.productSub ?? '';
@@ -50,7 +74,8 @@ class DeviceInfo {
   void _loadIOS(IosDeviceInfo info) {
     // FIXME: device, brand, board
     systemVersion = info.systemVersion;
-    systemModel = info.model;
+    // systemModel = info.model;
+    systemModel = info.localizedModel;
     systemDevice = info.utsname.machine;
     deviceBrand = "Apple";
     deviceBoard = info.utsname.machine;
@@ -68,20 +93,20 @@ class DeviceInfo {
   void _loadLinux(LinuxDeviceInfo info) {
     // FIXME: model, device, brand, board, manufacturer
     systemVersion = info.version ?? info.versionId ?? info.versionCodename ?? '';
-    systemModel = info.name;
-    systemDevice = info.prettyName;
+    systemModel = info.prettyName; // info.name;
+    systemDevice = info.id;
     deviceBrand = "Linux";
-    deviceBoard = info.prettyName;
-    deviceManufacturer = "Linux";
+    deviceBoard = ''; // info.prettyName;
+    deviceManufacturer = "Linux Distro";
   }
   void _loadWindows(WindowsDeviceInfo info) {
     // FIXME: model, device, brand, board
     systemVersion = '${info.majorVersion}.${info.minorVersion}.${info.buildNumber}';
-    systemModel = info.csdVersion;
+    systemModel = info.productName;
     systemDevice = info.deviceId;
-    deviceBrand = "Windows";
-    deviceBoard = info.productName;
-    deviceManufacturer = info.registeredOwner;
+    deviceBrand = "Microsoft Windows";
+    deviceBoard = ''; // info.csdVersion;
+    deviceManufacturer = 'Microsoft Corporation'; // info.registeredOwner;
   }
 
   String language = "zh-CN";
@@ -94,14 +119,31 @@ class DeviceInfo {
 
 }
 
-class AppPackageInfo {
+class AppPackageInfo with Logging {
   factory AppPackageInfo() => _instance;
   static final AppPackageInfo _instance = AppPackageInfo._internal();
   AppPackageInfo._internal() {
-    PackageInfo.fromPlatform().then(_load);
+    /*await */loadPackageInfo();
   }
 
-  void _load(PackageInfo info) {
+  bool _loaded = false;
+
+  Future<bool> loadPackageInfo() async {
+    if (_loaded) {
+      return false;
+    }
+    try {
+      _loadInfo(await PackageInfo.fromPlatform());
+      logInfo('load app package info, done!');
+    } catch (e) {
+      logError('failed to load app package info: $e');
+    } finally {
+      _loaded = true;
+    }
+    return true;
+  }
+
+  void _loadInfo(PackageInfo info) {
     packageName = info.packageName;
     displayName = info.appName;
     versionName = info.version;

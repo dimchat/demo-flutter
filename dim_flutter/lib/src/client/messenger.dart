@@ -112,6 +112,10 @@ class SharedMessenger extends ClientMessenger {
     }
     // 3. update visa document
     assert(visa.publicKey != null, 'visa error: $visa');
+    var shared = GlobalVariable();
+    var client = shared.terminal;
+    bool loaded = await client.loadDeviceAndPackageInfo();
+    logInfo('load device & app package info: $loaded');
     visa.setProperty('app', _getAppInfo(visa));
     visa.setProperty('sys', _getDeviceInfo(visa));
     // 4. sign it
@@ -161,8 +165,14 @@ class SharedMessenger extends ClientMessenger {
       };
     }
     GlobalVariable shared = GlobalVariable();
-    info['locale'] = shared.terminal.language;
-    info['model'] = shared.terminal.systemModel;
+    var client = shared.terminal;
+    info['locale'] = client.language; // DevicePlatform.localeName;
+    info['model'] = client.systemModel;
+    info['device'] = client.systemDevice;
+    info['brand'] = client.deviceBrand;
+    info['board'] = client.deviceBoard;
+    info['manufacturer'] = client.deviceManufacturer;
+    info['ver'] = client.systemVersion;
     info['os'] = DevicePlatform.operatingSystem;
     return info;
   }

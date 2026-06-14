@@ -70,7 +70,7 @@ class ClientHandshakeProcessor extends HandshakeCommandProcessor {
     }
     ClientSession? session = messenger?.session;
     if (session == null || !session.isReady) {
-      logInfo('session not ready, handshake again: $content, ${session?.remoteAddress}');
+      logInfo('session not ready, handshake again: ${session?.remoteAddress}, $content');
       return false;
     }
     String? oldKey = session.sessionKey;

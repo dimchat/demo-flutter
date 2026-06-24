@@ -19,57 +19,63 @@ dependencies:
   flutter_web_plugins:
     sdk: flutter
 
-  plugin_platform_interface: ^2.0.2
-  device_info_plus: ^9.1.2
-  package_info_plus: ^7.0.0
+  plugin_platform_interface: 2.1.8
+  device_info_plus: 9.1.2
+  package_info_plus: 8.3.1
 
-  permission_handler: ^12.0.0
-  permission_handler_android: ^13.0.0
-  path: ^1.8.3
-  path_provider: ^2.1.2
+  permission_handler: 12.0.0
+#  permission_handler_android: 13.0.0
+#  path: 1.8.3
+  path_provider: 2.1.2
 
-  shared_preferences: ^2.2.2
-  get: ^4.6.6
+  shared_preferences: 2.2.2
+  get: 4.6.6
 
-  sqflite: ^2.2.6
-#  sqflite_common_ffi: ^2.3.3
-#  sqflite_common_ffi_web: ^0.4.2
-#
-#  fvp: ^0.16.1
-  video_player: ^2.8.3
-  chewie: ^1.8.1
-  castscreen: ^1.0.2
+  sqflite: 2.4.3
+#  sqflite_android: 2.4.3
+#  sqflite_darwin: 2.4.3
+#  sqflite_platform_interface: 2.4.1
+#  sqflite_common_ffi: 2.3.3
+#  sqflite_common_ffi_web: 0.4.2
 
-  photo_view: ^0.14.0
-  image_picker: ^1.1.2
-  image_gallery_saver: ^2.0.3
-  flutter_image_compress: ^2.3.0
-  flutter_inappwebview: ^6.0.0
-#  webview_windows: ^0.4.0
-  url_launcher: ^6.3.0
+#  fvp: 0.16.1
+  video_player: 2.8.3
+  video_player_android: 2.5.3
+#  video_player_avfoundation: 2.6.3
+#  video_player_platform_interface: 6.7.0
+  chewie: 1.8.1
+  castscreen: 1.0.2
 
-  flutter_markdown: ^0.7.7
-#  markdown: ^7.3.0
-  syntax_highlight: ^0.4.0
+  photo_view: 0.14.0
+  image_picker: 1.1.2
+  image_gallery_saver: 2.0.3
+  flutter_image_compress: 2.3.0
+  flutter_inappwebview: 6.1.5
+#  webview_windows: 0.4.0
+  url_launcher: 6.3.0
 
-  flutter_section_list: ^1.1.1
-  #  flutter_tableview: ^1.0.1
-  #  tableview: ^0.0.3
+  flutter_markdown: 0.7.7
+#  markdown: 7.3.0
+  syntax_highlight: 0.4.0
+
+  flutter_section_list: 1.1.1
+  #  flutter_tableview: 1.0.1
+  #  tableview: 0.0.3
 
   #  wakelock_plus: 1.1.6
 
-  mutex: ^3.1.0
+  mutex: 3.1.0
 
-#  fast_base58: ^0.2.1
-#  encrypt: ^5.0.1       # 5.0.3
-#  basic_utils: ^5.5.3   # 5.7.0
-#  pointycastle: ^3.7.2  # 3.9.1
+#  fast_base58: 0.2.1
+#  encrypt: 5.0.1
+#  basic_utils: 5.5.3
+#  pointycastle: 3.7.2
 
-#  path: ^1.8.0          # 1.9.1
-#  dio: ^5.3.3           # 5.9.0
+#  path: 1.8.0
+#  dio: 5.3.3
 
-#  bip32: ^2.0.0
-#  bip39: ^1.0.6
+#  bip32: 2.0.0
+#  bip39: 1.0.6
 
   object_key: 1.1.1
   lnc: 1.2.2

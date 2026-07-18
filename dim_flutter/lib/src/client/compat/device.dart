@@ -6,6 +6,7 @@ import 'package:dim_client/ok.dart';
 
 import '../../common/platform.dart';
 import '../../widgets/permissions.dart';
+import 'browser.dart';
 
 class DeviceInfo with Logging {
   factory DeviceInfo() => _instance;
@@ -55,58 +56,57 @@ class DeviceInfo with Logging {
 
   void _loadWeb(WebBrowserInfo info) {
     // FIXME: all
-    systemVersion = info.appVersion ?? '';
+    systemVersion = info.browserVersion ?? '';
     // systemModel = info.appCodeName ?? '';
-    systemModel = info.browserName.name;
-    systemDevice = info.platform ?? '';
-    deviceBrand = info.product ?? '';
-    deviceBoard = info.productSub ?? '';
-    deviceManufacturer = info.vendor ?? '';
+    systemModel = info.browserName.name;     // chrome / safari / firefox / edge
+    systemDevice = info.platform ?? '';      // MacIntel / Win32 / Android / iPhone
+    deviceBrand = info.product ?? '';        // Gecko / AppleWebKit
+    deviceBoard = '';
+    deviceManufacturer = info.vendor ?? '';  // Google / Apple / Mozilla
   }
   void _loadAndroid(AndroidDeviceInfo info) {
     systemVersion = info.version.release;
-    systemModel = info.model;
-    systemDevice = info.device;
-    deviceBrand = info.brand;
-    deviceBoard = info.board;
-    deviceManufacturer = info.manufacturer;
+    systemModel = info.model;                // "LIO-AL00"
+    systemDevice = info.device;              // "HWLIO"
+    deviceBrand = info.brand;                // "HUAWEI"
+    deviceBoard = info.board;                // "LIO"
+    deviceManufacturer = info.manufacturer;  // "HUAWEI"
   }
   void _loadIOS(IosDeviceInfo info) {
     // FIXME: device, brand, board
     systemVersion = info.systemVersion;
-    // systemModel = info.model;
-    systemModel = info.localizedModel;
-    systemDevice = info.utsname.machine;
+    systemModel = info.model;                // "iPhone"
+    systemDevice = info.utsname.machine;     // "iPhone13,4"
     deviceBrand = "Apple";
-    deviceBoard = info.utsname.machine;
+    deviceBoard = '';
     deviceManufacturer = "Apple Inc.";
   }
   void _loadMacOS(MacOsDeviceInfo info) {
     // FIXME: device, brand, board
     systemVersion = '${info.majorVersion}.${info.minorVersion}.${info.patchVersion}';
-    systemModel = info.model;
-    systemDevice = info.systemGUID ?? info.osRelease;
+    systemModel = info.model;                // "iMacPro1,1"
+    systemDevice = info.model;               // "iMacPro1,1"
     deviceBrand = "Apple";
-    deviceBoard = info.systemGUID ?? info.osRelease;
+    deviceBoard = '';
     deviceManufacturer = "Apple Inc.";
   }
   void _loadLinux(LinuxDeviceInfo info) {
     // FIXME: model, device, brand, board, manufacturer
-    systemVersion = info.version ?? info.versionId ?? info.versionCodename ?? '';
-    systemModel = info.prettyName; // info.name;
-    systemDevice = info.id;
-    deviceBrand = "Linux";
-    deviceBoard = ''; // info.prettyName;
-    deviceManufacturer = "Linux Distro";
+    systemVersion = info.versionId ?? info.version ?? info.versionCodename ?? '';
+    systemModel = info.prettyName;           // "Ubuntu 24.04 LTS"
+    systemDevice = info.id;                  // "ubuntu"
+    deviceBrand = info.id;                   // "ubuntu";
+    deviceBoard = '';
+    deviceManufacturer = info.name;          // "Canonical Ltd.";
   }
   void _loadWindows(WindowsDeviceInfo info) {
     // FIXME: model, device, brand, board
     systemVersion = '${info.majorVersion}.${info.minorVersion}.${info.buildNumber}';
-    systemModel = info.productName;
+    systemModel = info.productName;          // "Windows 11 Pro"
     systemDevice = info.deviceId;
     deviceBrand = "Microsoft Windows";
-    deviceBoard = ''; // info.csdVersion;
-    deviceManufacturer = 'Microsoft Corporation'; // info.registeredOwner;
+    deviceBoard = '';
+    deviceManufacturer = 'Microsoft Corporation';
   }
 
   String language = "zh-CN";

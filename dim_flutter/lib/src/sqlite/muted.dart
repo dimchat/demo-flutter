@@ -1,6 +1,7 @@
 
 import 'package:dim_client/ok.dart';
 import 'package:dim_client/sdk.dart';
+import 'package:dim_client/compat.dart';
 
 import '../common/dbi/contact.dart';
 import '../common/constants.dart';
@@ -126,7 +127,7 @@ class MutedCache extends DataCache<ID, List<ID>> implements MutedDBI {
     int count = 0;
     // 1. remove to allow
     for (ID item in oldContacts) {
-      if (newContacts.contains(item)) {
+      if (item.isContainedIn(newContacts)) {
         continue;
       }
       task = _newTask(user, allowed: item);
@@ -139,7 +140,7 @@ class MutedCache extends DataCache<ID, List<ID>> implements MutedDBI {
     }
     // 2. add to muted
     for (ID item in newContacts) {
-      if (oldContacts.contains(item)) {
+      if (item.isContainedIn(oldContacts)) {
         continue;
       }
       task = _newTask(user, muted: item);
@@ -174,7 +175,7 @@ class MutedCache extends DataCache<ID, List<ID>> implements MutedDBI {
     if (allContacts == null) {
       logError('failed to get muted-list');
       return false;
-    } else if (allContacts.contains(contact)) {
+    } else if (contact.isContainedIn(allContacts)) {
       logWarning('muted contact exists: $contact');
       return true;
     }
@@ -199,7 +200,7 @@ class MutedCache extends DataCache<ID, List<ID>> implements MutedDBI {
     var allContacts = await task.load();
     if (allContacts == null) {
       allContacts = [];
-    } else if (allContacts.contains(contact)) {
+    } else if (contact.isContainedIn(allContacts)) {
       // found
     } else {
       logWarning('muted contact not exists: $user');

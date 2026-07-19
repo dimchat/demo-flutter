@@ -30,12 +30,12 @@ String getDocumentType(Document document) {
   }
 }
 
-String getDocumentTerminal(Document document) {
-  String? terminal = document.getString('terminal');
-  if (terminal == null || terminal == '*') {
-    return '';
+String? getDocumentTerminal(Document document) {
+  if (document is Visa) {
+    return DocumentUtils.getVisaTerminal(document);
   }
-  return terminal;
+  // bulletin document has no terminal
+  return null;
 }
 
 
@@ -83,24 +83,26 @@ class _DocumentTable extends DataTableHandler<Document> {
   static const List<String> _insertVisaColumns = ["did", "terminal", "type", "data", "signature"];
 
   // protected
-  Future<List<Document>> loadDocuments(ID entity) async {
-    var cond = SQLConditions.compare('did', '=', entity.toString());
-    if (entity.isUser) {
+  Future<List<Document>> loadDocuments(ID identifier) async {
+    ID did = identifier.withoutTerminal();
+    var cond = SQLConditions.compare('did', '=', did.toString());
+    if (identifier.isUser) {
       // user documents were moved to "t_visa"
       return await select(_visaTable, columns: _selectVisaColumns, conditions: cond);
     }
     // load group documents
-    assert(entity.isGroup, 'group ID error: $entity');
+    assert(identifier.isGroup, 'group ID error: $identifier');
     return await select(_table, columns: _selectColumns, conditions: cond);
   }
 
   // protected
   Future<bool> updateDocument(Document doc, ID identifier) async {
+    ID did = identifier.withoutTerminal();
     // String type = doc.getString('type') ?? '';
     String type = getDocumentType(doc);
     String? data = doc.getString('data');
     String? signature = doc.getString('signature');
-    var cond = SQLConditions.compare('did', '=', identifier.toString());
+    var cond = SQLConditions.compare('did', '=', did.toString());
     cond = cond.andCompare('type', '=', type);
     Map<String, dynamic> values = {
       'data': data,
@@ -108,7 +110,8 @@ class _DocumentTable extends DataTableHandler<Document> {
     };
     if (identifier.isUser) {
       // update user document into "t_visa"
-      String terminal = getDocumentTerminal(doc);
+      String? terminal = getDocumentTerminal(doc);
+      terminal ??= identifier.terminal ?? '';
       cond = cond.andCompare('terminal', '=', terminal);
       return await update(_visaTable, values: values, conditions: cond) > 0;
     }
@@ -119,19 +122,21 @@ class _DocumentTable extends DataTableHandler<Document> {
 
   // protected
   Future<bool> insertDocument(Document doc, ID identifier) async {
+    ID did = identifier.withoutTerminal();
     // String type = doc.getString('type') ?? '';
     String type = getDocumentType(doc);
     String? data = doc.getString('data');
     String? signature = doc.getString('signature');
     List values = [
-      identifier.toString(),
+      did.toString(),
       type,
       data,
       signature,
     ];
     if (identifier.isUser) {
       // add user document into "t_visa"
-      String terminal = getDocumentTerminal(doc);
+      String? terminal = getDocumentTerminal(doc);
+      terminal ??= identifier.terminal ?? '';
       values.insert(1, terminal);
       return await insert(_visaTable, columns: _insertVisaColumns, values: values) > 0;
     }
@@ -158,8 +163,8 @@ class _DocTask extends DbTask<ID, List<Document>> {
 
   @override
   Future<List<Document>?> readData() async {
-    // TODO: remove expired document(s)
-    return await _table.loadDocuments(_entity);
+    var docs = await _table.loadDocuments(_entity);
+    return DocumentUtils.trimDocuments(docs);
   }
 
   @override
@@ -169,14 +174,14 @@ class _DocTask extends DbTask<ID, List<Document>> {
       assert(false, 'should not happen: $_entity');
       return false;
     }
-    ID? identifier = ID.parse(doc['did']);
+    ID? identifier = DocumentUtils.getDocumentID(doc);
     if (identifier == null) {
       assert(false, 'document ID not found: $doc');
       identifier = _entity;
     }
     // String type = doc.getString('type') ?? '';
     String type = getDocumentType(doc);
-    String terminal = getDocumentTerminal(doc);
+    String terminal = getDocumentTerminal(doc) ?? '';
     bool update = false;
     Document item;
     // check old documents
@@ -200,6 +205,7 @@ class _DocTask extends DbTask<ID, List<Document>> {
       update = true;
     }
     if (update) {
+      DocumentUtils.sortDocuments(documents);
       // update old record
       return await _table.updateDocument(doc, identifier);
     }
@@ -207,6 +213,7 @@ class _DocTask extends DbTask<ID, List<Document>> {
     var ok = await _table.insertDocument(doc, identifier);
     if (ok) {
       documents.add(doc);
+      DocumentUtils.sortDocuments(documents);
     }
     return ok;
   }

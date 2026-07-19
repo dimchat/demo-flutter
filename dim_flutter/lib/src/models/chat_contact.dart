@@ -5,6 +5,7 @@ import 'package:dim_client/ok.dart' as lnc;
 import 'package:dim_client/ok.dart';
 import 'package:dim_client/sdk.dart';
 import 'package:dim_client/common.dart';
+import 'package:dim_client/compat.dart';
 
 import '../client/packer.dart';
 import '../common/dbi/contact.dart';
@@ -158,19 +159,22 @@ class ContactInfo extends Conversation {
     _avatar = _visa?.avatar;
     // get active time (visa time & login time)
     _lastActiveTime = visa?.time;
-    var pair = await shared.database.getLoginCommandMessage(identifier);
-    DateTime? loginTime = pair.first?.time;
-    if (_lastActiveTime == null) {
-      _lastActiveTime = loginTime;
-    } else if (DocumentUtils.isBefore(loginTime, _lastActiveTime)) {
-      _lastActiveTime = loginTime;
+    var array = await shared.database.getLoginCommandMessages(identifier);
+    if (array.isNotEmpty) {
+      var pair = array.first;
+      DateTime? loginTime = pair.first.time;
+      if (_lastActiveTime == null) {
+        _lastActiveTime = loginTime;
+      } else if (DocumentUtils.isBefore(loginTime, _lastActiveTime)) {
+        _lastActiveTime = loginTime;
+      }
     }
     // get friendship
     if (user == null) {
       _friendFlag = null;
     } else {
       List<ID> contacts = await shared.facebook.getContacts(user.identifier);
-      _friendFlag = contacts.contains(identifier);
+      _friendFlag = identifier.isContainedIn(contacts);
     }
     // parse language & client info
     _parseLanguage(visa);

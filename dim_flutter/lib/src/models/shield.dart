@@ -2,6 +2,7 @@
 import 'package:dim_client/ok.dart';
 import 'package:dim_client/sdk.dart';
 import 'package:dim_client/common.dart';
+import 'package:dim_client/compat.dart';
 
 import '../client/shared.dart';
 
@@ -36,7 +37,7 @@ class Shield {
     if (managers.isNotEmpty) {
       Log.info('check managers: $managers');
       Set<ID> blockList = contacts.toSet();
-      blockList.removeWhere((did) => managers.contains(did));
+      blockList.removeWhere((did) => did.isContainedIn(managers));
       if (blockList.length < contacts.length) {
         Log.info('broadcast block-list command: $blockList (${contacts.length} -> ${blockList.length})');
         contacts = blockList.toList();

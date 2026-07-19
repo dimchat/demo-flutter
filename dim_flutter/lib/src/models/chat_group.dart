@@ -6,6 +6,7 @@ import 'package:get/get.dart';
 import 'package:dim_client/ok.dart' as lnc;
 import 'package:dim_client/ok.dart';
 import 'package:dim_client/sdk.dart';
+import 'package:dim_client/compat.dart';
 import 'package:dim_client/common.dart';
 import 'package:dim_client/group.dart';
 import 'package:dim_client/client.dart';
@@ -104,24 +105,24 @@ class GroupInfo extends Conversation with Logging {
   bool get isAdmin {
     ID? me = _current;
     List<ID>? admins = _admins;
-    return me != null && admins != null && admins.contains(me);
+    return me != null && admins != null && me.isContainedIn(admins);
   }
   bool get isNotAdmin {
     ID? me = _current;
     List<ID>? admins = _admins;
-    return me != null && admins != null && !admins.contains(me);
+    return me != null && admins != null && me.isNotContainedIn(admins);
   }
 
   /// member
   bool get isMember {
     ID? me = _current;
     List<ID>? members = _members;
-    return me != null && members != null && members.contains(me);
+    return me != null && members != null && me.isContainedIn(members);
   }
   bool get isNotMember {
     ID? me = _current;
     List<ID>? members = _members;
-    return me != null && members != null && !members.contains(me);
+    return me != null && members != null && me.isNotContainedIn(members);
   }
 
   /// Group Name

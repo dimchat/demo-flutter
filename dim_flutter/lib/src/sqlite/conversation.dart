@@ -152,7 +152,7 @@ class ConversationCache extends _ConversationTable {
 
   static Conversation? _find(ID chat, List<Conversation> array) {
     for (var item in array) {
-      if (item.identifier == chat) {
+      if (item.identifier.isSameAs(chat)) {
         return item;
       }
     }

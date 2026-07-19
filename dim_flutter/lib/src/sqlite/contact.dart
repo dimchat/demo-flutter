@@ -2,6 +2,7 @@
 import 'package:dim_client/ok.dart';
 import 'package:dim_client/sdk.dart';
 import 'package:dim_client/common.dart';
+import 'package:dim_client/compat.dart';
 
 import '../common/constants.dart';
 import 'helper/sqlite.dart';
@@ -126,7 +127,7 @@ class ContactCache extends DataCache<ID, List<ID>> implements ContactDBI  {
     int count = 0;
     // 1. remove
     for (ID item in oldContacts) {
-      if (newContacts.contains(item)) {
+      if (item.isContainedIn(newContacts)) {
         continue;
       }
       task = _newTask(user, remove: item);
@@ -139,7 +140,7 @@ class ContactCache extends DataCache<ID, List<ID>> implements ContactDBI  {
     }
     // 2. add
     for (ID item in newContacts) {
-      if (oldContacts.contains(item)) {
+      if (item.isContainedIn(oldContacts)) {
         continue;
       }
       task = _newTask(user, append: item);
@@ -172,7 +173,7 @@ class ContactCache extends DataCache<ID, List<ID>> implements ContactDBI  {
     var allContacts = await task.load();
     if (allContacts == null) {
       allContacts = [];
-    } else if (allContacts.contains(contact)) {
+    } else if (contact.isContainedIn(allContacts)) {
       logWarning('contact exists: $contact');
       return true;
     }
@@ -197,7 +198,7 @@ class ContactCache extends DataCache<ID, List<ID>> implements ContactDBI  {
     if (allContacts == null) {
       logError('failed to get contacts');
       return false;
-    } else if (allContacts.contains(contact)) {
+    } else if (contact.isContainedIn(allContacts)) {
       // found
     } else {
       logWarning('contact not exists: $user');

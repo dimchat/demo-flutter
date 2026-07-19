@@ -1,6 +1,7 @@
 
 import 'package:dim_client/ok.dart';
 import 'package:dim_client/sdk.dart';
+import 'package:dim_client/compat.dart';
 
 import '../common/constants.dart';
 import 'helper/sqlite.dart';
@@ -123,7 +124,7 @@ class AdminCache extends DataCache<ID, List<ID>> {
     int count = 0;
     // 1. remove
     for (ID item in oldAdmins) {
-      if (newAdmins.contains(item)) {
+      if (item.isContainedIn(newAdmins)) {
         continue;
       }
       task = _newTask(group, remove: item);
@@ -136,7 +137,7 @@ class AdminCache extends DataCache<ID, List<ID>> {
     }
     // 2. add
     for (ID item in newAdmins) {
-      if (oldAdmins.contains(item)) {
+      if (item.isContainedIn(oldAdmins)) {
         continue;
       }
       task = _newTask(group, append: item);
@@ -170,7 +171,7 @@ class AdminCache extends DataCache<ID, List<ID>> {
     var allAdmins = await task.load();
     if (allAdmins == null) {
       allAdmins = [];
-    } else if (allAdmins.contains(admin)) {
+    } else if (admin.isContainedIn(allAdmins)) {
       logWarning('admin exists: $admin, group: $group');
       return true;
     }
@@ -196,7 +197,7 @@ class AdminCache extends DataCache<ID, List<ID>> {
     if (allAdmins == null) {
       logError('failed to get admins');
       return false;
-    } else if (allAdmins.contains(admin)) {
+    } else if (admin.isContainedIn(allAdmins)) {
       // found
     } else {
       logWarning('admin not exists: $admin, group: $group');

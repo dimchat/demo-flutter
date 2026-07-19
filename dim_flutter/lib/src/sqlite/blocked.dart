@@ -1,6 +1,7 @@
 
 import 'package:dim_client/ok.dart';
 import 'package:dim_client/sdk.dart';
+import 'package:dim_client/compat.dart';
 
 import '../common/dbi/contact.dart';
 import '../common/constants.dart';
@@ -126,7 +127,7 @@ class BlockedCache extends DataCache<ID, List<ID>> implements BlockedDBI {
     int count = 0;
     // 1. remove to allow
     for (ID item in oldContacts) {
-      if (newContacts.contains(item)) {
+      if (item.isContainedIn(newContacts)) {
         continue;
       }
       task = _newTask(user, allowed: item);
@@ -139,7 +140,7 @@ class BlockedCache extends DataCache<ID, List<ID>> implements BlockedDBI {
     }
     // 2. add to block
     for (ID item in newContacts) {
-      if (oldContacts.contains(item)) {
+      if (item.isContainedIn(oldContacts)) {
         continue;
       }
       task = _newTask(user, blocked: item);
@@ -173,7 +174,7 @@ class BlockedCache extends DataCache<ID, List<ID>> implements BlockedDBI {
     var allContacts = await task.load();
     if (allContacts == null) {
       allContacts = [];
-    } else if (allContacts.contains(contact)) {
+    } else if (contact.isContainedIn(allContacts)) {
       logWarning('blocked contact exists: $contact');
       return true;
     }
@@ -199,7 +200,7 @@ class BlockedCache extends DataCache<ID, List<ID>> implements BlockedDBI {
     if (allContacts == null) {
       logError('failed to get blocked-list');
       return false;
-    } else if (allContacts.contains(contact)) {
+    } else if (contact.isContainedIn(allContacts)) {
       // found
     } else {
       logWarning('blocked contact not exists: $user');

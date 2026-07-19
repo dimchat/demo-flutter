@@ -63,7 +63,7 @@ class NeighborInfo with Logging {
   static Future<NeighborInfo> newStation(StationInfo record) async =>
       await _StationManager().newStation(
           record.host, record.port,
-          provider: record.provider ?? ProviderInfo.GSP, chosen: record.chosen
+          provider: record.provider ?? ServiceProvider.GSP, chosen: record.chosen
       );
 
   /// get stations for speed tested

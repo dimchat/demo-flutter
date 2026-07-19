@@ -246,14 +246,14 @@ class _AutoAvatarState extends State<_AutoAvatarView> implements lnc.Observer {
       ID? identifier = userInfo?['ID'];
       Document? visa = userInfo?['document'];
       assert(identifier != null && visa != null, 'notification error: $notification');
-      if (identifier == widget.identifier && visa is Visa) {
+      if (widget.identifier.isSameAs(identifier) && visa is Visa) {
         Log.info('document updated, refreshing avatar: $identifier');
         // update refresh for new avatar
         await _reload();
       }
     } else if (name == _kAutoAvatarUpdate) {
       ID? identifier = userInfo?['ID'];
-      if (identifier == widget.identifier) {
+      if (widget.identifier.isSameAs(identifier)) {
         Log.info('avatar updated, refreshing avatar: $identifier');
         // refresh for avatar
         if (mounted) {

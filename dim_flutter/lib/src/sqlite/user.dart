@@ -2,6 +2,7 @@
 import 'package:dim_client/ok.dart';
 import 'package:dim_client/sdk.dart';
 import 'package:dim_client/common.dart';
+import 'package:dim_client/compat.dart';
 
 import '../common/constants.dart';
 import 'helper/sqlite.dart';
@@ -155,7 +156,7 @@ class UserCache extends DataCache<String, List<ID>> implements UserDBI {
     int count = 0;
     // 1. remove
     for (ID item in oldUsers) {
-      if (newUsers.contains(item)) {
+      if (item.isContainedIn(newUsers)) {
         continue;
       }
       task = _newTask(remove: item);
@@ -168,7 +169,7 @@ class UserCache extends DataCache<String, List<ID>> implements UserDBI {
     }
     // 2. add
     for (ID item in newUsers) {
-      if (oldUsers.contains(item)) {
+      if (item.isContainedIn(oldUsers)) {
         continue;
       }
       task = _newTask(append: item);
@@ -200,7 +201,7 @@ class UserCache extends DataCache<String, List<ID>> implements UserDBI {
     var localUsers = await task.load();
     if (localUsers == null) {
       localUsers = [];
-    } else if (localUsers.contains(user)) {
+    } else if (user.isContainedIn(localUsers)) {
       logWarning('user exists: $user');
       return true;
     }
@@ -224,7 +225,7 @@ class UserCache extends DataCache<String, List<ID>> implements UserDBI {
     if (localUsers == null) {
       logError('failed to get local users');
       return false;
-    } else if (localUsers.contains(user)) {
+    } else if (user.isContainedIn(localUsers)) {
       // found
     } else {
       logWarning('user not exists: $user');

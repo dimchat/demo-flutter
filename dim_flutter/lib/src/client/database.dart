@@ -269,8 +269,8 @@ class SharedDatabase implements AccountDBI, SessionDBI, MessageDBI,
   //
 
   @override
-  Future<Pair<LoginCommand?, ReliableMessage?>> getLoginCommandMessage(ID identifier) async =>
-      await loginTable.getLoginCommandMessage(identifier);
+Future<List<Pair<LoginCommand, ReliableMessage>>> getLoginCommandMessages(ID identifier) async =>
+      await loginTable.getLoginCommandMessages(identifier);
 
   @override
   Future<bool> saveLoginCommandMessage(ID identifier, LoginCommand content, ReliableMessage rMsg) async =>

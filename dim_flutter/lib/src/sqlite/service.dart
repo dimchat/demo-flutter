@@ -203,7 +203,7 @@ class ProviderCache extends DataCache<String, List<ProviderInfo>> implements Pro
 
   static ProviderInfo? _find(ID identifier, List<ProviderInfo> providers) {
     for (ProviderInfo item in providers) {
-      if (item.identifier == identifier) {
+      if (item.identifier.isSameAs(identifier)) {
         return item;
       }
     }

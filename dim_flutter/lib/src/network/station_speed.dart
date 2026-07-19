@@ -213,14 +213,14 @@ List<ID> _sortProviders(List<ProviderInfo> records) {
     providers.add(item.identifier);
   }
   // 2. set GSP to the front
-  int pos = providers.indexOf(ProviderInfo.GSP);
+  int pos = providers.indexOf(ServiceProvider.GSP);
   if (pos < 0) {
     // gsp not exists, insert to the front
-    providers.insert(0, ProviderInfo.GSP);
+    providers.insert(0, ServiceProvider.GSP);
   } else if (pos > 0) {
     // move to the front
     providers.removeAt(pos);
-    providers.insert(0, ProviderInfo.GSP);
+    providers.insert(0, ServiceProvider.GSP);
   }
   return providers;
 }

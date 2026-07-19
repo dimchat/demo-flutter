@@ -5,6 +5,7 @@ import 'package:dim_client/sdk.dart';
 import 'package:dim_client/ok.dart';
 import 'package:dim_client/ok.dart' as lnc;
 import 'package:dim_client/common.dart';
+import 'package:dim_client/compat.dart';
 
 import '../common/constants.dart';
 import '../common/dbi/contact.dart';
@@ -151,7 +152,7 @@ abstract class Conversation with Logging implements lnc.Observer {
   // @override
   // bool operator ==(Object other) {
   //   if (other is Conversation) {
-  //     return identifier == other.identifier;
+  //     return other.identifier.isSameAs(identifier);
   //   }
   //   return false;
   // }
@@ -258,7 +259,7 @@ abstract class Conversation with Logging implements lnc.Observer {
     // check managers
     GlobalVariable shared = GlobalVariable();
     List<ID> managers = shared.config.managers;
-    if (managers.contains(identifier)) {
+    if (identifier.isContainedIn(managers)) {
       logWarning('cannot block manager: $identifier, $managers');
       if (context.mounted) {
         Alert.show(context, 'Unblocked',

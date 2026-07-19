@@ -7,6 +7,7 @@ import 'package:get/get.dart';
 
 import 'package:dim_client/ok.dart';
 import 'package:dim_client/sdk.dart';
+import 'package:dim_client/compat.dart';
 
 import '../models/chat.dart';
 import '../models/chat_contact.dart';
@@ -128,10 +129,11 @@ class _ContactListAdapter with SectionAdapterMixin {
     ContactInfo info = _parent.dataSource.getItem(section, index);
     return _PickContactCell(_parent, info, onTap: () {
       Set<ID> members = _parent.selected;
-      if (members.contains(info.identifier)) {
-        members.remove(info.identifier);
+      ID did = info.identifier.withoutTerminal();
+      if (did.isContainedIn(members)) {
+        members.remove(did);
       } else {
-        members.add(info.identifier);
+        members.add(did);
       }
       Log.info('selected members: $members');
     });
@@ -170,7 +172,8 @@ class _PickContactCell extends StatefulWidget {
   final ContactInfo info;
   final GestureTapCallback? onTap;
 
-  bool get isSelected => _parent.selected.contains(info.identifier);
+  // bool get isSelected => _parent.selected.contains(info.identifier);
+  bool get isSelected => info.identifier.withoutTerminal().isContainedIn(_parent.selected);
 
   @override
   State<StatefulWidget> createState() => _PickContactState();

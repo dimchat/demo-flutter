@@ -1,6 +1,7 @@
 
 import 'package:dim_client/ok.dart';
 import 'package:dim_client/sdk.dart';
+import 'package:dim_client/compat.dart';
 
 import '../common/constants.dart';
 import 'helper/sqlite.dart';
@@ -123,7 +124,7 @@ class MemberCache extends DataCache<ID, List<ID>> {
     int count = 0;
     // 1. remove
     for (ID item in oldMembers) {
-      if (newMembers.contains(item)) {
+      if (item.isContainedIn(newMembers)) {
         continue;
       }
       task = _newTask(group, remove: item);
@@ -136,7 +137,7 @@ class MemberCache extends DataCache<ID, List<ID>> {
     }
     // 2. add
     for (ID item in newMembers) {
-      if (oldMembers.contains(item)) {
+      if (item.isContainedIn(oldMembers)) {
         continue;
       }
       task = _newTask(group, append: item);
@@ -170,7 +171,7 @@ class MemberCache extends DataCache<ID, List<ID>> {
     var allMembers = await task.load();
     if (allMembers == null) {
       allMembers = [];
-    } else if (allMembers.contains(member)) {
+    } else if (member.isContainedIn(allMembers)) {
       logWarning('member exists: $member, group: $group');
       return true;
     }
@@ -196,7 +197,7 @@ class MemberCache extends DataCache<ID, List<ID>> {
     if (allMembers == null) {
       logError('failed to get members');
       return false;
-    } else if (allMembers.contains(member)) {
+    } else if (member.isContainedIn(allMembers)) {
       // found
     } else {
       logWarning('member not exists: $member, group: $group');

@@ -53,36 +53,39 @@ class _LoginCommandTable extends DataTableHandler<Pair<LoginCommand, ReliableMes
   static const String _table = LoginDatabase.tLogin;
   static const List<String> _selectColumns = ["cmd", "msg"];
   static const List<String> _insertColumns = ["uid", "cmd", "msg"];
+  // TODO: add column "terminal"
 
   // protected
-  Future<List<Pair<LoginCommand, ReliableMessage>>> loadLoginCommandMessages(ID identifier) async {
-    var cond = SQLConditions.compare('uid', '=', identifier.toString());
+  Future<List<Pair<LoginCommand, ReliableMessage>>> loadLoginCommandMessages(ID uid) async {
+    var cond = SQLConditions.compare('uid', '=', uid.toString());
     return await select(_table, columns: _selectColumns,
         conditions: cond, orderBy: 'id DESC');
   }
 
   // protected
-  Future<bool> deleteLoginCommandMessage(ID identifier) async {
-    var cond = SQLConditions.compare('uid', '=', identifier.toString());
+  Future<bool> deleteLoginCommandMessage(ID uid) async {
+    var cond = SQLConditions.compare('uid', '=', uid.toString());
     if (await delete(_table, conditions: cond) < 0) {
-      logError('failed to remove login command: $identifier');
+      logError('failed to remove login command: $uid');
       return false;
     }
     return true;
   }
 
   // protected
-  Future<bool> saveLoginCommandMessage(ID identifier, LoginCommand content, ReliableMessage rMsg) async {
+  Future<bool> saveLoginCommandMessage(ID uid, String? terminal, LoginCommand content, ReliableMessage rMsg) async {
+    // TODO: save login command with uid + terminal
+    logInfo('save login command: $uid, terminal: $terminal');
     // add new record
     String cmd = JSON.encode(content.toMap());
     String msg = JSON.encode(rMsg.toMap());
     List values = [
-      identifier.toString(),
+      uid.toString(),
       cmd,
       msg,
     ];
     if (await insert(_table, columns: _insertColumns, values: values) <= 0) {
-      logError('failed to save login command: $identifier -> $content');
+      logError('failed to save login command: $uid "$terminal" -> $content');
       return false;
     }
     return true;
@@ -108,7 +111,9 @@ class _LoginTask extends DbTask<ID, List<Pair<LoginCommand, ReliableMessage>>> {
 
   @override
   Future<List<Pair<LoginCommand, ReliableMessage>>?> readData() async {
-    return await _table.loadLoginCommandMessages(_user);
+    ID uid = _user.withoutTerminal();
+    var records = await _table.loadLoginCommandMessages(uid);
+    return LoginCommandUtils.trimCommandMessages(records);
   }
 
   @override
@@ -120,8 +125,11 @@ class _LoginTask extends DbTask<ID, List<Pair<LoginCommand, ReliableMessage>>> {
       return false;
     }
     ID identifier = cmd.identifier;
+    ID uid = identifier.withoutTerminal();
+    String? terminal = identifier.terminal;
+    // TODO: save login command with uid + terminal
     if (records.isNotEmpty) {
-      var ok = await _table.deleteLoginCommandMessage(identifier);
+      var ok = await _table.deleteLoginCommandMessage(uid);
       if (ok) {
         records.clear();
       } else {
@@ -129,9 +137,10 @@ class _LoginTask extends DbTask<ID, List<Pair<LoginCommand, ReliableMessage>>> {
         return false;
       }
     }
-    var ok = await _table.saveLoginCommandMessage(identifier, cmd, msg);
+    var ok = await _table.saveLoginCommandMessage(uid, terminal, cmd, msg);
     if (ok) {
       records.add(Pair(cmd, msg));
+      LoginCommandUtils.sortCommandMessages(records);
     }
     return ok;
   }
@@ -147,14 +156,10 @@ class LoginCommandCache extends DataCache<ID, List<Pair<LoginCommand, ReliableMe
       _LoginTask(mutexLock, cachePool, _table, identifier, cmd: cmd, msg: msg);
 
   @override
-  Future<Pair<LoginCommand?, ReliableMessage?>> getLoginCommandMessage(ID identifier) async {
+  Future<List<Pair<LoginCommand, ReliableMessage>>> getLoginCommandMessages(ID identifier) async {
     var task = _newTask(identifier);
     var array = await task.load();
-    if (array == null || array.isEmpty) {
-      return const Pair(null, null);
-    }
-    var pair = array.first;
-    return Pair(pair.first, pair.second);
+    return array ?? [];
   }
 
   @override

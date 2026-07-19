@@ -40,7 +40,7 @@ dependencies:
 
 #  fvp: 0.16.1
   video_player: 2.8.3
-  video_player_android: 2.5.3
+#  video_player_android: 2.5.3
 #  video_player_avfoundation: 2.6.3
 #  video_player_platform_interface: 6.7.0
   chewie: 1.8.1
@@ -83,12 +83,12 @@ dependencies:
   startrek: 1.2.0
   stargate: 1.2.0
 
-  mkm: 2.3.3
-  dkd: 2.3.3
-  dimp: 2.3.3
-  dimsdk: 2.3.3
-  dim_plugins: 2.3.3
-  dim_client: 1.4.8
+  mkm: 2.3.4
+  dkd: 2.3.4
+  dimp: 2.3.4
+  dimsdk: 2.3.4
+  dim_plugins: 2.3.4
+  dim_client: 1.5.0
 
   tvbox: 1.0.0
 

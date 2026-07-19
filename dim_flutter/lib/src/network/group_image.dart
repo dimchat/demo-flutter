@@ -46,14 +46,14 @@ class _GroupImageState extends State<GroupImage> implements lnc.Observer {
       ID? identifier = userInfo?['ID'];
       if (identifier == null) {
         Log.error('notification error: $notification');
-      } else if (identifier == widget.info.identifier) {
+      } else if (widget.info.identifier.isSameAs(identifier)) {
         await _reload();
       }
     } else if (name == NotificationNames.kParticipantsUpdated) {
       ID? identifier = userInfo?['ID'];
       if (identifier == null) {
         Log.error('notification error: $notification');
-      } else if (identifier == widget.info.identifier) {
+      } else if (widget.info.identifier.isSameAs(identifier)) {
         if (mounted) {
           setState(() {
           });

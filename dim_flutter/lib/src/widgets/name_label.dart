@@ -69,12 +69,12 @@ class _NameState extends State<NameLabel> implements lnc.Observer {
     Map? userInfo = notification.userInfo;
     if (name == NotificationNames.kDocumentUpdated) {
       ID? identifier = userInfo?['ID'];
-      if (identifier == widget.info.identifier) {
+      if (widget.info.identifier.isSameAs(identifier)) {
         await _reload();
       }
     } else if (name == NotificationNames.kRemarkUpdated) {
       ID? identifier = userInfo?['contact'];
-      if (identifier == widget.info.identifier) {
+      if (widget.info.identifier.isSameAs(identifier)) {
         await _reload();
       }
     }

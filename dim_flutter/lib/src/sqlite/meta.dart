@@ -122,7 +122,7 @@ class MetaCache extends DataCache<ID, Meta> implements MetaDBI {
   }
 
   bool checkMeta(Meta meta, ID identifier) {
-    return meta.isValid && MetaUtils.matchIdentifier(identifier, meta);
+    return meta.isValid && meta.matchIdentifier(identifier);
   }
 
 }

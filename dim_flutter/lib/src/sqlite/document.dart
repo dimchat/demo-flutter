@@ -10,29 +10,9 @@ import 'helper/task.dart';
 import 'entity.dart';
 
 
-String getDocumentType(Document document) {
-  // return DocumentUtils.getDocumentType(document) ?? '';
-  var type = document.getString('type');
-  if (type != null && type.isNotEmpty) {
-    return Converter.getString(type) ?? '';
-  }
-  // get type for did
-  ID? did = ID.parse(document['did']);
-  if (did == null) {
-    assert(false, 'document ID not found: $document');
-    return DocumentType.PROFILE;
-  } else if (did.isUser) {
-    return DocumentType.VISA;
-  } else if (did.isGroup) {
-    return DocumentType.BULLETIN;
-  } else {
-    return DocumentType.PROFILE;
-  }
-}
-
 String? getDocumentTerminal(Document document) {
   if (document is Visa) {
-    return DocumentUtils.getVisaTerminal(document);
+    return document.terminal;
   }
   // bulletin document has no terminal
   return null;
@@ -98,8 +78,7 @@ class _DocumentTable extends DataTableHandler<Document> {
   // protected
   Future<bool> updateDocument(Document doc, ID identifier) async {
     ID did = identifier.withoutTerminal();
-    // String type = doc.getString('type') ?? '';
-    String type = getDocumentType(doc);
+    String type = doc.type ?? '';
     String? data = doc.getString('data');
     String? signature = doc.getString('signature');
     var cond = SQLConditions.compare('did', '=', did.toString());
@@ -123,8 +102,7 @@ class _DocumentTable extends DataTableHandler<Document> {
   // protected
   Future<bool> insertDocument(Document doc, ID identifier) async {
     ID did = identifier.withoutTerminal();
-    // String type = doc.getString('type') ?? '';
-    String type = getDocumentType(doc);
+    String type = doc.type ?? '';
     String? data = doc.getString('data');
     String? signature = doc.getString('signature');
     List values = [
@@ -174,13 +152,9 @@ class _DocTask extends DbTask<ID, List<Document>> {
       assert(false, 'should not happen: $_entity');
       return false;
     }
-    ID? identifier = DocumentUtils.getDocumentID(doc);
-    if (identifier == null) {
-      assert(false, 'document ID not found: $doc');
-      identifier = _entity;
-    }
-    // String type = doc.getString('type') ?? '';
-    String type = getDocumentType(doc);
+    ID identifier = doc.identifier;
+    assert(_entity.isSameAs(identifier), 'document ID not matched: $_entity, $doc');
+    String type = doc.type ?? '';
     String terminal = getDocumentTerminal(doc) ?? '';
     bool update = false;
     Document item;
@@ -190,7 +164,7 @@ class _DocTask extends DbTask<ID, List<Document>> {
       if (identifier != item['did']) {
         assert(false, 'document error: $identifier, $item');
         continue;
-      } else if (getDocumentType(item) != type) {
+      } else if (item.type != type) {
         logInfo('skip document: $identifier, type=$type, $item');
         continue;
       } else if (identifier.isUser && getDocumentTerminal(item) != terminal) {

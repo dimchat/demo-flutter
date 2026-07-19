@@ -1,7 +1,7 @@
 
 import 'package:dim_client/ok.dart';
 import 'package:dim_client/sdk.dart';
-import 'package:dim_client/compat.dart';
+import 'package:dim_client/common.dart';
 
 import '../common/constants.dart';
 import 'helper/sqlite.dart';

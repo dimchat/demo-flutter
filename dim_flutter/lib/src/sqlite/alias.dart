@@ -27,8 +27,10 @@ class _RemarkTable extends DataTableHandler<ContactRemark> {
 
   // protected
   Future<bool> clearRemarks(ID contact, {required ID user}) async {
-    var cond = SQLConditions.compare('uid', '=', user.toString());
-    cond = cond.andCompare('contact', '=', contact.toString());
+    ID uid = user.withoutTerminal();
+    ID cid = contact.withoutTerminal();
+    var cond = SQLConditions.compare('uid', '=', uid.toString());
+    cond = cond.andCompare('contact', '=', cid.toString());
     if (await delete(_table, conditions: cond) < 0) {
       logError('failed to remove remarks: $user -> $contact');
       return false;
@@ -38,10 +40,12 @@ class _RemarkTable extends DataTableHandler<ContactRemark> {
 
   // protected
   Future<bool> addRemark(ContactRemark remark, {required ID user}) async {
+    ID uid = user.withoutTerminal();
+    ID cid = remark.identifier.withoutTerminal();
     // add new record
     List values = [
-      user.toString(),
-      remark.identifier.toString(),
+      uid.toString(),
+      cid.toString(),
       remark.alias,
       remark.description,
     ];
@@ -53,13 +57,15 @@ class _RemarkTable extends DataTableHandler<ContactRemark> {
   }
 
   Future<bool> updateRemark(ContactRemark remark, {required ID user}) async {
+    ID uid = user.withoutTerminal();
+    ID cid = remark.identifier.withoutTerminal();
     // update old record
     Map<String, dynamic> values = {
       'alias': remark.alias,
       'description': remark.description,
     };
-    var cond = SQLConditions.compare('uid', '=', user.toString());
-    cond = cond.andCompare('contact', '=', remark.identifier.toString());
+    var cond = SQLConditions.compare('uid', '=', uid.toString());
+    cond = cond.andCompare('contact', '=', cid.toString());
     if (await update(_table, values: values, conditions: cond) < 1) {
       logError('failed to update remark: $user -> $remark');
       return false;
@@ -69,7 +75,8 @@ class _RemarkTable extends DataTableHandler<ContactRemark> {
 
   // protected
   Future<List<ContactRemark>> loadRemarks({required ID user}) async {
-    var cond = SQLConditions.compare('uid', '=', user.toString());
+    ID uid = user.withoutTerminal();
+    var cond = SQLConditions.compare('uid', '=', uid.toString());
     return await select(_table, columns: _selectColumns,
         conditions: cond, orderBy: 'id DESC');
   }
@@ -133,7 +140,7 @@ class RemarkCache extends DataCache<ID, Map<ID, ContactRemark>> implements Remar
   final _RemarkTable _table = _RemarkTable();
 
   _RemarkTask _newTask(ID user, {ContactRemark? newRemark}) =>
-      _RemarkTask(mutexLock, cachePool, _table, user, newRemark: newRemark);
+      _RemarkTask(mutexLock, cachePool, _table, user.withoutTerminal(), newRemark: newRemark);
 
   @override
   Future<ContactRemark?> getRemark(ID contact, {required ID user}) async {

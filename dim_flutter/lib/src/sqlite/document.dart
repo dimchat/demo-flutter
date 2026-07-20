@@ -10,12 +10,16 @@ import 'helper/task.dart';
 import 'entity.dart';
 
 
-String? getDocumentTerminal(Document document) {
+String getDocumentTerminal(Document document) {
   if (document is Visa) {
-    return document.terminal;
+    String? terminal = document.terminal;
+    if (terminal == null || terminal == '*') {
+      terminal = '';
+    }
+    return terminal;
   }
   // bulletin document has no terminal
-  return null;
+  return '';
 }
 
 
@@ -89,8 +93,10 @@ class _DocumentTable extends DataTableHandler<Document> {
     };
     if (identifier.isUser) {
       // update user document into "t_visa"
-      String? terminal = getDocumentTerminal(doc);
-      terminal ??= identifier.terminal ?? '';
+      String terminal = getDocumentTerminal(doc);
+      if (terminal.isEmpty) {
+        terminal = identifier.terminal ?? '';
+      }
       cond = cond.andCompare('terminal', '=', terminal);
       return await update(_visaTable, values: values, conditions: cond) > 0;
     }
@@ -113,8 +119,10 @@ class _DocumentTable extends DataTableHandler<Document> {
     ];
     if (identifier.isUser) {
       // add user document into "t_visa"
-      String? terminal = getDocumentTerminal(doc);
-      terminal ??= identifier.terminal ?? '';
+      String terminal = getDocumentTerminal(doc);
+      if (terminal.isEmpty) {
+        terminal = identifier.terminal ?? '';
+      }
       values.insert(1, terminal);
       return await insert(_visaTable, columns: _insertVisaColumns, values: values) > 0;
     }
@@ -141,8 +149,17 @@ class _DocTask extends DbTask<ID, List<Document>> {
 
   @override
   Future<List<Document>?> readData() async {
-    var docs = await _table.loadDocuments(_entity);
-    return DocumentUtils.trimDocuments(docs);
+    ID did = _entity.withoutTerminal();
+    var docs = await _table.loadDocuments(did);
+    if (docs.length > 1) {
+      var array = DocumentUtils.trimDocuments(docs);
+      logInfo('trim for: $_entity, ${array.length}/${docs.length} documents');
+      if (array.length > 8) {
+        array = array.sublist(0, 8);
+      }
+      docs = array;
+    }
+    return docs;
   }
 
   @override
@@ -155,7 +172,7 @@ class _DocTask extends DbTask<ID, List<Document>> {
     ID identifier = doc.identifier;
     assert(_entity.isSameAs(identifier), 'document ID not matched: $_entity, $doc');
     String type = doc.type ?? '';
-    String terminal = getDocumentTerminal(doc) ?? '';
+    String terminal = getDocumentTerminal(doc);
     bool update = false;
     Document item;
     // check old documents
@@ -200,7 +217,7 @@ class DocumentCache extends DataCache<ID, List<Document>> implements DocumentDBI
   final _DocumentTable _table = _DocumentTable();
 
   _DocTask _newTask(ID entity, {Document? newDocument}) =>
-      _DocTask(mutexLock, cachePool, _table, entity, newDocument: newDocument);
+      _DocTask(mutexLock, cachePool, _table, entity.withoutTerminal(), newDocument: newDocument);
 
   @override
   Future<List<Document>> getDocuments(ID entity) async {

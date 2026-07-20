@@ -24,8 +24,9 @@ class _MemberTable extends DataTableHandler<ID> {
 
   // protected
   Future<bool> removeMember(ID member, {required ID group}) async {
+    ID uid = member.withoutTerminal();
     var cond = SQLConditions.compare('gid', '=', group.toString());
-    cond = cond.andCompare('member', '=', member.toString());
+    cond = cond.andCompare('member', '=', uid.toString());
     if (await delete(_table, conditions: cond) < 0) {
       logError('failed to remove member: $member, group: $group');
       return false;
@@ -35,10 +36,11 @@ class _MemberTable extends DataTableHandler<ID> {
 
   // protected
   Future<bool> addMember(ID member, {required ID group}) async {
+    ID uid = member.withoutTerminal();
     // add new record
     List values = [
       group.toString(),
-      member.toString(),
+      uid.toString(),
     ];
     if (await insert(_table, columns: _insertColumns, values: values) <= 0) {
       logError('failed to add member: $member, group: $group');

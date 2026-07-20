@@ -19,8 +19,12 @@ class TraceTable extends DataTableHandler<String> implements TraceDBI {
   static const List<String> _insertColumns = ["cid", "sender", "sn", "signature", "trace"];
 
   @override
-  Future<bool> addTrace(String trace, ID cid,
-      {required ID sender, required int sn, required String? signature}) async {
+  Future<bool> addTrace(String trace, ID cid, {
+    required ID sender,
+    required int sn, required String? signature,
+  }) async {
+    cid = cid.withoutTerminal();
+    sender = sender.withoutTerminal();
     if (signature == null) {
       signature = '';
     } else if (signature.length > 8) {
@@ -32,6 +36,7 @@ class TraceTable extends DataTableHandler<String> implements TraceDBI {
 
   @override
   Future<List<String>> getTraces(ID sender, int sn, String? signature) async {
+    sender = sender.withoutTerminal();
     SQLConditions cond;
     if (signature != null) {
       if (signature.length > 8) {
@@ -54,6 +59,7 @@ class TraceTable extends DataTableHandler<String> implements TraceDBI {
 
   @override
   Future<bool> removeTraces(ID sender, int sn, String? signature) async {
+    sender = sender.withoutTerminal();
     var cond = SQLConditions.compare('sender', '=', sender.toString());
     cond = cond.andCompare('sn', '=', sn);
     if (signature != null) {
@@ -67,6 +73,7 @@ class TraceTable extends DataTableHandler<String> implements TraceDBI {
 
   @override
   Future<bool> removeAllTraces(ID cid) async {
+    cid = cid.withoutTerminal();
     var cond = SQLConditions.compare('cid', '=', cid.toString());
     return await delete(_table, conditions: cond) >= 0;
   }

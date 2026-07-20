@@ -67,11 +67,12 @@ class _PrivateKeyTable extends DataTableHandler<PrivateKey> implements PrivateKe
 
   @override
   Future<List<DecryptKey>> getPrivateKeysForDecryption(ID user) async {
+    ID uid = user.withoutTerminal();
     if (DevicePlatform.isIOS/* || DevicePlatform.isMacOS*/) {
       ChannelManager man = ChannelManager();
-      return await man.dbChannel.getPrivateKeysForDecryption(user);
+      return await man.dbChannel.getPrivateKeysForDecryption(uid);
     }
-    var cond = SQLConditions.compare('uid', '=', user.toString());
+    var cond = SQLConditions.compare('uid', '=', uid.toString());
     cond = cond.andCompare('decrypt', '<>', 0);
     // WHERE uid='$user' AND decrypt=1 ORDER BY type DESC LIMIT 3
     List<PrivateKey> array = await select(_table, columns: _selectColumns,
@@ -81,21 +82,23 @@ class _PrivateKeyTable extends DataTableHandler<PrivateKey> implements PrivateKe
 
   @override
   Future<PrivateKey?> getPrivateKeyForSignature(ID user) async {
+    ID uid = user.withoutTerminal();
     if (DevicePlatform.isIOS/* || DevicePlatform.isMacOS*/) {
       ChannelManager man = ChannelManager();
-      return await man.dbChannel.getPrivateKeyForSignature(user);
+      return await man.dbChannel.getPrivateKeyForSignature(uid);
     }
     // TODO: support multi private keys
-    return await getPrivateKeyForVisaSignature(user);
+    return await getPrivateKeyForVisaSignature(uid);
   }
 
   @override
   Future<PrivateKey?> getPrivateKeyForVisaSignature(ID user) async {
+    ID uid = user.withoutTerminal();
     if (DevicePlatform.isIOS/* || DevicePlatform.isMacOS*/) {
       ChannelManager man = ChannelManager();
-      return await man.dbChannel.getPrivateKeyForVisaSignature(user);
+      return await man.dbChannel.getPrivateKeyForVisaSignature(uid);
     }
-    var cond = SQLConditions.compare('uid', '=', user.toString());
+    var cond = SQLConditions.compare('uid', '=', uid.toString());
     cond = cond.andCompare('type', '=', PrivateKeyDBI.kMeta);
     cond = cond.andCompare('sign', '<>', 0);
     // WHERE uid='$user' AND type='M' AND sign=1 ORDER BY id DESC  LIMIT 1
@@ -106,16 +109,19 @@ class _PrivateKeyTable extends DataTableHandler<PrivateKey> implements PrivateKe
   }
 
   @override
-  Future<bool> savePrivateKey(PrivateKey key, String type, ID user,
-      {int sign = 1, required int decrypt}) async {
+  Future<bool> savePrivateKey(PrivateKey key, String type, ID user, {
+    int sign = 1,
+    required int decrypt,
+  }) async {
+    ID uid = user.withoutTerminal();
     if (DevicePlatform.isIOS/* || DevicePlatform.isMacOS*/) {
       ChannelManager man = ChannelManager();
-      return await man.dbChannel.savePrivateKey(key, type, user,
+      return await man.dbChannel.savePrivateKey(key, type, uid,
           sign: sign, decrypt: decrypt);
     }
     // 1. save to database
     String json = JSON.encode(key.toMap());
-    List values = [user.toString(), json, type, sign, decrypt];
+    List values = [uid.toString(), json, type, sign, decrypt];
     return await insert(_table, columns: _insertColumns, values: values) > 0;
   }
 
@@ -199,8 +205,10 @@ class PrivateKeyCache extends _PrivateKeyTable {
   }
 
   @override
-  Future<bool> savePrivateKey(PrivateKey key, String type, ID user,
-      {int sign = 1, required int decrypt}) async {
+  Future<bool> savePrivateKey(PrivateKey key, String type, ID user, {
+    int sign = 1,
+    required int decrypt,
+  }) async {
     double now = TimeUtils.currentTimeSeconds;
 
     // 1. update memory cache
@@ -248,11 +256,16 @@ class MsgKeyCache with Logging implements CipherKeyDBI {
   final Map<ID, Map<ID, SymmetricKey>> _caches = {};
 
   @override
-  Future<void> cacheCipherKey({required ID sender, required ID receiver,
-                               required SymmetricKey key}) async {
+  Future<void> cacheCipherKey({
+    required ID sender, required ID receiver,
+    required SymmetricKey key,
+  }) async {
     if (receiver.isBroadcast) {
       // broadcast message has no key
       return;
+    } else {
+      sender = sender.withoutTerminal();
+      receiver = receiver.withoutTerminal();
     }
     Map<ID, SymmetricKey>? keyMap = _caches[receiver];
     if (keyMap == null) {
@@ -263,11 +276,16 @@ class MsgKeyCache with Logging implements CipherKeyDBI {
   }
 
   @override
-  Future<SymmetricKey?> getCipherKey({required ID sender, required ID receiver,
-                                      bool generate = false}) async {
+  Future<SymmetricKey?> getCipherKey({
+    required ID sender, required ID receiver,
+    bool generate = false,
+  }) async {
     if (receiver.isBroadcast) {
       // broadcast message has no key
       return Password.kPlainKey;
+    } else {
+      sender = sender.withoutTerminal();
+      receiver = receiver.withoutTerminal();
     }
     SymmetricKey? key;
     // check cache first

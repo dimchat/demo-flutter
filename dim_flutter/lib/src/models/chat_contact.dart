@@ -5,7 +5,6 @@ import 'package:dim_client/ok.dart' as lnc;
 import 'package:dim_client/ok.dart';
 import 'package:dim_client/sdk.dart';
 import 'package:dim_client/common.dart';
-import 'package:dim_client/compat.dart';
 
 import '../client/packer.dart';
 import '../common/dbi/contact.dart';
@@ -431,6 +430,7 @@ class _ContactManager {
   final Map<ID, ContactInfo> _contacts = {};
 
   ContactInfo getContactInfo(ID identifier) {
+    identifier = identifier.withoutTerminal();
     ContactInfo? info = _contacts[identifier];
     if (info == null) {
       info = ContactInfo(identifier);

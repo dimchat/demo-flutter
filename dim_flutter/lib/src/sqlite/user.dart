@@ -2,7 +2,6 @@
 import 'package:dim_client/ok.dart';
 import 'package:dim_client/sdk.dart';
 import 'package:dim_client/common.dart';
-import 'package:dim_client/compat.dart';
 
 import '../common/constants.dart';
 import 'helper/sqlite.dart';
@@ -25,7 +24,8 @@ class _UserTable extends DataTableHandler<ID> {
 
   // protected
   Future<bool> removeUser(ID user) async {
-    var cond = SQLConditions.compare('uid', '=', user.toString());
+    ID uid = user.withoutTerminal();
+    var cond = SQLConditions.compare('uid', '=', uid.toString());
     if (await delete(_table, conditions: cond) < 0) {
       logError('failed to remove local user: $user');
       return false;
@@ -35,9 +35,10 @@ class _UserTable extends DataTableHandler<ID> {
 
   // protected
   Future<bool> addUser(ID user, bool chosen) async {
+    ID uid = user.withoutTerminal();
     // add other user with chosen flag = 0
     List values = [
-      user.toString(),
+      uid.toString(),
       chosen ? 1 : 0
     ];
     if (await insert(_table, columns: _insertColumns, values: values) <= 0) {
@@ -49,10 +50,11 @@ class _UserTable extends DataTableHandler<ID> {
 
   // protected
   Future<bool> updateUser(ID user, bool chosen) async {
+    ID uid = user.withoutTerminal();
     Map<String, dynamic> values = {
       'chosen': chosen ? 1 : 0
     };
-    var cond = SQLConditions.compare('uid', '=', user.toString());
+    var cond = SQLConditions.compare('uid', '=', uid.toString());
     if (await update(_table, values: values, conditions: cond) < 0) {
       logError('failed to update local user: $user');
       return false;

@@ -2,7 +2,6 @@
 import 'package:dim_client/ok.dart';
 import 'package:dim_client/sdk.dart';
 import 'package:dim_client/common.dart';
-import 'package:dim_client/compat.dart';
 
 import '../common/constants.dart';
 import 'helper/sqlite.dart';
@@ -25,8 +24,10 @@ class _ContactTable extends DataTableHandler<ID> {
 
   // protected
   Future<bool> removeContact(ID contact, {required ID user}) async {
-    var cond = SQLConditions.compare('uid', '=', user.toString());
-    cond = cond.andCompare('contact', '=', contact.toString());
+    ID uid = user.withoutTerminal();
+    ID cid = contact.withoutTerminal();
+    var cond = SQLConditions.compare('uid', '=', uid.toString());
+    cond = cond.andCompare('contact', '=', cid.toString());
     if (await delete(_table, conditions: cond) < 0) {
       logError('failed to remove contact: $contact, user: $user');
       return false;
@@ -36,10 +37,12 @@ class _ContactTable extends DataTableHandler<ID> {
 
   // protected
   Future<bool> addContact(ID contact, {required ID user}) async {
+    ID uid = user.withoutTerminal();
+    ID cid = contact.withoutTerminal();
     // add new record
     List values = [
-      user.toString(),
-      contact.toString(),
+      uid.toString(),
+      cid.toString(),
     ];
     if (await insert(_table, columns: _insertColumns, values: values) <= 0) {
       logError('failed to add contact: $contact, user: $user');
@@ -50,7 +53,8 @@ class _ContactTable extends DataTableHandler<ID> {
 
   // protected
   Future<List<ID>> loadContacts({required ID user}) async {
-    var cond = SQLConditions.compare('uid', '=', user.toString());
+    ID uid = user.withoutTerminal();
+    var cond = SQLConditions.compare('uid', '=', uid.toString());
     return await select(_table, distinct: true, columns: _selectColumns, conditions: cond);
   }
 
@@ -108,7 +112,7 @@ class ContactCache extends DataCache<ID, List<ID>> implements ContactDBI  {
   final _ContactTable _table = _ContactTable();
 
   _ContactTask _newTask(ID user, {ID? append, ID? remove}) =>
-      _ContactTask(mutexLock, cachePool, _table, user, append: append, remove: remove);
+      _ContactTask(mutexLock, cachePool, _table, user.withoutTerminal(), append: append, remove: remove);
 
   @override
   Future<List<ID>> getContacts({required ID user}) async {

@@ -34,15 +34,17 @@ class _MetaTable extends DataTableHandler<Meta> {
   static const List<String> _selectColumns = ["type", "pub_key", "seed", "fingerprint"];
   static const List<String> _insertColumns = ["did", "type", "pub_key", "seed", "fingerprint"];
 
-  Future<Meta?> loadMeta(ID entity) async {
-    var cond = SQLConditions.compare('did', '=', entity.toString());
+  Future<Meta?> loadMeta(ID identifier) async {
+    ID did = identifier.withoutTerminal();
+    var cond = SQLConditions.compare('did', '=', did.toString());
     List<Meta> array = await select(_table, columns: _selectColumns,
         conditions: cond, orderBy: 'id DESC', limit: 1);
     // first record only
     return array.isEmpty ? null : array.first;
   }
 
-  Future<bool> saveMeta(Meta meta, ID entity) async {
+  Future<bool> saveMeta(Meta meta, ID identifier) async {
+    ID did = identifier.withoutTerminal();
     int type = MetaVersion.parseInt(meta.type, 0);
     String json = JSON.encode(meta.publicKey.toMap());
     String seed;
@@ -54,7 +56,7 @@ class _MetaTable extends DataTableHandler<Meta> {
       seed = '';
       fingerprint = '';
     }
-    List values = [entity.toString(), type, json, seed, fingerprint];
+    List values = [did.toString(), type, json, seed, fingerprint];
     return await insert(_table, columns: _insertColumns, values: values) > 0;
   }
 
@@ -83,7 +85,7 @@ class MetaCache extends DataCache<ID, Meta> implements MetaDBI {
 
   final _MetaTable _table = _MetaTable();
 
-  _MetaTask _newTask(ID entity) => _MetaTask(mutexLock, cachePool, _table, entity);
+  _MetaTask _newTask(ID entity) => _MetaTask(mutexLock, cachePool, _table, entity.withoutTerminal());
 
   @override
   Future<Meta?> getMeta(ID entity) async {

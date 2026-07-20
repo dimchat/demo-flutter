@@ -25,8 +25,10 @@ class _BlockedTable extends DataTableHandler<ID> {
 
   // protected
   Future<bool> removeBlocked(ID contact, {required ID user}) async {
-    var cond = SQLConditions.compare('uid', '=', user.toString());
-    cond = cond.andCompare('blocked', '=', contact.toString());
+    ID uid = user.withoutTerminal();
+    ID cid = contact.withoutTerminal();
+    var cond = SQLConditions.compare('uid', '=', uid.toString());
+    cond = cond.andCompare('blocked', '=', cid.toString());
     if (await delete(_table, conditions: cond) < 0) {
       logError('failed to remove blocked: $contact, user: $user');
       return false;
@@ -36,10 +38,12 @@ class _BlockedTable extends DataTableHandler<ID> {
 
   // protected
   Future<bool> addBlocked(ID contact, {required ID user}) async {
+    ID uid = user.withoutTerminal();
+    ID cid = contact.withoutTerminal();
     // add new record
     List values = [
-      user.toString(),
-      contact.toString(),
+      uid.toString(),
+      cid.toString(),
     ];
     if (await insert(_table, columns: _insertColumns, values: values) <= 0) {
       logError('failed to add blocked: $contact, user: $user');
@@ -50,7 +54,8 @@ class _BlockedTable extends DataTableHandler<ID> {
 
   // protected
   Future<List<ID>> loadBlockedList(ID user) async {
-    var cond = SQLConditions.compare('uid', '=', user.toString());
+    ID uid = user.withoutTerminal();
+    var cond = SQLConditions.compare('uid', '=', uid.toString());
     return await select(_table, distinct: true, columns: _selectColumns, conditions: cond);
   }
 
@@ -108,7 +113,7 @@ class BlockedCache extends DataCache<ID, List<ID>> implements BlockedDBI {
   final _BlockedTable _table = _BlockedTable();
 
   _BlockedTask _newTask(ID user, {ID? blocked, ID? allowed}) =>
-      _BlockedTask(mutexLock, cachePool, _table, user, blocked: blocked, allowed: allowed);
+      _BlockedTask(mutexLock, cachePool, _table, user.withoutTerminal(), blocked: blocked, allowed: allowed);
 
   @override
   Future<List<ID>> getBlockList({required ID user}) async {

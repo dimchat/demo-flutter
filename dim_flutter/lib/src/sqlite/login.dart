@@ -56,26 +56,29 @@ class _LoginCommandTable extends DataTableHandler<Pair<LoginCommand, ReliableMes
   // TODO: add column "terminal"
 
   // protected
-  Future<List<Pair<LoginCommand, ReliableMessage>>> loadLoginCommandMessages(ID uid) async {
+  Future<List<Pair<LoginCommand, ReliableMessage>>> loadLoginCommandMessages(ID user) async {
+    ID uid = user.withoutTerminal();
     var cond = SQLConditions.compare('uid', '=', uid.toString());
     return await select(_table, columns: _selectColumns,
         conditions: cond, orderBy: 'id DESC');
   }
 
   // protected
-  Future<bool> deleteLoginCommandMessage(ID uid) async {
+  Future<bool> deleteLoginCommandMessage(ID user) async {
+    ID uid = user.withoutTerminal();
     var cond = SQLConditions.compare('uid', '=', uid.toString());
     if (await delete(_table, conditions: cond) < 0) {
-      logError('failed to remove login command: $uid');
+      logError('failed to remove login command: $user');
       return false;
     }
     return true;
   }
 
   // protected
-  Future<bool> saveLoginCommandMessage(ID uid, String? terminal, LoginCommand content, ReliableMessage rMsg) async {
+  Future<bool> saveLoginCommandMessage(ID user, String? terminal, LoginCommand content, ReliableMessage rMsg) async {
+    ID uid = user.withoutTerminal();
     // TODO: save login command with uid + terminal
-    logInfo('save login command: $uid, terminal: $terminal');
+    logInfo('save login command: $user, terminal: $terminal');
     // add new record
     String cmd = JSON.encode(content.toMap());
     String msg = JSON.encode(rMsg.toMap());
@@ -85,7 +88,7 @@ class _LoginCommandTable extends DataTableHandler<Pair<LoginCommand, ReliableMes
       msg,
     ];
     if (await insert(_table, columns: _insertColumns, values: values) <= 0) {
-      logError('failed to save login command: $uid "$terminal" -> $content');
+      logError('failed to save login command: $user "$terminal" -> $content');
       return false;
     }
     return true;
@@ -113,7 +116,15 @@ class _LoginTask extends DbTask<ID, List<Pair<LoginCommand, ReliableMessage>>> {
   Future<List<Pair<LoginCommand, ReliableMessage>>?> readData() async {
     ID uid = _user.withoutTerminal();
     var records = await _table.loadLoginCommandMessages(uid);
-    return LoginCommandUtils.trimCommandMessages(records);
+    if (records.length > 1) {
+      var array = LoginCommandUtils.trimCommandMessages(records);
+      logInfo('trim for: $_user, ${array.length}/${records.length} commands');
+      if (array.length > 8) {
+        array = array.sublist(0, 8);
+      }
+      records = array;
+    }
+    return records;
   }
 
   @override
@@ -153,7 +164,7 @@ class LoginCommandCache extends DataCache<ID, List<Pair<LoginCommand, ReliableMe
   final _LoginCommandTable _table = _LoginCommandTable();
 
   _LoginTask _newTask(ID identifier, {LoginCommand? cmd, ReliableMessage? msg}) =>
-      _LoginTask(mutexLock, cachePool, _table, identifier, cmd: cmd, msg: msg);
+      _LoginTask(mutexLock, cachePool, _table, identifier.withoutTerminal(), cmd: cmd, msg: msg);
 
   @override
   Future<List<Pair<LoginCommand, ReliableMessage>>> getLoginCommandMessages(ID identifier) async {

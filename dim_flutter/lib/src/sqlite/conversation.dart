@@ -17,36 +17,28 @@ abstract class ConversationDBI {
   ///
   /// @param user - current user ID
   /// @return chat box ID list
-  Future<List<Conversation>> getConversations({
-    required ID user,
-  });
+  Future<List<Conversation>> getConversations({required ID user});
 
   ///  Add conversation
   ///
   /// @param chat - conversation info
   /// @param user - current user ID
   /// @return true on success
-  Future<bool> addConversation(Conversation chat, {
-    required ID user,
-  });
+  Future<bool> addConversation(Conversation chat, {required ID user});
 
   ///  Update conversation
   ///
   /// @param chat - conversation info
   /// @param user - current user ID
   /// @return true on success
-  Future<bool> updateConversation(Conversation chat, {
-    required ID user,
-  });
+  Future<bool> updateConversation(Conversation chat, {required ID user});
 
   ///  Remove conversation
   ///
   /// @param chat - conversation ID
   /// @param user - current user ID
   /// @return true on success
-  Future<bool> removeConversation(ID chat, {
-    required ID user,
-  });
+  Future<bool> removeConversation(ID chat, {required ID user});
 
 }
 
@@ -75,32 +67,31 @@ class _ConversationTable extends DataTableHandler<Conversation> implements Conve
   static const List<String> _insertColumns = ["uid", "cid", "unread", "last", "time", "mentioned"];
 
   @override
-  Future<List<Conversation>> getConversations({
-    required ID user,
-  }) async {
-    var cond = SQLConditions.compare('uid', '=', user.toString());
+  Future<List<Conversation>> getConversations({required ID user}) async {
+    ID uid = user.withoutTerminal();
+    var cond = SQLConditions.compare('uid', '=', uid.toString());
     cond = cond.orCompare('uid', '=', '');
     return await select(_table, columns: _selectColumns,
         conditions: cond, orderBy: 'time DESC');
   }
 
   @override
-  Future<bool> addConversation(Conversation chat, {
-    required ID user,
-  }) async {
+  Future<bool> addConversation(Conversation chat, {required ID user}) async {
+    ID uid = user.withoutTerminal();
+    ID cid = chat.identifier.withoutTerminal();
     double? seconds;
     if (chat.lastMessageTime != null) {
       seconds = chat.lastMessageTime!.millisecondsSinceEpoch / 1000.0;
     }
-    List values = [user.toString(), chat.identifier.toString(), chat.unread,
+    List values = [uid.toString(), cid.toString(), chat.unread,
       chat.lastMessage, seconds, chat.mentionedSerialNumber];
     return await insert(_table, columns: _insertColumns, values: values) > 0;
   }
 
   @override
-  Future<bool> updateConversation(Conversation chat, {
-    required ID user,
-  }) async {
+  Future<bool> updateConversation(Conversation chat, {required ID user}) async {
+    ID uid = user.withoutTerminal();
+    ID cid = chat.identifier.withoutTerminal();
     int? time = chat.lastMessageTime?.millisecondsSinceEpoch;
     if (time == null) {
       time = 0;
@@ -113,32 +104,31 @@ class _ConversationTable extends DataTableHandler<Conversation> implements Conve
       'time': time,
       'mentioned': chat.mentionedSerialNumber,
     };
-    var cond = SQLConditions.compare('uid', '=', user.toString());
+    var cond = SQLConditions.compare('uid', '=', uid.toString());
     cond = cond.orCompare('uid', '=', '');
-    cond = cond.andCompare('cid', '=', chat.identifier.toString());
+    cond = cond.andCompare('cid', '=', cid.toString());
     return await update(_table, values: values, conditions: cond) > 0;
   }
 
   @override
-  Future<bool> removeConversation(ID chat, {
-    required ID user,
-  }) async {
-    var cond = SQLConditions.compare('uid', '=', user.toString());
+  Future<bool> removeConversation(ID chat, {required ID user}) async {
+    ID uid = user.withoutTerminal();
+    ID cid = chat.withoutTerminal();
+    var cond = SQLConditions.compare('uid', '=', uid.toString());
     cond = cond.orCompare('uid', '=', '');
-    cond = cond.andCompare('cid', '=', chat.toString());
+    cond = cond.andCompare('cid', '=', cid.toString());
     return await delete(_table, conditions: cond) >= 0;
   }
 
-  Future<int> burnConversations(DateTime expired, {
-    required ID user,
-  }) async {
+  Future<int> burnConversations(DateTime expired, {required ID user}) async {
+    ID uid = user.withoutTerminal();
     int time = expired.millisecondsSinceEpoch ~/ 1000;
     Map<String, dynamic> values = {
       'unread': 0,
       'last': '',
       'mentioned': 0,
     };
-    var cond = SQLConditions.compare('uid', '=', user.toString());
+    var cond = SQLConditions.compare('uid', '=', uid.toString());
     cond = cond.orCompare('uid', '=', '');
     cond = cond.andCompare('time', '<', time);
     return await update(_table, values: values, conditions: cond);
@@ -169,9 +159,7 @@ class ConversationCache extends _ConversationTable {
   }
 
   @override
-  Future<List<Conversation>> getConversations({
-    required ID user,
-  }) async {
+  Future<List<Conversation>> getConversations({required ID user}) async {
     List<Conversation>? conversations;
     await lock();
     try {
@@ -189,9 +177,7 @@ class ConversationCache extends _ConversationTable {
   }
 
   @override
-  Future<bool> addConversation(Conversation chat, {
-    required ID user,
-  }) async {
+  Future<bool> addConversation(Conversation chat, {required ID user}) async {
     // 1. check cache
     List<Conversation>? array = await getConversations(user: user);
     if (_find(chat.identifier, array) != null) {
@@ -217,9 +203,7 @@ class ConversationCache extends _ConversationTable {
   }
 
   @override
-  Future<bool> updateConversation(Conversation chat, {
-    required ID user,
-  }) async {
+  Future<bool> updateConversation(Conversation chat, {required ID user}) async {
     // 1. check cache
     List<Conversation>? array = await getConversations(user: user);
     Conversation? old = _find(chat.identifier, array);
@@ -251,9 +235,7 @@ class ConversationCache extends _ConversationTable {
   }
 
   @override
-  Future<bool> removeConversation(ID chat, {
-    required ID user,
-  }) async {
+  Future<bool> removeConversation(ID chat, {required ID user}) async {
     // 1. check cache
     List<Conversation>? array = await getConversations(user: user);
     Conversation? old = _find(chat, array);
@@ -279,9 +261,7 @@ class ConversationCache extends _ConversationTable {
   }
 
   @override
-  Future<int> burnConversations(DateTime expired, {
-    required ID user,
-  }) async {
+  Future<int> burnConversations(DateTime expired, {required ID user}) async {
     int results = await super.burnConversations(expired, user: user);
     if (results < 0) {
       logError('failed to clean expired conversations: $expired');

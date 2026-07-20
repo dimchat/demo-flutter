@@ -161,12 +161,14 @@ class InstantMessageTable extends DataTableHandler<InstantMessage> implements In
   @override
   Future<Pair<List<InstantMessage>, int>> getInstantMessages(ID chat, {
     required ID user,
-    int start = 0, int? limit
+    int start = 0, int? limit,
   }) async {
+    ID uid = user.withoutTerminal();
+    ID cid = chat.withoutTerminal();
     limit ??= 1024;
-    var cond = SQLConditions.compare('uid', '=', user.toString());
+    var cond = SQLConditions.compare('uid', '=', uid.toString());
     cond = cond.orCompare('uid', '=', '');
-    cond = cond.andCompare('cid', '=', chat.toString());
+    cond = cond.andCompare('cid', '=', cid.toString());
     List<InstantMessage> messages = await select(_table, columns: _selectColumns,
         conditions: cond, orderBy: 'time DESC', offset: start, limit: limit);
     int remaining = 0;
@@ -180,8 +182,9 @@ class InstantMessageTable extends DataTableHandler<InstantMessage> implements In
   Future<bool> saveInstantMessage(ID chat, InstantMessage iMsg, {
     required ID user,
   }) async {
-    String cid = chat.toString();
-    String sender = iMsg.sender.toString();
+    ID uid = user.withoutTerminal();
+    ID cid = chat.withoutTerminal();
+    ID sender = iMsg.sender.withoutTerminal();
     // String receiver = iMsg.receiver.string;
     int? time = iMsg.time?.millisecondsSinceEpoch;
     if (time == null) {
@@ -211,10 +214,10 @@ class InstantMessageTable extends DataTableHandler<InstantMessage> implements In
     }
 
     // check old record
-    var cond = SQLConditions.compare('uid', '=', user.toString());
+    var cond = SQLConditions.compare('uid', '=', uid.toString());
     cond = cond.orCompare('uid', '=', '');
-    cond = cond.andCompare('cid', '=', cid);
-    cond = cond.andCompare('sender', '=', sender);
+    cond = cond.andCompare('cid', '=', cid.toString());
+    cond = cond.andCompare('sender', '=', sender.toString());
     cond = cond.andCompare('sn', '=', content.sn);
     List<InstantMessage> messages = await select(_table, columns: _selectColumns,
         conditions: cond, limit: 1);
@@ -222,7 +225,7 @@ class InstantMessageTable extends DataTableHandler<InstantMessage> implements In
     if (messages.isEmpty) {
       // add new message
       String uid = '';  // TODO: add with current user id
-      List values = [uid, cid, sender,/* receiver,*/ time, iMsg.type,
+      List values = [uid, cid.toString(), sender.toString(),/* receiver,*/ time, iMsg.type,
         content.sn, sig, /*JSON.encode(content.dictionary),*/ msg];
       if (await insert(_table, columns: _insertColumns, values: values) <= 0) {
         logError('failed to save message: $sender -> $chat');
@@ -250,9 +253,9 @@ class InstantMessageTable extends DataTableHandler<InstantMessage> implements In
 
     // update old message
     Map<String, dynamic> values = {
-      // 'cid': chat.string,
-      // 'sender': sender,
-      // // 'receiver': receiver,
+      // 'cid': cid.toString(),
+      // 'sender': sender.toString(),
+      // // 'receiver': receiver.toString(),
       'time': time,
       'type': iMsg.type,
       // 'sn': content.sn,
@@ -280,12 +283,13 @@ class InstantMessageTable extends DataTableHandler<InstantMessage> implements In
   Future<bool> removeInstantMessage(ID chat, Envelope envelope, Content content, {
     required ID user,
   }) async {
-    String cid = chat.toString();
-    String sender = envelope.sender.toString();
-    var cond = SQLConditions.compare('uid', '=', user.toString());
+    ID uid = user.withoutTerminal();
+    ID cid = chat.withoutTerminal();
+    ID sender = envelope.sender.withoutTerminal();
+    var cond = SQLConditions.compare('uid', '=', uid.toString());
     cond = cond.orCompare('uid', '=', '');
-    cond = cond.andCompare('cid', '=', cid);
-    cond = cond.andCompare('sender', '=', sender);
+    cond = cond.andCompare('cid', '=', cid.toString());
+    cond = cond.andCompare('sender', '=', sender.toString());
     cond = cond.andCompare('sn', '=', content.sn);
     if (await delete(_table, conditions: cond) < 0) {
       logError('failed to remove message: $sender -> $chat');
@@ -306,9 +310,11 @@ class InstantMessageTable extends DataTableHandler<InstantMessage> implements In
   Future<bool> removeInstantMessages(ID chat, {
     required ID user,
   }) async {
-    var cond = SQLConditions.compare('uid', '=', user.toString());
+    ID uid = user.withoutTerminal();
+    ID cid = chat.withoutTerminal();
+    var cond = SQLConditions.compare('uid', '=', uid.toString());
     cond = cond.orCompare('uid', '=', '');
-    cond = cond.andCompare('cid', '=', chat.toString());
+    cond = cond.andCompare('cid', '=', cid.toString());
     if (await delete(_table, conditions: cond) < 0) {
       logError('failed to remove messages: $chat');
       return false;
@@ -325,8 +331,9 @@ class InstantMessageTable extends DataTableHandler<InstantMessage> implements In
   Future<int> burnMessages(DateTime expired, {
     required ID user,
   }) async {
+    ID uid = user.withoutTerminal();
     int time = expired.millisecondsSinceEpoch ~/ 1000;
-    var cond = SQLConditions.compare('uid', '=', user.toString());
+    var cond = SQLConditions.compare('uid', '=', uid.toString());
     cond = cond.orCompare('uid', '=', '');
     cond = cond.andCompare('time', '<', time);
     int results = await delete(_table, conditions: cond);

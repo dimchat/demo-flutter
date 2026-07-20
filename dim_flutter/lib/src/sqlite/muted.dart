@@ -25,8 +25,10 @@ class _MutedTable extends DataTableHandler<ID> {
 
   // protected
   Future<bool> removeMuted(ID contact, {required ID user}) async {
-    var cond = SQLConditions.compare('uid', '=', user.toString());
-    cond = cond.andCompare('muted', '=', contact.toString());
+    ID uid = user.withoutTerminal();
+    ID cid = contact.withoutTerminal();
+    var cond = SQLConditions.compare('uid', '=', uid.toString());
+    cond = cond.andCompare('muted', '=', cid.toString());
     if (await delete(_table, conditions: cond) < 0) {
       logError('failed to remove muted: $contact, user: $user');
       return false;
@@ -36,10 +38,12 @@ class _MutedTable extends DataTableHandler<ID> {
 
   // protected
   Future<bool> addMuted(ID contact, {required ID user}) async {
+    ID uid = user.withoutTerminal();
+    ID cid = contact.withoutTerminal();
     // add new record
     List values = [
-      user.toString(),
-      contact.toString(),
+      uid.toString(),
+      cid.toString(),
     ];
     if (await insert(_table, columns: _insertColumns, values: values) <= 0) {
       logError('failed to add muted: $contact, user: $user');
@@ -50,7 +54,8 @@ class _MutedTable extends DataTableHandler<ID> {
 
   // protected
   Future<List<ID>> loadMutedList(ID user) async {
-    var cond = SQLConditions.compare('uid', '=', user.toString());
+    ID uid = user.withoutTerminal();
+    var cond = SQLConditions.compare('uid', '=', uid.toString());
     return await select(_table, distinct: true, columns: _selectColumns, conditions: cond);
   }
 
@@ -108,7 +113,7 @@ class MutedCache extends DataCache<ID, List<ID>> implements MutedDBI {
   final _MutedTable _table = _MutedTable();
 
   _MutedTask _newTask(ID user, {ID? muted, ID? allowed}) =>
-      _MutedTask(mutexLock, cachePool, _table, user, muted: muted, allowed: allowed);
+      _MutedTask(mutexLock, cachePool, _table, user.withoutTerminal(), muted: muted, allowed: allowed);
 
   @override
   Future<List<ID>> getMuteList({required ID user}) async {

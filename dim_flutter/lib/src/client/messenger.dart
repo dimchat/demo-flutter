@@ -5,12 +5,10 @@ import 'package:dim_client/sdk.dart';
 import 'package:dim_client/common.dart';
 import 'package:dim_client/client.dart';
 
-import '../common/platform.dart';
-import '../models/newest.dart';
 import '../models/shield.dart';
 import '../models/vestibule.dart';
 import '../network/velocity.dart';
-import '../ui/language.dart';
+import 'compat/visa.dart';
 import 'shared.dart';
 
 class SharedMessenger extends ClientMessenger {
@@ -88,93 +86,51 @@ class SharedMessenger extends ClientMessenger {
       assert(false, 'current user not found');
       return false;
     }
-    // 1. get sign key for current user
+    //
+    //  0. get sign key for current user
+    //
     SignKey? sKey = await facebook.getPrivateKeyForVisaSignature(user.identifier);
     if (sKey == null) {
       assert(false, 'private key not found: $user');
       return false;
     }
-    // 2. get visa document for current user
+    //
+    //  1. get visa document for current user
+    //
     Visa? visa = DocumentUtils.lastVisa(await user.documents);
     if (visa == null) {
       // FIXME: query from station or create a new one?
       assert(false, 'user error: $user');
       return false;
     } else {
-      // clone for modifying
-      Document? doc = Document.parse(visa.copyMap(false));
-      if (doc is Visa) {
-        visa = doc;
-      } else {
-        assert(false, 'visa error: $visa');
-        return false;
-      }
+      // update device info before cloning visa document
+      var shared = GlobalVariable();
+      var client = shared.terminal;
+      bool loaded = await client.loadDeviceAndPackageInfo();
+      logInfo('load device & app package info: $loaded');
     }
-    // 3. update visa document
-    assert(visa.publicKey != null, 'visa error: $visa');
-    var shared = GlobalVariable();
-    var client = shared.terminal;
-    bool loaded = await client.loadDeviceAndPackageInfo();
-    logInfo('load device & app package info: $loaded');
-    visa.setProperty('app', _getAppInfo(visa));
-    visa.setProperty('sys', _getDeviceInfo(visa));
-    // 4. sign it
-    Uint8List? sig = visa.sign(sKey);
-    assert(sig != null, 'failed to sign visa: $visa, $user');
-    // 5. save it
+    //
+    //  2. clone for signing
+    //
+    Visa? clone = visa.clone();
+    if (clone == null) {
+      logError('failed to clone visa: $visa');
+      return false;
+    }
+    assert(clone.publicKey != null, 'visa error: $clone');
+    Uint8List? sig = clone.sign(sKey);
+    if (sig == null) {
+      assert(false, 'failed to sign visa: $clone, $user');
+      return false;
+    }
+    //
+    //  3. save the new visa document
+    //
     var archivist = facebook.archivist;
-    bool? ok = await archivist?.saveDocument(visa, user.identifier);
-    assert(ok == true, 'failed to save document: $visa');
-    logWarning('visa updated: $ok, $visa');
+    bool? ok = await archivist?.saveDocument(clone, user.identifier);
+    assert(ok == true, 'failed to save document: $clone');
+    logWarning('visa updated: $ok, $clone');
     return ok == true;
-  }
-  Map _getAppInfo(Visa visa) {
-    var info = visa.getProperty('app');
-    if (info == null) {
-      info = {};
-    } else if (info is Map) {
-      // app info already exist, update it
-    } else {
-      assert(info is String, 'invalid app info: $info');
-      info = {
-        'app': info,
-      };
-    }
-    var lang = LanguageDataSource();
-    var newest = NewestManager();
-    var shared = GlobalVariable();
-    var client = shared.terminal;
-    info['id'] = client.packageName;
-    info['name'] = client.displayName;
-    info['version'] = client.versionName;
-    info['build'] = client.buildNumber;
-    info['store'] = newest.store;
-    info['language'] = lang.getCurrentLanguageCode();
-    return info;
-  }
-  Map _getDeviceInfo(Visa visa) {
-    var info = visa.getProperty('sys');
-    if (info == null) {
-      info = {};
-    } else if (info is Map) {
-      // device info already exist, update it
-    } else {
-      assert(info is String, 'invalid device info: $info');
-      info = {
-        'sys': info,
-      };
-    }
-    GlobalVariable shared = GlobalVariable();
-    var client = shared.terminal;
-    info['locale'] = client.language; // DevicePlatform.localeName;
-    info['model'] = client.systemModel;
-    info['device'] = client.systemDevice;
-    info['brand'] = client.deviceBrand;
-    info['board'] = client.deviceBoard;
-    info['manufacturer'] = client.deviceManufacturer;
-    info['ver'] = client.systemVersion;
-    info['os'] = DevicePlatform.operatingSystem;
-    return info;
   }
 
   @override

@@ -11,7 +11,7 @@ import 'package:dim_client/ws.dart' hide Processor;
 import '../common/constants.dart';
 import '../models/station.dart';
 import '../network/neighbor.dart';
-import 'compat/device.dart';
+import 'compat/sys.dart';
 
 import 'messenger.dart';
 import 'packer.dart';
@@ -253,46 +253,37 @@ class Client extends Terminal {
   //  DeviceMixin
   //
 
-  final DeviceInfo _deviceInfo = DeviceInfo();
-  final AppPackageInfo _packageInfo = AppPackageInfo();
+  final SysEnv _sys = SysEnv();
 
-  Future<bool> loadDeviceAndPackageInfo() async {
-    bool ok1 = await _deviceInfo.loadDeviceInfo();
-    bool ok2 = await _packageInfo.loadPackageInfo();
-    logInfo('load device info: $ok1');
-    logInfo('load app package info: $ok2');
-    return ok1 && ok2;
-  }
-
-  String get packageName => _packageInfo.packageName;
+  String get packageName => _sys.packageInfo.packageName;
 
   @override
-  String get displayName => _packageInfo.displayName;
+  String get displayName => _sys.packageInfo.displayName;
 
   @override
-  String get versionName => _packageInfo.versionName;
+  String get versionName => _sys.packageInfo.versionName;
 
-  String get buildNumber => _packageInfo.buildNumber;
-
-  @override
-  String get language => _deviceInfo.language;
+  String get buildNumber => _sys.packageInfo.buildNumber;
 
   @override
-  String get systemVersion => _deviceInfo.systemVersion;
+  String get language => _sys.deviceInfo.language;
 
   @override
-  String get systemModel => _deviceInfo.systemModel;
+  String get systemVersion => _sys.deviceInfo.systemVersion;
 
   @override
-  String get systemDevice => _deviceInfo.systemDevice;
+  String get systemModel => _sys.deviceInfo.systemModel;
 
   @override
-  String get deviceBrand => _deviceInfo.deviceBrand;
+  String get systemDevice => _sys.deviceInfo.systemDevice;
 
   @override
-  String get deviceBoard => _deviceInfo.deviceBoard;
+  String get deviceBrand => _sys.deviceInfo.deviceBrand;
 
   @override
-  String get deviceManufacturer => _deviceInfo.deviceManufacturer;
+  String get deviceBoard => _sys.deviceInfo.deviceBoard;
+
+  @override
+  String get deviceManufacturer => _sys.deviceInfo.deviceManufacturer;
 
 }

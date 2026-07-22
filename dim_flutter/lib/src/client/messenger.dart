@@ -97,17 +97,18 @@ class SharedMessenger extends ClientMessenger {
     //
     //  1. get visa document for current user
     //
-    Visa? visa = DocumentUtils.lastVisa(await user.documents);
+    String? terminal;
+    Visa? visa = await user.localVisa;
     if (visa == null) {
-      // FIXME: query from station or create a new one?
-      assert(false, 'user error: $user');
-      return false;
-    } else {
-      // update device info before cloning visa document
-      var shared = GlobalVariable();
-      var client = shared.terminal;
-      bool loaded = await client.loadDeviceAndPackageInfo();
-      logInfo('load device & app package info: $loaded');
+      // get any visa
+      visa = await user.visa;
+      if (visa == null) {
+        // FIXME: query from station or create a new one?
+        assert(false, 'user error: $user');
+        return false;
+      }
+      // new terminal for clone visa
+      terminal = Register.terminal;
     }
     //
     //  2. clone for signing
@@ -116,6 +117,10 @@ class SharedMessenger extends ClientMessenger {
     if (clone == null) {
       logError('failed to clone visa: $visa');
       return false;
+    } else if (terminal != null && terminal.isNotEmpty) {
+      var old = visa['terminal'];
+      logWarning('updating visa terminal: "$old" -> "$terminal"');
+      clone['terminal'] = terminal;
     }
     assert(clone.publicKey != null, 'visa error: $clone');
     Uint8List? sig = clone.sign(sKey);

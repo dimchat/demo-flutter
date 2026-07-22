@@ -11,9 +11,7 @@ import 'browser.dart';
 class DeviceInfo with Logging {
   factory DeviceInfo() => _instance;
   static final DeviceInfo _instance = DeviceInfo._internal();
-  DeviceInfo._internal() {
-    /*await */loadDeviceInfo();
-  }
+  DeviceInfo._internal();
 
   bool _loaded = false;
 
@@ -122,9 +120,7 @@ class DeviceInfo with Logging {
 class AppPackageInfo with Logging {
   factory AppPackageInfo() => _instance;
   static final AppPackageInfo _instance = AppPackageInfo._internal();
-  AppPackageInfo._internal() {
-    /*await */loadPackageInfo();
-  }
+  AppPackageInfo._internal();
 
   bool _loaded = false;
 

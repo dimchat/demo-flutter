@@ -88,7 +88,7 @@ dependencies:
   dimp: 2.3.4
   dimsdk: 2.3.4
   dim_plugins: 2.3.4
-  dim_client: 1.5.2
+  dim_client: 1.5.3
 
   tvbox: 1.0.0
 

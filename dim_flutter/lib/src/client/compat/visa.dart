@@ -1,6 +1,5 @@
 
-import 'dart:typed_data';
-
+import 'package:dim_client/common.dart';
 import 'package:dim_client/ok.dart';
 import 'package:dim_client/sdk.dart';
 
@@ -24,7 +23,7 @@ extension SysEnvExtension on Visa {
       String? terminal = visa.getString('terminal');
       // reset visa terminal
       if (terminal == null || terminal.isEmpty) {
-        visa['terminal'] = _getDeviceId();
+        visa['terminal'] = Register.terminal;
       } else {
         Log.info('visa terminal: "$terminal"');
       }
@@ -84,14 +83,4 @@ Map _getDeviceInfo(Visa visa) {
   info['ver'] = client.systemVersion;
   info['os'] = DevicePlatform.operatingSystem;
   return info;
-}
-
-String _getDeviceId() {
-  GlobalVariable shared = GlobalVariable();
-  var client = shared.terminal;
-  String device = client.systemDevice;
-  Uint8List data = UTF8.encode(device);
-  String terminal = Base58.encode(data);
-  Log.info('device id: "$device" -> "$terminal" as visa terminal');
-  return terminal;
 }

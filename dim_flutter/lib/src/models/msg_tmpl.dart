@@ -4,7 +4,7 @@ import 'package:dim_client/sdk.dart';
 
 abstract class MessageTemplate {
 
-  static String getText(Map content) {
+  static String getText(Mapping content) {
     try {
       var template = content['template'];
       var replacements = content['replacements'];

@@ -119,8 +119,12 @@ class SharedMessenger extends ClientMessenger {
       return false;
     } else if (terminal != null && terminal.isNotEmpty) {
       var old = visa['terminal'];
-      logWarning('updating visa terminal: "$old" -> "$terminal"');
-      clone['terminal'] = terminal;
+      if (old != terminal) {
+        logWarning('updating visa terminal: "$old" -> "$terminal"');
+        clone['terminal'] = terminal;
+      } else {
+        logInfo('terminal not changed: $old');
+      }
     }
     assert(clone.publicKey != null, 'visa error: $clone');
     Uint8List? sig = clone.sign(sKey);

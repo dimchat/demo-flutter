@@ -72,7 +72,7 @@ class TranslateContent extends AppCustomizedContent {
   String? get code => result?.code ?? getString('code');
 
   TranslateResult? get result {
-    Map? info = this['result'];
+    Mapping? info = this['result'];
     return info == null ? null : TranslateResult(info);
   }
 

@@ -2,6 +2,7 @@ library dim_flutter;
 
 export 'models/newest.dart';
 export 'models/config.dart';
+// export 'models/config_api.dart';
 // export 'models/config_branch.dart';
 // export 'models/config_loader.dart';
 export 'models/chat.dart';

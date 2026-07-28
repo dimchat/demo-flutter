@@ -6,7 +6,6 @@ import 'package:dim_client/sdk.dart';
 
 import '../common/constants.dart';
 import '../models/chat.dart';
-import '../models/chat_contact.dart';
 
 
 /// NameView

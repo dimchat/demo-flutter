@@ -34,6 +34,7 @@ import 'package:image_gallery_saver/image_gallery_saver.dart';
 import 'package:photo_view/photo_view_gallery.dart';
 
 import 'package:dim_client/ok.dart';
+import 'package:dim_client/sdk.dart';
 import 'package:pnf/client.dart';
 
 import '../ui/icons.dart';
@@ -61,20 +62,20 @@ class Gallery {
         onGranted: (context) => _confirmToSave(context, loader),
       );
 
-  static Image? getThumbnail(Map content) {
+  static Image? getThumbnail(Mapping content) {
     var small = content['thumbnail'];
     return small == null ? null : ImageUtils.getImage(small);
   }
-  static Image? getSnapshot(Map content) {
+  static Image? getSnapshot(Mapping content) {
     var small = content['snapshot'];
     return small == null ? null : ImageUtils.getImage(small);
   }
 
-  static ImageProvider? getThumbnailProvider(Map content) {
+  static ImageProvider? getThumbnailProvider(Mapping content) {
     var small = content['thumbnail'];
     return small == null ? null : ImageUtils.getProvider(small);
   }
-  static ImageProvider? getSnapshotProvider(Map content) {
+  static ImageProvider? getSnapshotProvider(Mapping content) {
     var small = content['snapshot'];
     return small == null ? null : ImageUtils.getProvider(small);
   }

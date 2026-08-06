@@ -15,22 +15,19 @@ extension SysEnvExtension on Visa {
     // clone for modifying
     Map info = copyMap(false);
     Document? visa = Document.parse(info);
-    if (visa is Visa) {
-      assert(visa.publicKey != null, 'visa error: $visa');
-      // update system environment
-      visa.setProperty('app', _getAppInfo(visa));
-      visa.setProperty('sys', _getDeviceInfo(visa));
-      String? terminal = visa.getString('terminal');
-      // reset visa terminal
-      if (terminal == null || terminal.isEmpty) {
-        visa['terminal'] = Register.terminal;
-      } else {
-        Log.info('visa terminal: "$terminal"');
-      }
-      return visa;
+    if (visa is Visa) {} else {
+      assert(false, 'visa error: $info');
+      return null;
     }
-    assert(false, 'visa error: $info');
-    return null;
+    assert(visa.publicKey != null, 'visa error: $visa');
+    // update system environment
+    visa.setProperty('app', _getAppInfo(visa));
+    visa.setProperty('sys', _getDeviceInfo(visa));
+    // reset visa terminal
+    var terminal = visa['terminal'];
+    visa['terminal'] = Register.terminal;
+    Log.info('update visa terminal: "$terminal" => "${Register.terminal}"');
+    return visa;
   }
 
 }

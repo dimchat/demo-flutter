@@ -5,11 +5,14 @@ import 'package:dim_client/sdk.dart';
 import 'package:dim_client/common.dart';
 import 'package:dim_client/client.dart';
 
+import '../models/amanuensis.dart';
 import '../models/shield.dart';
 import '../models/vestibule.dart';
 import '../network/velocity.dart';
+
 import 'compat/visa.dart';
 import 'shared.dart';
+
 
 class SharedMessenger extends ClientMessenger {
   SharedMessenger(super.session, super.facebook, super.mdb);
@@ -97,7 +100,6 @@ class SharedMessenger extends ClientMessenger {
     //
     //  1. get visa document for current user
     //
-    String? terminal;
     Visa? visa = await user.localVisa;
     if (visa == null) {
       // get any visa
@@ -107,8 +109,6 @@ class SharedMessenger extends ClientMessenger {
         assert(false, 'user error: $user');
         return false;
       }
-      // new terminal for clone visa
-      terminal = Register.terminal;
     }
     //
     //  2. clone for signing
@@ -117,14 +117,6 @@ class SharedMessenger extends ClientMessenger {
     if (clone == null) {
       logError('failed to clone visa: $visa');
       return false;
-    } else if (terminal != null && terminal.isNotEmpty) {
-      var old = visa['terminal'];
-      if (old != terminal) {
-        logWarning('updating visa terminal: "$old" -> "$terminal"');
-        clone['terminal'] = terminal;
-      } else {
-        logInfo('terminal not changed: $old');
-      }
     }
     assert(clone.publicKey != null, 'visa error: $clone');
     Uint8List? sig = clone.sign(sKey);
@@ -201,6 +193,15 @@ class SharedMessenger extends ClientMessenger {
     content['provider'] = provider.toString();
     content['stations'] = stations;
     await sendContent(content, sender: null, receiver: master, priority: 1);
+  }
+
+  @override
+  Future<bool> saveInstantMessage(InstantMessage iMsg) async {
+    Amanuensis clerk = Amanuensis();
+    return await clerk.saveInstantMessage(iMsg).onError((error, stackTrace) {
+      Log.error('failed to save message: $error');
+      return false;
+    });
   }
 
 }

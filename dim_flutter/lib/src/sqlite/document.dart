@@ -178,6 +178,7 @@ class _DocTask extends DbTask<ID, List<Document>> {
     // check old documents
     for (int index = documents.length - 1; index >= 0; --index) {
       item = documents[index];
+      // TODO: check did
       if (identifier != item['did']) {
         assert(false, 'document error: $identifier, $item');
         continue;
@@ -222,8 +223,22 @@ class DocumentCache extends DataCache<ID, List<Document>> implements DocumentDBI
   @override
   Future<List<Document>> getDocuments(ID entity) async {
     var task = _newTask(entity);
-    var documents = await task.load();
-    return documents ?? [];
+    var documents = await task.load() ?? [];
+    // filter by terminal
+    var docs = documents;
+    var terminal = entity.terminal;
+    if (terminal != null && terminal.isNotEmpty) {
+      docs = [];
+      for (var item in documents) {
+        if (item is Visa && item.terminal != terminal) {
+          // visa terminal not matched
+          continue;
+        }
+        docs.add(item);
+      }
+    }
+    logInfo('loaded ${docs.length}/${documents.length} document(s) for $entity');
+    return docs;
   }
 
   @override
@@ -244,6 +259,7 @@ class DocumentCache extends DataCache<ID, List<Document>> implements DocumentDBI
     if (documents == null) {
       documents = [];
     } else {
+      // TODO: check terminal
       // check time
       DateTime? newTime = doc.time;
       if (newTime != null) {

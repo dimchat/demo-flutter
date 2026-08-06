@@ -25,21 +25,24 @@ class SysEnv with Logging {
     if (ok1) {
       // Update terminal (device)
       String device = deviceInfo.systemDevice;
-      Register.terminal = _normalizeDeviceName(device);
-      logInfo('device id: "$device" -> "${Register.terminal}" as visa terminal');
+      String terminal = _normalizeDeviceName(device);
+      if (terminal.isNotEmpty) {
+        Register.terminal = terminal;
+      }
+      logInfo('device id: "$device" -> "$terminal" as visa terminal');
     }
     return ok1 && ok2;
   }
 
 }
 
-String? _normalizeDeviceName(String device) => _trimTerminal(
+String _normalizeDeviceName(String device) => _trimTerminal(
     device.replaceAll(_terminalPattern, '_')
 );
 
 final _terminalPattern = RegExp(r'[^A-Za-z0-9\-.]+');
 
-String? _trimTerminal(String device, [String sep = '_']) {
+String _trimTerminal(String device, [String sep = '_']) {
   int start = 0;
   int end = device.length - 1;
   while (start < end && device[start] == sep) {
@@ -48,5 +51,9 @@ String? _trimTerminal(String device, [String sep = '_']) {
   while (start < end && device[end] == sep) {
     --end;
   }
-  return start <= end ? device.substring(start, end + 1) : null;
+  if (start > end) {
+    assert(false, 'terminal error: "$device"');
+    return device;
+  }
+  return device.substring(start, end + 1);
 }

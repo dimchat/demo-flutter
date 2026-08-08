@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 
 import 'package:dim_client/ok.dart';
+import 'package:dim_client/sdk.dart';
 
 import '../client/client.dart';
 import '../client/shared.dart';
@@ -25,7 +27,23 @@ class NewestManager with Logging {
   static const int kMustUpgrade = 3;
 
   // App Distribution Channel
-  String store = 'AppStore';  // AppStore, GooglePlay, ...
+  String store = 'store.mopo.com';  // "apps.apple.com", "play.google.com", ...
+
+  Future<String?> registerStore() async {
+    // get store name from assets
+    String json = await rootBundle.loadString('assets/store.json');
+    var info = JSONMap.decode(json);
+    if (info is Map) {
+      var channel = info['store'];
+      if (channel is String && channel.isNotEmpty) {
+        logWarning('set distribution channel (app store): "$store" -> "$channel".');
+        store = channel;
+        return channel;
+      }
+    }
+    assert(false, 'failed to load "assets/store.json": $json');
+    return null;
+  }
 
   Newest? parse(Map? info) {
     Newest? newest = _latest;

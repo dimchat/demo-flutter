@@ -1,8 +1,10 @@
 
+import 'package:dim_client/ok.dart';
 import 'package:dim_client/group.dart';
 import 'package:dim_client/client.dart';
 
 import '../models/config.dart';
+import '../models/newest.dart';
 import 'compat/loader.dart';
 import 'cpu/text.dart';
 
@@ -63,6 +65,15 @@ class GlobalVariable {
     // register plugins
     libraryLoader = CompatLibraryLoader();
     libraryLoader.run();
+    // register app distribution channel
+    var newest = NewestManager();
+    newest.registerStore().then((store) {
+      if (store == null) {
+        Log.error('failed to get app distribution channel (app store)');
+      } else {
+        Log.info('app distribution channel (app store): "$store".');
+      }
+    });
     // create config
     Config config = Config();
     config.load();

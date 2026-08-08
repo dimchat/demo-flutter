@@ -31,11 +31,12 @@ import '../sqlite/alias.dart';
 import '../sqlite/blocked.dart';
 import '../sqlite/muted.dart';
 
-class SharedDatabase implements AccountDBI, SessionDBI, MessageDBI,
-                                AppCustomizedInfoDBI,
-                                ConversationDBI, InstantMessageDBI, TraceDBI,
-                                RemarkDBI, BlockedDBI, MutedDBI,
-                                SpeedDBI {
+class SharedDatabase with Logging
+    implements AccountDBI, SessionDBI, MessageDBI,
+               AppCustomizedInfoDBI,
+               ConversationDBI, InstantMessageDBI, TraceDBI,
+               RemarkDBI, BlockedDBI, MutedDBI,
+               SpeedDBI {
 
   /// Account
   final PrivateKeyDBI privateKeyTable = PrivateKeyCache();
@@ -74,46 +75,136 @@ class SharedDatabase implements AccountDBI, SessionDBI, MessageDBI,
   //
 
   @override
-  Future<bool> savePrivateKey(PrivateKey key, String type, ID user,
-      {int sign = 1, required int decrypt}) async =>
-      await privateKeyTable.savePrivateKey(key, type, user,
-          sign: sign, decrypt: decrypt);
+  Future<bool> savePrivateKey(PrivateKey key, String type, ID user, {
+    int sign = 1,
+    required int decrypt,
+  }) async {
+    user = user.withoutTerminal();  // Naked ID
+    return await privateKeyTable.savePrivateKey(key, type, user, sign: sign, decrypt: decrypt);
+  }
 
   @override
-  Future<List<DecryptKey>> getPrivateKeysForDecryption(ID user) async =>
-      await privateKeyTable.getPrivateKeysForDecryption(user);
+  Future<List<DecryptKey>> getPrivateKeysForDecryption(ID user) async {
+    user = user.withoutTerminal();  // Naked ID
+    return await privateKeyTable.getPrivateKeysForDecryption(user);
+  }
 
   @override
-  Future<PrivateKey?> getPrivateKeyForSignature(ID user) async =>
-      await privateKeyTable.getPrivateKeyForSignature(user);
+  Future<PrivateKey?> getPrivateKeyForSignature(ID user) async {
+    user = user.withoutTerminal();  // Naked ID
+    return await privateKeyTable.getPrivateKeyForSignature(user);
+  }
 
   @override
-  Future<PrivateKey?> getPrivateKeyForVisaSignature(ID user) async =>
-      await privateKeyTable.getPrivateKeyForVisaSignature(user);
+  Future<PrivateKey?> getPrivateKeyForVisaSignature(ID user) async {
+    user = user.withoutTerminal();  // Naked ID
+    return await privateKeyTable.getPrivateKeyForVisaSignature(user);
+  }
 
   //
   //  Meta Table
   //
 
   @override
-  Future<bool> saveMeta(Meta meta, ID entity) async =>
-      await metaTable.saveMeta(meta, entity);
+  Future<bool> saveMeta(Meta meta, ID entity) async {
+    entity = entity.withoutTerminal();  // Naked ID
+    // check meta with ID
+    bool ok = meta.isValid && meta.matchIdentifier(entity);
+    if (!ok) {
+      logError('meta not match: $entity => $meta');
+      assert(false, 'meta not match: $entity => $meta');
+      return false;
+    }
+    return await metaTable.saveMeta(meta, entity);
+  }
 
   @override
-  Future<Meta?> getMeta(ID entity) async =>
-      await metaTable.getMeta(entity);
+  Future<Meta?> getMeta(ID entity) async {
+    entity = entity.withoutTerminal();  // Naked ID
+    return await metaTable.getMeta(entity);
+  }
 
   //
   //  Document Table
   //
 
   @override
-  Future<bool> saveDocument(Document doc, ID entity) async =>
-      await documentTable.saveDocument(doc, entity);
+  Future<bool> saveDocument(Document doc, ID entity) async {
+    String? terminal = entity.terminal;
+    if (terminal != null) {
+      entity = entity.withoutTerminal();  // Named ID
+      // check terminal in visa document
+      if (doc is Visa) {
+        // String? old = DocumentUtils.getVisaTerminal(doc);
+        String? old = doc.getString('terminal');
+        if (old == null || old == '' || old == '*') {
+          doc['terminal'] = terminal;
+        }
+      }
+    // } else if (doc is Bulletin) {
+    //   // check found of group in bulletin document
+    //   ID? founder = doc.founder;
+    //   if (founder != null) {
+    //     final gMeta = await getMeta($entity);
+    //     final fMeta = await getMeta(founder);
+    //     if (fMeta?.publicKey != gMeta!.publicKey) {
+    //       assert(false, 'founder error: $founder, group: $entity');
+    //       return false;
+    //     }
+    //   }
+    }
+    // check ID
+    ID? did = DocumentUtils.getDocumentID(doc);
+    if (did == null) {
+      logWarning('set id for document: $entity, $doc');
+      doc['did'] = entity.toString();
+    } else if (!did.isSameAs(entity)) {
+      logError('document id not match: $entity, $doc');
+      return false;
+    }
+    // check document with meta.key
+    Meta? meta = await getMeta(entity);
+    if (meta == null) {
+      assert(false, 'meta not exists: $entity');
+      return false;
+    } else if (!doc.verify(meta.publicKey)) {
+      assert(false, 'document invalid: $entity, $doc');
+      return false;
+    }
+    // OK, save to local storage
+    return await documentTable.saveDocument(doc, entity);
+  }
 
   @override
-  Future<List<Document>> getDocuments(ID entity) async =>
-      await documentTable.getDocuments(entity);
+  Future<List<Document>> getDocuments(ID entity) async {
+    String? terminal = entity.terminal;
+    if (terminal != null) {
+      entity = entity.withoutTerminal();  // Naked ID
+    }
+    // load
+    List<Document> documents = await documentTable.getDocuments(entity);
+    int total = documents.length;
+    if (terminal != null) {
+      // filter for terminal
+      List<Document> array = [];
+      int index = 0;
+      for (final doc in documents) {
+        index += 1;
+        if (doc is Visa && doc.terminal != terminal) {
+          // visa terminal not matched
+          logInfo('[$index/$total] skip visa not for: $entity/$terminal, $doc');
+        } else {
+          logInfo('[$index/$total]  got document for: $entity/$terminal, $doc');
+          array.add(doc);
+        }
+      }
+      logInfo('filter ${array.length}/$total document(s) for user: $entity/$terminal');
+      documents = array;
+    } else {
+      logInfo('loaded $total document(s) for user: $entity');
+    }
+    return documents;
+  }
 
   //
   //  User Table
@@ -125,11 +216,20 @@ class SharedDatabase implements AccountDBI, SessionDBI, MessageDBI,
   @override
   Future<bool> saveLocalUsers(List<ID> users) async => await userTable.saveLocalUsers(users);
 
-  Future<bool> addUser(ID user) async => await userTable.addUser(user);
+  Future<bool> addUser(ID user) async {
+    user = user.withoutTerminal(); // Naked ID
+    return await userTable.addUser(user);
+  }
 
-  Future<bool> removeUser(ID user) async => await userTable.removeUser(user);
+  Future<bool> removeUser(ID user) async {
+    user = user.withoutTerminal(); // Naked ID
+    return await userTable.removeUser(user);
+  }
 
-  Future<bool> setCurrentUser(ID user) async => await userTable.setCurrentUser(user);
+  Future<bool> setCurrentUser(ID user) async {
+    user = user.withoutTerminal(); // Naked ID
+    return await userTable.setCurrentUser(user);
+  }
 
   Future<ID?> getCurrentUser() async => await userTable.getCurrentUser();
 
@@ -138,70 +238,104 @@ class SharedDatabase implements AccountDBI, SessionDBI, MessageDBI,
   //
 
   @override
-  Future<List<ID>> getContacts({required ID user}) async =>
-      await contactTable.getContacts(user: user);
+  Future<List<ID>> getContacts({required ID user}) async {
+    user = user.withoutTerminal(); // Naked ID
+    return await contactTable.getContacts(user: user);
+  }
 
   @override
-  Future<bool> saveContacts(List<ID> contacts, {required ID user}) async =>
-      await contactTable.saveContacts(contacts, user: user);
+  Future<bool> saveContacts(List<ID> contacts, {required ID user}) async {
+    user = user.withoutTerminal(); // Naked ID
+    return await contactTable.saveContacts(contacts, user: user);
+  }
 
-  Future<bool> addContact(ID contact, {required ID user}) async =>
-      await contactTable.addContact(contact, user: user);
+  Future<bool> addContact(ID contact, {required ID user}) async {
+    contact = contact.withoutTerminal(); // Naked ID
+    user = user.withoutTerminal(); // Naked ID
+    return await contactTable.addContact(contact, user: user);
+  }
 
-  Future<bool> removeContact(ID contact, {required ID user}) async =>
-      await contactTable.removeContact(contact, user: user);
+  Future<bool> removeContact(ID contact, {required ID user}) async {
+    contact = contact.withoutTerminal(); // Naked ID
+    user = user.withoutTerminal(); // Naked ID
+    return await contactTable.removeContact(contact, user: user);
+  }
 
   //
   //  Remark Table
   //
 
   @override
-  Future<ContactRemark?> getRemark(ID contact, {required ID user}) async =>
-      await remarkTable.getRemark(contact, user: user);
+  Future<ContactRemark?> getRemark(ID contact, {required ID user}) async {
+    user = user.withoutTerminal(); // Naked ID
+    return await remarkTable.getRemark(contact, user: user);
+  }
 
   @override
-  Future<bool> setRemark(ContactRemark remark, {required ID user}) async =>
-      await remarkTable.setRemark(remark, user: user);
+  Future<bool> setRemark(ContactRemark remark, {required ID user}) async {
+    user = user.withoutTerminal(); // Naked ID
+    return await remarkTable.setRemark(remark, user: user);
+  }
 
   //
   //  Blocked Table
   //
 
   @override
-  Future<List<ID>> getBlockList({required ID user}) async =>
-      await blockedTable.getBlockList(user: user);
+  Future<List<ID>> getBlockList({required ID user}) async {
+    user = user.withoutTerminal(); // Naked ID
+    return await blockedTable.getBlockList(user: user);
+  }
 
   @override
-  Future<bool> saveBlockList(List<ID> contacts, {required ID user}) async =>
-      await blockedTable.saveBlockList(contacts, user: user);
+  Future<bool> saveBlockList(List<ID> contacts, {required ID user}) async {
+    user = user.withoutTerminal(); // Naked ID
+    return await blockedTable.saveBlockList(contacts, user: user);
+  }
 
   @override
-  Future<bool> addBlocked(ID contact, {required ID user}) async =>
-      await blockedTable.addBlocked(contact, user: user);
+  Future<bool> addBlocked(ID contact, {required ID user}) async {
+    contact = contact.withoutTerminal(); // Naked ID
+    user = user.withoutTerminal(); // Naked ID
+    return await blockedTable.addBlocked(contact, user: user);
+  }
 
   @override
-  Future<bool> removeBlocked(ID contact, {required ID user}) async =>
-      await blockedTable.removeBlocked(contact, user: user);
+  Future<bool> removeBlocked(ID contact, {required ID user}) async {
+    contact = contact.withoutTerminal(); // Naked ID
+    user = user.withoutTerminal(); // Naked ID
+    return await blockedTable.removeBlocked(contact, user: user);
+  }
 
   //
   //  Muted Table
   //
 
   @override
-  Future<List<ID>> getMuteList({required ID user}) async =>
-      await mutedTable.getMuteList(user: user);
+  Future<List<ID>> getMuteList({required ID user}) async {
+    user = user.withoutTerminal(); // Naked ID
+    return await mutedTable.getMuteList(user: user);
+  }
 
   @override
-  Future<bool> saveMuteList(List<ID> contacts, {required ID user}) async =>
-      await mutedTable.saveMuteList(contacts, user: user);
+  Future<bool> saveMuteList(List<ID> contacts, {required ID user}) async {
+    user = user.withoutTerminal(); // Naked ID
+    return await mutedTable.saveMuteList(contacts, user: user);
+  }
 
   @override
-  Future<bool> addMuted(ID contact, {required ID user}) async =>
-      await mutedTable.addMuted(contact, user: user);
+  Future<bool> addMuted(ID contact, {required ID user}) async {
+    contact = contact.withoutTerminal(); // Naked ID
+    user = user.withoutTerminal(); // Naked ID
+    return await mutedTable.addMuted(contact, user: user);
+  }
 
   @override
-  Future<bool> removeMuted(ID contact, {required ID user}) async =>
-      await mutedTable.removeMuted(contact, user: user);
+  Future<bool> removeMuted(ID contact, {required ID user}) async {
+    contact = contact.withoutTerminal(); // Naked ID
+    user = user.withoutTerminal(); // Naked ID
+    return await mutedTable.removeMuted(contact, user: user);
+  }
 
   //
   //  Group Table
@@ -223,11 +357,15 @@ class SharedDatabase implements AccountDBI, SessionDBI, MessageDBI,
   Future<bool> saveMembers(List<ID> members, {required ID group}) async =>
       await groupTable.saveMembers(members, group: group);
 
-  Future<bool> addMember(ID member, {required ID group}) async =>
-      await groupTable.addMember(member, group: group);
+  Future<bool> addMember(ID member, {required ID group}) async {
+    member = member.withoutTerminal(); // Naked ID
+    return await groupTable.addMember(member, group: group);
+  }
 
-  Future<bool> removeMember(ID member, {required ID group}) async =>
-      await groupTable.removeMember(member, group: group);
+  Future<bool> removeMember(ID member, {required ID group}) async {
+    member = member.withoutTerminal(); // Naked ID
+    return await groupTable.removeMember(member, group: group);
+  }
 
   @override
   Future<List<ID>> getAdministrators({required ID group}) async =>
@@ -269,12 +407,51 @@ class SharedDatabase implements AccountDBI, SessionDBI, MessageDBI,
   //
 
   @override
-Future<List<Pair<LoginCommand, ReliableMessage>>> getLoginCommandMessages(ID identifier) async =>
-      await loginTable.getLoginCommandMessages(identifier);
+Future<List<Pair<LoginCommand, ReliableMessage>>> getLoginCommandMessages(ID user) async {
+    String? terminal = user.terminal;
+    if (terminal != null) {
+      user = user.withoutTerminal(); // Naked ID
+    }
+    // load
+    var records = await loginTable.getLoginCommandMessages(user);
+    int total = records.length;
+    if (terminal != null) {
+      // filter for terminal
+      List<Pair<LoginCommand, ReliableMessage>> array = [];
+      LoginCommand cmd;
+      int index = 0;
+      for (final pair in records) {
+        cmd = pair.first;
+        index += 1;
+        if (cmd.terminal != terminal) {
+          // login terminal not matched
+          logInfo('[$index/$total]   skip login not for: $user/$terminal, $cmd');
+        } else {
+          logInfo('[$index/$total] got login record for: $user/$terminal, $cmd');
+          array.add(pair);
+        }
+      }
+      records = array;
+    } else {
+      logInfo('loaded $total login command(s) for user: $user');
+    }
+    return records;
+  }
 
   @override
-  Future<bool> saveLoginCommandMessage(ID identifier, LoginCommand content, ReliableMessage rMsg) async =>
-      await loginTable.saveLoginCommandMessage(identifier, content, rMsg);
+  Future<bool> saveLoginCommandMessage(ID user, LoginCommand content, ReliableMessage rMsg) async {
+    String? terminal = user.terminal;
+    if (terminal != null) {
+      user = user.withoutTerminal();  // Naked ID
+      // String? old = content.terminal;
+      String? old = content.getString('terminal');
+      if (old == null || old == '' || old == '*') {
+        content['terminal'] = terminal;
+      }
+    }
+    // save
+    return await loginTable.saveLoginCommandMessage(user, content, rMsg);
+  }
 
   //
   //  Provider Table

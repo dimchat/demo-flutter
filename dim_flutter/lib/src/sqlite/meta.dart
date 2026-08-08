@@ -95,11 +95,7 @@ class MetaCache extends DataCache<ID, Meta> implements MetaDBI {
 
   @override
   Future<bool> saveMeta(Meta meta, ID entity) async {
-    // 0. check valid
-    if (!checkMeta(meta, entity)) {
-      logError('meta not match: $entity');
-      return false;
-    }
+    assert(meta.isValid, 'meta invalid: $entity -> $meta');
     // 1. check old record
     Meta? old = await getMeta(entity);
     if (old != null) {
@@ -121,10 +117,6 @@ class MetaCache extends DataCache<ID, Meta> implements MetaDBI {
       'meta': meta,
     });
     return true;
-  }
-
-  bool checkMeta(Meta meta, ID identifier) {
-    return meta.isValid && meta.matchIdentifier(identifier);
   }
 
 }

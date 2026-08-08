@@ -22,6 +22,34 @@ String getDocumentTerminal(Document document) {
   return '';
 }
 
+bool _docTypeNotMatch(String? type1, String? type2) {
+  type1 ??= '';
+  type2 ??= '';
+  if (type1 == '*' || type2 == '*') {
+    return false;
+  }
+  return type1 != type2;
+}
+
+List<Document> _sortDocuments(List<Document> documents, ID entity) {
+  int total = documents.length;
+  if (total > 1) {
+    // 1. Sort documents by timestamp descending
+    DocumentUtils.sortDocuments(documents);
+    // 2. Remove duplicated items by signature
+    DocumentUtils.tidyDocuments(documents);
+    // TODO: remove expired document(s)
+    if (documents.length > 8) {
+      documents.length = 8;
+    }
+  }
+  int count = documents.length;
+  if (count < total) {
+    Log.info('trim $count/$total document(s) for $entity');
+  }
+  return documents;
+}
+
 
 Document _extractDocument(ResultSet resultSet, int index) {
   String? did = resultSet.getString('did');
@@ -67,67 +95,58 @@ class _DocumentTable extends DataTableHandler<Document> {
   static const List<String> _insertVisaColumns = ["did", "terminal", "type", "data", "signature"];
 
   // protected
-  Future<List<Document>> loadDocuments(ID identifier) async {
-    ID did = identifier.withoutTerminal();
-    var cond = SQLConditions.compare('did', '=', did.toString());
-    if (identifier.isUser) {
+  Future<List<Document>> loadDocuments(final ID entity) async {
+    var cond = SQLConditions.compare('did', '=', entity.toString());
+    if (entity.isUser) {
       // user documents were moved to "t_visa"
       return await select(_visaTable, columns: _selectVisaColumns, conditions: cond);
     }
     // load group documents
-    assert(identifier.isGroup, 'group ID error: $identifier');
+    assert(entity.isGroup, 'group ID error: $entity');
     return await select(_table, columns: _selectColumns, conditions: cond);
   }
 
   // protected
-  Future<bool> updateDocument(Document doc, ID identifier) async {
-    ID did = identifier.withoutTerminal();
+  Future<bool> updateDocument(Document doc, final ID entity) async {
     String type = doc.type ?? '';
     String? data = doc.getString('data');
     String? signature = doc.getString('signature');
-    var cond = SQLConditions.compare('did', '=', did.toString());
+    var cond = SQLConditions.compare('did', '=', entity.toString());
     cond = cond.andCompare('type', '=', type);
     Map<String, dynamic> values = {
       'data': data,
       'signature': signature,
     };
-    if (identifier.isUser) {
+    if (entity.isUser) {
       // update user document into "t_visa"
       String terminal = getDocumentTerminal(doc);
-      if (terminal.isEmpty) {
-        terminal = identifier.terminal ?? '';
-      }
       cond = cond.andCompare('terminal', '=', terminal);
       return await update(_visaTable, values: values, conditions: cond) > 0;
     }
     // update group document
-    assert(identifier.isGroup, 'group ID error: $identifier');
+    assert(entity.isGroup, 'group ID error: $entity');
     return await update(_table, values: values, conditions: cond) > 0;
   }
 
   // protected
-  Future<bool> insertDocument(Document doc, ID identifier) async {
-    ID did = identifier.withoutTerminal();
+  Future<bool> insertDocument(Document doc, final ID entity) async {
     String type = doc.type ?? '';
     String? data = doc.getString('data');
     String? signature = doc.getString('signature');
     List values = [
-      did.toString(),
+      entity.toString(),
       type,
       data,
       signature,
     ];
-    if (identifier.isUser) {
+    if (entity.isUser) {
       // add user document into "t_visa"
       String terminal = getDocumentTerminal(doc);
-      if (terminal.isEmpty) {
-        terminal = identifier.terminal ?? '';
-      }
       values.insert(1, terminal);
       return await insert(_visaTable, columns: _insertVisaColumns, values: values) > 0;
     }
     // add group document
-    assert(identifier.isGroup, 'group ID error: $identifier');
+    assert(entity.isGroup, 'group ID error: $entity');
     return await insert(_table, columns: _insertColumns, values: values) > 0;
   }
 
@@ -149,63 +168,82 @@ class _DocTask extends DbTask<ID, List<Document>> {
 
   @override
   Future<List<Document>?> readData() async {
-    ID did = _entity.withoutTerminal();
-    var docs = await _table.loadDocuments(did);
-    if (docs.length > 1) {
-      var array = DocumentUtils.trimDocuments(docs);
-      logInfo('trim for: $_entity, ${array.length}/${docs.length} documents');
-      if (array.length > 8) {
-        array = array.sublist(0, 8);
-      }
-      docs = array;
-    }
-    return docs;
+    var docs = await _table.loadDocuments(_entity);
+    return _sortDocuments(docs, _entity);
   }
 
   @override
   Future<bool> writeData(List<Document> documents) async {
-    Document? doc = _newDocument;
-    if (doc == null) {
+    Document? newDoc = _newDocument;
+    if (newDoc == null) {
       assert(false, 'should not happen: $_entity');
       return false;
     }
-    ID identifier = doc.identifier;
-    assert(_entity.isSameAs(identifier), 'document ID not matched: $_entity, $doc');
-    String type = doc.type ?? '';
-    String terminal = getDocumentTerminal(doc);
+    String? newType = newDoc.type;
+    String newSignature = newDoc.getString('signature') ?? '';
+    String newTerminal = getDocumentTerminal(newDoc);
+    // check did
+    ID? did = newDoc.identifier;
+    if (did == null) {
+      logWarning('document id not found: $_entity, $newDoc');
+      // return false;
+    } else if (!did.isSameAs(_entity)) {
+      assert(false, 'document id not matched: $_entity, $newDoc');
+      return false;
+    }
+    //
+    //  0. check old documents
+    //
     bool update = false;
-    Document item;
-    // check old documents
-    for (int index = documents.length - 1; index >= 0; --index) {
-      item = documents[index];
-      // TODO: check did
-      if (identifier != item['did']) {
-        assert(false, 'document error: $identifier, $item');
-        continue;
-      } else if (item.type != type) {
-        logInfo('skip document: $identifier, type=$type, $item');
-        continue;
-      } else if (identifier.isUser && getDocumentTerminal(item) != terminal) {
-        logInfo('skip visa: $identifier, terminal=$terminal, $item');
-        continue;
-      } else if (item == doc) {
-        logWarning('same document, no need to update: $identifier');
+    int total = documents.length;
+    int index = 0;
+    for (Document item in documents) {
+      index += 1;
+      // check document id
+      did = item.identifier;
+      if (did == null || !did.isSameAs(_entity)) {
+        logError('[$index/$total] document id not matched: $_entity, $did => $item');
+        // TODO: remove it?
+        assert(did == null, 'document error: $_entity, $item');
+        // continue;
+      }
+      // check duplicated
+      if (item.getString('signature') == newSignature) {
+        logWarning('[$index/$total] document exists: $did, sign=$newSignature.');
+        return true;
+      } else if (item == newDoc) {
+        logWarning('[$index/$total] same document, no need to update: $did.');
         return true;
       }
-      // old record found, update it
-      documents[index] = doc;
+      // check terminal & type
+      String device = getDocumentTerminal(item);
+      if (device != newTerminal) {
+        logInfo('[$index/$total] skip document: $did, terminal=$device <> $newTerminal.');
+        continue;
+      } else if (_docTypeNotMatch(item.type, newType)) {
+        logInfo('[$index/$total] skip document: $did, type=${item.type} <> $newType.');
+        continue;
+      }
+      // old record found (same type, same terminal),
+      // update it
+      logInfo('[$index/$total] update document: $did, terminal=$newTerminal type=$newType.');
+      documents[index - 1] = newDoc;
       update = true;
+      // break;
     }
     if (update) {
-      DocumentUtils.sortDocuments(documents);
+      _sortDocuments(documents, _entity);
       // update old record
-      return await _table.updateDocument(doc, identifier);
+      return await _table.updateDocument(newDoc, _entity);
+    } else {
+      DateTime? when = Converter.getDateTime(newDoc.getProperty('created_time'));
+      logInfo('insert new document: $_entity "$newTerminal", type="$newType", created=[$when].');
     }
     // add new record
-    var ok = await _table.insertDocument(doc, identifier);
+    var ok = await _table.insertDocument(newDoc, _entity);
     if (ok) {
-      documents.add(doc);
-      DocumentUtils.sortDocuments(documents);
+      documents.add(newDoc);
+      _sortDocuments(documents, _entity);
     }
     return ok;
   }
@@ -217,69 +255,56 @@ class DocumentCache extends DataCache<ID, List<Document>> implements DocumentDBI
 
   final _DocumentTable _table = _DocumentTable();
 
-  _DocTask _newTask(ID entity, {Document? newDocument}) =>
-      _DocTask(mutexLock, cachePool, _table, entity.withoutTerminal(), newDocument: newDocument);
+  _DocTask _newTask(ID entity, {Document? newDocument}) {
+    assert(entity.terminal == null, 'not a naked id: $entity');
+    return _DocTask(mutexLock, cachePool, _table, entity, newDocument: newDocument);
+  }
 
   @override
   Future<List<Document>> getDocuments(ID entity) async {
     var task = _newTask(entity);
-    var documents = await task.load() ?? [];
-    // filter by terminal
-    var docs = documents;
-    var terminal = entity.terminal;
-    if (terminal != null && terminal.isNotEmpty) {
-      docs = [];
-      for (var item in documents) {
-        if (item is Visa && item.terminal != terminal) {
-          // visa terminal not matched
-          continue;
-        }
-        docs.add(item);
-      }
-    }
-    logInfo('loaded ${docs.length}/${documents.length} document(s) for $entity');
-    return docs;
+    return await task.load() ?? [];
   }
 
   @override
-  Future<bool> saveDocument(Document doc, ID identifier) async {
-    //
-    //  0. check valid
-    //
-    assert(identifier == doc['did'], 'document ID not matched: $identifier, $doc');
-    if (!doc.isValid) {
-      logError('document not valid: $identifier');
-      return false;
-    }
+  Future<bool> saveDocument(Document doc, ID entity) async {
+    assert(doc.isValid, 'document invalid: $entity -> $doc');
     //
     //  1. load old records
     //
-    var task = _newTask(identifier);
+    var task = _newTask(entity);
     var documents = await task.load();
     if (documents == null) {
       documents = [];
     } else {
-      // TODO: check terminal
-      // check time
+      String newTerm = getDocumentTerminal(doc);
+      String? newType = doc.type;
       DateTime? newTime = doc.time;
-      if (newTime != null) {
-        DateTime? oldTime;
-        for (Document item in documents) {
-          oldTime = item.time;
-          if (oldTime != null && oldTime.isAfter(newTime)) {
-            logWarning('ignore expired document: $doc');
-            return false;
-          }
+      DateTime? oldTime;
+      for (final item in documents) {
+        if (getDocumentTerminal(item) != newTerm) {
+          continue;
+        } else if (_docTypeNotMatch(item.type, newType)) {
+          continue;
+        } else if (newTime == null) {
+          assert(false, 'document time error: $entity, $item');
+          continue;
+        }
+        // check expired
+        oldTime = item.time;
+        if (oldTime != null && oldTime.isAfter(newTime)) {
+          logWarning('ignore expired document: $doc');
+          return false;
         }
       }
     }
     //
     //  2. save new record
     //
-    task = _newTask(identifier, newDocument: doc);
+    task = _newTask(entity, newDocument: doc);
     bool ok = await task.save(documents);
     if (!ok) {
-      logError('failed to save document: $identifier');
+      logError('failed to save document: $entity');
       return false;
     }
     //
@@ -287,7 +312,7 @@ class DocumentCache extends DataCache<ID, List<Document>> implements DocumentDBI
     //
     var nc = NotificationCenter();
     nc.postNotification(NotificationNames.kDocumentUpdated, this, {
-      'ID': identifier,
+      'ID': entity,
       'document': doc,
     });
     return true;

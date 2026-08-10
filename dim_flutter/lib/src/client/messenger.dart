@@ -5,7 +5,6 @@ import 'package:dim_client/sdk.dart';
 import 'package:dim_client/common.dart';
 import 'package:dim_client/client.dart';
 
-import '../models/amanuensis.dart';
 import '../models/shield.dart';
 import '../models/vestibule.dart';
 import '../network/velocity.dart';
@@ -193,15 +192,6 @@ class SharedMessenger extends ClientMessenger {
     content['provider'] = provider.toString();
     content['stations'] = stations;
     await sendContent(content, sender: null, receiver: master, priority: 1);
-  }
-
-  @override
-  Future<bool> saveInstantMessage(InstantMessage iMsg) async {
-    Amanuensis clerk = Amanuensis();
-    return await clerk.saveInstantMessage(iMsg).onError((error, stackTrace) {
-      Log.error('failed to save message: $error');
-      return false;
-    });
   }
 
 }

@@ -5,6 +5,7 @@ import 'package:dim_client/cpu.dart';
 import 'package:dim_client/plugins.dart';
 
 import '../../common/protocol/search.dart';
+import '../../models/amanuensis.dart';
 import '../../ui/translation.dart';
 import '../cpu/translate.dart';
 import '../cpu/text.dart';
@@ -64,6 +65,29 @@ class _CompatExtensionLoader extends ClientExtensionLoader {
     // Command.setFactory(StorageCommand.CONTACTS, StorageCommand::new);
     // Command.setFactory(StorageCommand.PRIVATE_KEY, StorageCommand::new);
 
+  }
+
+  @override
+  void registerCustomizedHandlers() {
+    super.registerCustomizedHandlers();
+
+    var filter = sharedMessageExtensions.customizedFilter;
+    // 'chat.dim.messenger:chat_history'
+    (filter as AppCustomizedFilter).setContentHandler(
+      app: SyncChatContent.APP,
+      mod: SyncChatContent.MOD,
+      handler: _ChatHistoryHandler(),
+    );
+  }
+
+}
+
+class _ChatHistoryHandler extends ChatHistoryHandler {
+
+  @override
+  Future<bool> saveInstantMessage(InstantMessage iMsg) async {
+    Amanuensis clerk = Amanuensis();
+    return await clerk.saveInstantMessage(iMsg);
   }
 
 }

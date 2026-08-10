@@ -1,15 +1,18 @@
 
+import 'package:flutter/services.dart';
+
 import 'package:dim_client/common.dart';
 import 'package:dim_client/ok.dart';
+import 'package:dim_client/sdk.dart';
 
 import '../../ui/nav.dart';
 import 'device.dart';
 
 
-class SysEnv with Logging {
-  factory SysEnv() => _instance;
-  static final SysEnv _instance = SysEnv._internal();
-  SysEnv._internal();
+class SysInfo with Logging {
+  factory SysInfo() => _instance;
+  static final SysInfo _instance = SysInfo._internal();
+  SysInfo._internal();
 
   final DeviceInfo deviceInfo = DeviceInfo();
   final AppPackageInfo packageInfo = AppPackageInfo();
@@ -17,6 +20,11 @@ class SysEnv with Logging {
   Future<bool> beforeLaunchApp() async {
     // Check Brightness & Language
     await initFacade();
+    // Load settings
+    var sys = SysEnv();
+    sys.setAssetLoader(_AssetLoader());
+    var text = await sys.loadString(sys.SETTINGS);
+    logInfo('load settings: $text');
     // Load device + package info
     bool ok1 = await deviceInfo.loadDeviceInfo();
     bool ok2 = await packageInfo.loadPackageInfo();
@@ -27,7 +35,7 @@ class SysEnv with Logging {
       String device = deviceInfo.systemDevice;
       String terminal = _normalizeDeviceName(device);
       if (terminal.isNotEmpty) {
-        Register.terminal = terminal;
+        sys.terminal = terminal;
       }
       logInfo('device id: "$device" -> "$terminal" as visa terminal');
     }
@@ -56,4 +64,35 @@ String _trimTerminal(String device, [String sep = '_']) {
     return device;
   }
   return device.substring(start, end + 1);
+}
+
+
+class _AssetLoader implements AssetLoader {
+
+  @override
+  Future<String> loadString(String key, {bool cache = true}) async {
+    return await rootBundle.loadString(key, cache: cache);
+  }
+
+}
+
+
+extension SyncMessageExtension on Message {
+
+  String? get syncTerminal {
+    String? fromWhere = getString('from');
+    if (fromWhere == null) {
+      return null;
+    }
+    int pos = fromWhere.indexOf('/');
+    if (pos < 0) {
+      return null;
+    }
+    String terminal = fromWhere.substring(pos + 1);
+    if (terminal == SysEnv().terminal) {
+      return null;
+    }
+    return terminal;
+  }
+
 }

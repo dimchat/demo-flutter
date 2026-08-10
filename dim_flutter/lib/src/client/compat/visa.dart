@@ -4,7 +4,6 @@ import 'package:dim_client/ok.dart';
 import 'package:dim_client/sdk.dart';
 
 import '../../common/platform.dart';
-import '../../models/newest.dart';
 import '../../ui/language.dart';
 import '../shared.dart';
 
@@ -25,8 +24,8 @@ extension SysEnvExtension on Visa {
     visa.setProperty('sys', _getDeviceInfo(visa));
     // reset visa terminal
     var terminal = visa['terminal'];
-    visa['terminal'] = Register.terminal;
-    Log.info('update visa terminal: "$terminal" => "${Register.terminal}"');
+    visa['terminal'] = SysEnv().terminal;
+    Log.info('update visa terminal: "$terminal" => "${SysEnv().terminal}"');
     return visa;
   }
 
@@ -45,14 +44,14 @@ Map _getAppInfo(Visa visa) {
     };
   }
   var lang = LanguageDataSource();
-  var newest = NewestManager();
+  var sys = SysEnv();
   var shared = GlobalVariable();
   var client = shared.terminal;
   info['id'] = client.packageName;
   info['name'] = client.displayName;
   info['version'] = client.versionName;
   info['build'] = client.buildNumber;
-  info['store'] = newest.store;
+  info['store'] = sys.storeName;
   info['language'] = lang.getCurrentLanguageCode();
   return info;
 }

@@ -253,7 +253,7 @@ class Client extends Terminal {
   //  DeviceMixin
   //
 
-  final SysEnv _sys = SysEnv();
+  final _sys = SysInfo();
 
   String get packageName => _sys.packageInfo.packageName;
 

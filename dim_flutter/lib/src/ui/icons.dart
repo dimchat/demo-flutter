@@ -49,6 +49,7 @@ abstract class AppIcons {
   static const IconData  unavailableIcon = CupertinoIcons.slash_circle;
   // Msg Status
   static const IconData   msgDefaultIcon = CupertinoIcons.ellipsis;
+  static const IconData      msgSyncIcon = CupertinoIcons.arrow_right_arrow_left;
   static const IconData msgEncryptedIcon = CupertinoIcons.lock;
   static const IconData   msgWaitingIcon = CupertinoIcons.ellipsis;
   static const IconData      msgSentIcon = Icons.done;

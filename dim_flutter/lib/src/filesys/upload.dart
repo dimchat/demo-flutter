@@ -105,11 +105,9 @@ class SharedFileUploader with Logging {
     //
     //  2. load enigma secrets
     //
-    String json = await rootBundle.loadString('assets/enigma.json');
-    Map? info = JSONMap.decode(json);
-    List? secrets = info?['secrets'];
-    if (secrets == null) {
-      assert(false, 'failed to update enigma secrets: $json');
+    List secrets = SysEnv().enigmaSecrets;
+    if (secrets.isEmpty) {
+      logError('failed to update enigma secrets');
       return false;
     }
     var items = UploadServer.parseEnigmaItems(secrets);

@@ -1,5 +1,4 @@
 
-import 'package:dim_client/sdk.dart';
 import 'package:dim_client/common.dart';
 import 'package:dim_client/cpu.dart';
 
@@ -24,7 +23,8 @@ class SharedContentProcessorCreator extends ClientContentProcessorCreator {
 
       // default
       case ContentType.ANY:
-      case '*':
+      case 'any':
+      case '0':
         return AnyContentProcessor(facebook!, messenger!);
 
     }

@@ -39,7 +39,7 @@ class ConfigLoader with Logging {
   Future<Map> loadAssetsFile(String assets) async {
     logInfo('loading config: $assets');
     try {
-      String json = await rootBundle.loadString(assets);
+      String json = await rootBundle.loadString(assets, cache: false);
       var config = JSONMap.decode(json);
       if (config == null) {
         assert(false, 'config assets error: $assets -> $json');

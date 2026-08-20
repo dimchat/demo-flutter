@@ -33,7 +33,7 @@ import 'dart:typed_data';
 import 'package:flutter/cupertino.dart';
 
 import 'package:dim_client/ok.dart';
-import 'package:dim_client/sdk.dart';
+import 'package:dim_client/common.dart';
 
 import '../widgets/browser.dart';
 

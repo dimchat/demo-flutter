@@ -101,6 +101,14 @@ abstract class AppIcons {
   static const IconData exportAccountIcon = CupertinoIcons.lock_shield;
   // static const IconData exportAccountIcon = Icons.vpn_key_outlined;
   // static const IconData exportAccountIcon = Icons.account_balance_wallet_outlined;
+
+  static const IconData       devicesIcon = Icons.devices;
+  static const IconData androidDeviceIcon = Icons.phone_android;
+  static const IconData     iosDeviceIcon = Icons.phone_iphone;
+  static const IconData   macosDeviceIcon = Icons.desktop_mac;
+  static const IconData windowsDeviceIcon = Icons.desktop_windows;
+  static const IconData unknownDeviceIcon = Icons.device_unknown;
+
   static const IconData          burnIcon = CupertinoIcons.timer;
 
   static const IconData       storageIcon = CupertinoIcons.square_stack_3d_up;

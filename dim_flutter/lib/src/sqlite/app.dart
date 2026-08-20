@@ -49,7 +49,7 @@ Mapper _extractCustomizedInfo(ResultSet resultSet, int index) {
   try {
     Map? info = JSONMap.decode(json);
     if (info != null) {
-      content = Dictionary(info);
+      content = Dictionary(info.asMapping());
     }
   } catch(e, st) {
     Log.error('failed to extract message: $json');
@@ -57,10 +57,10 @@ Mapper _extractCustomizedInfo(ResultSet resultSet, int index) {
   }
   if (content == null) {
     // build error message
-    content = Dictionary({
+    content = Dictionary(<String, dynamic>{
       'text': json,
       'error': 'failed to extract message',
-    });
+    }.asMapping());
     DateTime? time = resultSet.getDateTime('time');
     if (time != null) {
       content.setDateTime('time', time);

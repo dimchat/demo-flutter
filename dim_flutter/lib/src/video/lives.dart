@@ -219,7 +219,7 @@ Widget _getChannelButton(ChannelStream src, TVBox tvBox) {
         channel.setValue('unfold', unfold != true);
         // post notification
         var nc = lnc.NotificationCenter();
-        nc.postNotification('PlayerChannelsRefresh', null, {});
+        nc.postNotification(LiveChannelListPage.kPlayerChannelsRefresh, null, {});
       },
       child: Text(name,
         style: isPlaying ? Styles.livePlayingStyle : Styles.liveChannelStyle,

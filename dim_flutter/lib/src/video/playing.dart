@@ -73,14 +73,14 @@ class MediaItem extends Dictionary {
     required String title,
     String? filename,
     Uri? cover,
-  }) => MediaItem({
+  }) => MediaItem(<String, dynamic>{
     'URL': m3u8.toString(),
     'url': m3u8.toString(),
     'title': title,
     'filename': filename ?? Paths.filename(m3u8.path),
     'cover': cover?.toString(),
     'snapshot': cover?.toString(),
-  });
+  }.asMapping());
 
 }
 

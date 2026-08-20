@@ -28,6 +28,7 @@
  * SOFTWARE.
  * =============================================================================
  */
+import 'package:dim_client/common.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -84,7 +85,9 @@ class VideoPlayerPage extends StatefulWidget {
   }) => showPage(
     context: context,
     builder: (context) => VideoPlayerPage(MediaItem(null),
-      TVBox(livesUrl, {'url': livesUrl.toString()},),
+      TVBox(livesUrl, <String, dynamic>{
+        'url': livesUrl.toString(),
+      }.asMapping()),
       onShare: onShare,
     ),
   );

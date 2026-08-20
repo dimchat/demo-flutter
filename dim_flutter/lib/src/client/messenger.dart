@@ -1,7 +1,6 @@
 import 'dart:typed_data';
 
 import 'package:dim_client/ok.dart';
-import 'package:dim_client/sdk.dart';
 import 'package:dim_client/common.dart';
 import 'package:dim_client/client.dart';
 
@@ -126,7 +125,7 @@ class SharedMessenger extends ClientMessenger {
     //
     //  3. save the new visa document
     //
-    var archivist = facebook.archivist;
+    var archivist = facebook.barrack;
     bool? ok = await archivist?.saveDocument(clone, user.identifier);
     assert(ok == true, 'failed to save document: $clone');
     logWarning('visa updated: $ok, $clone');

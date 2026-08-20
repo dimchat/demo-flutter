@@ -31,7 +31,6 @@
 import 'dart:typed_data';
 
 import 'package:dim_client/client.dart';
-import 'package:dim_client/sdk.dart';
 import 'package:dim_client/common.dart';
 
 import '../client/cpu/handshake.dart';
@@ -75,7 +74,7 @@ class StationSpeeder {
   ///   DataSource for Station
   ///
 
-  late final _StationDataSource _dataSource = _StationDataSource();
+  final _StationDataSource _dataSource = _StationDataSource();
 
   Future<void> reload() async => await _dataSource.reload();
 

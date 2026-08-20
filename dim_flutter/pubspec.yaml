@@ -83,12 +83,13 @@ dependencies:
   startrek: 1.2.0
   stargate: 1.2.0
 
-  mkm: 2.3.6
-  dkd: 2.3.6
-  dimp: 2.3.6
-  dimsdk: 2.3.6
-  dim_plugins: 2.3.6
-  dim_client: 1.5.8
+  mkm: 2.4.2
+  dkd: 2.4.1
+  dimp: 2.4.1
+  dimsdk: 2.4.0
+  dimax: 2.4.0
+  dimap: 2.1.0
+  dim_client: 1.6.0
 
   tvbox: 1.0.0
 

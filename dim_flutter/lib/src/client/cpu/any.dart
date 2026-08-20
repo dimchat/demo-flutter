@@ -1,5 +1,5 @@
 
-import 'package:dim_client/sdk.dart';
+import 'package:dim_client/common.dart';
 
 class AnyContentProcessor extends BaseContentProcessor {
   AnyContentProcessor(super.facebook, super.messenger);

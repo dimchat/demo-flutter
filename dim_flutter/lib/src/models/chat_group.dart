@@ -5,7 +5,6 @@ import 'package:get/get.dart';
 
 import 'package:dim_client/ok.dart' as lnc;
 import 'package:dim_client/ok.dart';
-import 'package:dim_client/sdk.dart';
 import 'package:dim_client/common.dart';
 import 'package:dim_client/group.dart';
 import 'package:dim_client/client.dart';
@@ -323,7 +322,7 @@ class GroupInfo extends Conversation with Logging {
       return 'Failed to sign group document';
     }
     // 3. save into local storage and broadcast it
-    var archivist = shared.facebook.archivist;
+    var archivist = shared.facebook.barrack;
     var ok = await archivist?.saveDocument(bulletin, group);
     if (ok == true) {
       Log.warning('group document saved: $group');

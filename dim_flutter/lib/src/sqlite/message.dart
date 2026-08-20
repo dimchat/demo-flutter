@@ -1,6 +1,6 @@
 
 import 'package:dim_client/ok.dart';
-import 'package:dim_client/sdk.dart';
+import 'package:dim_client/common.dart';
 
 import '../common/dbi/message.dart';
 import '../common/constants.dart';
@@ -203,7 +203,7 @@ class InstantMessageTable extends DataTableHandler<InstantMessage> implements In
       info = iMsg.copyMap(false);
       info['content'] = body;
     } else {
-      info = iMsg.toMap();
+      info = iMsg.toMap().asMap();
     }
     // serializing without 'data'
     String msg = JSON.encode(info);

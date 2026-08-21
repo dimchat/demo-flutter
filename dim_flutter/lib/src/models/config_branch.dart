@@ -74,14 +74,14 @@ class ConfigBranch with Logging {
     if (info is Map) {
       var inner = info[name];
       if (inner == null) {
-        container = {name: info};
+        container = <String, dynamic>{name: info};
       } else {
         // already wrapped
         container = info;
       }
     } else {
       assert(info is List, 'config branch error: "$name", $info');
-      container = {name: info};
+      container = <String, dynamic>{name: info};
     }
     //
     //  2. save

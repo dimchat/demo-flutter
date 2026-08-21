@@ -93,7 +93,7 @@ class Config with Logging {
   Future<Config> load() async {
     Map? cnf = _info;
     if (cnf == null) {
-      _info = {};
+      _info = <String, dynamic>{};
       //
       //  1. load from cache path
       //

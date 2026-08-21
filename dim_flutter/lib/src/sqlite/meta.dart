@@ -1,6 +1,5 @@
 
 import 'package:dim_client/ok.dart';
-import 'package:dim_client/sdk.dart';
 import 'package:dim_client/common.dart';
 
 import '../common/constants.dart';
@@ -15,7 +14,7 @@ Meta _extractMeta(ResultSet resultSet, int index) {
   String? json = resultSet.getString('pub_key');
   Map? key = JSON.decode(json!);
 
-  Map info = {
+  Map<String, dynamic> info = {
     'version': type,
     'type': type,
     'key': key,

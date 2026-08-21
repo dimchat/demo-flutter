@@ -173,7 +173,7 @@ class PortableFileUploadTask extends PortableNetworkUpper {
     //
     //  2. create with PNF
     //
-    pnf['enigma'] = {
+    pnf['enigma'] = <String, dynamic>{
       'API': url,
       'keys': api.keys,
     };

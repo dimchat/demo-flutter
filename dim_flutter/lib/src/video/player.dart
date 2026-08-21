@@ -135,7 +135,7 @@ class _VideoAppState extends State<VideoPlayerPage> with Logging implements lnc.
     await _playerController.closeVideo();
     var filename = Paths.filename(url.path);
     _error = null;
-    widget.playingItem.refresh({
+    widget.playingItem.refresh(<String, dynamic>{
       'url': url.toString(),
       'URL': url.toString(),
       'title': title,

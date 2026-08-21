@@ -1,6 +1,5 @@
 
 import 'package:dim_client/ok.dart';
-import 'package:dim_client/sdk.dart';
 import 'package:dim_client/common.dart';
 
 import '../common/constants.dart';
@@ -518,7 +517,7 @@ class Amanuensis with Logging {
       logWarning('ignore receipt for customized content: ${env.sender} -> ${env.receiver}, ${env.type}');
       return true;
     }
-    Map mta = {
+    Map<String, dynamic> mta = {
       'ID': iMsg.sender.toString(),
       'did': iMsg.sender.toString(),
       'time': content['time'],

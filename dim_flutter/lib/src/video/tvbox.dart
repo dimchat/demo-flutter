@@ -120,14 +120,14 @@ class TVBox extends Dictionary with Logging {
           sources.add(src);
         }
         if (sources.isNotEmpty) {
-          items.add(LiveChannel({
+          items.add(LiveChannel(<String, dynamic>{
             'name': mem.name,
             'streams': sources,
           }));
         }
       }
       if (items.isNotEmpty) {
-        sections.add(LiveGenre({
+        sections.add(LiveGenre(<String, dynamic>{
           'title': grp.title,
           'channels': items,
         }));

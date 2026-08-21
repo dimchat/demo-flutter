@@ -174,7 +174,7 @@ class SharedMessenger extends ClientMessenger {
     }
     List stations = [];
     for (VelocityMeter item in meters) {
-      stations.add({
+      stations.add(<String, dynamic>{
         'host': item.host,
         'port': item.port,
         'response_time': item.responseTime,

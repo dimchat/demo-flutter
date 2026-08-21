@@ -2,7 +2,6 @@ import 'dart:typed_data';
 
 import 'package:dim_client/ok.dart';
 import 'package:dim_client/ws.dart';
-import 'package:dim_client/sdk.dart';
 import 'package:dim_client/common.dart';
 import 'package:dim_client/client.dart';
 import 'package:pnf/client.dart' show URLHelper;
@@ -95,7 +94,7 @@ class SharedEmitter extends Emitter implements Observer {
     }
     logInfo('get task for file: $filename');
     // file data failed to upload, mark it error
-    iMsg['error'] = {
+    iMsg['error'] = <String, dynamic>{
       'message': 'failed to upload file',
     };
     await _saveInstantMessage(iMsg);

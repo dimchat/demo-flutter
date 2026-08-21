@@ -52,7 +52,7 @@ class UploadServer with ClassNameMixIn {
         continue;
       } else {
         // default: HEX encoding
-        enigma = EnigmaItem.parse({
+        enigma = EnigmaItem.parse(<String, dynamic>{
           "index": sec.substring(0, 6),
           "secret": 'hex,$sec',
         });

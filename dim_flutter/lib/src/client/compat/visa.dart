@@ -1,7 +1,6 @@
 
 import 'package:dim_client/common.dart';
 import 'package:dim_client/ok.dart';
-import 'package:dim_client/sdk.dart';
 
 import '../../common/platform.dart';
 import '../../ui/language.dart';
@@ -34,12 +33,12 @@ extension SysEnvExtension on Visa {
 Map _getAppInfo(Visa visa) {
   var info = visa.getProperty('app');
   if (info == null) {
-    info = {};
+    info = <String, dynamic>{};
   } else if (info is Map) {
     // app info already exist, update it
   } else {
     assert(info is String, 'invalid app info: $info');
-    info = {
+    info = <String, dynamic>{
       'app': info,
     };
   }
@@ -59,12 +58,12 @@ Map _getAppInfo(Visa visa) {
 Map _getDeviceInfo(Visa visa) {
   var info = visa.getProperty('sys');
   if (info == null) {
-    info = {};
+    info = <String, dynamic>{};
   } else if (info is Map) {
     // device info already exist, update it
   } else {
     assert(info is String, 'invalid device info: $info');
-    info = {
+    info = <String, dynamic>{
       'sys': info,
     };
   }

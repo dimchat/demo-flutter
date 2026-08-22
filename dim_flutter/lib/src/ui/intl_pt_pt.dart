@@ -155,6 +155,10 @@ final Map<String, String> intlPtPt = {
   'Change Avatar': 'Alterar Avatar',
   'Update & Broadcast': 'Atualizar e Transmitir',
 
+  'Devices': 'Dispositivos',
+  'My Devices': 'Os meus dispositivos',
+  'Multi-device login': 'Início de sessão multi-dispositivo',
+
   'System': 'Sistema',
   'Light': 'Claro',
   'Dark': 'Escuro',
@@ -230,6 +234,8 @@ final Map<String, String> intlPtPt = {
   'Message is rejected': 'Mensagem foi rejeitada',
   'Safely delivered': 'Entregue com segurança',
   'Safely delivered to @count members': 'Entregue com segurança a @count membro(s)',
+  'Message delivery timeout': 'Tempo limite de envio de mensagem esgotado.',
+  'Synchronized from @terminal': 'Sincronizado a partir de @terminal.',
 
   'Draft': 'Rasura',
   'Mentioned': 'Você foi mencionado',

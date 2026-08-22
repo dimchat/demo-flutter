@@ -155,6 +155,10 @@ final Map<String, String> intlDeDe = {
   'Change Avatar': 'Avatar ändern',
   'Update & Broadcast': 'Aktualisieren & Senden',
 
+  'Devices': 'Geräte',
+  'My Devices': 'Meine Geräte',
+  'Multi-device login': 'Multi-Geräte-Anmeldung',
+
   'System': 'System',
   'Light': 'Hell',
   'Dark': 'Dunkel',
@@ -230,6 +234,8 @@ final Map<String, String> intlDeDe = {
   'Message is rejected': 'Nachricht wurde abgelehnt',
   'Safely delivered': 'Sicher zugestellt',
   'Safely delivered to @count members': 'Sicher an @count Mitglieder zugestellt',
+  'Message delivery timeout': 'Zeitüberschreitung beim Senden der Nachricht.',
+  'Synchronized from @terminal': 'Synchronisiert von @terminal.',
 
   'Draft': 'Entwurf',
   'Mentioned': 'Du wurdest erwähnt',

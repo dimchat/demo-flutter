@@ -155,6 +155,10 @@ final Map<String, String> intlBnBd = {
   'Change Avatar': 'অবতার পরিবর্তন করুন',
   'Update & Broadcast': 'আপডেট এবং ব্রডকাস্ট',
 
+  'Devices': 'ডিভাইস',
+  'My Devices': 'আমার ডিভাইস',
+  'Multi-device login': 'মাল্টি-ডিভাইস লগইন',
+
   'System': 'সিস্টেম',
   'Light': 'হালকা',
   'Dark': 'অন্ধকার',
@@ -230,6 +234,8 @@ final Map<String, String> intlBnBd = {
   'Message is rejected': 'বার্তা প্রত্যাখ্যান',
   'Safely delivered': 'নিরাপদে পৌঁছেছে',
   'Safely delivered to @count members': 'নিরাপদে @count সদস্যদের কাছে পৌঁছেছে',
+  'Message delivery timeout': 'বার্তা পাঠানোর সময় শেষ হয়েছে।',
+  'Synchronized from @terminal': '@terminal থেকে সিঙ্ক করা হয়েছে।',
 
   'Draft': 'খসড়া',
   'Mentioned': 'তোমার উল্লেখ হয়েছে',

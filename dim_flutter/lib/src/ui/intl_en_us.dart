@@ -154,6 +154,10 @@ final Map<String, String> intlEnUs = {
   'Change Avatar': 'Change Avatar',
   'Update & Broadcast': 'Update & Broadcast',
 
+  'Devices': 'Devices',
+  'My Devices': 'My Devices',
+  'Multi-device login': 'Multi-device login',
+
   'System': 'System',
   'Light': 'Light',
   'Dark': 'Dark',
@@ -229,6 +233,8 @@ final Map<String, String> intlEnUs = {
   'Message is rejected': 'Message is rejected',
   'Safely delivered': 'Safely delivered',
   'Safely delivered to @count members': 'Safely delivered to @count member(s)',
+  'Message delivery timeout': 'Message delivery timeout.',
+  'Synchronized from @terminal': 'Synchronized from @terminal.',
 
   'Draft': 'Draft',
   'Mentioned': 'You were mentioned',

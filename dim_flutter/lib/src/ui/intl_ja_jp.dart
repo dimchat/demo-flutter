@@ -155,6 +155,10 @@ final Map<String, String> intlJaJp = {
   'Change Avatar': 'アバターを変更',
   'Update & Broadcast': '更新してブロードキャスト',
 
+  'Devices': 'デバイス',
+  'My Devices': 'マイデバイス',
+  'Multi-device login': 'マルチデバイスログイン',
+
   'System': 'システム',
   'Light': 'ライト',
   'Dark': 'ダーク',
@@ -230,6 +234,8 @@ final Map<String, String> intlJaJp = {
   'Message is rejected': 'メッセージが拒否されました',
   'Safely delivered': '安全に配信されました',
   'Safely delivered to @count members': '安全に @count 人のメンバーに配信されました',
+  'Message delivery timeout': 'メッセージの送信がタイムアウトしました。',
+  'Synchronized from @terminal': '@terminalから同期しました。',
 
   'Draft': '下書き',
   'Mentioned': 'あなたは言及されました',

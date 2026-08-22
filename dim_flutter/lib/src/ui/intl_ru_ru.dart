@@ -155,6 +155,10 @@ final Map<String, String> intlRuRu = {
   'Change Avatar': 'Сменить аватар',
   'Update & Broadcast': 'Обновить и тра��слировать',
 
+  'Devices': 'Устройства',
+  'My Devices': 'Мои устройства',
+  'Multi-device login': 'Вход с нескольких устройств',
+
   'System': 'Система',
   'Light': 'Светлая',
   'Dark': 'Темная',
@@ -230,6 +234,8 @@ final Map<String, String> intlRuRu = {
   'Message is rejected': 'Сообщение отклонено',
   'Safely delivered': 'Безопасно доставлено',
   'Safely delivered to @count members': 'Безопасно доставлено @count участникам',
+  'Message delivery timeout': 'Истекло время отправки сообщения.',
+  'Synchronized from @terminal': 'Синхронизировано из @terminal.',
 
   'Draft': 'Черновик',
   'Mentioned': 'Вас упомянули',

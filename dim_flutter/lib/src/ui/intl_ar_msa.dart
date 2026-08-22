@@ -155,6 +155,10 @@ final Map<String, String> intlAr = {
   'Change Avatar': 'تغيير الصورة الرمزية',
   'Update & Broadcast': 'تحديث وبث',
 
+  'Devices': 'الأجهزة',
+  'My Devices': 'أجهزتي',
+  'Multi-device login': 'تسجيل الدخول متعدد الأجهزة',
+
   'System': 'النظام',
   'Light': 'فاتح',
   'Dark': 'داكن',
@@ -230,6 +234,8 @@ final Map<String, String> intlAr = {
   'Message is rejected': 'تم رفض الرسالة',
   'Safely delivered': 'تم التوصيل بأمان',
   'Safely delivered to @count members': 'تم التوصيل بأمان لـ @count عضو',
+  'Message delivery timeout': 'انتهت مهلة إرسال الرسالة.',
+  'Synchronized from @terminal': 'تمت المزامنة من @terminal.',
 
   'Draft': 'مسودة',
   'Mentioned': 'تمت الإشارة إليك',

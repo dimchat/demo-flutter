@@ -155,6 +155,10 @@ final Map<String, String> intlHiIn = {
   'Change Avatar': 'अवतार बदलें',
   'Update & Broadcast': 'अपडेट और प्रसार',
 
+  'Devices': 'डिवाइस',
+  'My Devices': 'मेरे डिवाइस',
+  'Multi-device login': 'मल्टी-डिवाइस लॉगिन',
+
   'System': 'सिस्टम',
   'Light': 'रोशनी',
   'Dark': 'अंधकार',
@@ -230,6 +234,8 @@ final Map<String, String> intlHiIn = {
   'Message is rejected': 'संदेश अस्वीकृत है',
   'Safely delivered': 'सुरक्षित रूप से डिलीवर किया गया',
   'Safely delivered to @count members': 'सुरक्षित रूप से @count सदस्यों को डिलीवर किया गया',
+  'Message delivery timeout': 'संदेश भेजने का समय समाप्त हो गया।',
+  'Synchronized from @terminal': '@terminal से सिंक किया गया।',
 
   'Draft': 'मसौदा',
   'Mentioned': 'आपका उल्लेख किया गया',

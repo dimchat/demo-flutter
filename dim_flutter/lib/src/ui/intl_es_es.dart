@@ -156,6 +156,10 @@ final Map<String, String> intlEsEs = {
   'Change Avatar': 'Cambiar Avatar',
   'Update & Broadcast': 'Actualizar y Difundir',
 
+  'Devices': 'Dispositivos',
+  'My Devices': 'Mis dispositivos',
+  'Multi-device login': 'Inicio de sesión multi-dispositivo',
+
   'System': 'Sistema',
   'Light': 'Claro',
   'Dark': 'Oscuro',
@@ -231,6 +235,8 @@ final Map<String, String> intlEsEs = {
   'Message is rejected': 'Mensaje rechazado',
   'Safely delivered': 'Entregado con seguridad',
   'Safely delivered to @count members': 'Entregado con seguridad a @count miembro(s)',
+  'Message delivery timeout': 'Tiempo de espera agotado al enviar el mensaje.',
+  'Synchronized from @terminal': 'Sincronizado desde @terminal.',
 
   'Draft': 'Borrador',
   'Mentioned': 'Fuiste mencionado',

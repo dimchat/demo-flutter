@@ -155,6 +155,10 @@ final Map<String, String> intlThTh = {
   'Change Avatar': 'เปลี่ยนรูปโปรไฟล์',
   'Update & Broadcast': 'อัปเดตและกระจาย',
 
+  'Devices': 'อุปกรณ์',
+  'My Devices': 'อุปกรณ์ของฉัน',
+  'Multi-device login': 'เข้าสู่ระบบบนอุปกรณ์หลายเครื่อง',
+
   'System': 'ระบบ',
   'Light': 'สว่าง',
   'Dark': 'มืด',
@@ -230,6 +234,8 @@ final Map<String, String> intlThTh = {
   'Message is rejected': 'ข้อความถูกปฏิเสธ',
   'Safely delivered': 'ส่งสำเร็จ',
   'Safely delivered to @count members': 'ส่งสำเร็จถึงสมาชิก @count คน',
+  'Message delivery timeout': 'หมดเวลาในการส่งข้อความ。',
+  'Synchronized from @terminal': 'ซิงค์จาก @terminal แล้ว。',
 
   'Draft': 'ร่าง',
   'Mentioned': 'คุณถูกกล่าวถึง',

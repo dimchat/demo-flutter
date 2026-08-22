@@ -155,6 +155,10 @@ final Map<String, String> intlViVN = {
   'Change Avatar': 'Đổi ảnh đại diện',
   'Update & Broadcast': 'Cập nhật và Phát sóng',
 
+  'Devices': 'Thiết bị',
+  'My Devices': 'Thiết bị của tôi',
+  'Multi-device login': 'Đăng nhập đa thiết bị',
+
   'System': 'Hệ thống',
   'Light': 'Sáng',
   'Dark': 'Tối',
@@ -230,6 +234,8 @@ final Map<String, String> intlViVN = {
   'Message is rejected': 'Tin nhắn bị từ chối',
   'Safely delivered': 'Giao hàng an toàn',
   'Safely delivered to @count members': 'Giao hàng an toàn cho @count thành viên',
+  'Message delivery timeout': 'Hết thời gian gửi tin nhắn.',
+  'Synchronized from @terminal': 'Đồng bộ từ @terminal.',
 
   'Draft': 'Nháp',
   'Mentioned': 'Bạn đã được đề cập',

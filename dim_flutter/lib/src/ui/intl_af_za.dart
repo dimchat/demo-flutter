@@ -155,6 +155,10 @@ final Map<String, String> intlAfZa = {
   'Change Avatar': 'Verander Avatar',
   'Update & Broadcast': 'Opdateer & Uitsaai',
 
+  'Devices': 'Toestelle',
+  'My Devices': 'My toestelle',
+  'Multi-device login': 'Multi-toestel aanmelding',
+
   'System': 'Sisteem',
   'Light': 'Lig',
   'Dark': 'Donker',
@@ -230,6 +234,8 @@ final Map<String, String> intlAfZa = {
   'Message is rejected': 'Boodskap word afgekeur',
   'Safely delivered': 'Veilig afgelewer',
   'Safely delivered to @count members': 'Veilig afgelewer aan @count lid/lidmate',
+  'Message delivery timeout': 'Tydverloop by boodskapaflewering.',
+  'Synchronized from @terminal': 'Gesinchroniseer vanaf @terminal.',
 
   'Draft': 'Konsep',
   'Mentioned': 'Jy is genoem',

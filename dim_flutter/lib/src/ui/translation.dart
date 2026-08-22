@@ -1,7 +1,6 @@
 
 import 'package:dim_client/common.dart';
 import 'package:dim_client/ok.dart';
-import 'package:dim_client/sdk.dart';
 
 import '../client/shared.dart';
 import '../common/constants.dart';
@@ -111,7 +110,7 @@ class Translator with Logging implements Observer {
   factory Translator() => _instance;
   static final Translator _instance = Translator._internal();
   Translator._internal() {
-    var nc = NotificationCenter();
+    final nc = NotificationCenter();
     nc.addObserver(this, NotificationNames.kTranslatorWarning);
   }
 
@@ -146,7 +145,7 @@ class Translator with Logging implements Observer {
       if (sender == null) {
         logError('translator error: $userInfo');
       } else {
-        var text = result?.translation;
+        String? text = result?.translation;
         text ??= result?.text;
         _updateTranslator(sender, text);
       }
@@ -154,7 +153,7 @@ class Translator with Logging implements Observer {
   }
 
   void _updateTranslator(ID sender, String? text) {
-    var fastest = _fastestTranslator;
+    ID? fastest = _fastestTranslator;
     if (fastest == null) {
       fastest = sender;
     } else if (text == null) {
@@ -168,7 +167,7 @@ class Translator with Logging implements Observer {
     _fastestTranslator = fastest;
     _warningMessage = text;
     // post notification
-    var nc = NotificationCenter();
+    final nc = NotificationCenter();
     nc.postNotification(NotificationNames.kTranslatorReady, this, {
       // 'action': 'update',
       'translator': fastest,
@@ -177,7 +176,7 @@ class Translator with Logging implements Observer {
 
   Future<bool> testCandidates() async {
     Config config = Config();
-    var bots = config.translators;
+    final bots = config.translators;
     if (bots.isEmpty) {
       return false;
     } else if (_fastestTranslator != null) {
@@ -185,8 +184,8 @@ class Translator with Logging implements Observer {
       return true;
     }
     // check last query time
-    var now = DateTime.now();
-    var last = _lastQueryTime;
+    final now = DateTime.now();
+    final last = _lastQueryTime;
     if (last != null && now.subtract(Duration(seconds: _queryInterval)).isBefore(last)) {
       logWarning('last query is not expired, call it after $_queryInterval seconds.');
       return false;
@@ -197,7 +196,7 @@ class Translator with Logging implements Observer {
       }
     }
     // query candidates
-    var content = TranslateContent.query('Hi there!', 0, format: null);
+    final content = TranslateContent.query('Hi there!', 0, format: null);
     content['mod'] = 'test';
     logInfo('say hi to translators: $bots, $content');
     GlobalVariable shared = GlobalVariable();
@@ -213,7 +212,7 @@ class Translator with Logging implements Observer {
       logWarning('translator not found');
       return false;
     }
-    var content = TranslateContent.query(text, tag, format: format);
+    final content = TranslateContent.query(text, tag, format: format);
     logInfo('sending to translator: $receiver, $content');
     GlobalVariable shared = GlobalVariable();
     await shared.emitter.sendContent(content, receiver: receiver);

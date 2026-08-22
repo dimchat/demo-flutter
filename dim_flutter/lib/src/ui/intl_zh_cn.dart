@@ -154,6 +154,10 @@ final Map<String, String> intlZhCn = {
   'Change Avatar': '更换头像',
   'Update & Broadcast': '更新并广播',
 
+  'Devices': '设备',
+  'My Devices': '我的设备',
+  'Multi-device login': '多设备登录',
+
   'System': '系统',
   'Light': '浅色',
   'Dark': '深色',
@@ -228,6 +232,8 @@ final Map<String, String> intlZhCn = {
   'Message is rejected': '消息被拒收',
   'Safely delivered': '已安全送达',
   'Safely delivered to @count members': '已安全送达 @count 位成员',
+  'Message delivery timeout': '消息发送超时。',
+  'Synchronized from @terminal': '同步自@terminal。',
 
   'Draft': '草稿',
   'Mentioned': '有人@我',

@@ -155,6 +155,10 @@ final Map<String, String> intlIdId = {
   'Change Avatar': 'Ganti Avatar',
   'Update & Broadcast': 'Perbarui & Siarkan',
 
+  'Devices': 'Perangkat',
+  'My Devices': 'Perangkat saya',
+  'Multi-device login': 'Masuk multi-perangkat',
+
   'System': 'Sistem',
   'Light': 'Terang',
   'Dark': 'Gelap',
@@ -230,6 +234,8 @@ final Map<String, String> intlIdId = {
   'Message is rejected': 'Pesan ditolak',
   'Safely delivered': 'Terkirim dengan aman',
   'Safely delivered to @count members': 'Terkirim dengan aman kepada @count anggota',
+  'Message delivery timeout': 'Waktu pengiriman pesan habis.',
+  'Synchronized from @terminal': 'Disinkronkan dari @terminal.',
 
   'Draft': 'Draf',
   'Mentioned': 'Anda disebutkan',

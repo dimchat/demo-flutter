@@ -154,6 +154,10 @@ final Map<String, String> intlZhTw = {
   'Change Avatar': '更換頭像',
   'Update & Broadcast': '更新並廣播',
 
+  'Devices': '裝置',
+  'My Devices': '我的裝置',
+  'Multi-device login': '多裝置登入',
+
   'System': '系統',
   'Light': '亮色',
   'Dark': '暗色',
@@ -228,6 +232,8 @@ final Map<String, String> intlZhTw = {
   'Message is rejected': '訊息被拒絕',
   'Safely delivered': '已安全送達',
   'Safely delivered to @count members': '已安全送達 @count 位成員',
+  'Message delivery timeout': '訊息傳送逾時。',
+  'Synchronized from @terminal': '同步來自@terminal。',
 
   'Draft': '草稿',
   'Mentioned': '有人@我',

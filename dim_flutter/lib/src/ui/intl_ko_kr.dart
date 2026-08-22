@@ -155,6 +155,10 @@ final Map<String, String> intlKoKr = {
   'Change Avatar': '아바타 변경',
   'Update & Broadcast': '업데이트 및 브로드캐스트',
 
+  'Devices': '기기',
+  'My Devices': '내 기기',
+  'Multi-device login': '멀티 기기 로그인',
+
   'System': '시스템',
   'Light': '라이트',
   'Dark': '다크',
@@ -229,6 +233,8 @@ final Map<String, String> intlKoKr = {
   'Message is rejected': '메시지가 거부되었습니다',
   'Safely delivered': '안전하게 전달됨',
   'Safely delivered to @count members': '@count 명에게 안전하게 전달됨',
+  'Message delivery timeout': '메시지 전송 시간이 초과되었습니다.',
+  'Synchronized from @terminal': '@terminal에서 동기화되었습니다.',
 
   'Draft': '초안',
   'Mentioned': '당신은 언급되었습니다',

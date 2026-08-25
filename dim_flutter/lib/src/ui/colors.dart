@@ -13,11 +13,14 @@ abstract class ThemeColors {
   Color get avatarColor => tarsierLogoBackgroundColor;
   Color get avatarDefaultColor => CupertinoColors.inactiveGray;
 
+  // device icon
+  Color get iconBackgroundColor;
+
   // Color get tabColor => CupertinoColors.black;
   Color get activeTabColor => CupertinoColors.systemBlue;
 
   Color get scaffoldBackgroundColor;
-  Color get appBardBackgroundColor;
+  Color get appBarBackgroundColor;
 
   Color get inputTrayBackgroundColor;
 
@@ -123,10 +126,13 @@ abstract class ThemeColors {
 class _LightThemeColors extends ThemeColors {
 
   @override
+  Color get iconBackgroundColor => CupertinoColors.extraLightBackgroundGray;
+
+  @override
   Color get scaffoldBackgroundColor => CupertinoColors.extraLightBackgroundGray;
 
   @override
-  Color get appBardBackgroundColor => CupertinoColors.extraLightBackgroundGray;
+  Color get appBarBackgroundColor => CupertinoColors.extraLightBackgroundGray;
 
   @override
   Color get inputTrayBackgroundColor => CupertinoColors.white;
@@ -250,10 +256,13 @@ class _LightThemeColors extends ThemeColors {
 class _DarkThemeColors extends ThemeColors {
 
   @override
+  Color get iconBackgroundColor => CupertinoColors.darkBackgroundGray;
+
+  @override
   Color get scaffoldBackgroundColor => CupertinoColors.darkBackgroundGray;
 
   @override
-  Color get appBardBackgroundColor => CupertinoColors.darkBackgroundGray;
+  Color get appBarBackgroundColor => CupertinoColors.darkBackgroundGray;
 
   @override
   Color get inputTrayBackgroundColor => CupertinoColors.systemFill;

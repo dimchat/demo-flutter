@@ -63,7 +63,7 @@ class BrowserState extends State<Browser> {
   Widget build(BuildContext context) => Scaffold(
     backgroundColor: Styles.colors.scaffoldBackgroundColor,
     appBar: CupertinoNavigationBar(
-      backgroundColor: Styles.colors.appBardBackgroundColor,
+      backgroundColor: Styles.colors.appBarBackgroundColor,
       middle: Text(title,
         maxLines: 1,
         overflow: TextOverflow.ellipsis,

@@ -1,6 +1,5 @@
 
 import 'package:dim_client/ok.dart';
-import 'package:dim_client/sdk.dart';
 import 'package:dim_client/common.dart';
 
 import '../common/dbi/app.dart';
@@ -192,9 +191,9 @@ class SharedDatabase with Logging
         index += 1;
         if (doc is Visa && doc.terminal != terminal) {
           // visa terminal not matched
-          logInfo('[$index/$total] skip visa not for: $entity/$terminal, $doc');
+          logInfo('[$index/$total] skip visa not for: $entity/$terminal, ${doc.terminal}');
         } else {
-          logInfo('[$index/$total]  got document for: $entity/$terminal, $doc');
+          logInfo('[$index/$total]  got document for: $entity/$terminal, ${doc['terminal']}');
           array.add(doc);
         }
       }

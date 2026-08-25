@@ -79,7 +79,7 @@ class _MemberPickerState extends State<MemberPicker> {
   Widget build(BuildContext context) => Scaffold(
     backgroundColor: Styles.colors.scaffoldBackgroundColor,
     appBar: CupertinoNavigationBar(
-      backgroundColor: Styles.colors.appBardBackgroundColor,
+      backgroundColor: Styles.colors.appBarBackgroundColor,
       middle: StatedTitleView.from(context, () => 'Select Participants'.tr),
       trailing: TextButton(child: Text('OK'.tr),
         onPressed: () {

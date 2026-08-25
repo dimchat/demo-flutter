@@ -199,7 +199,7 @@ class _VideoAppState extends State<VideoPlayerPage> with Logging implements lnc.
     // backgroundColor: Styles.colors.scaffoldBackgroundColor,
     backgroundColor: widget.bgColor,
     navigationBar: CupertinoNavigationBar(
-      // backgroundColor: Styles.colors.appBardBackgroundColor,
+      // backgroundColor: Styles.colors.appBarBackgroundColor,
       backgroundColor: widget.bgColor,
       middle: Text(widget.title,
         maxLines: 1,

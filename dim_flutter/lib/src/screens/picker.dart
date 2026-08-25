@@ -77,7 +77,7 @@ class _AirPlayState extends State<AirPlayPicker> {
   Widget build(BuildContext context) => Scaffold(
     backgroundColor: Styles.colors.scaffoldBackgroundColor,
     appBar: AppBar(
-      backgroundColor: Styles.colors.appBardBackgroundColor,
+      backgroundColor: Styles.colors.appBarBackgroundColor,
       title: Text('Select TV'.tr),
     ),
     body: Center(

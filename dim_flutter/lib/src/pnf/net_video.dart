@@ -32,7 +32,6 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
 import 'package:dim_client/ok.dart';
-import 'package:dim_client/sdk.dart';
 import 'package:dim_client/common.dart';
 
 import '../ui/icons.dart';
@@ -51,8 +50,11 @@ class NetworkVideoFactory {
   static final NetworkVideoFactory _instance = NetworkVideoFactory._internal();
   NetworkVideoFactory._internal();
 
-  PortableNetworkView getVideoView(VideoContent content,
-      {double? width, double? height, OnVideoShare? onVideoShare}) {
+  PortableNetworkView getVideoView(VideoContent content, {
+    double? width, double? height,
+    OnVideoShare? onVideoShare,
+  }) {
+    // TODO: clone without serializing?
     var pnf = TransportableFile.parse(content.toMap());
     Uri? url = pnf?.url;
     if (url == null || pnf == null) {

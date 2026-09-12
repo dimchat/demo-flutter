@@ -1,4 +1,4 @@
-import 'package:dim_client/sdk.dart';
+import 'package:dim_client/common.dart';
 
 import 'helper/sqlite.dart';
 

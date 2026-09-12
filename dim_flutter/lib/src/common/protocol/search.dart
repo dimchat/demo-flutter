@@ -28,7 +28,7 @@
  * SOFTWARE.
  * =============================================================================
  */
-import 'package:dim_client/sdk.dart';
+import 'package:dim_client/common.dart';
 
 
 ///  Search command: {
